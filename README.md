@@ -564,31 +564,36 @@ All configurations are updated for the latest NixOS:
 
 ### Common Issues & Solutions
 
-1. **Build failures**: 
+1. **Build failures**:
+
    ```bash
    nix flake check          # Check for syntax errors
    just validate            # Run full validation suite
    ```
 
-2. **VM boot hangs**: 
+2. **VM boot hangs**:
+
    ```bash
    just build-vm-image desktop-test    # Use latest boot fixes
    pkill -f qemu                       # Kill stuck VMs
    ```
 
-3. **Hardware issues**: 
+3. **Hardware issues**:
+
    ```bash
    sudo nixos-generate-config --show-hardware-config > hardware-configuration.nix
    ```
 
 4. **Module conflicts**: Check for conflicting options using `lib.mkForce`
-   
+
 5. **Permission errors**: Ensure user is in wheel group
+
    ```bash
    sudo usermod -a -G wheel $USER
    ```
 
 6. **Flake lock issues**:
+
    ```bash
    nix flake update         # Update all inputs
    git add flake.lock       # Commit lock changes
