@@ -1,6 +1,7 @@
 # NixOS Template Setup Guide
 
-This NixOS template includes comprehensive setup scripts to help new users get up and running quickly with a fully configured NixOS system.
+This NixOS template includes comprehensive setup scripts to help new users get up and running quickly with a fully configured
+NixOS system.
 
 ## Quick Start
 
@@ -36,13 +37,13 @@ Validates your system before attempting configuration:
 - **Network Connectivity**: Tests internet and NixOS channels
 - **Hardware Support**: Detects system architecture and capabilities
 
-**Usage:**
+#### Usage:
 
 ```bash
 ./scripts/check-prerequisites.sh
 ```
 
-**What it checks:**
+#### What it checks:
 
 - NixOS version compatibility (23.11+)
 - Nix flakes support
@@ -60,14 +61,14 @@ Minimal interaction setup with sensible defaults:
 - **Fast Configuration**: Generates working config in minutes
 - **Basic Customization**: Hostname, username, and desktop environment
 
-**Best for:**
+#### Best for:
 
 - First-time NixOS users
 - Testing the template quickly
 - VM deployments
 - Getting a working system fast
 
-**Features:**
+#### Features:
 
 - Automatic VM type detection (QEMU, VirtualBox, VMware, Hyper-V)
 - Memory-based desktop recommendation (XFCE for <4GB, GNOME for >8GB)
@@ -85,14 +86,14 @@ Comprehensive guided setup with full customization:
 - **Advanced Options**: Detailed customization of all aspects
 - **Validation**: Comprehensive testing before deployment
 
-**Best for:**
+#### Best for:
 
 - Users who want full control
 - Production deployments
 - Complex configurations
 - Learning NixOS configuration
 
-**Features:**
+#### Features:
 
 - Multiple user templates (basic, developer, gamer, minimal, server)
 - Desktop environment selection with preview
@@ -111,7 +112,7 @@ Specialized script for virtual machine environments:
 - **Confidence Scoring**: Reliability rating for detection results
 - **Optimization Suggestions**: Performance and usability improvements
 
-**Supported Platforms:**
+#### Supported Platforms:
 
 - QEMU/KVM with VirtIO optimizations
 - VirtualBox with Guest Additions
@@ -308,25 +309,25 @@ When gaming template is selected:
 
 ### Common Issues
 
-**Script Permission Denied**
+#### Script Permission Denied
 
 ```bash
 chmod +x scripts/*.sh
 ```
 
-**Prerequisites Check Fails**
+#### Prerequisites Check Fails
 
 - Ensure you're running on NixOS
 - Check internet connectivity
 - Verify sufficient disk space (>10GB recommended)
 
-**Configuration Build Fails**
+#### Configuration Build Fails
 
 - Check syntax with: `just validate`
 - Review error messages for specific issues
 - Ensure all required inputs were provided
 
-**VM Detection Issues**
+#### VM Detection Issues
 
 ```bash
 # Manual VM detection
@@ -334,7 +335,7 @@ systemd-detect-virt
 cat /sys/class/dmi/id/product_name
 ```
 
-**Network Configuration Problems**
+#### Network Configuration Problems
 
 - Check interface names: `ip link show`
 - Verify NetworkManager status: `systemctl status NetworkManager`

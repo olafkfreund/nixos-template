@@ -141,7 +141,7 @@ get_host_age_keys() {
   for host_key in "${host_key_paths[@]}"; do
     if [ -f "$host_key" ]; then
       local age_key
-      age_key=$(sudo ssh-to-age <"$host_key" 2>/dev/null || true)
+      age_key=$(sudo cat "$host_key" | ssh-to-age 2>/dev/null || true)
       if [ -n "$age_key" ]; then
         age_keys+=("$age_key")
         print_info "Converted host key: $(basename "$host_key") -> $age_key"

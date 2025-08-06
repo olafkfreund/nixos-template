@@ -1,6 +1,7 @@
 # User Templates Guide
 
-This NixOS template includes several pre-configured user templates for different use cases. Each template provides a complete Home Manager configuration optimized for specific workflows.
+This NixOS template includes several pre-configured user templates for different use cases. Each template provides a complete Home
+Manager configuration optimized for specific workflows.
 
 ## Available User Templates
 

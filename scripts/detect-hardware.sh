@@ -247,7 +247,7 @@ detect_audio_hardware() {
 
     # Check sources (microphones)
     local sources
-    sources=$(pactl list short sources 2>/dev/null | grep -v monitor | wc -l || echo "0")
+    sources=$(pactl list short sources 2>/dev/null | grep -cv monitor || echo "0")
     if [ "$sources" -gt 0 ]; then
       has_microphone=true
     fi
@@ -285,9 +285,9 @@ detect_usb_devices() {
   # Check USB devices
   if command -v lsusb >/dev/null 2>&1; then
     # Count input devices
-    keyboard_count=$(lsusb 2>/dev/null | grep -i keyboard | wc -l || echo "0")
-    mouse_count=$(lsusb 2>/dev/null | grep -i mouse | wc -l || echo "0")
-    webcam_count=$(lsusb 2>/dev/null | grep -iE "(camera|webcam)" | wc -l || echo "0")
+    keyboard_count=$(lsusb 2>/dev/null | grep -ci keyboard || echo "0")
+    mouse_count=$(lsusb 2>/dev/null | grep -ci mouse || echo "0")
+    webcam_count=$(lsusb 2>/dev/null | grep -ciE "(camera|webcam)" || echo "0")
 
     confidence=$CONFIDENCE_MEDIUM
   fi

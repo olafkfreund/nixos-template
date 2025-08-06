@@ -257,7 +257,7 @@ check_vm_hardware() {
       echo "    $line"
     done
   else
-    ls -la /dev/[sv]d* /dev/nvme* 2>/dev/null | head -5 || echo "    Unable to detect storage devices"
+    find /dev -maxdepth 1 -name '[sv]d*' -o -name 'nvme*' 2>/dev/null | head -5 | while read -r dev; do ls -la "$dev"; done || echo "    Unable to detect storage devices"
   fi
 
   # Network information

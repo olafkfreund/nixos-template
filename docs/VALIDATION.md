@@ -1,6 +1,8 @@
 # Template Validation Guide
 
-This document explains the comprehensive validation system for NixOS template configurations, covering syntax validation, build evaluation, VM testing, and CI/CD integration. All validations are NixOS 25.05 compatible with zero deprecation warnings.
+This document explains the comprehensive validation system for NixOS template configurations, covering syntax validation, build evaluation, VM testing, and CI/CD integration.
+All validations are
+NixOS 25.05 compatible with zero deprecation warnings.
 
 ## 🎯 Current Status
 

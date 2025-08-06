@@ -115,6 +115,7 @@ EOF
 
 load_state() {
   if [ -f "$SETUP_STATE_FILE" ]; then
+    # shellcheck source=/dev/null
     source "$SETUP_STATE_FILE"
     print_info "Loaded previous setup state"
     return 0
