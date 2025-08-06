@@ -1,0 +1,83 @@
+{
+  "workbench.colorTheme": "Default Dark+",
+  "editor.fontFamily": "JetBrains Mono, 'Droid Sans Mono', 'monospace'",
+  "editor.fontSize": 14,
+  "editor.lineHeight": 1.5,
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": true,
+  "editor.renderWhitespace": "boundary",
+  "editor.rulers": [80, 120],
+  "editor.wordWrap": "bounded",
+  "editor.wordWrapColumn": 120,
+  "editor.minimap.enabled": true,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": true,
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000,
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  
+  "terminal.integrated.fontSize": 13,
+  "terminal.integrated.fontFamily": "JetBrains Mono",
+  "terminal.integrated.shell.linux": "/bin/bash",
+  
+  "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
+  
+  "git.enableSmartCommit": true,
+  "git.confirmSync": false,
+  "git.autofetch": true,
+  
+  "extensions.autoUpdate": true,
+  
+  "nix.enableLanguageServer": true,
+  "nix.serverPath": "nil",
+  "nix.formatterPath": "nixpkgs-fmt",
+  
+  "[nix]": {
+    "editor.defaultFormatter": "jnoortheen.nix-ide",
+    "editor.tabSize": 2
+  },
+  
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  
+  "[yaml]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.wordWrap": "on"
+  },
+  
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  
+  "[rust]": {
+    "editor.defaultFormatter": "rust-lang.rust-analyzer"
+  },
+  
+  "[go]": {
+    "editor.defaultFormatter": "golang.go"
+  }
+}

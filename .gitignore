@@ -1,0 +1,95 @@
+# NixOS Template .gitignore
+
+# Exclude local configuration files
+CLAUDE.md
+.cursorrules
+
+# Nix result symlinks
+result
+result-*
+
+# Hardware configurations (contain sensitive hardware info)
+# Comment out if you want to track hardware configs
+# hosts/*/hardware-configuration.nix
+
+# Age keys (secrets)
+*.key
+age-key.txt
+id_rsa
+id_ed25519
+
+# Build artifacts
+.direnv/
+.envrc
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.#*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+.temp/
+tmp/
+
+# Logs
+*.log
+logs/
+
+# Cache directories
+.cache/
+__pycache__/
+*.pyc
+node_modules/
+
+# Backup files
+*.backup
+*.bak
+*.orig
+
+# State files
+.state
+state.json
+
+# User-specific runtime files
+.secrets/
+secrets/*.age.dec
+secrets/decrypted/
+
+# Local development
+.env
+.env.local
+.envrc.local
+
+# Testing
+test-results/
+coverage/
+
+# Documentation build artifacts
+docs/_build/
+docs/.doctrees/
+
+# Flake lock conflicts
+flake.lock.orig
+flake.lock.rej
+
+# System-specific files
+/mnt/
+/media/
+/run/
+/proc/
+/sys/
+/dev/
+
+# Local customizations (uncomment if needed)
+# hosts/local-*/
+# overlays/local/
+# pkgs/local/
