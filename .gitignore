@@ -8,6 +8,13 @@ CLAUDE.md
 result
 result-*
 
+# VM disk images
+*.qcow2
+*.img
+*.raw
+*.vmdk
+*.vdi
+
 # Hardware configurations (contain sensitive hardware info)
 # Comment out if you want to track hardware configs
 # hosts/*/hardware-configuration.nix
