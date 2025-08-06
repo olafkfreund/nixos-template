@@ -50,7 +50,8 @@ jobs:
     - name: Remove dead code
       run: |
         echo "Removing dead code..."
-        deadnix --edit . || echo "No dead code found"
+        # Use deadnix without --edit to avoid removing required function arguments
+        deadnix --fail . && echo "No dead code found" || echo "Dead code detected but not auto-removed to preserve function arguments"
         
     - name: Format shell scripts
       run: |
