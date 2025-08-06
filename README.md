@@ -3,7 +3,7 @@
 A sophisticated, modular NixOS configuration template using flakes, featuring:
 
 - **100% Green CI** - Comprehensive validation ensuring reliability
-- **VM Testing Ready** - Full desktop environment testing in VMs
+- **VM Testing Ready** - Full desktop environment testing in VMs (works on any Linux distro)
 - **Modular Architecture** - Organized, reusable modules
 - **Home Manager Integration** - Declarative user environments
 - **SOPS Secrets Management** - Encrypted secrets in Git
@@ -16,6 +16,26 @@ A sophisticated, modular NixOS configuration template using flakes, featuring:
 - **NixOS 25.05 Compatible** - Latest NixOS features and deprecation fixes
 
 ## Quick Start
+
+### Non-NixOS Users (Try NixOS in VMs)
+
+**Want to try NixOS without installing it?** You can test this entire configuration on Ubuntu, 
+Fedora, Arch, or any Linux distribution:
+
+```bash
+# Install Nix package manager (works on any Linux)
+curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+
+# Clone and test NixOS in a VM
+git clone <your-repo> nixos-test
+cd nixos-test
+nix build .#nixosConfigurations.desktop-test.config.system.build.vm
+./result/bin/run-desktop-test-vm
+
+# Login: username=vm-user, password=nixos
+```
+
+**[Complete Non-NixOS Usage Guide →](docs/NON-NIXOS-USAGE.md)**
 
 ### New NixOS Users (Automated Setup)
 
@@ -70,7 +90,7 @@ just update-switch
 
 ## Project Structure
 
-```
+```text
 nixos-config/
 ├── flake.nix                 # Main flake configuration
 ├── flake.lock               # Reproducible input locks
@@ -125,12 +145,14 @@ nixos-config/
 ├── scripts/               # Management and setup scripts
 │   ├── nixos-setup.sh     # Full interactive setup wizard
 │   ├── quick-setup.sh     # Quick setup with smart defaults
+│   ├── try-nixos.sh       # Try NixOS on non-NixOS systems
 │   ├── check-prerequisites.sh # System validation
 │   ├── detect-vm.sh       # VM environment detection
 │   ├── setup-agenix.sh    # Secrets management setup
 │   └── rebuild.sh         # Rebuild script
 ├── docs/                   # Documentation
 │   ├── SETUP.md           # Comprehensive setup guide
+│   ├── NON-NIXOS-USAGE.md # Guide for non-NixOS users
 │   ├── VM-SUPPORT.md      # Virtual machine documentation
 │   └── GPU-CONFIGURATION.md # GPU setup guide
 ├──
@@ -179,13 +201,16 @@ just show-inputs                   # Show flake input versions
 ### Setup Scripts (For New Users)
 
 ```bash
+# For non-NixOS users (Ubuntu, Fedora, Arch, etc.)
+./scripts/try-nixos.sh
+
 # Check system prerequisites (includes hardware detection)
 ./scripts/check-prerequisites.sh
 
-# Quick automated setup
+# Quick automated setup (NixOS users)
 ./scripts/quick-setup.sh
 
-# Full interactive setup wizard
+# Full interactive setup wizard (NixOS users)
 ./scripts/nixos-setup.sh
 
 # Hardware type detection
