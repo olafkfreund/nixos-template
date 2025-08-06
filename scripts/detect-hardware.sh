@@ -211,7 +211,7 @@ detect_network_interfaces() {
   done
 
   # Wireless interface strongly suggests laptop
-  if [ $wireless_count -gt 0 ]; then
+  if [ "$wireless_count" -gt 0 ]; then
     laptop_score=$((laptop_score + 20))
     confidence=$CONFIDENCE_HIGH
   fi
@@ -325,13 +325,13 @@ detect_cpu_memory() {
   confidence=$CONFIDENCE_HIGH
 
   # High-end specs suggest workstation or server
-  if [ $cpu_cores -ge 16 ] || [ $total_memory_gb -ge 32 ]; then
+  if [ "$cpu_cores" -ge 16 ] || [ "$total_memory_gb" -ge 32 ]; then
     server_score=$((server_score + 15))
     workstation_score=$((workstation_score + 20))
-  elif [ $cpu_cores -ge 8 ] || [ $total_memory_gb -ge 16 ]; then
+  elif [ "$cpu_cores" -ge 8 ] || [ "$total_memory_gb" -ge 16 ]; then
     desktop_score=$((desktop_score + 10))
     workstation_score=$((workstation_score + 15))
-  elif [ $cpu_cores -le 4 ] && [ $total_memory_gb -le 8 ]; then
+  elif [ "$cpu_cores" -le 4 ] && [ "$total_memory_gb" -le 8 ]; then
     # Lower-end specs might suggest laptop
     laptop_score=$((laptop_score + 5))
   fi
@@ -469,7 +469,7 @@ detect_hardware_type() {
   echo "CONFIDENCE_LEVEL=$confidence_level"
   echo "CONFIDENCE_SCORE=$max_score"
   echo "HAS_BATTERY=$has_battery"
-  echo "HAS_WIRELESS=$([ $wireless_count -gt 0 ] && echo true || echo false)"
+  echo "HAS_WIRELESS=$([ "$wireless_count" -gt 0 ] && echo true || echo false)"
   echo "CPU_CORES=$cpu_cores"
   echo "MEMORY_GB=$total_memory_gb"
 }

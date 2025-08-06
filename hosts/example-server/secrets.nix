@@ -104,91 +104,101 @@
     };
   };
 
-  # Use secrets in system configuration
-  users.users.root = {
-    hashedPasswordFile = config.age.secrets."root-password".path;
-  };
-
-  # Database configuration with secrets
-  services.postgresql = {
-    enable = true;
-    ensureUsers = [
-      {
-        name = "nextcloud";
-        ensurePermissions."DATABASE nextcloud" = "ALL PRIVILEGES";
-      }
-    ];
-    ensureDatabases = [ "nextcloud" ];
-  };
-
-  # Nextcloud with secrets
-  services.nextcloud = {
-    enable = true;
-    package = pkgs.nextcloud29;
-    hostName = "cloud.example.com";
-
-    config = {
-      adminuser = "admin";
-      adminpassFile = config.age.secrets."nextcloud-admin-password".path;
-
-      dbtype = "pgsql";
-      dbuser = "nextcloud";
-      dbname = "nextcloud";
-      dbpassFile = config.age.secrets."nextcloud-db-password".path;
+  # User and group configuration
+  users = {
+    users = {
+      root = {
+        hashedPasswordFile = config.age.secrets."root-password".path;
+      };
+      
+      webservice = {
+        isSystemUser = true;
+        group = "webservice";
+      };
+      
+      backup = {
+        isSystemUser = true;
+        group = "backup";
+      };
+      
+      mail = {
+        isSystemUser = true;
+        group = "mail";
+      };
+    };
+    
+    groups = {
+      webservice = { };
+      backup = { };
+      mail = { };
     };
   };
 
-  # Nginx with SSL certificates from secrets
-  services.nginx = {
-    enable = true;
-    virtualHosts."example.com" = {
-      sslCertificate = config.age.secrets."ssl-cert".path;
-      sslCertificateKey = config.age.secrets."ssl-key".path;
-      enableACME = false; # Using custom certificates
-      forceSSL = true;
+  # Service configuration with secrets
+  services = {
+    # Database configuration with secrets
+    postgresql = {
+      enable = true;
+      ensureUsers = [
+        {
+          name = "nextcloud";
+          ensurePermissions."DATABASE nextcloud" = "ALL PRIVILEGES";
+        }
+      ];
+      ensureDatabases = [ "nextcloud" ];
+    };
 
-      locations."/" = {
-        proxyPass = "http://127.0.0.1:8080";
-        proxyWebsockets = true;
+    # Nextcloud with secrets
+    nextcloud = {
+      enable = true;
+      package = pkgs.nextcloud29;
+      hostName = "cloud.example.com";
+
+      config = {
+        adminuser = "admin";
+        adminpassFile = config.age.secrets."nextcloud-admin-password".path;
+
+        dbtype = "pgsql";
+        dbuser = "nextcloud";
+        dbname = "nextcloud";
+        dbpassFile = config.age.secrets."nextcloud-db-password".path;
+      };
+    };
+
+    # Nginx with SSL certificates from secrets
+    nginx = {
+      enable = true;
+      virtualHosts."example.com" = {
+        sslCertificate = config.age.secrets."ssl-cert".path;
+        sslCertificateKey = config.age.secrets."ssl-key".path;
+        enableACME = false; # Using custom certificates
+        forceSSL = true;
+
+        locations."/" = {
+          proxyPass = "http://127.0.0.1:8080";
+          proxyWebsockets = true;
+        };
+      };
+    };
+
+    # Backup service with encryption
+    restic.backups.system = {
+      enable = true;
+      passwordFile = config.age.secrets."server-backup-password".path;
+      repository = "rest:https://backup.example.com/server";
+      paths = [
+        "/etc"
+        "/var/lib"
+        "/home"
+      ];
+      exclude = [
+        "/var/lib/docker"
+        "/var/lib/systemd"
+      ];
+      timerConfig = {
+        OnCalendar = "02:00";
       };
     };
   };
 
-  # Backup service with encryption
-  services.restic.backups.system = {
-    enable = true;
-    passwordFile = config.age.secrets."server-backup-password".path;
-    repository = "rest:https://backup.example.com/server";
-    paths = [
-      "/etc"
-      "/var/lib"
-      "/home"
-    ];
-    exclude = [
-      "/var/lib/docker"
-      "/var/lib/systemd"
-    ];
-    timerConfig = {
-      OnCalendar = "02:00";
-    };
-  };
-
-  # Create required system users
-  users.users.webservice = {
-    isSystemUser = true;
-    group = "webservice";
-  };
-  users.groups.webservice = { };
-
-  users.users.backup = {
-    isSystemUser = true;
-    group = "backup";
-  };
-  users.groups.backup = { };
-
-  users.users.mail = {
-    isSystemUser = true;
-    group = "mail";
-  };
-  users.groups.mail = { };
 }

@@ -156,6 +156,7 @@ Specialized script for virtual machine environments:
    ```
 
 4. **Install NixOS**
+
    ```bash
    # The setup script will guide you through installation
    # It will handle nixos-install automatically
@@ -187,6 +188,7 @@ Specialized script for virtual machine environments:
    ```
 
 4. **Apply Configuration**
+
    ```bash
    # Generated configuration will be tested and applied automatically
    # Or manually apply later:
@@ -360,6 +362,7 @@ cat /sys/class/dmi/id/product_name
    ```
 
 4. **Restore Previous Generation**
+
    ```bash
    sudo nixos-rebuild switch --rollback
    ```
@@ -391,6 +394,7 @@ If automated setup doesn't meet your needs:
    ```
 
 4. **Build and Switch**
+
    ```bash
    just switch my-host
    ```
@@ -405,9 +409,9 @@ After successful setup:
    - Add custom modules
 
 2. **Learn NixOS**
-   - Read the NixOS manual: https://nixos.org/manual/nixos/stable/
-   - Explore Nix language: https://nix.dev/
-   - Join the community: https://discourse.nixos.org/
+   - Read the NixOS manual: <https://nixos.org/manual/nixos/stable/>
+   - Explore Nix language: <https://nix.dev/>
+   - Join the community: <https://discourse.nixos.org/>
 
 3. **Keep Updated**
 

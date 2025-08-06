@@ -567,6 +567,8 @@ main() {
     fix_common_issues
     echo
 
+    return $overall_result
+
   } | tee /dev/fd/3 3>&1 | {
     output=$(cat)
     echo "$output"

@@ -170,8 +170,8 @@ setup_secrets_nix() {
   local user_age_key
   user_age_key=$(get_age_public_key)
 
-  local ssh_age_keys
-  readarray -t ssh_age_keys < <(get_ssh_age_keys)
+  # local ssh_age_keys
+  # readarray -t ssh_age_keys < <(get_ssh_age_keys) # Currently unused
 
   # Get host keys
   local host_age_keys

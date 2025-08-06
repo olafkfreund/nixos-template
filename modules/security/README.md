@@ -134,6 +134,7 @@ modules.security.agenix = {
    ```
 
 5. **Use in configuration**:
+
    ```nix
    users.users.alice = {
      hashedPasswordFile = config.age.secrets."user-password".path;

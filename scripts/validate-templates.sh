@@ -183,7 +183,8 @@ validate_user_templates() {
 
   if [ -d "$user_templates_dir" ]; then
     while IFS= read -r -d '' template; do
-      local template_name=$(basename "$template" .nix)
+      local template_name
+      template_name=$(basename "$template" .nix)
       print_info "Validating user template: $template_name"
 
       # Check syntax
@@ -220,7 +221,8 @@ validate_scripts() {
       fi
 
       # Test help/info commands that should be safe
-      local script_name=$(basename "$script")
+      local script_name
+      script_name=$(basename "$script")
       case "$script_name" in
         "detect-hardware.sh")
           if "$script" help >/dev/null 2>&1; then

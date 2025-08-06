@@ -177,6 +177,7 @@ git commit --no-verify -m "commit message"
    ```
 
 4. **Regular Maintenance**:
+
    ```bash
    just update            # Update dependencies
    just outdated-check    # Check for newer versions

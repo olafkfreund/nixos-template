@@ -312,6 +312,7 @@ M-x all-the-icons-install-fonts
    ```
 
 2. Reduce UI updates:
+
    ```elisp
    (setq lsp-ui-sideline-enable nil)
    (setq lsp-ui-doc-enable nil)
@@ -320,6 +321,7 @@ M-x all-the-icons-install-fonts
 **Memory usage**:
 
 1. Tune garbage collection:
+
    ```elisp
    (setq gc-cons-threshold 20000000)
    (setq gc-cons-percentage 0.1)

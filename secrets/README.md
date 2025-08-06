@@ -291,6 +291,7 @@ services.restic.backups.home = {
    ```
 
 4. **Use in configuration**:
+
    ```nix
    services.myservice = {
      secretFile = config.age.secrets."new-secret".path;
@@ -327,6 +328,7 @@ services.restic.backups.home = {
    ```
 
 3. **Re-encrypt secrets**:
+
    ```bash
    agenix -r  # Rekey all secrets
    ```

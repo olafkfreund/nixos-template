@@ -149,6 +149,7 @@ After enabling the module:
    - Enable Steam Play for all other titles
 
 4. **Use GameMode**:
+
    ```bash
    # GameMode activates automatically with Steam games
    # Manual activation:

@@ -229,7 +229,7 @@ Markdown linting rules for documentation consistency.
 
 Excludes build artifacts, secrets, and local configuration files.
 
-### GitHub Actions Workflows
+### Workflow Configuration Files
 
 - `.github/workflows/ci.yml` - Main CI pipeline
 - `.github/workflows/format.yml` - Auto-formatting
@@ -368,6 +368,7 @@ git tag --list | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$'
    ```
 
 5. **Push Changes**
+
    ```bash
    git push origin feature-branch
    # CI runs automatically on PR

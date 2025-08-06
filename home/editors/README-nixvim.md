@@ -401,6 +401,7 @@ toggleterm = {
 **Slow completion**:
 
 1. Adjust completion settings:
+
    ```lua
    require('cmp').setup({
      performance = {
