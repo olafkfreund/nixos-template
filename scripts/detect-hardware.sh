@@ -79,7 +79,7 @@ detect_chassis() {
   # Method 2: Check product name for clues
   if [ -f /sys/class/dmi/id/product_name ]; then
     local product_name
-    product_name=$(tr '[:upper:]' '[:lower:]' < /sys/class/dmi/id/product_name 2>/dev/null || echo "")
+    product_name=$(tr '[:upper:]' '[:lower:]' </sys/class/dmi/id/product_name 2>/dev/null || echo "")
 
     if [[ $product_name =~ (laptop|notebook|thinkpad|elitebook|pavilion.*laptop|inspiron.*laptop) ]]; then
       laptop_score=$((laptop_score + 20))
