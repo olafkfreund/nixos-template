@@ -5,6 +5,8 @@ A sophisticated, modular NixOS configuration template using flakes, featuring:
 - **100% Green CI** - Comprehensive validation ensuring reliability
 - **VM Testing Ready** - Full desktop environment testing in VMs (works on any Linux distro)
 - **Custom ISO Creation** - Build installer ISOs with preconfigured templates
+- **Interactive Installers** - Template selection and automated deployment
+- **Multi-Platform Support** - Works on any Linux distribution
 - **Modular Architecture** - Organized, reusable modules
 - **Home Manager Integration** - Declarative user environments
 - **SOPS Secrets Management** - Encrypted secrets in Git
@@ -15,6 +17,28 @@ A sophisticated, modular NixOS configuration template using flakes, featuring:
 - **Custom Packages & Overlays** - Extend and customize packages
 - **Boot Reliability** - Fixed VM systemd conflicts and boot issues
 - **NixOS 25.05 Compatible** - Latest NixOS features and deprecation fixes
+
+**[📚 Complete Features Overview →](docs/FEATURES-OVERVIEW.md)**
+
+## Table of Contents
+
+1. [Quick Start](#quick-start)
+   - [Non-NixOS Users (Try NixOS in VMs)](#non-nixos-users-try-nixos-in-vms)
+   - [Custom NixOS Installer ISOs](#custom-nixos-installer-isos)
+   - [New NixOS Users (Automated Setup)](#new-nixos-users-automated-setup)
+   - [Advanced Users (Manual Setup)](#advanced-users-manual-setup)
+2. [Project Structure](#project-structure)
+3. [Available Commands](#available-commands)
+4. [Module System](#module-system)
+5. [GPU Configuration](#gpu-configuration)
+6. [Virtual Machine Testing](#virtual-machine-testing)
+7. [Custom NixOS Installer ISOs](#custom-nixos-installer-isos-1)
+8. [Host Configurations](#host-configurations)
+9. [Secrets Management](#secrets-management)
+10. [Development Shell](#development-shell)
+11. [Best Practices](#best-practices)
+12. [Validation & CI/CD](#validation--cicd)
+13. [Troubleshooting](#troubleshooting)
 
 ## Quick Start
 
@@ -37,6 +61,32 @@ nix build .#nixosConfigurations.desktop-test.config.system.build.vm
 ```
 
 **[Complete Non-NixOS Usage Guide →](docs/NON-NIXOS-USAGE.md)**
+
+### Custom NixOS Installer ISOs
+
+**Create bootable NixOS installers with your preconfigured templates:**
+
+```bash
+# Build preconfigured installer (recommended - includes all templates)
+just build-iso-preconfigured
+
+# Build minimal CLI installer (lightweight for servers)
+just build-iso-minimal
+
+# Build desktop installer (GNOME for newcomers)
+just build-iso-desktop
+
+# Create bootable USB (replace /dev/sdX with your USB device)
+just create-bootable-usb nixos-preconfigured-installer.iso /dev/sdX
+```
+
+The **preconfigured installer** includes:
+- Interactive template selection during installation
+- All host configurations (desktop, laptop, server, VM)
+- Automated deployment wizard
+- Development tools pre-installed
+
+**[Complete ISO Creation Guide →](docs/ISO-CREATION.md)**
 
 ### New NixOS Users (Automated Setup)
 
@@ -157,6 +207,7 @@ nixos-config/
 │   ├── SETUP.md           # Comprehensive setup guide
 │   ├── NON-NIXOS-USAGE.md # Guide for non-NixOS users
 │   ├── ISO-CREATION.md    # Custom installer ISO guide
+│   ├── FEATURES-OVERVIEW.md # Complete features documentation
 │   ├── VM-SUPPORT.md      # Virtual machine documentation
 │   └── GPU-CONFIGURATION.md # GPU setup guide
 ├──
@@ -191,13 +242,15 @@ just list-vms                      # Show available VM configurations
 just list-desktops                 # Show available desktop environments
 just test-vm myhost                # Test VM configuration
 
-# ISO Creation Commands
-just build-iso-minimal             # Build minimal installer ISO
-just build-iso-desktop             # Build desktop installer ISO
-just build-iso-preconfigured       # Build preconfigured installer ISO
-just build-all-isos                # Build all installer ISOs
-just list-isos                     # Show available ISO types
-just iso-workflow                  # Show complete ISO creation workflow
+# 💿 ISO Creation Commands
+just list-isos                     # List available ISO types with features
+just build-iso-preconfigured       # Build preconfigured installer (⭐ recommended)
+just build-iso-minimal             # Build minimal CLI installer (~800MB)
+just build-iso-desktop             # Build desktop installer with GNOME (~2.5GB)
+just build-all-isos                # Build all installer types
+just test-iso preconfigured        # Test ISO configuration without building
+just create-bootable-usb FILE DEV  # Create bootable USB from ISO
+just iso-workflow                  # Complete ISO creation workflow guide
 
 # Desktop Environment Commands
 just test-desktop gnome myhost     # Test specific desktop configuration
@@ -235,6 +288,17 @@ just show-inputs                   # Show flake input versions
 ./scripts/setup-agenix.sh
 ```
 
+### 💿 ISO Creation Workflow
+
+```bash
+# Complete ISO creation and deployment workflow
+just iso-workflow                          # Step-by-step guide
+just list-isos                            # Show all ISO types
+just build-iso-preconfigured              # Build recommended installer
+just create-bootable-usb nixos-preconfigured-installer.iso /dev/sdX
+# Boot from USB → Select template → Automated installation
+```
+
 ### Management Scripts
 
 ```bash
@@ -263,7 +327,36 @@ nix develop
 
 ## Module System
 
-This configuration uses a modular approach where features are organized into reusable modules.
+This configuration uses a modular approach where features are organized into reusable modules, providing a complete NixOS ecosystem from development to deployment.
+
+## 🌟 Complete NixOS Ecosystem
+
+This template provides an end-to-end NixOS experience:
+
+### 🔧 **Development & Testing**
+- **Non-NixOS Support**: Test on Ubuntu, Fedora, Arch, any Linux distribution
+- **VM Testing**: Safe desktop environment testing without system changes
+- **Live Development**: Edit configurations and test in VMs instantly
+- **Multi-Platform**: Same configs work across different systems
+
+### 📦 **Deployment Options**
+- **Custom ISOs**: Build installer images with your configurations
+- **Template Selection**: Interactive installer with pre-built templates
+- **Automated Setup**: Skip manual NixOS configuration entirely
+- **Bootable Media**: Create USB/DVD installers for any environment
+
+### 🏗️ **Organizational Use**
+- **Standardized Deployments**: Consistent configurations across teams
+- **Educational Environments**: Pre-configured learning setups
+- **Client Deployments**: Custom NixOS solutions for consulting
+- **Development Teams**: Shared development environments
+
+### 🔄 **Full Workflow Coverage**
+1. **Develop**: Create configurations using templates
+2. **Test**: Validate in VMs on any Linux system
+3. **Package**: Build custom installer ISOs
+4. **Deploy**: Boot and install with template selection
+5. **Maintain**: Update and redeploy as needed
 
 ### Enabling Modules
 
@@ -464,67 +557,106 @@ See [VM Documentation](docs/VM-SUPPORT.md) for detailed VM configuration and tro
 
 ## Custom NixOS Installer ISOs
 
-Create custom NixOS installer ISOs with preconfigured settings and templates:
+Transform this template into bootable NixOS installer ISOs with preconfigured settings and interactive template selection. Perfect for organizational deployments, development environments, and educational use.
 
-### Quick ISO Creation
+### 🚀 Quick ISO Creation
 
 ```bash
-# Build minimal installer (CLI only, ~800MB)
-just build-iso-minimal
+# List available installer types and their features
+just list-isos
 
-# Build desktop installer (GNOME desktop, ~2.5GB)
-just build-iso-desktop
-
-# Build preconfigured installer (includes all templates, ~1.5GB)
+# Build preconfigured installer (⭐ RECOMMENDED)
 just build-iso-preconfigured
 
-# Build all installer types
+# Build minimal CLI installer (lightweight for servers)
+just build-iso-minimal
+
+# Build desktop installer (GNOME for newcomers)
+just build-iso-desktop
+
+# Build all installer types at once
 just build-all-isos
 ```
 
-### Available ISO Types
+### 📀 Available ISO Types
 
-**Minimal Installer** - Perfect for servers and experienced users
+| Type | Size | Interface | Best For | Key Features |
+|------|------|-----------|----------|--------------|
+| **Minimal** | ~800MB | CLI Only | Servers, Experts | SSH access, essential tools, lightweight |
+| **Desktop** | ~2.5GB | GNOME Desktop | Newcomers, Graphics | Firefox, GParted, visual tools, auto-login |
+| **Preconfigured** ⭐ | ~1.5GB | Interactive CLI | Quick Deploy, Templates | All templates, wizard, dev tools |
 
-- Command-line interface only
-- SSH access enabled
-- Essential installation tools
-- Lightweight at ~800MB
+### 🎯 Preconfigured Installer Features
 
-**Desktop Installer** - Great for newcomers and graphical preference
+The **preconfigured installer** is the star feature - it includes:
 
-- Full GNOME desktop environment
-- Firefox browser and GParted included
-- Visual installation tools
-- Auto-login convenience
+**📋 Interactive Template Selection**
+- Browse all available host configurations during installation
+- Choose from desktop, laptop, server, or VM templates
+- Preview template features and descriptions
 
-**Preconfigured Installer** ⭐ **Recommended**
+**🔧 Automated Installation Wizard**
+- Partition disks and select templates in guided workflow
+- Automatic configuration deployment
+- Skip manual NixOS configuration editing
 
-- Interactive template selection
-- All configuration templates included
-- Quick installation wizard
-- Development tools pre-installed
+**🛠️ Development Environment Ready**
+- Git, just, editors, and development tools pre-installed
+- All templates available at `/etc/nixos-template/`
+- Quick configuration customization workflow
 
-### Creating Bootable Media
+### 💾 Creating Bootable Media
 
 ```bash
-# Create bootable USB (replace /dev/sdX with your USB device)
+# Check available USB devices
+lsblk
+
+# Create bootable USB (DESTRUCTIVE - erases USB drive)
 just create-bootable-usb nixos-preconfigured-installer.iso /dev/sdX
 
-# Show full workflow
+# Get complete workflow guide
 just iso-workflow
 ```
 
-### Installation Process
+### 🚀 Installation Workflow
 
+#### Preconfigured Installer (Recommended)
+1. **Boot from USB/DVD** - Installer launches automatically
+2. **Network Setup** - Connect to WiFi if needed
+3. **Interactive Menu** - Select from available templates
+4. **Partition Disks** - Standard disk partitioning
+5. **Template Deployment** - Automatic configuration setup
+6. **Installation** - `nixos-install` runs automatically
+7. **Reboot** - Boot into your fully configured NixOS system
+
+#### Traditional Installers (Minimal/Desktop)
 1. **Boot from USB/DVD**
-2. **Network setup** (if needed)
-3. **Choose installation method:**
-   - **Preconfigured:** Select template and auto-install
-   - **Manual:** Standard NixOS installation process
-4. **Reboot and enjoy your configured NixOS system**
+2. **Network Setup** (if needed)
+3. **Manual Installation** - Follow standard NixOS installation process
+4. **Browse Templates** - Templates available for reference at `/etc/nixos-template/`
 
-See [ISO Creation Guide](docs/ISO-CREATION.md) for detailed instructions and customization options.
+### 🎨 Customization Options
+
+```bash
+# Test ISO configuration without building
+just test-iso preconfigured
+
+# Customize installer modules
+nano modules/installer/preconfigured-installer.nix
+
+# Add your own packages to installers
+# Edit hosts/installer-isos/*/configuration.nix
+```
+
+### 💡 Use Cases
+
+- **Organizations**: Deploy standardized NixOS configurations
+- **Development Teams**: Share development environment setups  
+- **Educational**: Distribute pre-configured learning environments
+- **Personal**: Quick deployment of personal configurations
+- **Consulting**: Client-specific NixOS deployments
+
+See [ISO Creation Guide](docs/ISO-CREATION.md) for detailed instructions, customization options, and advanced usage patterns.
 
 ## Host Configurations
 
@@ -611,6 +743,7 @@ This template maintains **100% green CI status** with comprehensive validation t
 - **Syntax Validation**: All Nix files checked for correct syntax
 - **Build Evaluation**: Templates evaluate without hardware dependencies
 - **VM Testing**: Configurations build actual bootable VMs
+- **ISO Validation**: Custom installer ISOs build and configure correctly
 - **Module Validation**: All modules load correctly with proper dependencies
 - **Script Testing**: Management scripts validated for functionality
 - **Flake Validation**: Complete flake dependency resolution
@@ -679,25 +812,40 @@ All configurations are updated for the latest NixOS:
    pkill -f qemu                       # Kill stuck VMs
    ```
 
-3. **Hardware issues**:
+3. **ISO creation issues**:
+
+   ```bash
+   just test-iso minimal               # Test without building
+   just list-isos                      # Check available types
+   nix-collect-garbage -d              # Free up disk space
+   ```
+
+4. **Hardware issues**:
 
    ```bash
    sudo nixos-generate-config --show-hardware-config > hardware-configuration.nix
    ```
 
-4. **Module conflicts**: Check for conflicting options using `lib.mkForce`
+5. **Module conflicts**: Check for conflicting options using `lib.mkForce`
 
-5. **Permission errors**: Ensure user is in wheel group
+6. **Permission errors**: Ensure user is in wheel group
 
    ```bash
    sudo usermod -a -G wheel $USER
    ```
 
-6. **Flake lock issues**:
+7. **Flake lock issues**:
 
    ```bash
    nix flake update         # Update all inputs
    git add flake.lock       # Commit lock changes
+   ```
+
+8. **Bootable USB creation**:
+
+   ```bash
+   lsblk                    # Verify USB device path
+   sudo umount /dev/sdX*    # Unmount before writing
    ```
 
 ### Getting Help
