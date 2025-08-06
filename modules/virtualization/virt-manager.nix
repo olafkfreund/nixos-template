@@ -111,6 +111,9 @@ in
       # Integration packages
       (mkIf cfg.integrations.nautilus gvfs)
 
+      # Cockpit machines plugin
+      (mkIf cfg.applications.cockpit-machines cockpit-machines)
+
       # User-specified extra packages
     ] ++ cfg.extraPackages;
 
@@ -130,10 +133,6 @@ in
       };
     };
 
-    # Install cockpit-machines plugin
-    environment.systemPackages = mkIf cfg.applications.cockpit-machines [
-      pkgs.cockpit-machines
-    ];
 
     # Desktop entries and MIME types
     xdg = {

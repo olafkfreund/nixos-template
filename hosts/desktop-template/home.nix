@@ -254,7 +254,7 @@
     # VS Code configuration
     vscode = {
       enable = true;
-      extensions = with pkgs.vscode-extensions; [
+      profiles.default.extensions = with pkgs.vscode-extensions; [
         # Language support
         ms-python.python
         rust-lang.rust-analyzer
@@ -282,7 +282,7 @@
         ms-vscode-remote.remote-containers
       ];
 
-      userSettings = {
+      profiles.default.userSettings = {
         "editor.fontSize" = 14;
         "editor.fontFamily" = "JetBrains Mono";
         "editor.fontLigatures" = true;
@@ -410,7 +410,7 @@
     gpg-agent = {
       enable = true;
       enableSshSupport = true;
-      pinentryPackage = pkgs.pinentry-gnome3;
+      pinentry.package = pkgs.pinentry-gnome3;
 
       defaultCacheTtl = 3600;
       defaultCacheTtlSsh = 3600;

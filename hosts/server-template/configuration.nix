@@ -291,8 +291,7 @@
     # Minimal graphics (headless server)
     graphics.enable = false;
 
-    # No audio needed
-    pulseaudio.enable = false;
+    # No audio needed (disable at services level)
 
     # CPU microcode updates
     cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
@@ -301,6 +300,9 @@
     # Disable bluetooth
     bluetooth.enable = false;
   };
+
+  # Disable audio services (not needed on server)
+  services.pulseaudio.enable = false;
 
   # Kernel configuration for server stability
   boot = {
@@ -434,8 +436,8 @@
 
   # User configuration (minimal)
   users = {
-    # Disable mutable users for security
-    mutableUsers = false;
+    # Enable mutable users for templates (users can set passwords after deployment)
+    mutableUsers = true;
 
     users = {
       root = {
@@ -455,7 +457,8 @@
         ];
 
         # Set hashed password (generate with: mkpasswd -m sha-512)
-        hashedPassword = "$6$rounds=4096$..."; # Replace with actual hash
+        # Replace with actual hash or use hashedPasswordFile for security
+        hashedPassword = "!"; # Account locked - use SSH keys only
 
         # SSH keys for secure access
         openssh.authorizedKeys.keys = [
@@ -520,9 +523,9 @@
   # Systemd configuration
   systemd = {
     # Watchdog configuration
-    watchdog = {
-      runtimeTime = "20s";
-      rebootTime = "30s";
+    settings.Manager = {
+      RuntimeWatchdogSec = "20s";
+      RebootWatchdogSec = "30s";
     };
 
     # Sleep configuration (servers shouldn't sleep)

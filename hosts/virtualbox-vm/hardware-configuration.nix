@@ -61,7 +61,7 @@
   };
 
   # Audio configuration
-  hardware.pulseaudio = {
+  services.pulseaudio = {
     enable = lib.mkDefault true;
     support32Bit = true;
   };

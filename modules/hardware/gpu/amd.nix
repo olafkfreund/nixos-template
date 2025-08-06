@@ -96,40 +96,42 @@ in
       ];
     };
 
-    # Desktop gaming configuration
-    environment.systemPackages = lib.mkIf isDesktop (with pkgs; [
-      # AMD tools
-      radeontop # GPU monitoring
-      amdgpu-top # Modern AMD GPU monitor
+    # System packages for AMD GPU support
+    environment.systemPackages = with pkgs; (
+      # Desktop gaming packages
+      lib.optionals isDesktop [
+        # AMD tools
+        radeontop # GPU monitoring
+        amdgpu-top # Modern AMD GPU monitor
 
-      # Graphics utilities
-      mesa-demos # OpenGL demos
-      vulkan-tools # Vulkan utilities
-      glxinfo # OpenGL info
-    ] ++ lib.optionals cfg.gaming.enable [
-      # Gaming tools
-      mangohud # Gaming overlay
-      gamemode # Gaming optimizations
-    ]);
+        # Graphics utilities
+        mesa-demos # OpenGL demos
+        vulkan-tools # Vulkan utilities
+        glxinfo # OpenGL info
+      ] ++ lib.optionals (isDesktop && cfg.gaming.enable) [
+        # Gaming tools
+        mangohud # Gaming overlay
+        gamemode # Gaming optimizations
+      ] ++
+      # AI/Compute packages
+      lib.optionals isCompute [
+        # ROCm platform
+        rocm-opencl-icd
+        rocm-opencl-runtime
 
-    # AI/Compute configuration
-    environment.systemPackages = lib.mkIf isCompute (with pkgs; [
-      # ROCm platform
-      rocm-opencl-icd
-      rocm-opencl-runtime
+        # Development tools
+        clinfo # OpenCL info
+        rocm-smi # ROCm system management
 
-      # Development tools
-      clinfo # OpenCL info
-      rocm-smi # ROCm system management
-
-      # AI frameworks (examples)
-      # pytorch-rocm
-      # tensorflow-rocm
-    ] ++ lib.optionals cfg.compute.hip [
-      # HIP runtime
-      hip
-      rocm-device-libs
-    ]);
+        # AI frameworks (examples)
+        # pytorch-rocm
+        # tensorflow-rocm
+      ] ++ lib.optionals (isCompute && cfg.compute.hip) [
+        # HIP runtime
+        hip
+        rocm-device-libs
+      ]
+    );
 
     # ROCm configuration for AI workloads
     systemd.tmpfiles.rules = lib.mkIf (cfg.compute.enable && cfg.compute.rocm) [

@@ -160,45 +160,47 @@ in
       ];
     };
 
-    # Desktop packages
-    environment.systemPackages = lib.mkIf isDesktop (with pkgs; [
-      # NVIDIA tools
-      nvidia-system-monitor-qt # GPU monitoring
-      nvtop # Terminal GPU monitor
+    # System packages for NVIDIA GPU support
+    environment.systemPackages = with pkgs; (
+      # Desktop packages
+      lib.optionals isDesktop [
+        # NVIDIA tools
+        nvidia-system-monitor-qt # GPU monitoring
+        nvtop # Terminal GPU monitor
 
-      # Graphics utilities
-      glxinfo # OpenGL info
-      vulkan-tools # Vulkan utilities
-      nvidia-settings # NVIDIA control panel
-    ] ++ lib.optionals cfg.gaming.enable [
-      # Gaming tools
-      mangohud # Gaming overlay
-      gamemode # Gaming optimizations
-    ]);
+        # Graphics utilities
+        glxinfo # OpenGL info
+        vulkan-tools # Vulkan utilities
+        nvidia-settings # NVIDIA control panel
+      ] ++ lib.optionals (isDesktop && cfg.gaming.enable) [
+        # Gaming tools
+        mangohud # Gaming overlay
+        gamemode # Gaming optimizations
+      ] ++
+      # AI/Compute packages
+      lib.optionals isCompute [
+        # CUDA development
+        cudatoolkit
 
-    # AI/Compute packages
-    environment.systemPackages = lib.mkIf isCompute (with pkgs; [
-      # CUDA development
-      cudatoolkit
+        # Monitoring and management
+        nvidia-ml-py # Python ML interface
+        nvtop # GPU monitoring
 
-      # Monitoring and management
-      nvidia-ml-py # Python ML interface
-      nvtop # GPU monitoring
-
-      # Development tools
-      nsight-compute # CUDA profiler
-      nsight-systems # System profiler
-    ] ++ lib.optionals cfg.compute.cudnn [
-      # Deep learning
-      cudnn
-    ] ++ lib.optionals cfg.compute.tensorrt [
-      # TensorRT inference
-      # tensorrt
-    ] ++ lib.optionals cfg.compute.containers [
-      # Container support
-      nvidia-docker
-      nvidia-container-toolkit
-    ]);
+        # Development tools
+        nsight-compute # CUDA profiler
+        nsight-systems # System profiler
+      ] ++ lib.optionals (isCompute && cfg.compute.cudnn) [
+        # Deep learning
+        cudnn
+      ] ++ lib.optionals (isCompute && cfg.compute.tensorrt) [
+        # TensorRT inference
+        # tensorrt
+      ] ++ lib.optionals (isCompute && cfg.compute.containers) [
+        # Container support
+        nvidia-docker
+        nvidia-container-toolkit
+      ]
+    );
 
     # CUDA and AI framework support
     environment.sessionVariables = lib.mkMerge [

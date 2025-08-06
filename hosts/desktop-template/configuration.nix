@@ -39,6 +39,9 @@
     };
   };
 
+  # Disable PulseAudio in favor of PipeWire (handled by modules.desktop.audio)
+  services.pulseaudio.enable = false;
+
   # Gaming support
   modules.gaming = {
     steam = {
@@ -146,8 +149,8 @@
       ];
     };
 
-    # Audio with all features
-    pulseaudio.enable = false; # Use PipeWire instead
+    # Audio with all features (pulseaudio is configured via services.pulseaudio)
+    # pulseaudio.enable moved to services.pulseaudio in modules
 
     # Enable all CPU microcode updates
     cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;

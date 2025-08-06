@@ -402,7 +402,7 @@
     gpg-agent = {
       enable = true;
       enableSshSupport = true;
-      pinentryPackage = pkgs.pinentry-curses; # Text-based for servers
+      pinentry.package = pkgs.pinentry-curses; # Text-based for servers
 
       # Long timeouts for server work
       defaultCacheTtl = 7200; # 2 hours

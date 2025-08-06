@@ -107,30 +107,32 @@ in
       ]);
     };
 
-    # Desktop packages
-    environment.systemPackages = lib.mkIf isDesktop (with pkgs; [
-      # Intel GPU tools
-      intel-gpu-tools # Intel GPU debugging tools
-      libva-utils # VA-API utilities (vainfo, etc.)
+    # System packages for Intel GPU support
+    environment.systemPackages = with pkgs; (
+      # Desktop packages
+      lib.optionals isDesktop [
+        # Intel GPU tools
+        intel-gpu-tools # Intel GPU debugging tools
+        libva-utils # VA-API utilities (vainfo, etc.)
 
-      # Graphics utilities
-      glxinfo # OpenGL info
-      vulkan-tools # Vulkan utilities
-      mesa-demos # OpenGL demos
-    ]);
+        # Graphics utilities
+        glxinfo # OpenGL info
+        vulkan-tools # Vulkan utilities
+        mesa-demos # OpenGL demos
+      ] ++
+      # Compute packages for Intel Arc/Xe
+      lib.optionals (cfg.compute.enable && (cfg.generation == "arc" || cfg.generation == "xe")) [
+        # Intel compute tools
+        intel-compute-runtime
+        clinfo # OpenCL info
 
-    # Compute packages for Intel Arc/Xe
-    environment.systemPackages = lib.mkIf (cfg.compute.enable && (cfg.generation == "arc" || cfg.generation == "xe")) (with pkgs; [
-      # Intel compute tools
-      intel-compute-runtime
-      clinfo # OpenCL info
-
-      # Level Zero tools
-      level-zero # Level Zero runtime
-    ] ++ lib.optionals cfg.compute.oneapi [
-      # Intel OneAPI toolkit components
-      # intel-oneapi-runtime
-    ]);
+        # Level Zero tools
+        level-zero # Level Zero runtime
+      ] ++ lib.optionals (cfg.compute.enable && (cfg.generation == "arc" || cfg.generation == "xe") && cfg.compute.oneapi) [
+        # Intel OneAPI toolkit components
+        # intel-oneapi-runtime
+      ]
+    );
 
     # Environment variables
     environment.sessionVariables = lib.mkMerge [
