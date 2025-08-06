@@ -10,18 +10,22 @@
   ];
 
   # VM hardware configuration
-  boot.initrd.availableKernelModules = [
-    "virtio_pci"
-    "virtio_scsi"
-    "virtio_blk"
-    "virtio_net"
-    "ahci"
-    "xhci_pci"
-    "sr_mod"
-  ];
-  boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-intel" ]; # or "kvm-amd" for AMD hosts
-  boot.extraModulePackages = [ ];
+  boot = {
+    initrd = {
+      availableKernelModules = [
+        "virtio_pci"
+        "virtio_scsi"
+        "virtio_blk"
+        "virtio_net"
+        "ahci"
+        "xhci_pci"
+        "sr_mod"
+      ];
+      kernelModules = [ ];
+    };
+    kernelModules = [ "kvm-intel" ]; # or "kvm-amd" for AMD hosts
+    extraModulePackages = [ ];
+  };
 
   # Filesystem configuration - EXAMPLE FOR SINGLE DISK VM
   # Replace UUIDs with your actual values from `blkid`

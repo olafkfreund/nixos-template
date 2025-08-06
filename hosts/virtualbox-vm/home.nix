@@ -27,27 +27,29 @@
     neofetch
   ];
 
-  # Git configuration
-  programs.git = {
-    enable = true;
-    userName = lib.mkDefault "VirtualBox User";
-    userEmail = lib.mkDefault "vbox-user@example.com";
-  };
-
-  # Shell configuration
-  programs.bash = {
-    enable = true;
-    shellAliases = {
-      ll = "ls -la";
-      la = "ls -la";
-      l = "ls -l";
-      cls = "clear";
-      ".." = "cd ..";
+  # Program configurations
+  programs = {
+    # Git configuration
+    git = {
+      enable = true;
+      userName = lib.mkDefault "VirtualBox User";
+      userEmail = lib.mkDefault "vbox-user@example.com";
     };
-  };
 
-  # Firefox configuration for VM
-  programs.firefox = {
+    # Shell configuration
+    bash = {
+      enable = true;
+      shellAliases = {
+        ll = "ls -la";
+        la = "ls -la";
+        l = "ls -l";
+        cls = "clear";
+        ".." = "cd ..";
+      };
+    };
+
+    # Firefox configuration for VM
+    firefox = {
     enable = true;
     profiles.default = {
       name = "Default";
