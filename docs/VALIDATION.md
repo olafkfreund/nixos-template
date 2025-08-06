@@ -161,7 +161,7 @@ git commit -m "update configuration"
 - nix-validation: Flake check + individual file syntax
 - code-quality: nixpkgs-fmt, statix, deadnix linting
 - shell-validation: shellcheck for all scripts
-- documentation: Markdown linting + link checking  
+- documentation: Markdown linting + link checking
 - template-validation: Structure + build evaluation
 - security-scan: Pattern detection + permission checks
 - integration-test: End-to-end flake functionality
