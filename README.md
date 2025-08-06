@@ -10,6 +10,8 @@ A sophisticated, modular NixOS configuration template using flakes, featuring:
 - **AI/Compute Ready** - CUDA, ROCm, OneAPI for machine learning
 - **Development Tools** - Scripts and utilities for easy management
 - **Custom Packages & Overlays** - Extend and customize packages
+- **CI/CD Ready** - Comprehensive GitHub Actions validation pipeline
+- **NixOS 25.05 Compatible** - Latest NixOS features and deprecation fixes
 
 ## Quick Start
 
@@ -371,6 +373,51 @@ This provides:
 1. **Use binary caches** - Configure trusted substituters
 2. **Enable auto-optimization** - Let Nix optimize the store
 3. **Regular cleanup** - Use `make clean` periodically
+
+## Validation & CI/CD
+
+This template includes comprehensive validation to ensure reliability and compatibility:
+
+### Multi-Level Validation
+
+- **Syntax Validation**: All Nix files are checked for correct syntax
+- **Build Evaluation**: Templates can be evaluated without hardware dependencies
+- **VM Testing**: Configurations can build actual bootable VMs
+- **Module Validation**: All modules load correctly with proper dependencies
+- **Script Testing**: Management scripts are validated for functionality
+
+### GitHub Actions CI
+
+Automated validation runs on every commit:
+
+```bash
+# Run validation locally (same as CI)
+./scripts/validate-templates.sh standard
+
+# Quick syntax-only check
+./scripts/validate-templates.sh minimal
+
+# Full validation including VM builds
+./scripts/validate-templates.sh full
+```
+
+**CI Pipeline includes:**
+
+- Nix flake validation
+- Code quality checks (formatting, linting)
+- Security scanning
+- Template structure validation
+- Integration testing
+- Multi-system compatibility
+
+### NixOS 25.05 Compatibility
+
+All configurations are updated for the latest NixOS:
+
+- Modern option syntax (no deprecated warnings)
+- Updated module system patterns
+- Latest GPU driver configurations
+- Current Home Manager integration
 
 ## Troubleshooting
 
