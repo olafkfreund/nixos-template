@@ -50,64 +50,64 @@
 
     # Firefox configuration for VM
     firefox = {
-    enable = true;
-    profiles.default = {
-      name = "Default";
-      isDefault = true;
+      enable = true;
+      profiles.default = {
+        name = "Default";
+        isDefault = true;
 
-      settings = {
-        # Performance optimizations for VMs
-        "gfx.webrender.enabled" = false; # Disable for VM compatibility
-        "layers.acceleration.disabled" = true;
+        settings = {
+          # Performance optimizations for VMs
+          "gfx.webrender.enabled" = false; # Disable for VM compatibility
+          "layers.acceleration.disabled" = true;
 
-        # Privacy settings
-        "browser.startup.homepage" = "about:blank";
-        "browser.newtabpage.enabled" = false;
+          # Privacy settings
+          "browser.startup.homepage" = "about:blank";
+          "browser.newtabpage.enabled" = false;
 
-        # Disable unnecessary features in VMs
-        "geo.enabled" = false;
-        "media.navigator.enabled" = false;
+          # Disable unnecessary features in VMs
+          "geo.enabled" = false;
+          "media.navigator.enabled" = false;
+        };
       };
     };
-  };
 
-  # XDG configuration
-  xdg = {
-    enable = true;
+    # XDG configuration
+    xdg = {
+      enable = true;
 
-    # Default applications
-    mimeApps.defaultApplications = {
-      "text/plain" = [ "mousepad.desktop" ];
-      "text/html" = [ "firefox.desktop" ];
-      "application/pdf" = [ "firefox.desktop" ];
+      # Default applications
+      mimeApps.defaultApplications = {
+        "text/plain" = [ "mousepad.desktop" ];
+        "text/html" = [ "firefox.desktop" ];
+        "application/pdf" = [ "firefox.desktop" ];
+      };
     };
-  };
 
-  # Desktop environment specific settings
-  dconf.settings = {
-    "org/xfce/desktop" = {
-      backdrop = {
-        screen0 = {
-          monitor0 = {
-            workspace0 = {
-              last-image = "${pkgs.xfce.xfce4-artwork}/share/pixmaps/xfce-blue.jpg";
+    # Desktop environment specific settings
+    dconf.settings = {
+      "org/xfce/desktop" = {
+        backdrop = {
+          screen0 = {
+            monitor0 = {
+              workspace0 = {
+                last-image = "${pkgs.xfce.xfce4-artwork}/share/pixmaps/xfce-blue.jpg";
+              };
             };
           };
         };
       };
     };
-  };
 
-  # Services
-  services = {
-    # Redshift for eye strain
-    redshift = {
-      enable = true;
-      latitude = 40.0; # Adjust to your location
-      longitude = -74.0; # Adjust to your location
+    # Services
+    services = {
+      # Redshift for eye strain
+      redshift = {
+        enable = true;
+        latitude = 40.0; # Adjust to your location
+        longitude = -74.0; # Adjust to your location
+      };
     };
-  };
 
-  # Home Manager state version
-  home.stateVersion = "25.05";
-}
+    # Home Manager state version
+    home.stateVersion = "25.05";
+  }
