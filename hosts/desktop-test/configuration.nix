@@ -24,43 +24,49 @@
   # Hostname
   networking.hostName = "desktop-test";
 
-  # Enable VM guest optimizations
+  # Enable VM guest optimizations (simplified to prevent boot issues)
   modules.virtualization.vm-guest = {
     enable = true;
-    type = "qemu"; # Can also use "auto" for auto-detection
+    type = "qemu";
 
     optimizations = {
-      performance = true;
+      performance = false; # Disable to prevent systemd conflicts
       graphics = true;
       networking = true;
-      storage = true;
+      storage = false; # Disable to prevent boot hangs
     };
 
     guestTools = {
       enable = true;
       clipboard = true;
-      folderSharing = true;
+      folderSharing = false; # Disable to prevent mount issues
       timeSync = true;
     };
 
     serial = {
-      enable = true;
+      enable = false; # Disable to prevent boot hangs
     };
   };
 
   # Desktop configuration
-  modules.desktop.gnome = {
-    enable = true;
-    extensions = {
-      enable = true;
-      default = true;
-    };
-    apps = {
-      enable = true;
-      includeFlatpak = false; # Keep VM lightweight
+  modules.desktop.gnome.enable = true;
+  
+  # VM-specific systemd service overrides to prevent boot hangs
+  systemd.services = {
+    # Disable problematic services in VMs
+    "systemd-hwdb-update".enable = false;
+    "systemd-journal-flush".enable = false;
+    
+    # Ensure critical services start properly
+    "systemd-logind".serviceConfig = {
+      Restart = "always";
+      RestartSec = 1;
     };
   };
-
+  
+  # Disable AppArmor in VMs (can cause boot issues)
+  security.apparmor.enable = lib.mkForce false;
+  
   # Users
   users.users.vm-user = {
     isNormalUser = true;
@@ -117,10 +123,19 @@
     wget
   ];
 
-  # Additional virtualization settings
+  # Boot configuration for reliable VM startup
   boot = {
     # Resize root partition on boot (useful for cloud images)
     growPartition = true;
+    
+    # Kernel parameters for VM stability
+    kernelParams = [
+      "quiet"           # Reduce boot messages
+      "systemd.unit=graphical.target"  # Boot directly to graphical target
+    ];
+    
+    # Timeout settings
+    loader.timeout = lib.mkForce 1;
   };
 
   # System state version
