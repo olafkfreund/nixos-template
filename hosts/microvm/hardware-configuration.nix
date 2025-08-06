@@ -9,14 +9,18 @@
     (modulesPath + "/profiles/qemu-guest.nix")
   ];
 
-  # Minimal hardware support
-  boot.initrd.availableKernelModules = [
-    "virtio_pci"
-    "virtio_blk"
-    "virtio_net"
-  ];
-  boot.initrd.kernelModules = [ ];
-  boot.extraModulePackages = [ ];
+  # Boot and hardware configuration
+  boot = {
+    # Minimal hardware support
+    initrd = {
+      availableKernelModules = [
+        "virtio_pci"
+        "virtio_blk"
+        "virtio_net"
+      ];
+      kernelModules = [ ];
+    };
+    extraModulePackages = [ ];
 
   # Single root filesystem (no separate /boot for minimal setup)
   fileSystems."/" = {
@@ -57,8 +61,6 @@
     cpu.amd.updateMicrocode = false;
   };
 
-  # MicroVM-optimized boot
-  boot = {
     # Use systemd-boot for faster boot
     loader = {
       systemd-boot = {

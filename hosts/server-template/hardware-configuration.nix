@@ -10,10 +10,14 @@
   # This is a template file - you MUST replace these with your actual hardware details
   # Generate the real configuration with: sudo nixos-generate-config
 
-  boot.initrd.availableKernelModules = [ "ahci" "xhci_pci" "virtio_pci" "sr_mod" "virtio_blk" ];
-  boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-intel" ]; # Change to "kvm-amd" for AMD
-  boot.extraModulePackages = [ ];
+  boot = {
+    initrd = {
+      availableKernelModules = [ "ahci" "xhci_pci" "virtio_pci" "sr_mod" "virtio_blk" ];
+      kernelModules = [ ];
+    };
+    kernelModules = [ "kvm-intel" ]; # Change to "kvm-amd" for AMD
+    extraModulePackages = [ ];
+  };
 
   # PLACEHOLDER - Replace these UUIDs with your actual device UUIDs
   fileSystems."/" = {
