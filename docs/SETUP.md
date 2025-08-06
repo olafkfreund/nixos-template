@@ -86,14 +86,14 @@ Comprehensive guided setup with full customization:
 - **Advanced Options**: Detailed customization of all aspects
 - **Validation**: Comprehensive testing before deployment
 
-#### Best for
+#### Best suited for
 
 - Users who want full control
 - Production deployments
 - Complex configurations
 - Learning NixOS configuration
 
-#### Features
+#### Key Features
 
 - Multiple user templates (basic, developer, gamer, minimal, server)
 - Desktop environment selection with preview
