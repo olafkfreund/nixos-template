@@ -165,7 +165,7 @@ just list-vms                      # Show available VM configurations
 just list-desktops                 # Show available desktop environments
 just test-vm myhost                # Test VM configuration
 
-# Desktop Environment Commands  
+# Desktop Environment Commands
 just test-desktop gnome myhost     # Test specific desktop configuration
 just list-users                    # Show available user templates
 just init-user myhost developer    # Initialize user configuration from template
@@ -333,7 +333,7 @@ just build-vm-image desktop-test
 
 - **desktop-test** - Full GNOME desktop for testing (with boot reliability fixes)
 - **qemu-vm** - Basic QEMU VM configuration
-- **virtualbox-vm** - VirtualBox-optimized configuration  
+- **virtualbox-vm** - VirtualBox-optimized configuration
 - **microvm** - Minimal lightweight VM
 
 ### VM Management Commands
@@ -388,7 +388,7 @@ The VMs include:
 ✅ **Development Tools** - Git, VS Code, terminal applications  
 ✅ **SSH Access** - Port 22 open for remote development  
 ✅ **User Environment** - Home Manager configuration with dotfiles  
-✅ **Network Access** - NAT networking with internet connectivity  
+✅ **Network Access** - NAT networking with internet connectivity
 
 ### VM Troubleshooting
 
@@ -532,7 +532,7 @@ Our comprehensive CI pipeline runs on every commit:
 **✅ CI Pipeline Status:**
 
 - ✅ **Nix Code Validation** - Flake check, syntax validation, module imports
-- ✅ **Code Quality Checks** - nixpkgs-fmt, statix linting, deadnix analysis  
+- ✅ **Code Quality Checks** - nixpkgs-fmt, statix linting, deadnix analysis
 - ✅ **Shell Script Validation** - shellcheck compliance, executability checks
 - ✅ **Documentation Validation** - Markdown linting, broken link detection
 - ✅ **Template Validation** - Host templates, user templates, structure validation
@@ -545,7 +545,7 @@ Our comprehensive CI pipeline runs on every commit:
 Recent quality improvements ensuring 100% CI success:
 
 - **Fixed Undefined Variables** - Resolved flake validation failures
-- **Code Formatting** - Consistent nixpkgs-fmt across all files  
+- **Code Formatting** - Consistent nixpkgs-fmt across all files
 - **Linting Compliance** - Addressed statix warnings and suggestions
 - **Shell Script Quality** - All scripts pass shellcheck validation
 - **Documentation Quality** - Markdown files follow style guidelines

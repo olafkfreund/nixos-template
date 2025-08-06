@@ -50,23 +50,23 @@
 
   # Desktop configuration
   modules.desktop.gnome.enable = true;
-  
+
   # VM-specific systemd service overrides to prevent boot hangs
   systemd.services = {
     # Disable problematic services in VMs
     "systemd-hwdb-update".enable = false;
     "systemd-journal-flush".enable = false;
-    
+
     # Ensure critical services start properly
     "systemd-logind".serviceConfig = {
       Restart = "always";
       RestartSec = 1;
     };
   };
-  
+
   # Disable AppArmor in VMs (can cause boot issues)
   security.apparmor.enable = lib.mkForce false;
-  
+
   # Users
   users.users.vm-user = {
     isNormalUser = true;
@@ -127,13 +127,13 @@
   boot = {
     # Resize root partition on boot (useful for cloud images)
     growPartition = true;
-    
+
     # Kernel parameters for VM stability
     kernelParams = [
-      "quiet"           # Reduce boot messages
-      "systemd.unit=graphical.target"  # Boot directly to graphical target
+      "quiet" # Reduce boot messages
+      "systemd.unit=graphical.target" # Boot directly to graphical target
     ];
-    
+
     # Timeout settings
     loader.timeout = lib.mkForce 1;
   };
