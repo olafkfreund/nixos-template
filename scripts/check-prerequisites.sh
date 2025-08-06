@@ -58,7 +58,7 @@ check_nixos() {
       major=$(echo "$version_number" | cut -d'.' -f1)
       minor=$(echo "$version_number" | cut -d'.' -f2)
 
-      if [ "$major" -gt 23 ] || ([ "$major" -eq 23 ] && [ "$minor" -ge 11 ]); then
+      if [ "$major" -gt 23 ] || { [ "$major" -eq 23 ] && [ "$minor" -ge 11 ]; }; then
         print_success "NixOS version is compatible"
       else
         print_warning "NixOS version might be too old (23.11+ recommended)"

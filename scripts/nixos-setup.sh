@@ -167,7 +167,7 @@ prompt_password() {
 
   while true; do
     echo -ne "${WHITE}$prompt${NC}: "
-    read -s password
+    read -rs password
     echo
 
     if [ -z "$password" ]; then
@@ -177,7 +177,7 @@ prompt_password() {
 
     if [ "$confirm" = "true" ]; then
       echo -ne "${WHITE}Confirm password${NC}: "
-      read -s confirm_password
+      read -rs confirm_password
       echo
 
       if [ "$password" != "$confirm_password" ]; then

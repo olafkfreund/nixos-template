@@ -284,13 +284,13 @@ main() {
   echo -e "${BLUE}Please provide basic system information:${NC}"
   echo
 
-  read -p "Hostname [$DEFAULT_HOSTNAME]: " hostname
+  read -rp "Hostname [$DEFAULT_HOSTNAME]: " hostname
   hostname=${hostname:-$DEFAULT_HOSTNAME}
 
-  read -p "Username [$DEFAULT_USERNAME]: " username
+  read -rp "Username [$DEFAULT_USERNAME]: " username
   username=${username:-$DEFAULT_USERNAME}
 
-  read -p "Desktop Environment [$desktop_rec]: " desktop
+  read -rp "Desktop Environment [$desktop_rec]: " desktop
   desktop=${desktop:-$desktop_rec}
 
   echo
@@ -303,7 +303,7 @@ main() {
   echo "  Development tools: $dev_rec"
   echo
 
-  read -p "Proceed with setup? [Y/n]: " confirm
+  read -rp "Proceed with setup? [Y/n]: " confirm
   if [[ "$confirm" =~ ^[Nn] ]]; then
     print_info "Setup cancelled"
     exit 0
@@ -329,7 +329,7 @@ main() {
   echo -e "${YELLOW}This will modify your system!${NC}"
   echo
 
-  read -p "Apply configuration now? [y/N]: " apply
+  read -rp "Apply configuration now? [y/N]: " apply
   if [[ "$apply" =~ ^[Yy] ]]; then
     print_info "Applying configuration..."
     if sudo nixos-rebuild switch --flake ".#$hostname"; then

@@ -79,7 +79,7 @@ detect_chassis() {
   # Method 2: Check product name for clues
   if [ -f /sys/class/dmi/id/product_name ]; then
     local product_name
-    product_name=$(cat /sys/class/dmi/id/product_name 2>/dev/null | tr '[:upper:]' '[:lower:]' || echo "")
+    product_name=$(tr '[:upper:]' '[:lower:]' < /sys/class/dmi/id/product_name 2>/dev/null || echo "")
 
     if [[ $product_name =~ (laptop|notebook|thinkpad|elitebook|pavilion.*laptop|inspiron.*laptop) ]]; then
       laptop_score=$((laptop_score + 20))
@@ -176,10 +176,10 @@ detect_display() {
   fi
 
   # Multiple external displays suggest workstation/desktop
-  if [ $external_displays -gt 1 ]; then
+  if [ "$external_displays" -gt 1 ]; then
     desktop_score=$((desktop_score + 10))
     workstation_score=$((workstation_score + 15))
-  elif [ $external_displays -eq 0 ]; then
+  elif [ "$external_displays" -eq 0 ]; then
     # No displays might indicate headless server
     server_score=$((server_score + 15))
   fi
@@ -293,13 +293,13 @@ detect_usb_devices() {
   fi
 
   # External keyboard/mouse suggests desktop setup
-  if [ $keyboard_count -gt 0 ] || [ $mouse_count -gt 0 ]; then
+  if [ "$keyboard_count" -gt 0 ] || [ "$mouse_count" -gt 0 ]; then
     desktop_score=$((desktop_score + 5))
     workstation_score=$((workstation_score + 5))
   fi
 
   # Webcam suggests laptop or workstation
-  if [ $webcam_count -gt 0 ]; then
+  if [ "$webcam_count" -gt 0 ]; then
     laptop_score=$((laptop_score + 10))
     workstation_score=$((workstation_score + 5))
   fi
