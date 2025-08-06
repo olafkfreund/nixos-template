@@ -2,18 +2,18 @@
 
 A sophisticated, modular NixOS configuration template using flakes, featuring:
 
-- **✅ 100% Green CI** - Comprehensive validation ensuring reliability
-- **🖥️ VM Testing Ready** - Full desktop environment testing in VMs
-- **🧩 Modular Architecture** - Organized, reusable modules
-- **🏠 Home Manager Integration** - Declarative user environments
-- **🔐 SOPS Secrets Management** - Encrypted secrets in Git
-- **🖥️ Multiple Host Support** - Desktop, laptop, server, VM configurations
-- **🎮 GPU Support** - AMD, NVIDIA, Intel with gaming/AI optimizations
-- **🤖 AI/Compute Ready** - CUDA, ROCm, OneAPI for machine learning
-- **🛠️ Development Tools** - Scripts and utilities for easy management
-- **📦 Custom Packages & Overlays** - Extend and customize packages
-- **🚀 Boot Reliability** - Fixed VM systemd conflicts and boot issues
-- **💻 NixOS 25.05 Compatible** - Latest NixOS features and deprecation fixes
+- **100% Green CI** - Comprehensive validation ensuring reliability
+- **VM Testing Ready** - Full desktop environment testing in VMs
+- **Modular Architecture** - Organized, reusable modules
+- **Home Manager Integration** - Declarative user environments
+- **SOPS Secrets Management** - Encrypted secrets in Git
+- **Multiple Host Support** - Desktop, laptop, server, VM configurations
+- **GPU Support** - AMD, NVIDIA, Intel with gaming/AI optimizations
+- **AI/Compute Ready** - CUDA, ROCm, OneAPI for machine learning
+- **Development Tools** - Scripts and utilities for easy management
+- **Custom Packages & Overlays** - Extend and customize packages
+- **Boot Reliability** - Fixed VM systemd conflicts and boot issues
+- **NixOS 25.05 Compatible** - Latest NixOS features and deprecation fixes
 
 ## Quick Start
 
@@ -315,7 +315,7 @@ modules.hardware.gpu = {
 
 See [GPU Configuration Guide](docs/GPU-CONFIGURATION.md) for detailed setup instructions.
 
-## 🖥️ Virtual Machine Testing
+## Virtual Machine Testing
 
 This template includes comprehensive VM testing capabilities for safe development and desktop environment testing.
 
@@ -382,13 +382,13 @@ just build-vm-image gnome-test
 
 The VMs include:
 
-✅ **Boot Reliability** - Fixed systemd service conflicts and AppArmor issues  
-✅ **Desktop Ready** - Full GNOME with Wayland, optimized for VM performance  
-✅ **Guest Optimizations** - VirtIO drivers, shared clipboard, graphics acceleration  
-✅ **Development Tools** - Git, VS Code, terminal applications  
-✅ **SSH Access** - Port 22 open for remote development  
-✅ **User Environment** - Home Manager configuration with dotfiles  
-✅ **Network Access** - NAT networking with internet connectivity
+**Boot Reliability** - Fixed systemd service conflicts and AppArmor issues  
+**Desktop Ready** - Full GNOME with Wayland, optimized for VM performance  
+**Guest Optimizations** - VirtIO drivers, shared clipboard, graphics acceleration  
+**Development Tools** - Git, VS Code, terminal applications  
+**SSH Access** - Port 22 open for remote development  
+**User Environment** - Home Manager configuration with dotfiles  
+**Network Access** - NAT networking with internet connectivity
 
 ### VM Troubleshooting
 
@@ -501,18 +501,18 @@ This provides:
 2. **Enable auto-optimization** - Let Nix optimize the store
 3. **Regular cleanup** - Use `make clean` periodically
 
-## ✅ Validation & CI/CD
+## Validation & CI/CD
 
 This template maintains **100% green CI status** with comprehensive validation to ensure reliability and compatibility:
 
 ### Multi-Level Validation
 
-- **✅ Syntax Validation**: All Nix files checked for correct syntax
-- **✅ Build Evaluation**: Templates evaluate without hardware dependencies
-- **✅ VM Testing**: Configurations build actual bootable VMs
-- **✅ Module Validation**: All modules load correctly with proper dependencies
-- **✅ Script Testing**: Management scripts validated for functionality
-- **✅ Flake Validation**: Complete flake dependency resolution
+- **Syntax Validation**: All Nix files checked for correct syntax
+- **Build Evaluation**: Templates evaluate without hardware dependencies
+- **VM Testing**: Configurations build actual bootable VMs
+- **Module Validation**: All modules load correctly with proper dependencies
+- **Script Testing**: Management scripts validated for functionality
+- **Flake Validation**: Complete flake dependency resolution
 
 ### GitHub Actions CI (100% Passing)
 
@@ -529,16 +529,16 @@ Our comprehensive CI pipeline runs on every commit:
 ./scripts/validate-templates.sh full
 ```
 
-**✅ CI Pipeline Status:**
+**CI Pipeline Status:**
 
-- ✅ **Nix Code Validation** - Flake check, syntax validation, module imports
-- ✅ **Code Quality Checks** - nixpkgs-fmt, statix linting, deadnix analysis
-- ✅ **Shell Script Validation** - shellcheck compliance, executability checks
-- ✅ **Documentation Validation** - Markdown linting, broken link detection
-- ✅ **Template Validation** - Host templates, user templates, structure validation
-- ✅ **Security Scanning** - Hardcoded secrets detection, permission auditing
-- ✅ **Integration Testing** - Flake evaluation, development shell, justfile commands
-- ✅ **Pre-commit Hooks** - Automated formatting and linting
+- **Nix Code Validation** - Flake check, syntax validation, module imports
+- **Code Quality Checks** - nixpkgs-fmt, statix linting, deadnix analysis
+- **Shell Script Validation** - shellcheck compliance, executability checks
+- **Documentation Validation** - Markdown linting, broken link detection
+- **Template Validation** - Host templates, user templates, structure validation
+- **Security Scanning** - Hardcoded secrets detection, permission auditing
+- **Integration Testing** - Flake evaluation, development shell, justfile commands
+- **Pre-commit Hooks** - Automated formatting and linting
 
 ### Quality Improvements
 

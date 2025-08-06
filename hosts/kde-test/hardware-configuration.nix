@@ -23,7 +23,7 @@
       ];
       kernelModules = [ ];
     };
-    kernelModules = [ ]; # Disabled kvm modules to prevent VMX/SVM errors in nested virtualization
+    kernelModules = [ "kvm-intel" ]; # or "kvm-amd" for AMD hosts
     extraModulePackages = [ ];
   };
 
