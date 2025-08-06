@@ -110,23 +110,23 @@
       root = {
         hashedPasswordFile = config.age.secrets."root-password".path;
       };
-      
+
       webservice = {
         isSystemUser = true;
         group = "webservice";
       };
-      
+
       backup = {
         isSystemUser = true;
         group = "backup";
       };
-      
+
       mail = {
         isSystemUser = true;
         group = "mail";
       };
     };
-    
+
     groups = {
       webservice = { };
       backup = { };
