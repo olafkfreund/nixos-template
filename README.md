@@ -2,16 +2,18 @@
 
 A sophisticated, modular NixOS configuration template using flakes, featuring:
 
-- **Modular Architecture** - Organized, reusable modules
-- **Home Manager Integration** - Declarative user environments
-- **SOPS Secrets Management** - Encrypted secrets in Git
-- **Multiple Host Support** - Desktop, server, VM, and custom configurations
-- **GPU Support** - AMD, NVIDIA, Intel with gaming/AI optimizations
-- **AI/Compute Ready** - CUDA, ROCm, OneAPI for machine learning
-- **Development Tools** - Scripts and utilities for easy management
-- **Custom Packages & Overlays** - Extend and customize packages
-- **CI/CD Ready** - Comprehensive GitHub Actions validation pipeline
-- **NixOS 25.05 Compatible** - Latest NixOS features and deprecation fixes
+- **✅ 100% Green CI** - Comprehensive validation ensuring reliability
+- **🖥️ VM Testing Ready** - Full desktop environment testing in VMs
+- **🧩 Modular Architecture** - Organized, reusable modules
+- **🏠 Home Manager Integration** - Declarative user environments
+- **🔐 SOPS Secrets Management** - Encrypted secrets in Git
+- **🖥️ Multiple Host Support** - Desktop, laptop, server, VM configurations
+- **🎮 GPU Support** - AMD, NVIDIA, Intel with gaming/AI optimizations
+- **🤖 AI/Compute Ready** - CUDA, ROCm, OneAPI for machine learning
+- **🛠️ Development Tools** - Scripts and utilities for easy management
+- **📦 Custom Packages & Overlays** - Extend and customize packages
+- **🚀 Boot Reliability** - Fixed VM systemd conflicts and boot issues
+- **💻 NixOS 25.05 Compatible** - Latest NixOS features and deprecation fixes
 
 ## Quick Start
 
@@ -102,13 +104,16 @@ nixos-config/
 │
 ├── hosts/                  # Per-host configurations
 │   ├── common.nix          # Shared host configuration
-│   ├── example-desktop/    # Example desktop configuration
+│   ├── desktop-template/   # Desktop template configuration
 │   │   ├── configuration.nix
 │   │   ├── hardware-configuration.nix
 │   │   └── home.nix        # Home Manager config
-│   ├── example-server/     # Example server configuration (AI/compute)
+│   ├── laptop-template/    # Laptop template configuration
+│   ├── server-template/    # Server template configuration (AI/compute)
 │   ├── qemu-vm/            # QEMU/KVM virtual machine
-│   └── microvm/            # Minimal MicroVM configuration
+│   ├── virtualbox-vm/      # VirtualBox VM configuration
+│   ├── microvm/            # Minimal MicroVM configuration
+│   └── desktop-test/       # VM desktop testing environment
 │
 ├── home/                   # Home Manager configurations
 │   ├── profiles/           # Reusable user profiles
@@ -150,13 +155,25 @@ just shell           # Enter development shell
 just info            # Show system information
 
 # Host-specific commands
-just switch desktop   # Switch configuration for 'desktop' host
-just test server     # Test configuration for 'server' host
+just switch desktop-template   # Switch configuration for 'desktop-template' host
+just test server-template     # Test configuration for 'server-template' host
+
+# VM and Testing Commands
+just build-vm-image desktop-test    # Build VM image for desktop testing
+just init-vm myhost qemu           # Initialize VM configuration
+just list-vms                      # Show available VM configurations
+just list-desktops                 # Show available desktop environments
+just test-vm myhost                # Test VM configuration
+
+# Desktop Environment Commands  
+just test-desktop gnome myhost     # Test specific desktop configuration
+just list-users                    # Show available user templates
+just init-user myhost developer    # Initialize user configuration from template
 
 # Utility commands
-just init-host myhost    # Initialize new host configuration
-just diff               # Show configuration differences
-just show-inputs        # Show flake input versions
+just init-host myhost              # Initialize new host configuration
+just diff                          # Show configuration differences
+just show-inputs                   # Show flake input versions
 ```
 
 ### Setup Scripts (For New Users)
@@ -298,6 +315,116 @@ modules.hardware.gpu = {
 
 See [GPU Configuration Guide](docs/GPU-CONFIGURATION.md) for detailed setup instructions.
 
+## 🖥️ Virtual Machine Testing
+
+This template includes comprehensive VM testing capabilities for safe development and desktop environment testing.
+
+### Quick VM Testing
+
+```bash
+# Build and run the desktop testing VM
+just build-vm-image desktop-test
+./result/bin/run-desktop-test-vm
+
+# Login with: username=vm-user, password=nixos
+```
+
+### Available VM Configurations
+
+- **desktop-test** - Full GNOME desktop for testing (with boot reliability fixes)
+- **qemu-vm** - Basic QEMU VM configuration
+- **virtualbox-vm** - VirtualBox-optimized configuration  
+- **microvm** - Minimal lightweight VM
+
+### VM Management Commands
+
+```bash
+# List all VM configurations and their features
+just list-vms
+
+# Initialize new VM configuration
+just init-vm myhost-vm qemu              # Auto-detect VM type
+just init-vm myhost-vm virtualbox        # Specific VM type
+
+# Build VM images
+just build-vm-image desktop-test         # Build desktop testing VM
+just build-vm-image qemu-vm              # Build basic QEMU VM
+
+# Test VM configurations
+just test-vm desktop-test                # Test without building
+
+# Create QEMU disk and boot setup
+just create-vm myhost-vm 4096 20G        # 4GB RAM, 20GB disk
+```
+
+### Desktop Environment Testing
+
+Test different desktop environments safely in VMs:
+
+```bash
+# List available desktop environments
+just list-desktops
+# Available: gnome, kde, hyprland, niri
+
+# Test specific desktop in VM
+just test-desktop gnome desktop-test
+just test-desktop kde my-kde-vm
+just test-desktop hyprland my-hyprland-vm
+
+# Build desktop-specific VMs
+just init-vm gnome-test qemu
+# Edit hosts/gnome-test/configuration.nix:
+#   modules.desktop.gnome.enable = true;
+just build-vm-image gnome-test
+```
+
+### VM Features & Optimizations
+
+The VMs include:
+
+✅ **Boot Reliability** - Fixed systemd service conflicts and AppArmor issues  
+✅ **Desktop Ready** - Full GNOME with Wayland, optimized for VM performance  
+✅ **Guest Optimizations** - VirtIO drivers, shared clipboard, graphics acceleration  
+✅ **Development Tools** - Git, VS Code, terminal applications  
+✅ **SSH Access** - Port 22 open for remote development  
+✅ **User Environment** - Home Manager configuration with dotfiles  
+✅ **Network Access** - NAT networking with internet connectivity  
+
+### VM Troubleshooting
+
+If VM boot hangs or fails:
+
+```bash
+# Check VM process
+ps aux | grep qemu
+
+# Kill stuck VM
+pkill -f "qemu.*yourvm"
+
+# Rebuild with latest fixes
+just build-vm-image desktop-test
+
+# Run with more verbose output
+./result/bin/run-desktop-test-vm -serial stdio
+```
+
+### Advanced VM Usage
+
+```bash
+# Run VM in background with VNC
+./result/bin/run-desktop-test-vm -vnc :1 -daemonize
+# Connect to localhost:5901 with VNC viewer
+
+# Run with more memory and cores
+./result/bin/run-desktop-test-vm -m 4096 -smp 4
+
+# Network port forwarding (SSH)
+./result/bin/run-desktop-test-vm -netdev user,id=net0,hostfwd=tcp::2222-:22
+# Then: ssh vm-user@localhost -p 2222
+```
+
+See [VM Documentation](docs/VM-SUPPORT.md) for detailed VM configuration and troubleshooting.
+
 ## Host Configurations
 
 ### Adding a New Host
@@ -374,21 +501,22 @@ This provides:
 2. **Enable auto-optimization** - Let Nix optimize the store
 3. **Regular cleanup** - Use `make clean` periodically
 
-## Validation & CI/CD
+## ✅ Validation & CI/CD
 
-This template includes comprehensive validation to ensure reliability and compatibility:
+This template maintains **100% green CI status** with comprehensive validation to ensure reliability and compatibility:
 
 ### Multi-Level Validation
 
-- **Syntax Validation**: All Nix files are checked for correct syntax
-- **Build Evaluation**: Templates can be evaluated without hardware dependencies
-- **VM Testing**: Configurations can build actual bootable VMs
-- **Module Validation**: All modules load correctly with proper dependencies
-- **Script Testing**: Management scripts are validated for functionality
+- **✅ Syntax Validation**: All Nix files checked for correct syntax
+- **✅ Build Evaluation**: Templates evaluate without hardware dependencies
+- **✅ VM Testing**: Configurations build actual bootable VMs
+- **✅ Module Validation**: All modules load correctly with proper dependencies
+- **✅ Script Testing**: Management scripts validated for functionality
+- **✅ Flake Validation**: Complete flake dependency resolution
 
-### GitHub Actions CI
+### GitHub Actions CI (100% Passing)
 
-Automated validation runs on every commit:
+Our comprehensive CI pipeline runs on every commit:
 
 ```bash
 # Run validation locally (same as CI)
@@ -401,14 +529,27 @@ Automated validation runs on every commit:
 ./scripts/validate-templates.sh full
 ```
 
-**CI Pipeline includes:**
+**✅ CI Pipeline Status:**
 
-- Nix flake validation
-- Code quality checks (formatting, linting)
-- Security scanning
-- Template structure validation
-- Integration testing
-- Multi-system compatibility
+- ✅ **Nix Code Validation** - Flake check, syntax validation, module imports
+- ✅ **Code Quality Checks** - nixpkgs-fmt, statix linting, deadnix analysis  
+- ✅ **Shell Script Validation** - shellcheck compliance, executability checks
+- ✅ **Documentation Validation** - Markdown linting, broken link detection
+- ✅ **Template Validation** - Host templates, user templates, structure validation
+- ✅ **Security Scanning** - Hardcoded secrets detection, permission auditing
+- ✅ **Integration Testing** - Flake evaluation, development shell, justfile commands
+- ✅ **Pre-commit Hooks** - Automated formatting and linting
+
+### Quality Improvements
+
+Recent quality improvements ensuring 100% CI success:
+
+- **Fixed Undefined Variables** - Resolved flake validation failures
+- **Code Formatting** - Consistent nixpkgs-fmt across all files  
+- **Linting Compliance** - Addressed statix warnings and suggestions
+- **Shell Script Quality** - All scripts pass shellcheck validation
+- **Documentation Quality** - Markdown files follow style guidelines
+- **VM Boot Reliability** - Fixed systemd conflicts and boot hangs
 
 ### NixOS 25.05 Compatibility
 
@@ -421,12 +562,37 @@ All configurations are updated for the latest NixOS:
 
 ## Troubleshooting
 
-### Common Issues
+### Common Issues & Solutions
 
-1. **Build failures**: Check `nix flake check` for syntax errors
-2. **Hardware issues**: Verify hardware-configuration.nix is correct
-3. **Module conflicts**: Check for conflicting module options
-4. **Permission errors**: Ensure user is in wheel group
+1. **Build failures**: 
+   ```bash
+   nix flake check          # Check for syntax errors
+   just validate            # Run full validation suite
+   ```
+
+2. **VM boot hangs**: 
+   ```bash
+   just build-vm-image desktop-test    # Use latest boot fixes
+   pkill -f qemu                       # Kill stuck VMs
+   ```
+
+3. **Hardware issues**: 
+   ```bash
+   sudo nixos-generate-config --show-hardware-config > hardware-configuration.nix
+   ```
+
+4. **Module conflicts**: Check for conflicting options using `lib.mkForce`
+   
+5. **Permission errors**: Ensure user is in wheel group
+   ```bash
+   sudo usermod -a -G wheel $USER
+   ```
+
+6. **Flake lock issues**:
+   ```bash
+   nix flake update         # Update all inputs
+   git add flake.lock       # Commit lock changes
+   ```
 
 ### Getting Help
 
