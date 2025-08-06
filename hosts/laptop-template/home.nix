@@ -1,6 +1,6 @@
 # Laptop Home Manager Configuration
 # Optimized for mobile productivity and battery efficiency
-{ config, pkgs, lib, ... }:
+{ pkgs, lib, ... }:
 
 {
   # Home Manager basics
@@ -8,19 +8,19 @@
     username = "user";
     homeDirectory = lib.mkForce "/home/user";
     stateVersion = "25.05";
-    
+
     packages = with pkgs; [
       # Productivity apps for mobile work
       firefox
-      thunderbird      # Email client
-      libreoffice     # Office suite
-      evince          # PDF viewer
-      
+      thunderbird # Email client
+      libreoffice # Office suite
+      evince # PDF viewer
+
       # Development tools (lightweight)
       git
       vim
       vscode
-      
+
       # System utilities
       htop
       tree
@@ -28,28 +28,28 @@
       unzip
       wget
       curl
-      
+
       # Media and communication
       vlc
       signal-desktop
-      
+
       # Cloud storage clients
       rclone
-      
+
       # Laptop-specific utilities
       brightnessctl
       acpi
       upower
       tlp
     ];
-    
+
     # Session variables for laptop use
     sessionVariables = {
       EDITOR = "vim";
       BROWSER = "firefox";
-      
+
       # Reduce background processes
-      NIXOS_OZONE_WL = "1";  # Enable Wayland for Electron apps
+      NIXOS_OZONE_WL = "1"; # Enable Wayland for Electron apps
     };
   };
 
@@ -63,11 +63,11 @@
       extraConfig = {
         init.defaultBranch = "main";
         pull.rebase = false;
-        
+
         # Laptop-friendly settings
         core.autocrlf = "input";
         push.autoSetupRemote = true;
-        
+
         # Reduce network usage
         fetch.prune = true;
         remote.origin.prune = true;
@@ -80,26 +80,26 @@
       enableCompletion = true;
       historySize = 10000;
       historyControl = [ "ignoreboth" ];
-      
+
       shellAliases = {
         ll = "ls -la";
         la = "ls -la";
         l = "ls -l";
         ".." = "cd ..";
         "..." = "cd ../..";
-        
+
         # Power management aliases
         "battery" = "acpi -b";
         "thermal" = "acpi -t";
         "powersave" = "sudo tlp bat";
         "performance" = "sudo tlp ac";
-        
+
         # Brightness control
         "bright" = "brightnessctl";
         "dim" = "brightnessctl set 50%";
         "bright-max" = "brightnessctl set 100%";
       };
-      
+
       bashrcExtra = ''
         # Show battery status in prompt
         show_battery() {
@@ -141,7 +141,7 @@
       enable = true;
       controlMaster = "auto";
       controlPersist = "10m";
-      
+
       # Mobile-friendly SSH settings
       extraConfig = ''
         ServerAliveInterval 60
@@ -162,23 +162,23 @@
         isDefault = true;
         settings = {
           # Battery-friendly settings
-          "dom.ipc.processCount" = 4;  # Limit content processes
+          "dom.ipc.processCount" = 4; # Limit content processes
           "browser.tabs.remote.autostart" = true;
-          
+
           # Privacy settings for mobile use
           "privacy.donottrackheader.enabled" = true;
           "privacy.trackingprotection.enabled" = true;
-          
+
           # Performance settings
           "browser.cache.disk.enable" = true;
           "browser.cache.memory.enable" = true;
-          "browser.cache.memory.capacity" = 51200;  # 50MB RAM cache
-          
+          "browser.cache.memory.capacity" = 51200; # 50MB RAM cache
+
           # Reduce background activity
-          "browser.sessionstore.interval" = 30000;  # 30 seconds
+          "browser.sessionstore.interval" = 30000; # 30 seconds
           "browser.tabs.animate" = false;
           "browser.fullscreen.animateUp" = 0;
-          
+
           # Dark mode preference (better for battery on OLED screens)
           "ui.systemUsesDarkTheme" = 1;
         };
@@ -200,19 +200,19 @@
           show_age_threshold = 60;
           idle_threshold = 120;
         };
-        
+
         urgency_low = {
           background = "#1d2021";
           foreground = "#a89984";
           timeout = 10;
         };
-        
+
         urgency_normal = {
           background = "#458588";
           foreground = "#ebdbb2";
           timeout = 10;
         };
-        
+
         urgency_critical = {
           background = "#cc241d";
           foreground = "#ebdbb2";
@@ -242,11 +242,11 @@
       enable = true;
       enableSshSupport = true;
       pinentryPackage = pkgs.pinentry-gtk2;
-      
+
       # Laptop-friendly timeouts
-      defaultCacheTtl = 3600;      # 1 hour
-      defaultCacheTtlSsh = 3600;   # 1 hour
-      maxCacheTtl = 7200;          # 2 hours
+      defaultCacheTtl = 3600; # 1 hour
+      defaultCacheTtlSsh = 3600; # 1 hour
+      maxCacheTtl = 7200; # 2 hours
     };
 
     # Syncthing for file synchronization
@@ -262,31 +262,31 @@
       gtk-theme = "Adwaita-dark";
       icon-theme = "Adwaita";
       cursor-theme = "Adwaita";
-      
+
       # Power-saving settings
-      enable-animations = false;  # Disable animations to save power
+      enable-animations = false; # Disable animations to save power
     };
-    
+
     "org/gnome/desktop/session" = {
-      idle-delay = lib.hm.gvariant.mkUint32 300;  # 5 minutes
+      idle-delay = lib.hm.gvariant.mkUint32 300; # 5 minutes
     };
-    
+
     "org/gnome/settings-daemon/plugins/power" = {
       sleep-inactive-ac-type = "nothing";
       sleep-inactive-battery-type = "suspend";
-      sleep-inactive-battery-timeout = 900;  # 15 minutes
+      sleep-inactive-battery-timeout = 900; # 15 minutes
     };
-    
+
     "org/gnome/desktop/screensaver" = {
       lock-enabled = true;
-      lock-delay = lib.hm.gvariant.mkUint32 0;  # Lock immediately
+      lock-delay = lib.hm.gvariant.mkUint32 0; # Lock immediately
     };
   };
 
   # XDG configuration
   xdg = {
     enable = true;
-    
+
     # Default applications
     mimeApps = {
       enable = true;
@@ -296,13 +296,13 @@
         "x-scheme-handler/https" = "firefox.desktop";
         "x-scheme-handler/about" = "firefox.desktop";
         "x-scheme-handler/unknown" = "firefox.desktop";
-        
+
         "application/pdf" = "evince.desktop";
-        
+
         "text/plain" = "org.gnome.TextEditor.desktop";
       };
     };
-    
+
     # Desktop entries for custom laptop utilities
     desktopEntries = {
       battery-info = {
@@ -312,7 +312,7 @@
         icon = "battery";
         categories = [ "System" "Monitor" ];
       };
-      
+
       power-settings = {
         name = "Power Settings";
         comment = "Quick access to power management";
@@ -335,11 +335,11 @@
     cursorTheme = {
       name = "Adwaita";
     };
-    
+
     gtk3.extraConfig = {
       gtk-application-prefer-dark-theme = 1;
     };
-    
+
     gtk4.extraConfig = {
       gtk-application-prefer-dark-theme = 1;
     };
@@ -353,7 +353,7 @@
         Description = "Battery Level Monitor";
         After = [ "graphical-session.target" ];
       };
-      
+
       Service = {
         Type = "simple";
         ExecStart = "${pkgs.writeShellScript "battery-monitor" ''
@@ -371,7 +371,7 @@
         Restart = "always";
         RestartSec = 10;
       };
-      
+
       Install = {
         WantedBy = [ "default.target" ];
       };

@@ -9,6 +9,7 @@ This NixOS template supports multiple desktop environments with optimized config
 Modern desktop with excellent Wayland support and polished user experience.
 
 **Features:**
+
 - GNOME Shell with extensions support
 - Wayland by default with X11 fallback
 - GDM display manager
@@ -17,6 +18,7 @@ Modern desktop with excellent Wayland support and polished user experience.
 - Excellent accessibility support
 
 **Configuration:**
+
 ```nix
 modules.desktop.gnome = {
   enable = true;
@@ -31,6 +33,7 @@ modules.desktop.gnome = {
 Highly customizable desktop environment with extensive features.
 
 **Features:**
+
 - Plasma 6 desktop (with Plasma 5 option)
 - SDDM display manager
 - Comprehensive application suite
@@ -39,6 +42,7 @@ Highly customizable desktop environment with extensive features.
 - Professional workflow tools
 
 **Basic Configuration:**
+
 ```nix
 modules.desktop.kde = {
   enable = true;
@@ -50,11 +54,12 @@ modules.desktop.kde = {
 ```
 
 **Advanced Configuration:**
+
 ```nix
 modules.desktop.kde = {
   enable = true;
   version = "plasma6";
-  
+
   applications = {
     enable = true;
     minimal = false;             # Full app suite
@@ -62,12 +67,12 @@ modules.desktop.kde = {
     multimedia = true;           # KDE multimedia apps
     development = true;          # KDE development tools
   };
-  
+
   wayland = {
     enable = true;
     defaultSession = true;       # Use Wayland by default
   };
-  
+
   performance = {
     compositor = "opengl";       # opengl, xrender, auto
     animations = true;
@@ -83,6 +88,7 @@ modules.desktop.kde = {
 Modern Wayland compositor with advanced tiling capabilities.
 
 **Features:**
+
 - Dynamic tiling with floating windows
 - Waybar status bar with system information
 - Dunst notifications
@@ -91,6 +97,7 @@ Modern Wayland compositor with advanced tiling capabilities.
 - Keyboard-driven workflow
 
 **Basic Configuration:**
+
 ```nix
 modules.desktop.hyprland = {
   enable = true;
@@ -104,6 +111,7 @@ modules.desktop.hyprland = {
 Unique scrollable tiling compositor with innovative column-based layout.
 
 **Features:**
+
 - Scrollable workspaces (infinite horizontal scroll)
 - Column-based tiling with flexible window arrangements
 - Waybar integration with niri-specific modules
@@ -113,6 +121,7 @@ Unique scrollable tiling compositor with innovative column-based layout.
 - Keyboard and mouse hybrid workflow
 
 **Basic Configuration:**
+
 ```nix
 modules.desktop.niri = {
   enable = true;
@@ -126,10 +135,11 @@ modules.desktop.niri = {
 ```
 
 **Advanced Configuration:**
+
 ```nix
 modules.desktop.niri = {
   enable = true;
-  
+
   waybar = {
     enable = true;
     position = "top";
@@ -144,21 +154,21 @@ modules.desktop.niri = {
       tray = true;
     };
   };
-  
+
   dunst = {
     enable = true;
     theme = "catppuccin-mocha";
     position = "top-right";
     transparency = 90;
   };
-  
+
   applications = {
     terminal = "alacritty";      # Default terminal
     launcher = "fuzzel";         # App launcher (recommended for niri)
     browser = "firefox";         # Default browser
     fileManager = "thunar";      # File manager
   };
-  
+
   scrolling = {
     workspaces = true;           # Enable workspace scrolling
     columns = true;              # Enable column scrolling
@@ -168,7 +178,7 @@ modules.desktop.niri = {
       scrollCooldown = 150;      # Cooldown between scrolls (ms)
     };
   };
-  
+
   theme = {
     colorScheme = "dark";        # dark, light, auto
     wallpaper = "/path/to/wallpaper.jpg";
@@ -182,7 +192,7 @@ modules.desktop.niri = {
       outer = 16;
     };
   };
-  
+
   # Window rules for specific applications
   windowRules = [
     {
@@ -208,26 +218,26 @@ modules.desktop.niri = {
 ```nix
 modules.desktop.hyprland = {
   enable = true;
-  
+
   settings = {
     monitors = [
       "DP-1,1920x1080@60,0x0,1"
       "DP-2,1920x1080@60,1920x0,1"
     ];
-    
+
     appearance = {
       gaps_in = 8;
       gaps_out = 16;
       border_size = 2;
       rounding = 8;
     };
-    
+
     animations = {
       enable = true;
       speed = 1.0;
     };
   };
-  
+
   waybar = {
     enable = true;
     position = "top";
@@ -242,14 +252,14 @@ modules.desktop.hyprland = {
       tray = true;
     };
   };
-  
+
   applications = {
     terminal = "alacritty";      # Default terminal
-    launcher = "wofi";           # App launcher  
+    launcher = "wofi";           # App launcher
     fileManager = "thunar";      # File manager
     browser = "firefox";         # Web browser
   };
-  
+
   theme = {
     colorScheme = "dark";        # dark, light, auto
     wallpaper = "/path/to/wallpaper.jpg";
@@ -269,17 +279,17 @@ modules.desktop.hyprland = {
 
 ## Desktop Environment Comparison
 
-| Feature | GNOME | KDE | Hyprland | Niri |
-|---------|-------|-----|----------|------|
-| **Learning Curve** | Easy | Moderate | Advanced | Moderate |
-| **Customization** | Limited | Extensive | Complete | High |
-| **Resource Usage** | Moderate | Moderate | Light | Very Light |
-| **Wayland Support** | Excellent | Good | Native | Native |
-| **Touch Support** | Excellent | Good | None | None |
-| **Gaming** | Good | Excellent | Good | Good |
-| **Professional** | Good | Excellent | Advanced | Excellent |
-| **Development** | Good | Excellent | Advanced | Excellent |
-| **Unique Feature** | Polished UX | Customization | Animations | Scrollable Tiling |
+| Feature             | GNOME       | KDE           | Hyprland   | Niri              |
+| ------------------- | ----------- | ------------- | ---------- | ----------------- |
+| **Learning Curve**  | Easy        | Moderate      | Advanced   | Moderate          |
+| **Customization**   | Limited     | Extensive     | Complete   | High              |
+| **Resource Usage**  | Moderate    | Moderate      | Light      | Very Light        |
+| **Wayland Support** | Excellent   | Good          | Native     | Native            |
+| **Touch Support**   | Excellent   | Good          | None       | None              |
+| **Gaming**          | Good        | Excellent     | Good       | Good              |
+| **Professional**    | Good        | Excellent     | Advanced   | Excellent         |
+| **Development**     | Good        | Excellent     | Advanced   | Excellent         |
+| **Unique Feature**  | Polished UX | Customization | Animations | Scrollable Tiling |
 
 ## Configuration Guide
 
@@ -294,7 +304,7 @@ modules.desktop = {
   # kde.enable = true;
   # hyprland.enable = true;
   # niri.enable = true;
-  
+
   # Common desktop modules
   audio.enable = true;
   fonts.enable = true;
@@ -307,24 +317,28 @@ modules.desktop = {
 Each desktop environment includes Home Manager configurations for user-specific settings.
 
 **GNOME Home Configuration:**
+
 ```nix
 # Import GNOME profile
 imports = [ ../../../home/profiles/gnome.nix ];
 ```
 
 **KDE Home Configuration:**
+
 ```nix
 # Import KDE profile
 imports = [ ../../../home/profiles/kde.nix ];
 ```
 
 **Hyprland Home Configuration:**
+
 ```nix
 # Import Hyprland profile
 imports = [ ../../../home/profiles/hyprland.nix ];
 ```
 
 **Niri Home Configuration:**
+
 ```nix
 # Import Niri profile
 imports = [ ../../../home/profiles/niri.nix ];
@@ -347,7 +361,7 @@ home-manager.users.alice = {
   imports = [ ./home/profiles/gnome.nix ];
 };
 
-# User 2 - Hyprland preference  
+# User 2 - Hyprland preference
 home-manager.users.bob = {
   imports = [ ./home/profiles/hyprland.nix ];
 };
@@ -363,6 +377,7 @@ home-manager.users.charlie = {
 ### GNOME Features
 
 **Extensions:**
+
 - Dash to Dock
 - User Themes
 - AppIndicator Support
@@ -371,6 +386,7 @@ home-manager.users.charlie = {
 - Clipboard Indicator
 
 **Applications:**
+
 - Nautilus file manager
 - GNOME Terminal
 - Text Editor (gedit replacement)
@@ -378,6 +394,7 @@ home-manager.users.charlie = {
 - GNOME Tweaks for advanced settings
 
 **Keyboard Shortcuts:**
+
 - `Super` - Activities overview
 - `Super + L` - Lock screen
 - `Ctrl + Alt + T` - Terminal
@@ -386,6 +403,7 @@ home-manager.users.charlie = {
 ### KDE Features
 
 **Applications:**
+
 - Dolphin file manager
 - Konsole terminal
 - Kate text editor
@@ -394,6 +412,7 @@ home-manager.users.charlie = {
 - Okular document viewer
 
 **Customization:**
+
 - Plasma themes and widgets
 - Icon themes
 - Window decorations
@@ -401,6 +420,7 @@ home-manager.users.charlie = {
 - Keyboard shortcuts
 
 **Professional Tools:**
+
 - KDevelop IDE
 - Kdenlive video editor
 - Krita digital painting
@@ -409,12 +429,14 @@ home-manager.users.charlie = {
 ### Hyprland Features
 
 **Tiling Management:**
+
 - Dynamic tiling layouts
 - Floating window support
 - Multi-monitor workspaces
 - Tabbed and stacked layouts
 
 **Status Bar (Waybar):**
+
 - Workspace indicators
 - Window titles
 - System tray
@@ -422,6 +444,7 @@ home-manager.users.charlie = {
 - Clock and calendar
 
 **Applications:**
+
 - Alacritty/Kitty terminal
 - Wofi application launcher
 - Thunar file manager
@@ -429,6 +452,7 @@ home-manager.users.charlie = {
 - Swaylock screen locker
 
 **Key Bindings:**
+
 - `Super + Q` - Terminal
 - `Super + C` - Close window
 - `Super + R` - App launcher
@@ -438,6 +462,7 @@ home-manager.users.charlie = {
 ### Niri Features
 
 **Scrollable Tiling:**
+
 - Infinite horizontal workspace scrolling
 - Column-based tiling with flexible arrangements
 - Mouse wheel workspace navigation
@@ -445,12 +470,14 @@ home-manager.users.charlie = {
 - No traditional workspace limits
 
 **Column Management:**
+
 - Dynamic column widths (preset, proportional, or fixed)
 - Window stacking within columns
 - Consume/expel windows between columns
 - Column reordering and movement
 
 **Status Bar (Waybar with Niri modules):**
+
 - Scrollable workspace indicators
 - Current window titles
 - Niri-specific workspace information
@@ -458,6 +485,7 @@ home-manager.users.charlie = {
 - System tray integration
 
 **Applications:**
+
 - Alacritty/Foot terminal (lightweight Wayland terminals)
 - Fuzzel launcher (optimized for niri)
 - Thunar/Nautilus file manager
@@ -465,6 +493,7 @@ home-manager.users.charlie = {
 - Swaylock screen locker
 
 **Unique Key Bindings:**
+
 - `Super + T` - Terminal
 - `Super + D` - App launcher
 - `Super + Q` - Close window
@@ -478,6 +507,7 @@ home-manager.users.charlie = {
 - `Super + Comma/Period` - Consume/expel window
 
 **Window Rules:**
+
 - App-specific column widths
 - Default window positioning
 - Floating window rules
@@ -488,21 +518,25 @@ home-manager.users.charlie = {
 ### Display Issues
 
 **GNOME:**
+
 - Check Wayland vs X11 session at login
 - Use GNOME Tweaks for display settings
 - Check for conflicting extensions
 
 **KDE:**
+
 - Use System Settings → Display Configuration
 - Check compositor settings in System Settings
 - Verify SDDM display manager configuration
 
 **Hyprland:**
+
 - Check monitor configuration in hyprland.conf
 - Verify graphics drivers are loaded
 - Check Waybar configuration for display issues
 
 **Niri:**
+
 - Check niri configuration in `~/.config/niri/config.kdl`
 - Verify Wayland graphics drivers are loaded
 - Check `niri msg --help` for debugging commands
@@ -511,21 +545,25 @@ home-manager.users.charlie = {
 ### Performance Optimization
 
 **GNOME:**
+
 - Disable animations in GNOME Tweaks
 - Limit number of active extensions
 - Use X11 session for older hardware
 
 **KDE:**
+
 - Adjust compositor settings
 - Disable desktop effects for performance
 - Use software rendering if needed
 
 **Hyprland:**
+
 - Disable animations for better performance
 - Reduce blur effects
 - Optimize monitor refresh rates
 
 **Niri:**
+
 - Scrolling is already optimized and lightweight
 - Adjust scroll cooldown for better responsiveness
 - Use fewer columns for older hardware
@@ -534,11 +572,13 @@ home-manager.users.charlie = {
 ### Application Integration
 
 **Theme Consistency:**
+
 - Install both GTK and Qt theme packages
 - Set consistent cursor and icon themes
 - Configure XDG desktop portals
 
 **Font Rendering:**
+
 - Enable font antialiasing
 - Install complete font families
 - Configure font hinting
@@ -596,21 +636,25 @@ Users can choose at the login screen, but this increases system resource usage.
 ## Best Practices
 
 ### Performance
+
 - Only enable one desktop environment per system
 - Use appropriate graphics drivers
 - Configure power management for laptops
 
-### Security  
+### Security
+
 - Keep desktop environments updated
 - Use strong screen lock passwords
 - Configure automatic screen locking
 
 ### Backup
+
 - Export desktop settings before major changes
 - Document custom configurations
 - Test configurations before deployment
 
 ### Development
+
 - Use desktop-appropriate development tools
 - Configure version control integration
 - Set up proper terminal emulators

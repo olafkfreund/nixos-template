@@ -11,18 +11,21 @@ Age-based secrets management module for secure handling of sensitive configurati
 #### Features
 
 **Secure Secret Management**:
+
 - Age-based encryption for secrets
 - Declarative secret configuration
 - Automatic decryption on target systems
 - Public key-based access control
 
 **System Integration**:
+
 - Seamless NixOS integration
 - Systemd service integration
 - Proper file permissions and ownership
 - Symlink or direct file installation
 
 **Key Management**:
+
 - SSH host key integration
 - User key support
 - Multiple identity sources
@@ -35,19 +38,19 @@ Enable agenix secrets management:
 ```nix
 modules.security.agenix = {
   enable = true;
-  
+
   # Global settings
   secretsPath = "/run/agenix";
   secretsMode = "0400";
   secretsOwner = "root";
   secretsGroup = "root";
-  
+
   # Identity files for decryption
   identityPaths = [
     "/etc/ssh/ssh_host_ed25519_key"
     "/etc/ssh/ssh_host_rsa_key"
   ];
-  
+
   # Secrets configuration
   secrets = {
     "user-password" = {
@@ -55,7 +58,7 @@ modules.security.agenix = {
       owner = "root";
       mode = "0400";
     };
-    
+
     "wifi-password" = {
       file = ../../secrets/wifi-password.age;
       owner = "networkmanager";
@@ -69,10 +72,11 @@ modules.security.agenix = {
 #### Advanced Configuration
 
 **Custom Installation Type**:
+
 ```nix
 modules.security.agenix = {
   installationType = "system";  # or "activation"
-  
+
   secrets = {
     "database-password" = {
       file = ../../secrets/database-password.age;
@@ -86,6 +90,7 @@ modules.security.agenix = {
 ```
 
 **Multiple Identity Sources**:
+
 ```nix
 modules.security.agenix = {
   identityPaths = [
@@ -99,19 +104,22 @@ modules.security.agenix = {
 #### Quick Start
 
 1. **Add agenix to flake inputs** (already included):
+
    ```nix
    inputs.agenix.url = "github:ryantm/agenix";
    ```
 
 2. **Run setup script**:
+
    ```bash
    just setup-secrets
    ```
 
 3. **Configure secrets in host**:
+
    ```nix
    imports = [ ../../modules/security/agenix.nix ];
-   
+
    modules.security.agenix = {
      enable = true;
      secrets."user-password".file = ../../secrets/user-password.age;
@@ -119,6 +127,7 @@ modules.security.agenix = {
    ```
 
 4. **Create and edit secrets**:
+
    ```bash
    just new-secret user-password
    just edit-secret wifi-password
@@ -134,6 +143,7 @@ modules.security.agenix = {
 #### Common Use Cases
 
 **User Authentication**:
+
 ```nix
 # Secret configuration
 modules.security.agenix.secrets."user-password" = {
@@ -147,6 +157,7 @@ users.users.alice = {
 ```
 
 **Network Configuration**:
+
 ```nix
 # WiFi password
 modules.security.agenix.secrets."wifi-password" = {
@@ -162,6 +173,7 @@ networking.wireless.networks."MyNetwork" = {
 ```
 
 **Service Secrets**:
+
 ```nix
 # Database password
 modules.security.agenix.secrets."postgres-password" = {
@@ -180,6 +192,7 @@ services.postgresql = {
 ```
 
 **SSL/TLS Certificates**:
+
 ```nix
 # Certificate and key
 modules.security.agenix.secrets = {
@@ -190,7 +203,7 @@ modules.security.agenix.secrets = {
     mode = "0444";
     path = "/var/lib/ssl/cert.pem";
   };
-  
+
   "ssl-key" = {
     file = ../../secrets/ssl-key.age;
     owner = "nginx";
@@ -210,6 +223,7 @@ services.nginx.virtualHosts."example.com" = {
 #### Key Management
 
 **Generating Keys**:
+
 ```bash
 # Generate age key from SSH key
 ssh-to-age < ~/.ssh/id_ed25519.pub
@@ -222,6 +236,7 @@ sudo ssh-to-age < /etc/ssh/ssh_host_ed25519_key.pub
 ```
 
 **Key Configuration**:
+
 ```nix
 # In secrets/secrets.nix
 let
@@ -229,7 +244,7 @@ let
     alice = "age1xyz...";
     bob = "age1abc...";
   };
-  
+
   systems = {
     laptop = "age1host123...";
     server = "age1host456...";
@@ -248,7 +263,7 @@ The template includes convenient management commands:
 # Setup agenix
 just setup-secrets
 
-# Create/edit secrets  
+# Create/edit secrets
 just new-secret my-password
 just edit-secret existing-password
 
@@ -264,18 +279,21 @@ just check-secrets
 #### Security Best Practices
 
 **Access Control**:
+
 - Use principle of least privilege for secret access
 - Separate user and system keys
 - Regular key rotation and re-encryption
 - Document key ownership and purpose
 
 **Operational Security**:
+
 - Secure workstation for secret management
 - Backup private keys separately and securely
 - Audit secret access through system logs
 - Test disaster recovery procedures
 
 **Key Storage**:
+
 - Never commit private keys to version control
 - Use proper file permissions (600) for private keys
 - Consider hardware security modules for high-security environments
@@ -284,11 +302,12 @@ just check-secrets
 #### Integration Examples
 
 **Complete Host Setup**:
+
 ```nix
 # Host configuration with secrets
 { config, ... }: {
   imports = [ ../../modules/security/agenix.nix ];
-  
+
   modules.security.agenix = {
     enable = true;
     secrets = {
@@ -301,13 +320,13 @@ just check-secrets
       };
     };
   };
-  
+
   # Use secrets in configuration
   users.users = {
     alice.hashedPasswordFile = config.age.secrets."user-password".path;
     root.hashedPasswordFile = config.age.secrets."root-password".path;
   };
-  
+
   networking.wireless.networks."HomeNetwork" = {
     pskFile = config.age.secrets."wifi-password".path;
   };
@@ -315,6 +334,7 @@ just check-secrets
 ```
 
 **Service Integration**:
+
 ```nix
 # Nextcloud with secrets
 services.nextcloud = {
@@ -341,7 +361,8 @@ modules.security.agenix.secrets = {
 
 **Common Issues**:
 
-*Secret not decrypting*:
+_Secret not decrypting_:
+
 ```bash
 # Check identity files exist
 ls -la /etc/ssh/ssh_host_*_key
@@ -353,7 +374,8 @@ sudo ls -la /run/agenix/
 systemctl status agenix-*
 ```
 
-*Permission errors*:
+_Permission errors_:
+
 ```bash
 # Check file ownership
 ls -la /run/agenix/secret-name
@@ -362,7 +384,8 @@ ls -la /run/agenix/secret-name
 systemctl status agenix-secret-name
 ```
 
-*Missing agenix command*:
+_Missing agenix command_:
+
 ```bash
 # Install agenix
 nix-shell -p agenix
@@ -372,6 +395,7 @@ just setup-secrets
 ```
 
 **Debugging**:
+
 ```bash
 # Manual decryption test
 age -d -i /etc/ssh/ssh_host_ed25519_key secret.age
@@ -388,15 +412,17 @@ just check-secrets
 **From Other Secret Management**:
 
 1. **Export existing secrets**:
+
    ```bash
    # From sops-nix
    sops -d secrets.yaml > decrypted-secrets.yaml
-   
+
    # From files
    cat /path/to/existing/secret
    ```
 
 2. **Encrypt with agenix**:
+
    ```bash
    echo "secret-value" | agenix -e secret-name.age
    ```

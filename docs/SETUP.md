@@ -37,11 +37,13 @@ Validates your system before attempting configuration:
 - **Hardware Support**: Detects system architecture and capabilities
 
 **Usage:**
+
 ```bash
 ./scripts/check-prerequisites.sh
 ```
 
 **What it checks:**
+
 - NixOS version compatibility (23.11+)
 - Nix flakes support
 - Available system resources (memory, disk, CPU)
@@ -59,12 +61,14 @@ Minimal interaction setup with sensible defaults:
 - **Basic Customization**: Hostname, username, and desktop environment
 
 **Best for:**
+
 - First-time NixOS users
 - Testing the template quickly
 - VM deployments
 - Getting a working system fast
 
 **Features:**
+
 - Automatic VM type detection (QEMU, VirtualBox, VMware, Hyper-V)
 - Memory-based desktop recommendation (XFCE for <4GB, GNOME for >8GB)
 - Hardware configuration generation
@@ -82,12 +86,14 @@ Comprehensive guided setup with full customization:
 - **Validation**: Comprehensive testing before deployment
 
 **Best for:**
+
 - Users who want full control
 - Production deployments
 - Complex configurations
 - Learning NixOS configuration
 
 **Features:**
+
 - Multiple user templates (basic, developer, gamer, minimal, server)
 - Desktop environment selection with preview
 - Development language selection
@@ -106,6 +112,7 @@ Specialized script for virtual machine environments:
 - **Optimization Suggestions**: Performance and usability improvements
 
 **Supported Platforms:**
+
 - QEMU/KVM with VirtIO optimizations
 - VirtualBox with Guest Additions
 - VMware with VMware Tools
@@ -122,22 +129,24 @@ Specialized script for virtual machine environments:
    - Connect to internet
 
 2. **Partition and Format Disks**
+
    ```bash
    # Example for UEFI systems
    sudo parted /dev/sda -- mklabel gpt
    sudo parted /dev/sda -- mkpart root ext4 512MB 100%
    sudo parted /dev/sda -- mkpart ESP fat32 1MB 512MB
    sudo parted /dev/sda -- set 2 esp on
-   
+
    sudo mkfs.ext4 -L nixos /dev/sda1
    sudo mkfs.fat -F 32 -n boot /dev/sda2
-   
+
    sudo mount /dev/disk/by-label/nixos /mnt
    sudo mkdir -p /mnt/boot
    sudo mount /dev/disk/by-label/boot /mnt/boot
    ```
 
 3. **Setup Template**
+
    ```bash
    cd /mnt
    sudo git clone <your-repo> nixos-config
@@ -155,21 +164,24 @@ Specialized script for virtual machine environments:
 ### For Existing NixOS Systems
 
 1. **Clone Template**
+
    ```bash
    git clone <your-repo> ~/.config/nixos-template
    cd ~/.config/nixos-template
    ```
 
 2. **Check Prerequisites**
+
    ```bash
    ./scripts/check-prerequisites.sh
    ```
 
 3. **Run Setup**
+
    ```bash
    # Quick setup
    ./scripts/quick-setup.sh
-   
+
    # Or full setup
    ./scripts/nixos-setup.sh
    ```
@@ -188,30 +200,35 @@ Specialized script for virtual machine environments:
 The template system provides pre-configured user environments:
 
 #### Basic (`user`)
+
 - Essential applications (Firefox, file manager, text editor)
 - Basic development tools (git, vim)
 - Standard desktop experience
 - Suitable for general computing tasks
 
 #### Developer (`developer`)
+
 - Multiple programming languages (Python, Rust, Go, JavaScript)
 - Advanced editors (VSCode, Neovim) with LSP
 - Development tools (Docker/Podman, Git, databases)
 - Terminal enhancements (fish shell, starship prompt)
 
 #### Gamer (`gamer`)
+
 - Steam with Proton-GE and optimizations
 - Gaming tools (GameMode, MangoHud)
 - Discord and multimedia applications
 - Performance-optimized kernel parameters
 
 #### Minimal (`minimal`)
+
 - Lightweight applications only
 - Resource-efficient choices
 - Essential system tools
 - Suitable for older hardware or VMs
 
 #### Server (`server`)
+
 - Server administration tools
 - System monitoring (htop, iotop, nethogs)
 - Network utilities
@@ -220,24 +237,28 @@ The template system provides pre-configured user environments:
 ### Desktop Environments
 
 #### GNOME
+
 - Modern Wayland-first desktop
 - Integrated applications suite
 - Touch-friendly interface
 - Good hardware acceleration support
 
 #### KDE Plasma 6
+
 - Highly customizable desktop
 - Rich feature set
 - Traditional desktop paradigm
 - Excellent multi-monitor support
 
 #### Hyprland
+
 - Tiling window manager
 - Wayland native
 - Highly customizable
 - Great for developers and power users
 
 #### Niri
+
 - Innovative scrollable tiling
 - Wayland compositor
 - Unique workflow approach
@@ -286,21 +307,25 @@ When gaming template is selected:
 ### Common Issues
 
 **Script Permission Denied**
+
 ```bash
 chmod +x scripts/*.sh
 ```
 
 **Prerequisites Check Fails**
+
 - Ensure you're running on NixOS
 - Check internet connectivity
 - Verify sufficient disk space (>10GB recommended)
 
 **Configuration Build Fails**
+
 - Check syntax with: `just validate`
 - Review error messages for specific issues
 - Ensure all required inputs were provided
 
 **VM Detection Issues**
+
 ```bash
 # Manual VM detection
 systemd-detect-virt
@@ -308,6 +333,7 @@ cat /sys/class/dmi/id/product_name
 ```
 
 **Network Configuration Problems**
+
 - Check interface names: `ip link show`
 - Verify NetworkManager status: `systemctl status NetworkManager`
 - Test connectivity: `ping 8.8.8.8`
@@ -315,17 +341,20 @@ cat /sys/class/dmi/id/product_name
 ### Getting Help
 
 1. **Check Logs**
+
    ```bash
    journalctl -xeu nixos-rebuild
    ```
 
 2. **Validate Configuration**
+
    ```bash
    just validate
    nixos-rebuild dry-run --flake .#hostname
    ```
 
 3. **Test Without Applying**
+
    ```bash
    just test hostname
    ```
@@ -340,6 +369,7 @@ cat /sys/class/dmi/id/product_name
 If automated setup doesn't meet your needs:
 
 1. **Copy Example Configuration**
+
    ```bash
    cp -r hosts/example-desktop hosts/my-host
    ```
@@ -350,6 +380,7 @@ If automated setup doesn't meet your needs:
    - Generate hardware config: `sudo nixos-generate-config --show-hardware-config > hosts/my-host/hardware-configuration.nix`
 
 3. **Add to Flake**
+
    ```nix
    # In flake.nix
    nixosConfigurations.my-host = nixpkgs.lib.nixosSystem {
@@ -379,6 +410,7 @@ After successful setup:
    - Join the community: https://discourse.nixos.org/
 
 3. **Keep Updated**
+
    ```bash
    just update        # Update flake inputs
    just switch        # Apply updates

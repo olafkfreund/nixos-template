@@ -1,8 +1,8 @@
-{ config, lib, pkgs, inputs, outputs, ... }:
+{ config, pkgs, ... }:
 
 {
   # Server administration focused Home Manager configuration
-  
+
   # User information
   home = {
     username = "server";
@@ -18,7 +18,7 @@
     enable = true;
     userName = "Server Admin";
     userEmail = "admin@example.com";
-    
+
     extraConfig = {
       init.defaultBranch = "main";
       pull.rebase = true;
@@ -30,24 +30,24 @@
   # Server administration shell configuration
   programs.bash = {
     enable = true;
-    
+
     shellAliases = {
       # Enhanced listing for server management
       ll = "ls -alF --time-style=long-iso";
       la = "ls -A";
       l = "ls -CF";
-      
+
       # Navigation
       ".." = "cd ..";
       "..." = "cd ../..";
-      
+
       # System administration
       ports = "ss -tuln";
       listen = "ss -tuln | grep LISTEN";
       procs = "ps aux";
       meminfo = "free -h";
       diskinfo = "df -h";
-      
+
       # Service management
       sysstatus = "systemctl status";
       sysstart = "sudo systemctl start";
@@ -55,35 +55,35 @@
       sysrestart = "sudo systemctl restart";
       sysenable = "sudo systemctl enable";
       sysdisable = "sudo systemctl disable";
-      
+
       # Log viewing
       logs = "journalctl -f";
       syslogs = "journalctl -u";
-      
+
       # Network diagnostics
       netstat = "ss -tuln";
       connections = "ss -tup";
-      
+
       # NixOS server management
       rebuild = "sudo nixos-rebuild switch --flake .";
       rebuild-test = "sudo nixos-rebuild test --flake .";
       rollback = "sudo nixos-rebuild --rollback switch";
-      
+
       # Security and monitoring
       who-logged = "last";
       failed-logins = "journalctl _SYSTEMD_UNIT=sshd.service | grep 'Failed'";
-      
+
       # Docker management (if enabled)
       dps = "docker ps";
       dpa = "docker ps -a";
       di = "docker images";
       dlog = "docker logs";
       dex = "docker exec -it";
-      
+
       # File permissions
       perm = "stat -c '%A %n'";
     };
-    
+
     bashrcExtra = ''
       # Server admin prompt with system info
       export PS1="[\u@\h \W]\$ "
@@ -130,7 +130,7 @@
       # Show system info on login
       sysinfo
     '';
-    
+
     historyControl = [ "ignoredups" "erasedups" ];
     historySize = 10000;
     historyFileSize = 20000;
@@ -148,7 +148,7 @@
         tree = "eza --tree";
       };
     };
-    
+
     bat = {
       enable = true;
       config = {
@@ -156,11 +156,11 @@
         pager = "less -FR";
       };
     };
-    
+
     # Essential for server file management
     fd.enable = true;
     ripgrep.enable = true;
-    
+
     # System monitoring
     htop = {
       enable = true;
@@ -171,16 +171,16 @@
         tree_view = true;
       };
     };
-    
+
     btop.enable = true;
-    
+
     # Directory navigation
     zoxide.enable = true;
-    
+
     # Advanced SSH configuration for server management
     ssh = {
       enable = true;
-      
+
       matchBlocks = {
         "prod-server" = {
           hostname = "production.example.com";
@@ -188,14 +188,14 @@
           port = 22;
           # identityFile = "~/.ssh/id_ed25519_prod";
         };
-        
+
         "staging" = {
           hostname = "staging.example.com";
           user = "admin";
           port = 22;
           # identityFile = "~/.ssh/id_ed25519_staging";
         };
-        
+
         "backup-server" = {
           hostname = "backup.example.com";
           user = "backup";
@@ -203,7 +203,7 @@
           # identityFile = "~/.ssh/id_ed25519_backup";
         };
       };
-      
+
       extraConfig = ''
         # Server administration SSH settings
         ServerAliveInterval 60
@@ -212,7 +212,7 @@
         Compression yes
       '';
     };
-    
+
     # Vim with server admin configuration
     vim = {
       enable = true;
@@ -248,13 +248,13 @@
     htop
     btop
     iotop
-    nethogs          # Network usage per process
-    iftop            # Network bandwidth usage
-    ncdu             # Disk usage analyzer
-    lsof             # Open files
-    strace           # System call tracer
-    tcpdump          # Network packet analyzer
-    
+    nethogs # Network usage per process
+    iftop # Network bandwidth usage
+    ncdu # Disk usage analyzer
+    lsof # Open files
+    strace # System call tracer
+    tcpdump # Network packet analyzer
+
     # Network Tools
     nmap
     netcat-gnu
@@ -262,83 +262,83 @@
     dig
     whois
     traceroute
-    mtr              # Network diagnostic tool
+    mtr # Network diagnostic tool
     curl
     wget
     rsync
-    
+
     # File Management
     file
     tree
     p7zip
     unzip
     zip
-    
+
     # Text Processing
-    jq               # JSON processor
-    yq               # YAML processor
-    xmlstarlet       # XML processor
-    
+    jq # JSON processor
+    yq # YAML processor
+    xmlstarlet # XML processor
+
     # System Administration
-    psmisc           # killall, fuser, pstree
-    procps           # ps, top, kill
-    util-linux       # Various utilities
-    
+    psmisc # killall, fuser, pstree
+    procps # ps, top, kill
+    util-linux # Various utilities
+
     # Log Analysis
     logrotate
-    multitail        # Multi-file tail
-    
+    multitail # Multi-file tail
+
     # Security Tools
     gnupg
     openssl
-    
+
     # Backup Tools
     borgbackup
     rclone
     duplicity
-    
+
     # Database Tools
     # postgresql
     # sqlite
     # redis
-    
+
     # Container Management (uncomment if using containers)
     # docker
     # docker-compose
     # podman
     # buildah
-    
+
     # Virtualization (uncomment if managing VMs)
     # libvirt
     # qemu
-    
+
     # Cloud Tools (uncomment as needed)
     # awscli2
     # google-cloud-sdk
     # azure-cli
     # terraform
     # ansible
-    
+
     # Development/Automation
     git
     tmux
     screen
-    
+
     # Performance Analysis
     perf-tools
-    sysstat          # sar, iostat, mpstat
-    
+    sysstat # sar, iostat, mpstat
+
     # System Information
     lshw
     pciutils
     usbutils
     dmidecode
-    smartmontools    # Hard drive health
-    
+    smartmontools # Hard drive health
+
     # Text Editors
     vim
     nano
-    
+
     # Miscellaneous
     man-pages
     man-pages-posix
@@ -347,7 +347,7 @@
   # Server-friendly XDG directories
   xdg = {
     enable = true;
-    
+
     userDirs = {
       enable = true;
       createDirectories = true;
@@ -362,13 +362,13 @@
     EDITOR = "vim";
     VISUAL = "vim";
     PAGER = "less";
-    
+
     # History settings
     HISTCONTROL = "ignoredups:erasedups";
     HISTSIZE = "10000";
     HISTFILESIZE = "20000";
     HISTTIMEFORMAT = "%F %T ";
-    
+
     # Server paths
     SCRIPTS_DIR = "${config.home.homeDirectory}/scripts";
     BACKUPS_DIR = "${config.home.homeDirectory}/backups";
@@ -382,7 +382,7 @@
     "backups/.keep".text = "";
     "logs/.keep".text = "";
     "configs/.keep".text = "";
-    
+
     # Useful server administration scripts
     "scripts/system-info.sh" = {
       text = ''
@@ -414,7 +414,7 @@
       '';
       executable = true;
     };
-    
+
     "scripts/backup-check.sh" = {
       text = ''
         #!/bin/bash
@@ -434,7 +434,7 @@
       '';
       executable = true;
     };
-    
+
     # tmux configuration for server administration
     ".tmux.conf".text = ''
       # Server administration tmux configuration
@@ -475,8 +475,8 @@
     gpg-agent = {
       enable = true;
       enableSshSupport = true;
-      defaultCacheTtl = 3600;   # 1 hour
-      maxCacheTtl = 86400;      # 24 hours
+      defaultCacheTtl = 3600; # 1 hour
+      maxCacheTtl = 86400; # 24 hours
     };
   };
 }

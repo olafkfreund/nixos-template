@@ -1,8 +1,8 @@
-{ config, lib, pkgs, inputs, outputs, ... }:
+{ config, pkgs, ... }:
 
 {
   # Home Manager configuration for VM user
-  
+
   # Basic user info
   home = {
     username = "vm-user";
@@ -18,7 +18,7 @@
     enable = true;
     userName = "VM User";
     userEmail = "vm-user@example.com";
-    
+
     extraConfig = {
       init.defaultBranch = "main";
       pull.rebase = true;
@@ -29,7 +29,7 @@
   # Shell configuration optimized for VMs
   programs.bash = {
     enable = true;
-    
+
     shellAliases = {
       # Use eza instead of ls for better file listing
       ls = "eza";
@@ -39,16 +39,16 @@
       l = "ls -CF";
       ".." = "cd ..";
       "..." = "cd ../..";
-      
+
       # VM-specific aliases
       "vm-info" = "echo 'VM: ${config.home.username}@'$(hostname) && uname -a";
       "net-info" = "ip addr show && ip route show";
-      
+
       # NixOS specific aliases
       rebuild = "sudo nixos-rebuild switch --flake ~/nixos-config";
       rebuild-test = "sudo nixos-rebuild test --flake ~/nixos-config";
     };
-    
+
     bashrcExtra = ''
       # VM-friendly prompt with hostname
       export PS1="\[\e[36m\][\[\e[m\]\[\e[32m\]\u\[\e[m\]\[\e[36m\]@\[\e[m\]\[\e[34m\]\h\[\e[m\]\[\e[36m\]]\[\e[m\] \[\e[33m\]\w\[\e[m\]\$ "
@@ -65,23 +65,23 @@
     eza = {
       enable = true;
     };
-    
+
     # Better cat
     bat.enable = true;
-    
+
     # System monitoring
     htop.enable = true;
-    
+
     # Directory navigation
     zoxide.enable = true;
-    
+
     # Terminal multiplexer for persistent sessions
     tmux = {
       enable = true;
       terminal = "screen-256color";
       prefix = "C-a";
       keyMode = "vi";
-      
+
       extraConfig = ''
         # VM-friendly tmux configuration
         set -g mouse on
@@ -104,25 +104,25 @@
     netcat
     socat
     nmap
-    
+
     # File transfer
     rsync
-    openssh  # includes scp
-    
+    openssh # includes scp
+
     # System utilities
     tree
     file
     which
     lsof
     strace
-    
+
     # Text processing
     jq
     yq
-    
+
     # VM management tools
     qemu-utils
-    
+
     # Development tools (lightweight)
     git
     nano
@@ -132,7 +132,7 @@
   # XDG directories (minimal for VMs)
   xdg = {
     enable = true;
-    
+
     userDirs = {
       enable = true;
       createDirectories = true;
@@ -145,7 +145,7 @@
   # SSH configuration for VM access
   programs.ssh = {
     enable = true;
-    
+
     extraConfig = ''
       # VM-friendly SSH settings
       Host *
@@ -165,7 +165,7 @@
   home.sessionVariables = {
     EDITOR = "nano";
     PAGER = "less";
-    
+
     # VM identification
     VM_ENVIRONMENT = "true";
     VM_HOSTNAME = "qemu-vm";

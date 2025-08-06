@@ -35,14 +35,14 @@ Add VM guest support to any existing host:
 modules.virtualization.vm-guest = {
   enable = true;
   type = "auto";  # or "qemu", "virtualbox", "vmware", "hyperv"
-  
+
   optimizations = {
     performance = true;
     graphics = true;
     networking = true;
     storage = true;
   };
-  
+
   guestTools = {
     enable = true;
     clipboard = true;
@@ -57,6 +57,7 @@ modules.virtualization.vm-guest = {
 ### QEMU/KVM
 
 **Optimizations**:
+
 - VirtIO drivers for maximum performance
 - SPICE guest agent for clipboard/display
 - Paravirtualized network and storage
@@ -64,12 +65,14 @@ modules.virtualization.vm-guest = {
 - Memory ballooning
 
 **Guest Tools**:
+
 - Automatic screen resolution adjustment
 - Clipboard sharing (bidirectional)
 - File sharing between host and guest
 - Time synchronization
 
 **Example QEMU Launch**:
+
 ```bash
 qemu-system-x86_64 \
   -enable-kvm \
@@ -88,18 +91,21 @@ qemu-system-x86_64 \
 ### VirtualBox
 
 **Optimizations**:
+
 - VirtualBox Guest Additions integration
 - Shared folders support
 - 3D acceleration
 - Seamless mode support
 
 **Guest Tools**:
+
 - Bidirectional clipboard
 - Shared folders (automatically mounted)
 - Dynamic display resolution
 - Mouse integration
 
 **Setup Requirements**:
+
 ```bash
 # On host system, ensure VirtualBox Guest Additions ISO is available
 # Enable 3D acceleration in VM settings
@@ -110,12 +116,14 @@ qemu-system-x86_64 \
 ### VMware
 
 **Optimizations**:
+
 - VMware Tools (open-vm-tools) integration
 - VMXNET3 network driver
 - PVSCSI storage driver
 - VMware graphics driver
 
 **Guest Tools**:
+
 - Clipboard sharing
 - Drag and drop support
 - Shared folders
@@ -124,12 +132,14 @@ qemu-system-x86_64 \
 ### Hyper-V
 
 **Optimizations**:
+
 - Hyper-V Integration Services
 - Synthetic network adapters
 - Dynamic memory
 - Generation 2 VM support
 
 **Guest Tools**:
+
 - Enhanced session mode
 - Copy/paste integration
 - Time synchronization
@@ -193,7 +203,7 @@ just init-vm $(hostname) auto
 # Test configuration
 just test $(hostname)
 
-# Apply configuration  
+# Apply configuration
 just switch $(hostname)
 ```
 
@@ -288,7 +298,7 @@ services.xserver.desktopManager.gnome = {
   extraGSettingsOverrides = ''
     [org.gnome.desktop.interface]
     enable-animations=false
-    
+
     [org.gnome.desktop.background]
     picture-options='wallpaper'
     primary-color='#000000'
@@ -301,6 +311,7 @@ services.xserver.desktopManager.gnome = {
 ### Common Issues
 
 **VM not detected properly**:
+
 ```bash
 # Manual detection
 systemd-detect-virt
@@ -314,6 +325,7 @@ lsmod | grep -E "(virtio|vbox|vmw)"
 ```
 
 **Guest tools not working**:
+
 ```bash
 # QEMU/KVM
 systemctl status qemu-guest-agent
@@ -328,6 +340,7 @@ lsmod | grep virtio
 ```
 
 **Network issues**:
+
 ```bash
 # Check interface names
 ip link show
@@ -341,6 +354,7 @@ nmcli device status
 ```
 
 **Graphics problems**:
+
 ```bash
 # Check graphics drivers
 lspci | grep VGA
@@ -354,6 +368,7 @@ VBoxClient --clipboard
 ### Performance Issues
 
 **Slow boot**:
+
 ```nix
 # Reduce boot timeout
 boot.loader.grub.timeout = 1;
@@ -364,6 +379,7 @@ services.gnome.evolution-data-server.enable = false;
 ```
 
 **High CPU usage**:
+
 ```bash
 # Check running processes
 htop
@@ -374,6 +390,7 @@ systemctl disable cups
 ```
 
 **Memory pressure**:
+
 ```nix
 # Reduce memory usage
 services.gnome.gnome-keyring.enable = false;
@@ -398,8 +415,8 @@ modules.virtualization.libvirt.enable = true;
 
 ```nix
 # Enable VFIO for GPU passthrough
-boot.kernelParams = [ 
-  "intel_iommu=on" 
+boot.kernelParams = [
+  "intel_iommu=on"
   "vfio-pci.ids=10de:1234,10de:5678"  # GPU vendor:device IDs
 ];
 
@@ -468,6 +485,7 @@ systemd.services."vm-manager" = {
 ### File Sharing
 
 **QEMU 9P sharing**:
+
 ```bash
 # Host side
 qemu-system-x86_64 -virtfs local,path=/host/share,mount_tag=hostshare,security_model=passthrough,id=hostshare
@@ -481,6 +499,7 @@ fileSystems."/mnt/host" = {
 ```
 
 **VirtualBox shared folders**:
+
 ```nix
 # Automatically mount VirtualBox shared folders
 fileSystems."/media/sf_shared" = {

@@ -8,70 +8,70 @@ in
 {
   options.modules.virtualization.virt-manager = {
     enable = mkEnableOption "Virtual machine manager applications for different desktop environments";
-    
+
     applications = {
       virt-manager = mkOption {
         type = types.bool;
         default = true;
         description = "Install virt-manager (GTK-based, works with GNOME/GTK DEs)";
       };
-      
+
       gnome-boxes = mkOption {
         type = types.bool;
         default = false;
         description = "Install GNOME Boxes (GNOME-native virtualization)";
       };
-      
+
       virt-viewer = mkOption {
         type = types.bool;
         default = true;
         description = "Install virt-viewer for viewing VM consoles";
       };
-      
+
       qemu-gui = mkOption {
         type = types.bool;
         default = false;
         description = "Install QEMU GUI tools";
       };
-      
+
       cockpit-machines = mkOption {
         type = types.bool;
         default = false;
         description = "Install Cockpit machines plugin for web-based management";
       };
     };
-    
+
     remoteConnections = {
       enable = mkOption {
         type = types.bool;
         default = true;
         description = "Enable remote libvirt connections";
       };
-      
+
       ssh = mkOption {
         type = types.bool;
         default = true;
         description = "Enable SSH-based remote connections";
       };
     };
-    
+
     integrations = {
       nautilus = mkOption {
         type = types.bool;
         default = false;
         description = "Install Nautilus integration for GNOME Files";
       };
-      
+
       dolphin = mkOption {
         type = types.bool;
         default = false;
         description = "Install Dolphin integration for KDE";
       };
     };
-    
+
     extraPackages = mkOption {
       type = types.listOf types.package;
-      default = [];
+      default = [ ];
       description = "Additional virtualization-related packages";
       example = literalExpression ''
         with pkgs; [
@@ -98,19 +98,19 @@ in
       (mkIf cfg.applications.gnome-boxes gnome-boxes)
       (mkIf cfg.applications.virt-viewer virt-viewer)
       (mkIf cfg.applications.qemu-gui qemu_full)
-      
+
       # Remote access tools
       (mkIf cfg.remoteConnections.ssh openssh)
-      
+
       # Additional tools for VM management
-      libosinfo          # OS information database
-      osinfo-db-tools    # OS database tools
-      libguestfs         # Guest filesystem access
-      guestfs-tools      # Guest tools
-      
+      libosinfo # OS information database
+      osinfo-db-tools # OS database tools
+      libguestfs # Guest filesystem access
+      guestfs-tools # Guest tools
+
       # Integration packages
       (mkIf cfg.integrations.nautilus gvfs)
-      
+
       # User-specified extra packages
     ] ++ cfg.extraPackages;
 
@@ -141,13 +141,13 @@ in
         enable = true;
         defaultApplications = {
           # VM disk images
-          "application/x-qemu-disk" = mkIf cfg.applications.virt-manager ["virt-manager.desktop"];
-          "application/x-virtualbox-vdi" = mkIf cfg.applications.virt-manager ["virt-manager.desktop"];
-          "application/x-vmware-disk" = mkIf cfg.applications.virt-manager ["virt-manager.desktop"];
-          
+          "application/x-qemu-disk" = mkIf cfg.applications.virt-manager [ "virt-manager.desktop" ];
+          "application/x-virtualbox-vdi" = mkIf cfg.applications.virt-manager [ "virt-manager.desktop" ];
+          "application/x-vmware-disk" = mkIf cfg.applications.virt-manager [ "virt-manager.desktop" ];
+
           # VM configuration files
-          "application/x-libvirt-xml" = mkIf cfg.applications.virt-manager ["virt-manager.desktop"];
-          "text/x-libvirt-xml" = mkIf cfg.applications.virt-manager ["virt-manager.desktop"];
+          "application/x-libvirt-xml" = mkIf cfg.applications.virt-manager [ "virt-manager.desktop" ];
+          "text/x-libvirt-xml" = mkIf cfg.applications.virt-manager [ "virt-manager.desktop" ];
         };
       };
     };
@@ -200,7 +200,7 @@ in
         networkmanager-vpnc
         networkmanager-openconnect
       ];
-      
+
       # Don't manage libvirt bridges
       unmanaged = [ "interface-name:virbr*" "interface-name:br*" ];
     };
@@ -208,15 +208,15 @@ in
     # Firewall configuration for remote management
     networking.firewall = mkMerge [
       (mkIf cfg.remoteConnections.enable {
-        allowedTCPPorts = [ 16509 ];  # libvirtd TLS port
+        allowedTCPPorts = [ 16509 ]; # libvirtd TLS port
       })
-      
+
       (mkIf (cfg.remoteConnections.enable && !cfg.remoteConnections.ssh) {
-        allowedTCPPorts = [ 16514 ];  # libvirtd TCP port (insecure)
+        allowedTCPPorts = [ 16514 ]; # libvirtd TCP port (insecure)
       })
-      
+
       (mkIf cfg.applications.cockpit-machines {
-        allowedTCPPorts = [ 9090 ];   # Cockpit web interface
+        allowedTCPPorts = [ 9090 ]; # Cockpit web interface
       })
     ];
 
@@ -230,7 +230,7 @@ in
 
     # GNOME specific integrations
     programs.dconf.enable = mkIf cfg.applications.gnome-boxes true;
-    
+
     services.gnome = mkIf (cfg.applications.gnome-boxes && config.services.xserver.desktopManager.gnome.enable) {
       gnome-initial-setup.enable = mkDefault true;
     };
@@ -242,24 +242,24 @@ in
 
     # Font packages for better VM display
     fonts.packages = with pkgs; [
-      liberation_ttf      # Better font rendering in VMs
-      dejavu_fonts        # Wide character support
-      noto-fonts         # Unicode support
-      noto-fonts-cjk     # Asian language support
-      noto-fonts-emoji   # Emoji support
+      liberation_ttf # Better font rendering in VMs
+      dejavu_fonts # Wide character support
+      noto-fonts # Unicode support
+      noto-fonts-cjk # Asian language support
+      noto-fonts-emoji # Emoji support
     ];
 
     # Environment variables for VM management
     environment.sessionVariables = {
       # SPICE client configuration
       SPICE_DEBUG_LEVEL = mkIf cfg.applications.virt-viewer "1";
-      
+
       # virt-manager configuration
       VIRT_MANAGER_DEBUG = mkIf cfg.applications.virt-manager "0";
-      
+
       # Libvirt default URI
       LIBVIRT_DEFAULT_URI = "qemu:///system";
-      
+
       # GNOME Boxes configuration
       BOXES_DEBUG = mkIf cfg.applications.gnome-boxes "0";
     };
@@ -286,7 +286,7 @@ in
           ''}
         '';
       };
-      
+
       # virt-manager configuration template
       "virt-manager/virt-manager.conf" = mkIf cfg.applications.virt-manager {
         text = ''
@@ -314,7 +314,7 @@ in
           local-libvirt = qemu:///system
         '';
       };
-      
+
       # GNOME Boxes configuration
       "gnome-boxes/boxes.conf" = mkIf cfg.applications.gnome-boxes {
         text = ''
@@ -340,11 +340,11 @@ in
       # Create user VM directories
       "d /home/%i/VirtualMachines 0755 %i users -"
       "d /home/%i/.config/libvirt 0755 %i users -"
-      
+
       # GNOME Boxes storage
       "d /home/%i/.local/share/gnome-boxes 0755 %i users -"
       "d /home/%i/.local/share/gnome-boxes/images 0755 %i users -"
-      
+
       # Cockpit directories
       "d /var/lib/cockpit 0755 root root -"
       "d /etc/cockpit 0755 root root -"
@@ -372,7 +372,7 @@ in
     services = {
       # SPICE guest agent service (for guests)
       spice-vdagentd.enable = mkIf cfg.applications.virt-viewer true;
-      
+
       # Enable automatic login for single-user systems with VMs
       getty.autologinUser = mkIf cfg.applications.gnome-boxes null;
     };

@@ -9,31 +9,31 @@ in
 {
   options.modules.security.agenix = {
     enable = mkEnableOption "Age-based secret management with agenix";
-    
+
     secretsPath = mkOption {
       type = types.str;
       default = "/run/agenix";
       description = "Path where decrypted secrets will be stored";
     };
-    
+
     secretsMode = mkOption {
       type = types.str;
       default = "0400";
       description = "Default file mode for decrypted secrets";
     };
-    
+
     secretsOwner = mkOption {
       type = types.str;
       default = "root";
       description = "Default owner for decrypted secrets";
     };
-    
+
     secretsGroup = mkOption {
       type = types.str;
       default = "root";
       description = "Default group for decrypted secrets";
     };
-    
+
     identityPaths = mkOption {
       type = types.listOf types.str;
       default = [
@@ -42,7 +42,7 @@ in
       ];
       description = "List of identity files (private keys) for decryption";
     };
-    
+
     secrets = mkOption {
       type = types.attrsOf (types.submodule ({ name, ... }: {
         options = {
@@ -50,31 +50,31 @@ in
             type = types.path;
             description = "Path to the encrypted secret file";
           };
-          
+
           path = mkOption {
             type = types.str;
             default = "${cfg.secretsPath}/${name}";
             description = "Path where the decrypted secret will be installed";
           };
-          
+
           mode = mkOption {
             type = types.str;
             default = cfg.secretsMode;
             description = "File mode for this secret";
           };
-          
+
           owner = mkOption {
             type = types.str;
             default = cfg.secretsOwner;
             description = "Owner of this secret file";
           };
-          
+
           group = mkOption {
             type = types.str;
             default = cfg.secretsGroup;
             description = "Group of this secret file";
           };
-          
+
           symlink = mkOption {
             type = types.bool;
             default = true;
@@ -82,7 +82,7 @@ in
           };
         };
       }));
-      default = {};
+      default = { };
       description = "Attribute set of secrets to decrypt";
       example = literalExpression ''
         {
@@ -101,7 +101,7 @@ in
         }
       '';
     };
-    
+
     installationType = mkOption {
       type = types.enum [ "activation" "system" ];
       default = "activation";
@@ -125,32 +125,34 @@ in
         message = "agenix input is required. Add agenix to your flake inputs.";
       }
       {
-        assertion = cfg.identityPaths != [];
+        assertion = cfg.identityPaths != [ ];
         message = "At least one identity path must be specified for agenix";
       }
     ];
 
     # Configure agenix
     age = {
-      secrets = mapAttrs (name: secretConfig: {
-        file = secretConfig.file;
-        path = secretConfig.path;
-        mode = secretConfig.mode;
-        owner = secretConfig.owner;
-        group = secretConfig.group;
-        symlink = secretConfig.symlink;
-      }) cfg.secrets;
-      
+      secrets = mapAttrs
+        (_name: secretConfig: {
+          file = secretConfig.file;
+          path = secretConfig.path;
+          mode = secretConfig.mode;
+          owner = secretConfig.owner;
+          group = secretConfig.group;
+          symlink = secretConfig.symlink;
+        })
+        cfg.secrets;
+
       identityPaths = cfg.identityPaths;
     };
 
     # System packages for secret management
     environment.systemPackages = with pkgs; [
-      age                    # Age encryption tool
-      rage                   # Rust implementation of age
-      ssh-to-age            # Convert SSH keys to age keys
+      age # Age encryption tool
+      rage # Rust implementation of age
+      ssh-to-age # Convert SSH keys to age keys
     ] ++ optionals (inputs ? agenix) [
-      inputs.agenix.packages.${pkgs.system}.default  # agenix CLI tool
+      inputs.agenix.packages.${pkgs.system}.default # agenix CLI tool
     ];
 
     # Ensure secrets directory exists with proper permissions
@@ -180,8 +182,8 @@ in
       group = "agenix";
       home = cfg.secretsPath;
     };
-    
-    users.groups.agenix = {};
+
+    users.groups.agenix = { };
 
     # Systemd services for secret management
     systemd.services = mkMerge [
@@ -191,14 +193,14 @@ in
           description = "Install agenix secrets";
           wantedBy = [ "multi-user.target" ];
           after = [ "local-fs.target" ];
-          
+
           serviceConfig = {
             Type = "oneshot";
             RemainAfterExit = true;
             User = "root";
             Group = "root";
           };
-          
+
           script = ''
             # Ensure secrets directory exists
             mkdir -p ${cfg.secretsPath}
@@ -211,39 +213,41 @@ in
           '';
         };
       }
-      
+
       # Per-secret reload services (if using system installation)
       (mkIf (cfg.installationType == "system") (
-        mapAttrs' (name: secretConfig: {
-          name = "agenix-${name}";
-          value = {
-            description = "Agenix secret: ${name}";
-            after = [ "agenix-install-secrets.service" ];
-            wantedBy = [ "multi-user.target" ];
-            
-            serviceConfig = {
-              Type = "oneshot";
-              RemainAfterExit = true;
-              User = "root";
-              Group = "root";
+        mapAttrs'
+          (name: secretConfig: {
+            name = "agenix-${name}";
+            value = {
+              description = "Agenix secret: ${name}";
+              after = [ "agenix-install-secrets.service" ];
+              wantedBy = [ "multi-user.target" ];
+
+              serviceConfig = {
+                Type = "oneshot";
+                RemainAfterExit = true;
+                User = "root";
+                Group = "root";
+              };
+
+              script = ''
+                # Verify secret file exists and has correct permissions
+                if [ -f "${secretConfig.path}" ]; then
+                  chmod ${secretConfig.mode} "${secretConfig.path}"
+                  chown ${secretConfig.owner}:${secretConfig.group} "${secretConfig.path}"
+                  echo "Secret ${name} installed successfully"
+                else
+                  echo "Warning: Secret ${name} not found at ${secretConfig.path}"
+                  exit 1
+                fi
+              '';
+
+              # Reload service when secret file changes
+              restartTriggers = [ secretConfig.file ];
             };
-            
-            script = ''
-              # Verify secret file exists and has correct permissions
-              if [ -f "${secretConfig.path}" ]; then
-                chmod ${secretConfig.mode} "${secretConfig.path}"
-                chown ${secretConfig.owner}:${secretConfig.group} "${secretConfig.path}"
-                echo "Secret ${name} installed successfully"
-              else
-                echo "Warning: Secret ${name} not found at ${secretConfig.path}"
-                exit 1
-              fi
-            '';
-            
-            # Reload service when secret file changes
-            restartTriggers = [ secretConfig.file ];
-          };
-        }) cfg.secrets
+          })
+          cfg.secrets
       ))
     ];
 

@@ -1,8 +1,8 @@
-{ config, lib, pkgs, inputs, outputs, ... }:
+{ pkgs, ... }:
 
 {
   # Minimal Home Manager configuration for MicroVM
-  
+
   # Basic user info
   home = {
     username = "micro";
@@ -16,20 +16,20 @@
   # Minimal shell configuration
   programs.bash = {
     enable = true;
-    
+
     shellAliases = {
       # Essential aliases only
       ll = "ls -l";
       la = "ls -la";
-      
+
       # System info
       "sys" = "echo 'MicroVM:' $(hostname) '|' $(uname -r) '|' $(free -h | grep Mem | awk '{print $3\"/\"$2}')";
       "ip" = "ip -c addr show";
-      
+
       # Quick navigation
       ".." = "cd ..";
     };
-    
+
     bashrcExtra = ''
       # Ultra-minimal prompt
       export PS1="μvm:\w\$ "
@@ -46,7 +46,7 @@
       enable = true;
       aliases = {
         l = "ls";
-        ll = "ls -l"; 
+        ll = "ls -l";
       };
     };
   };
@@ -54,12 +54,12 @@
   # Minimal packages (only absolute essentials)
   home.packages = with pkgs; [
     # System utilities
-    procps    # ps, top, etc.
-    
+    procps # ps, top, etc.
+
     # Network tools
-    iproute2  # ip command
-    iputils   # ping
-    
+    iproute2 # ip command
+    iputils # ping
+
     # File utilities  
     file
     which
@@ -69,7 +69,7 @@
   home.sessionVariables = {
     EDITOR = "nano";
     PAGER = "cat";
-    
+
     # MicroVM identification
     MICROVM = "true";
     VM_TYPE = "microvm";
@@ -83,7 +83,7 @@
   xdg = {
     enable = true;
     userDirs = {
-      enable = false;  # Don't create extra directories
+      enable = false; # Don't create extra directories
     };
   };
 }

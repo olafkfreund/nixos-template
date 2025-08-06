@@ -9,70 +9,70 @@ in
 {
   options.modules.gaming.steam = {
     enable = mkEnableOption "Steam gaming platform with optimizations";
-    
+
     package = mkOption {
       type = types.package;
       default = pkgs.steam;
       description = "Steam package to use";
     };
-    
+
     remotePlay = {
       enable = mkOption {
         type = types.bool;
         default = true;
         description = "Enable Steam Remote Play functionality";
       };
-      
+
       openFirewall = mkOption {
         type = types.bool;
         default = true;
         description = "Open firewall ports for Steam Remote Play";
       };
     };
-    
+
     localNetworkGameTransfers = {
       enable = mkOption {
         type = types.bool;
         default = true;
         description = "Enable Steam Local Network Game Transfers";
       };
-      
+
       openFirewall = mkOption {
         type = types.bool;
         default = true;
         description = "Open firewall ports for Local Network Game Transfers";
       };
     };
-    
+
     gamescopeSession = {
       enable = mkOption {
         type = types.bool;
         default = false;
         description = "Enable gamescope session for Steam Big Picture mode";
       };
-      
+
       args = mkOption {
         type = types.listOf types.str;
-        default = [];
+        default = [ ];
         description = "Additional arguments to pass to gamescope";
         example = [ "--rt" "--prefer-vk-device" "8086:9bc4" ];
       };
     };
-    
+
     compattools = {
       proton-ge = mkOption {
         type = types.bool;
         default = true;
         description = "Install Proton-GE for better game compatibility";
       };
-      
+
       luxtorpeda = mkOption {
         type = types.bool;
         default = false;
         description = "Install Luxtorpeda for native Linux game engines";
       };
     };
-    
+
     hardware = {
       steam-hardware = mkOption {
         type = types.bool;
@@ -80,7 +80,7 @@ in
         description = "Enable support for Steam hardware (Steam Deck, Index, etc.)";
       };
     };
-    
+
     fonts = {
       enable = mkOption {
         type = types.bool;
@@ -88,30 +88,30 @@ in
         description = "Install additional fonts for better game compatibility";
       };
     };
-    
+
     performance = {
       gamemode = mkOption {
         type = types.bool;
         default = true;
         description = "Enable GameMode for performance optimization";
       };
-      
+
       mangohud = mkOption {
         type = types.bool;
         default = true;
         description = "Enable MangoHud for performance overlay";
       };
-      
+
       optimizations = mkOption {
         type = types.bool;
         default = true;
         description = "Apply system optimizations for gaming";
       };
     };
-    
+
     extraPackages = mkOption {
       type = types.listOf types.package;
-      default = [];
+      default = [ ];
       description = "Additional packages to install for Steam gaming";
       example = literalExpression ''
         with pkgs; [
@@ -167,17 +167,17 @@ in
           inhibit_screensaver = 1;
           softrealtime = "auto";
         };
-        
+
         filter = {
           whitelist = "steam";
         };
-        
+
         gpu = {
           apply_gpu_optimisations = "accept-responsibility";
           gpu_device = 0;
           amd_performance_level = "high";
         };
-        
+
         custom = {
           start = "${pkgs.libnotify}/bin/notify-send 'GameMode activated' 'System optimized for gaming'";
           end = "${pkgs.libnotify}/bin/notify-send 'GameMode deactivated' 'System back to normal'";
@@ -189,38 +189,38 @@ in
     environment.systemPackages = with pkgs; [
       # Core Steam and gaming tools
       cfg.package
-      
+
       # Performance monitoring and optimization
       (mkIf cfg.performance.mangohud mangohud)
       (mkIf cfg.performance.gamemode gamemode)
-      
+
       # Proton and compatibility tools
       (mkIf cfg.compattools.proton-ge proton-ge-bin)
       (mkIf cfg.compattools.luxtorpeda luxtorpeda)
       protontricks
-      
+
       # Gaming utilities
       steamtinkerlaunch
       steam-run
-      
+
       # Audio support
       pulseaudio
       pavucontrol
-      
+
       # Input device support
       linuxConsoleTools
       jstest-gtk
-      
+
       # Wine for additional Windows game support
       wine
       winetricks
-      
+
       # Additional gaming fonts
       (mkIf cfg.fonts.enable liberation_ttf)
       (mkIf cfg.fonts.enable dejavu_fonts)
       (mkIf cfg.fonts.enable source-han-sans)
       (mkIf cfg.fonts.enable wqy_zenhei)
-      
+
       # Extra packages specified by user
     ] ++ cfg.extraPackages;
 
@@ -231,21 +231,21 @@ in
         # CPU scheduling optimizations
         "preempt=full"
         "threadirqs"
-        
+
         # Memory management
         "transparent_hugepage=madvise"
-        
+
         # Reduce audio latency
         "snd_hda_intel.power_save=0"
       ];
-      
+
       # Use latest kernel for better hardware support
       kernelPackages = mkDefault pkgs.linuxPackages_latest;
-      
+
       # Kernel modules for gaming hardware
       kernelModules = [
-        "uinput"      # For Steam Controller and input remapping
-        "snd-seq"     # For MIDI support in games
+        "uinput" # For Steam Controller and input remapping
+        "snd-seq" # For MIDI support in games
         "snd-rawmidi" # For raw MIDI support
       ];
     };
@@ -256,7 +256,7 @@ in
       services = {
         # Disable power management that might interfere with gaming
         power-profiles-daemon.enable = mkForce false;
-        
+
         # Configure user slice for better gaming performance
         "user@".serviceConfig = {
           CPUWeight = 100;
@@ -264,7 +264,7 @@ in
           MemoryHigh = "75%";
           TasksMax = 12288;
         };
-        
+
         # System-wide gaming optimizations service
         steam-system-optimizations = {
           description = "System-wide Steam gaming optimizations";
@@ -291,19 +291,19 @@ in
           };
         };
       };
-      
+
       # Gaming-specific tmpfiles
       tmpfiles.rules = [
         # Create Steam runtime directory with proper permissions
         "d /tmp/.X11-unix 1777 root root -"
-        
+
         # Ensure proper permissions for audio
         "d /dev/snd 0755 root audio -"
-        
+
         # Create directory for MangoHud configs
         "d /etc/mangohud 0755 root root -"
       ];
-      
+
       # User services for gaming optimizations
       user.services = {
         # Steam optimization service
@@ -339,7 +339,7 @@ in
     security = {
       # Allow games to use realtime scheduling
       rtkit.enable = mkDefault true;
-      
+
       # Gaming-related PAM limits
       pam.loginLimits = mkIf cfg.performance.optimizations [
         {
@@ -403,14 +403,14 @@ in
         noto-fonts-cjk-sans
         noto-fonts-emoji
       ];
-      
+
       fontconfig = {
         enable = true;
         antialias = true;
         hinting.enable = true;
         hinting.style = "full";
         subpixel.rgba = "rgb";
-        
+
         defaultFonts = {
           serif = [ "Liberation Serif" "DejaVu Serif" ];
           sansSerif = [ "Liberation Sans" "DejaVu Sans" ];
@@ -450,38 +450,38 @@ in
     '';
 
     # Create steam user group
-    users.groups.steam = {};
-    
+    users.groups.steam = { };
+
     # Environment variables for Steam and gaming
     environment.sessionVariables = {
       # Steam optimizations
       STEAM_RUNTIME_PREFER_HOST_LIBRARIES = "0";
-      
+
       # Proton optimizations
       PROTON_USE_WINED3D = "0";
       PROTON_NO_ESYNC = "0";
       PROTON_NO_FSYNC = "0";
       PROTON_ENABLE_NVAPI = "1";
-      
+
       # DXVK optimizations
       DXVK_LOG_LEVEL = "none";
       DXVK_CONFIG_FILE = "/etc/dxvk.conf";
-      
+
       # VKD3D optimizations
       VKD3D_CONFIG = "dxr";
-      
+
       # MangoHud
       MANGOHUD = mkIf cfg.performance.mangohud "1";
       MANGOHUD_CONFIGFILE = "/etc/mangohud/MangoHud.conf";
-      
+
       # Gaming-specific OpenGL optimizations
       __GL_THREADED_OPTIMIZATIONS = "1";
       __GL_SHADER_DISK_CACHE = "1";
       __GL_SHADER_DISK_CACHE_SKIP_CLEANUP = "1";
-      
+
       # Vulkan optimizations
       VK_ICD_FILENAMES = "/usr/share/vulkan/icd.d/nvidia_icd.json:/usr/share/vulkan/icd.d/intel_icd.x86_64.json:/usr/share/vulkan/icd.d/radeon_icd.x86_64.json";
-      
+
       # Wine optimizations
       WINEPREFIX = "$HOME/.wine";
       WINEARCH = "win64";

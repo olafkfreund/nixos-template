@@ -1,14 +1,14 @@
-{ config, lib, pkgs, inputs, outputs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 {
   imports = [
     # Hardware configuration (generate with nixos-generate-config)
     ./hardware-configuration.nix
-    
+
     # Core modules only (no desktop)
     ../../modules/core
     ../../modules/development
-    
+
     # Hardware support
     ../../modules/hardware
     inputs.nixos-hardware.nixosModules.common-pc
@@ -27,15 +27,15 @@
         userEmail = "admin@example.com";
       };
     };
-    
+
     # GPU Configuration for AI/Compute workloads
     hardware.gpu = {
       # Auto-detect GPUs (recommended)
       autoDetect = true;
-      profile = "ai-compute";  # Optimized for AI/ML workloads
-      
+      profile = "ai-compute"; # Optimized for AI/ML workloads
+
       # Manual GPU selection for AI/Compute (uncomment the one you have)
-      
+
       # AMD GPU for AI/Compute (ROCm)
       # amd = {
       #   enable = true;
@@ -51,7 +51,7 @@
       #     profile = "high";  # High performance for compute
       #   };
       # };
-      
+
       # NVIDIA GPU for AI/Compute (CUDA)
       # nvidia = {
       #   enable = true;
@@ -72,7 +72,7 @@
       #     enable = true;       # Professional features
       #   };
       # };
-      
+
       # Intel Arc/Xe for AI/Compute (OneAPI)
       # intel = {
       #   enable = true;
@@ -84,7 +84,7 @@
       #     level_zero = true;   # Level Zero API
       #   };
       # };
-      
+
       # Multi-GPU compute setup
       # multiGpu = {
       #   enable = true;
@@ -97,23 +97,23 @@
   users.users.server-admin = {
     isNormalUser = true;
     description = "Server Administrator";
-    extraGroups = [ 
-      "wheel"        # sudo access
-      "docker"       # container access (if enabled)
-      "video"        # GPU access
-      "render"       # compute access
+    extraGroups = [
+      "wheel" # sudo access
+      "docker" # container access (if enabled)
+      "video" # GPU access
+      "render" # compute access
     ];
-    
+
     # Use SSH keys for authentication
     openssh.authorizedKeys.keys = [
       # Add your SSH public keys here
       # "ssh-rsa AAAAB3NzaC1yc2EAAAA... user@host"
     ];
-    
+
     # No password login for security
     hashedPassword = "!";
   };
-  
+
   # Home Manager configuration for server admin
   home-manager.users.server-admin = import ./home.nix;
 
@@ -128,15 +128,15 @@
         PubkeyAuthentication = true;
       };
     };
-    
+
     # Monitoring
     prometheus = {
-      enable = lib.mkDefault false;  # Enable if you want monitoring
+      enable = lib.mkDefault false; # Enable if you want monitoring
     };
-    
+
     # Container runtime (for AI workloads)
     docker = {
-      enable = lib.mkDefault false;  # Enable if needed
+      enable = lib.mkDefault false; # Enable if needed
       enableOnBoot = true;
     };
   };
@@ -145,17 +145,17 @@
   networking = {
     # Use NetworkManager for flexibility, or configure static IPs
     networkmanager.enable = lib.mkDefault true;
-    
+
     # Firewall configuration
     firewall = {
       enable = true;
-      allowedTCPPorts = [ 
-        22    # SSH
+      allowedTCPPorts = [
+        22 # SSH
         # 8080  # Add application ports as needed
       ];
       allowPing = true;
     };
-    
+
     # Server networking optimizations
     kernel.sysctl = {
       # Network performance tuning
@@ -163,7 +163,7 @@
       "net.core.wmem_max" = 268435456;
       "net.ipv4.tcp_rmem" = "4096 65536 268435456";
       "net.ipv4.tcp_wmem" = "4096 65536 268435456";
-      
+
       # For high-performance computing
       "vm.swappiness" = 10;
       "vm.dirty_ratio" = 15;
@@ -175,7 +175,7 @@
   hardware = {
     # Enable firmware
     enableRedistributableFirmware = true;
-    
+
     # CPU microcode
     cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
     # cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
@@ -187,29 +187,29 @@
     loader = {
       grub = {
         enable = lib.mkDefault true;
-        device = lib.mkDefault "/dev/sda";  # Adjust for your setup
+        device = lib.mkDefault "/dev/sda"; # Adjust for your setup
         timeout = 5;
       };
-      
+
       # Disable systemd-boot for servers
       systemd-boot.enable = lib.mkForce false;
     };
-    
+
     # Server kernel parameters
     kernelParams = [
       "quiet"
       "loglevel=3"
-      
+
       # Memory management for large datasets
       "transparent_hugepage=always"
-      
+
       # CPU isolation for compute workloads (optional)
       # "isolcpus=2-7"  # Isolate CPUs 2-7 for compute tasks
     ];
-    
+
     # Kernel modules for server hardware
-    kernelModules = [ 
-      "kvm-intel"  # or kvm-amd
+    kernelModules = [
+      "kvm-intel" # or kvm-amd
     ];
   };
 
@@ -219,43 +219,43 @@
     htop
     iotop
     nethogs
-    
+
     # Network tools
     netcat
     socat
     nmap
-    
+
     # Container tools (if using containers)
     docker-compose
-    
+
     # File transfer
     rsync
-    
+
     # Text processing
     jq
     yq
-    
+
     # System utilities
     screen
     tmux
     vim
-    
+
     # GPU monitoring (added automatically based on GPU selection)
-    nvtop  # Works with both NVIDIA and AMD
+    nvtop # Works with both NVIDIA and AMD
   ];
 
   # Virtualization support (for VMs or containers)
   virtualisation = {
     # Enable KVM
-    libvirtd.enable = lib.mkDefault false;  # Enable if needed
-    
+    libvirtd.enable = lib.mkDefault false; # Enable if needed
+
     # Docker configuration
     docker = lib.mkIf config.services.docker.enable {
       enableOnBoot = true;
-      
+
       # NVIDIA container support (enabled automatically if NVIDIA GPU is detected)
       enableNvidia = config.modules.hardware.gpu.nvidia.enable;
-      
+
       # Docker daemon configuration
       daemon.settings = {
         # Logging configuration
@@ -264,7 +264,7 @@
           max-size = "10m";
           max-file = "3";
         };
-        
+
         # Storage optimization
         storage-driver = "overlay2";
       };
@@ -275,16 +275,16 @@
   powerManagement = {
     enable = false;
   };
-  
+
   # Disable unnecessary services for servers
   services = {
     # No power management services
     thermald.enable = false;
     tlp.enable = false;
-    
+
     # No desktop services
     avahi.enable = false;
-    
+
     # Minimal logging for performance
     journald.extraConfig = ''
       SystemMaxUse=1G
@@ -296,7 +296,7 @@
   security = {
     # Stricter sudo configuration
     sudo.wheelNeedsPassword = true;
-    
+
     # Audit framework
     audit.enable = true;
     auditd.enable = true;

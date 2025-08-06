@@ -5,6 +5,7 @@ This directory contains a comprehensive Neovim configuration built with Nixvim a
 ## Features
 
 ### Core Functionality
+
 - **LSP Integration**: Full Language Server Protocol support for multiple languages
 - **Fuzzy Finding**: Telescope for finding files, text, and commands
 - **Syntax Highlighting**: Tree-sitter for accurate syntax highlighting
@@ -12,6 +13,7 @@ This directory contains a comprehensive Neovim configuration built with Nixvim a
 - **Git Integration**: Gitsigns for in-editor Git operations
 
 ### Development Environment
+
 - **File Explorer**: nvim-tree for project navigation
 - **Status Line**: Lualine with Git and LSP information
 - **Buffer Management**: Bufferline for easy buffer switching
@@ -19,6 +21,7 @@ This directory contains a comprehensive Neovim configuration built with Nixvim a
 - **Code Formatting**: Automatic formatting on save
 
 ### Supported Languages
+
 - **Nix**: Full support with nil LSP and nixpkgs-fmt
 - **Rust**: rust-analyzer with automatic formatting
 - **Go**: gopls with Go-specific features
@@ -29,6 +32,7 @@ This directory contains a comprehensive Neovim configuration built with Nixvim a
 - **Lua**: lua-ls for Neovim configuration
 
 ### Modern Features
+
 - **Which-key**: Interactive key binding help
 - **Auto-pairs**: Automatic bracket/quote completion
 - **Surround**: Easy text object manipulation
@@ -52,6 +56,7 @@ imports = [
 ### First Launch
 
 1. **Start Nixvim**:
+
    ```bash
    nvim
    ```
@@ -67,6 +72,7 @@ imports = [
 **Leader Key**: `Space`
 
 **File Operations**:
+
 - `<leader>ff` - Find files (Telescope)
 - `<leader>fg` - Live grep (search in files)
 - `<leader>fb` - Switch buffers
@@ -77,6 +83,7 @@ imports = [
 - `<leader>x` - Save and quit
 
 **LSP Operations**:
+
 - `gd` - Go to definition
 - `gr` - Find references
 - `gi` - Go to implementation
@@ -87,19 +94,23 @@ imports = [
 - `[d` / `]d` - Navigate diagnostics
 
 **Git Operations**:
+
 - `<leader>gg` - LazyGit (floating terminal)
 - Git signs show in the gutter automatically
 
 **Terminal**:
+
 - `<C-\>` - Toggle terminal
 - `<C-h/j/k/l>` - Navigate between terminal and editor
 
 **Buffer Management**:
+
 - `Tab` - Next buffer
 - `Shift+Tab` - Previous buffer
 - `<leader>bd` - Delete buffer
 
 **Window Navigation**:
+
 - `<C-h/j/k/l>` - Navigate between splits
 - `<C-Arrow>` - Resize windows
 
@@ -118,6 +129,7 @@ imports = [
 To add support for a new language:
 
 1. **Add Tree-sitter parser**:
+
 ```nix
 treesitter = {
   settings = {
@@ -130,6 +142,7 @@ treesitter = {
 ```
 
 2. **Add LSP server**:
+
 ```nix
 lsp = {
   servers = {
@@ -142,6 +155,7 @@ lsp = {
 ```
 
 3. **Add formatter to system packages**:
+
 ```nix
 home.packages = with pkgs; [
   # existing packages...
@@ -167,6 +181,7 @@ colorschemes.gruvbox = {
 ```
 
 Available colorschemes:
+
 - `catppuccin` (default)
 - `gruvbox`
 - `tokyonight`
@@ -306,30 +321,35 @@ toggleterm = {
 ## Language-Specific Features
 
 ### Rust Development
+
 - **rust-analyzer**: Intelligent code analysis
 - **Cargo integration**: Run tests and build from editor
 - **Rustfmt**: Automatic code formatting
 - **Clippy**: Linting with Rust's linter
 
 ### Python Development
+
 - **Pyright**: Type checking and intelligent completion
 - **Black**: Code formatting
 - **Import organization**: Automatic import sorting
 - **Virtual environment**: Automatic detection
 
 ### Go Development
+
 - **gopls**: Official Go language server
 - **Gofmt**: Automatic formatting
 - **Go modules**: Full support for Go modules
 - **Testing**: Integrated test running
 
 ### JavaScript/TypeScript
+
 - **tsserver**: Full TypeScript/JavaScript support
 - **Prettier**: Code formatting
 - **ESLint**: Linting (when available)
 - **Node.js**: Full ecosystem support
 
 ### Nix Development
+
 - **nil**: Nix language server
 - **nixpkgs-fmt**: Automatic formatting
 - **Syntax highlighting**: Full Nix syntax support
@@ -340,22 +360,26 @@ toggleterm = {
 ### Common Issues
 
 **LSP not working**:
+
 1. Check if language server is installed: `which rust-analyzer`
 2. Restart LSP: `:LspRestart`
 3. Check LSP status: `:LspInfo`
 4. View LSP logs: `:LspLog`
 
 **Treesitter errors**:
+
 1. Update parsers: `:TSUpdate`
 2. Check installation: `:TSInstallInfo`
 3. Reinstall parser: `:TSInstall language-name`
 
 **Completion not working**:
+
 1. Check if LSP is running: `:LspInfo`
 2. Check completion sources: Type something and see if menu appears
 3. Check if nvim-cmp is loaded: `:lua print(vim.inspect(require('cmp')))`
 
 **Telescope not finding files**:
+
 1. Check if ripgrep is installed: `which rg`
 2. Check if fd is installed: `which fd`
 3. Try from project root: `:cd /path/to/project`
@@ -363,16 +387,19 @@ toggleterm = {
 ### Performance Issues
 
 **Slow startup**:
+
 1. Check plugin count: Too many plugins can slow startup
 2. Profile startup: `nvim --startuptime startup.log`
 3. Lazy load plugins when possible
 
 **High memory usage**:
+
 1. Check LSP memory usage
 2. Disable unused language servers
 3. Reduce Treesitter parsers to only needed ones
 
 **Slow completion**:
+
 1. Adjust completion settings:
    ```lua
    require('cmp').setup({
@@ -385,17 +412,20 @@ toggleterm = {
 ### Debugging
 
 **Enable verbose logging**:
+
 ```vim
 :set verbose=9
 ```
 
 **Check configuration**:
+
 ```vim
 :checkhealth
 :lua print(vim.inspect(vim.lsp.get_active_clients()))
 ```
 
 **Plugin debugging**:
+
 ```vim
 :messages
 :lua print(vim.inspect(package.loaded))
@@ -415,16 +445,19 @@ The configuration integrates with NixOS/Home Manager by:
 ### Updating Configuration
 
 1. **Edit the configuration**:
+
    ```bash
    $EDITOR home/editors/nixvim.nix
    ```
 
 2. **Test changes**:
+
    ```bash
    just test hostname
    ```
 
 3. **Apply changes**:
+
    ```bash
    just switch hostname
    ```
@@ -434,6 +467,7 @@ The configuration integrates with NixOS/Home Manager by:
 ### Version Management
 
 **Update Neovim version**:
+
 ```nix
 programs.nixvim = {
   package = pkgs.neovim-unwrapped;  # Always latest
@@ -449,17 +483,20 @@ programs.nixvim = {
 ## Learning Resources
 
 ### Neovim/Vim Basics
+
 - [Neovim Documentation](https://neovim.io/doc/)
 - [Vim Tutorial](https://github.com/iggredible/Learn-Vim) (built-in: `vimtutor`)
 - [Vim Adventures](https://vim-adventures.com/) (interactive learning)
 
 ### Plugin Documentation
+
 - [Telescope](https://github.com/nvim-telescope/telescope.nvim)
 - [LSP Config](https://github.com/neovim/nvim-lspconfig)
 - [nvim-cmp](https://github.com/hrsh7th/nvim-cmp)
 - [Treesitter](https://github.com/nvim-treesitter/nvim-treesitter)
 
 ### Advanced Topics
+
 - [Nixvim Documentation](https://nix-community.github.io/nixvim/)
 - [Neovim Lua Guide](https://github.com/nanotee/nvim-lua-guide)
 - [LSP Configuration](https://microsoft.github.io/language-server-protocol/)
@@ -467,16 +504,19 @@ programs.nixvim = {
 ## Migration from Other Configs
 
 ### From regular Neovim
+
 - Configuration is declarative (no init.lua editing)
 - Packages managed by Nix
 - Similar key bindings and workflow
 
 ### From VSCode
+
 - LSP provides similar IDE features
 - Telescope replaces Ctrl+P functionality
 - Integrated terminal available
 
 ### From Vim
+
 - Modern features while maintaining Vim philosophy
 - Familiar key bindings with enhancements
 - Better defaults out of the box

@@ -6,7 +6,7 @@ in
 {
   options.modules.desktop.niri = {
     enable = lib.mkEnableOption "Niri scrollable-tiling compositor";
-    
+
     # Niri configuration
     settings = {
       # Input configuration
@@ -32,22 +32,22 @@ in
                 };
               };
             };
-            default = {};
+            default = { };
           };
-          
+
           repeat-delay = lib.mkOption {
             type = lib.types.int;
             default = 600;
             description = "Keyboard repeat delay in milliseconds";
           };
-          
+
           repeat-rate = lib.mkOption {
             type = lib.types.int;
             default = 25;
             description = "Keyboard repeat rate";
           };
         };
-        
+
         mouse = {
           natural-scroll = lib.mkEnableOption "natural scrolling" // { default = false; };
           accel-speed = lib.mkOption {
@@ -61,7 +61,7 @@ in
             description = "Mouse acceleration profile";
           };
         };
-        
+
         touchpad = {
           tap = lib.mkEnableOption "tap to click" // { default = true; };
           dwt = lib.mkEnableOption "disable while typing" // { default = true; };
@@ -73,7 +73,7 @@ in
           };
         };
       };
-      
+
       # Output configuration
       outputs = lib.mkOption {
         type = lib.types.listOf (lib.types.submodule {
@@ -130,10 +130,10 @@ in
             };
           };
         });
-        default = [];
+        default = [ ];
         description = "Output configurations";
       };
-      
+
       # Layout configuration
       layout = {
         gaps = lib.mkOption {
@@ -141,13 +141,13 @@ in
           default = 16;
           description = "Gap size between windows";
         };
-        
+
         center-focused-column = lib.mkOption {
           type = lib.types.enum [ "never" "always" "on-overflow" ];
           default = "on-overflow";
           description = "When to center the focused column";
         };
-        
+
         preset-column-widths = lib.mkOption {
           type = lib.types.listOf (lib.types.submodule {
             options = {
@@ -164,7 +164,7 @@ in
           ];
           description = "Preset column width proportions";
         };
-        
+
         default-column-width = lib.mkOption {
           type = lib.types.nullOr (lib.types.submodule {
             options = {
@@ -178,7 +178,7 @@ in
           description = "Default column width";
         };
       };
-      
+
       # Window rules
       window-rules = lib.mkOption {
         type = lib.types.listOf (lib.types.submodule {
@@ -200,7 +200,7 @@ in
               });
               description = "Window matching criteria";
             };
-            
+
             default-column-width = lib.mkOption {
               type = lib.types.nullOr (lib.types.submodule {
                 options = {
@@ -213,19 +213,19 @@ in
               default = null;
               description = "Default column width for matching windows";
             };
-            
+
             open-on-output = lib.mkOption {
               type = lib.types.nullOr lib.types.str;
               default = null;
               description = "Output to open window on";
             };
-            
+
             open-maximized = lib.mkOption {
               type = lib.types.nullOr lib.types.bool;
               default = null;
               description = "Open window maximized";
             };
-            
+
             open-fullscreen = lib.mkOption {
               type = lib.types.nullOr lib.types.bool;
               default = null;
@@ -233,24 +233,24 @@ in
             };
           };
         });
-        default = [];
+        default = [ ];
         description = "Window rules for specific applications";
       };
-      
+
       # Appearance
       prefer-no-csd = lib.mkEnableOption "prefer server-side decorations" // { default = false; };
-      
+
       hotkey-overlay = {
         skip-at-startup = lib.mkEnableOption "skip hotkey overlay at startup" // { default = false; };
       };
-      
+
       screenshot-path = lib.mkOption {
         type = lib.types.nullOr lib.types.str;
         default = null;
         description = "Path for screenshots (null for clipboard)";
       };
     };
-    
+
     # Waybar configuration
     waybar = {
       enable = lib.mkEnableOption "Waybar status bar" // { default = true; };
@@ -259,7 +259,7 @@ in
         default = "top";
         description = "Waybar position";
       };
-      
+
       modules = {
         workspaces = lib.mkEnableOption "workspace indicator" // { default = true; };
         window = lib.mkEnableOption "window title" // { default = true; };
@@ -269,18 +269,18 @@ in
         pulseaudio = lib.mkEnableOption "audio widget" // { default = true; };
         tray = lib.mkEnableOption "system tray" // { default = true; };
       };
-      
+
       theme = lib.mkOption {
         type = lib.types.enum [ "default" "minimal" "niri" ];
         default = "niri";
         description = "Waybar theme style";
       };
     };
-    
+
     # Dunst notification daemon
     dunst = {
       enable = lib.mkEnableOption "Dunst notification daemon" // { default = true; };
-      
+
       settings = {
         urgency_low = {
           timeout = lib.mkOption {
@@ -289,7 +289,7 @@ in
             description = "Timeout for low urgency notifications";
           };
         };
-        
+
         urgency_normal = {
           timeout = lib.mkOption {
             type = lib.types.int;
@@ -297,7 +297,7 @@ in
             description = "Timeout for normal urgency notifications";
           };
         };
-        
+
         urgency_critical = {
           timeout = lib.mkOption {
             type = lib.types.int;
@@ -307,7 +307,7 @@ in
         };
       };
     };
-    
+
     # Applications and utilities
     applications = {
       terminal = lib.mkOption {
@@ -315,55 +315,55 @@ in
         default = "alacritty";
         description = "Default terminal application";
       };
-      
+
       launcher = lib.mkOption {
         type = lib.types.str;
         default = "fuzzel";
         description = "Application launcher (fuzzel works well with niri)";
       };
-      
+
       fileManager = lib.mkOption {
         type = lib.types.str;
         default = "thunar";
         description = "Default file manager";
       };
-      
+
       browser = lib.mkOption {
         type = lib.types.str;
         default = "firefox";
         description = "Default web browser";
       };
-      
+
       screenshot = lib.mkOption {
         type = lib.types.str;
         default = "grim";
         description = "Screenshot tool";
       };
     };
-    
+
     # Theme and styling
     theme = {
       enable = lib.mkEnableOption "custom theming" // { default = true; };
-      
+
       colorScheme = lib.mkOption {
         type = lib.types.enum [ "dark" "light" "auto" ];
         default = "dark";
         description = "Color scheme preference";
       };
-      
+
       wallpaper = lib.mkOption {
         type = lib.types.str;
         default = "";
         description = "Path to wallpaper image";
       };
-      
+
       cursor = {
         theme = lib.mkOption {
           type = lib.types.str;
           default = "Adwaita";
           description = "Cursor theme";
         };
-        
+
         size = lib.mkOption {
           type = lib.types.int;
           default = 24;
@@ -376,7 +376,7 @@ in
   config = lib.mkIf cfg.enable {
     # Enable Niri
     programs.niri.enable = true;
-    
+
     # Niri configuration file
     environment.etc."niri/config.kdl".text = ''
       // Niri configuration in KDL format
@@ -595,7 +595,7 @@ in
           Mod+Shift+Ctrl+T { toggle-debug-tint; }
       }
     '';
-    
+
     # Essential packages for Niri and Waybar
     environment.systemPackages = with pkgs; [
       # Waybar (if enabled)
@@ -605,63 +605,63 @@ in
       dunst
     ] ++ [
       # Core Wayland utilities
-      wl-clipboard      # Clipboard manager
-      wlr-randr        # Display configuration
-      
+      wl-clipboard # Clipboard manager
+      wlr-randr # Display configuration
+
       # Application launcher (fuzzel works great with niri)
-      fuzzel           # Fast application launcher
-      wofi             # Alternative launcher
-      
+      fuzzel # Fast application launcher
+      wofi # Alternative launcher
+
       # Terminal emulators
-      alacritty        # Default terminal
-      foot             # Lightweight Wayland terminal
-      
+      alacritty # Default terminal
+      foot # Lightweight Wayland terminal
+
       # File manager
-      thunar           # File manager
-      
+      thunar # File manager
+
       # Screenshot and screen recording
-      grim             # Screenshot tool
-      slurp            # Screen area selection
-      swappy           # Screenshot annotation
-      wf-recorder      # Screen recorder
-      
+      grim # Screenshot tool
+      slurp # Screen area selection
+      swappy # Screenshot annotation
+      wf-recorder # Screen recorder
+
       # Wallpaper
-      swaybg           # Wallpaper setter
-      
+      swaybg # Wallpaper setter
+
       # System utilities
-      brightnessctl    # Brightness control
-      pamixer          # Audio control
-      pavucontrol      # Audio mixer GUI
-      
+      brightnessctl # Brightness control
+      pamixer # Audio control
+      pavucontrol # Audio mixer GUI
+
       # Screen locker
-      swaylock         # Screen locker
-      
+      swaylock # Screen locker
+
       # Theme and appearance
-      gtk3             # GTK3 for theme support
+      gtk3 # GTK3 for theme support
       adwaita-icon-theme
       gnome-themes-extra
-      
+
       # Fonts
       jetbrains-mono
       font-awesome
-      
+
       # Media
-      imv              # Image viewer
-      mpv              # Video player
-      
+      imv # Image viewer
+      mpv # Video player
+
       # Archive support for file manager
-      file-roller      # Archive manager
-      
+      file-roller # Archive manager
+
       # Network management
       networkmanagerapplet
-      
+
       # System information
-      fastfetch        # System info
-      
+      fastfetch # System info
+
       # PDF viewer
-      zathura          # Minimal PDF viewer
+      zathura # Minimal PDF viewer
     ];
-    
+
     # Waybar configuration file
     environment.etc."xdg/waybar/config".text = lib.mkIf cfg.waybar.enable (builtins.toJSON {
       mainBar = {
@@ -669,22 +669,22 @@ in
         position = cfg.waybar.position;
         height = 35;
         spacing = 4;
-        
+
         modules-left = [ "niri/workspaces" "niri/window" ];
         modules-center = [ "clock" ];
-        modules-right = [ 
-          "pulseaudio" 
-          "network" 
-          "battery" 
-          "tray" 
+        modules-right = [
+          "pulseaudio"
+          "network"
+          "battery"
+          "tray"
         ];
-        
+
         # Niri-specific modules
         "niri/workspaces" = lib.mkIf cfg.waybar.modules.workspaces {
           current-only = false;
           all-outputs = true;
         };
-        
+
         "niri/window" = lib.mkIf cfg.waybar.modules.window {
           format = "{}";
           max-length = 50;
@@ -693,13 +693,13 @@ in
             "(.*) - Visual Studio Code" = "󰨞 $1";
           };
         };
-        
+
         clock = lib.mkIf cfg.waybar.modules.clock {
           timezone = "UTC";
           tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
           format-alt = "{:%Y-%m-%d}";
         };
-        
+
         battery = lib.mkIf cfg.waybar.modules.battery {
           states = {
             warning = 30;
@@ -711,7 +711,7 @@ in
           format-alt = "{time} {icon}";
           format-icons = [ "" "" "" "" "" ];
         };
-        
+
         network = lib.mkIf cfg.waybar.modules.network {
           format-wifi = "{essid} ({signalStrength}%) ";
           format-ethernet = "{ipaddr}/{cidr} ";
@@ -720,7 +720,7 @@ in
           format-disconnected = "Disconnected ⚠";
           format-alt = "{ifname}: {ipaddr}/{cidr}";
         };
-        
+
         pulseaudio = lib.mkIf cfg.waybar.modules.pulseaudio {
           format = "{volume}% {icon} {format_source}";
           format-bluetooth = "{volume}% {icon} {format_source}";
@@ -739,13 +739,13 @@ in
           };
           on-click = "pavucontrol";
         };
-        
+
         tray = lib.mkIf cfg.waybar.modules.tray {
           spacing = 10;
         };
       };
     });
-    
+
     # Waybar style configuration
     environment.etc."xdg/waybar/style.css".text = lib.mkIf cfg.waybar.enable ''
       * {
@@ -862,7 +862,7 @@ in
           color: #f38ba8;
       }
     '';
-    
+
     # Dunst notification daemon configuration
     environment.etc."xdg/dunst/dunstrc".text = lib.mkIf cfg.dunst.enable ''
       [global]
@@ -933,30 +933,30 @@ in
       frame_color = "#f38ba8"
       timeout = ${toString cfg.dunst.settings.urgency_critical.timeout}
     '';
-    
+
     # (systemPackages merged above)
-    
+
     # XDG portal for better app integration
     xdg.portal = {
       enable = true;
       extraPortals = with pkgs; [
-        xdg-desktop-portal-gnome  # For compatibility
+        xdg-desktop-portal-gnome # For compatibility
         xdg-desktop-portal-gtk
       ];
-      
+
       config = {
         common = {
           default = [ "gtk" ];
         };
       };
     };
-    
+
     # Security and authentication
     security = {
       polkit.enable = true;
-      pam.services.swaylock = {};
+      pam.services.swaylock = { };
     };
-    
+
     programs = {
       # Thunar file manager
       thunar = {
@@ -966,27 +966,27 @@ in
           thunar-volman
         ];
       };
-      
+
       # dconf for GTK application settings
       dconf.enable = true;
     };
-    
+
     # Services for desktop functionality
     services = {
       # Desktop services
-      gvfs.enable = true;           # Virtual filesystems
-      udisks2.enable = true;        # Disk management
-      upower.enable = true;         # Power management
+      gvfs.enable = true; # Virtual filesystems
+      udisks2.enable = true; # Disk management
+      upower.enable = true; # Power management
       accounts-daemon.enable = true; # Account management
       gnome.gnome-keyring.enable = true; # Keyring for secrets
-      
+
       # Audio
       pipewire = {
         enable = true;
         audio.enable = true;
         pulse.enable = true;
         jack.enable = false;
-        
+
         # Low latency configuration
         extraConfig.pipewire = {
           "92-low-latency" = {
@@ -997,7 +997,7 @@ in
           };
         };
       };
-      
+
       # Display manager (minimal)
       greetd = {
         enable = true;
@@ -1009,7 +1009,7 @@ in
         };
       };
     };
-    
+
     # Fonts configuration
     fonts = {
       packages = with pkgs; [
@@ -1019,7 +1019,7 @@ in
         noto-fonts-cjk
         noto-fonts-emoji
       ];
-      
+
       fontconfig = {
         enable = true;
         defaultFonts = {
@@ -1027,35 +1027,35 @@ in
         };
       };
     };
-    
+
     # Environment variables
     environment.sessionVariables = {
       # Wayland variables
       XDG_CURRENT_DESKTOP = "niri";
       XDG_SESSION_DESKTOP = "niri";
       XDG_SESSION_TYPE = "wayland";
-      
+
       # Qt/GTK theming
       QT_QPA_PLATFORM = "wayland";
       QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
-      
+
       # Cursor theme
       XCURSOR_THEME = cfg.theme.cursor.theme;
       XCURSOR_SIZE = toString cfg.theme.cursor.size;
-      
+
       # Firefox Wayland
       MOZ_ENABLE_WAYLAND = "1";
-      
+
       # Java applications on Wayland
       _JAVA_AWT_WM_NONREPARENTING = "1";
-      
+
       # SDL Wayland
       SDL_VIDEODRIVER = "wayland";
-      
+
       # Clutter Wayland
       CLUTTER_BACKEND = "wayland";
     };
-    
+
     # Assertions to prevent conflicts
     assertions = [
       {

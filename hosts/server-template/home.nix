@@ -1,6 +1,6 @@
 # Server Home Manager Configuration
 # Minimal configuration focused on administration and monitoring
-{ config, pkgs, lib, ... }:
+{ pkgs, lib, ... }:
 
 {
   # Home Manager basics
@@ -8,7 +8,7 @@
     username = "user";
     homeDirectory = lib.mkForce "/home/user";
     stateVersion = "25.05";
-    
+
     packages = with pkgs; [
       # Essential server administration tools
       vim
@@ -22,14 +22,14 @@
       wget
       curl
       rsync
-      
+
       # System monitoring
       lm_sensors
       smartmontools
       lsof
       strace
       tcpdump
-      
+
       # Network utilities
       nmap
       netcat
@@ -38,31 +38,31 @@
       whois
       traceroute
       mtr
-      
+
       # Security tools
       lynis
       # rkhunter  # Package not available in nixpkgs
-      
+
       # Backup tools
       borgbackup
       rclone
-      
+
       # Container management
       podman-compose
       buildah
       skopeo
-      
+
       # Development/scripting
       python3
       nodejs
       jq
     ];
-    
+
     # Environment variables
     sessionVariables = {
       EDITOR = "vim";
       PAGER = "less";
-      SYSTEMD_LESS = "FRXMK";  # Better systemd output
+      SYSTEMD_LESS = "FRXMK"; # Better systemd output
     };
   };
 
@@ -77,11 +77,11 @@
         init.defaultBranch = "main";
         pull.rebase = false;
         push.autoSetupRemote = true;
-        
+
         # Server-friendly settings
         core.autocrlf = "input";
         fetch.prune = true;
-        
+
         # Safer defaults for server environments
         push.default = "simple";
         merge.conflictStyle = "diff3";
@@ -92,9 +92,9 @@
     bash = {
       enable = true;
       enableCompletion = true;
-      historySize = 50000;  # Large history for server work
+      historySize = 50000; # Large history for server work
       historyControl = [ "ignoreboth" "erasedups" ];
-      
+
       shellOptions = [
         "histappend"
         "checkwinsize"
@@ -102,7 +102,7 @@
         "globstar"
         "checkjobs"
       ];
-      
+
       shellAliases = {
         # File operations
         ll = "ls -la";
@@ -110,20 +110,20 @@
         l = "ls -l";
         ".." = "cd ..";
         "..." = "cd ../..";
-        
+
         # System monitoring
         "ps-mem" = "ps aux --sort=-%mem | head";
         "ps-cpu" = "ps aux --sort=-%cpu | head";
         "disk-usage" = "df -h";
         "memory" = "free -h";
         "processes" = "htop";
-        
+
         # Network monitoring
         "netstat-listen" = "netstat -tlnp";
         "netstat-all" = "netstat -tulnp";
         "ports" = "ss -tlnp";
         "connections" = "ss -tuln";
-        
+
         # Service management
         "sys-status" = "systemctl status";
         "sys-restart" = "sudo systemctl restart";
@@ -132,36 +132,36 @@
         "sys-enable" = "sudo systemctl enable";
         "sys-disable" = "sudo systemctl disable";
         "sys-reload" = "sudo systemctl reload";
-        
+
         # Log management
         "logs" = "sudo journalctl -f";
         "logs-error" = "sudo journalctl -p err -f";
         "logs-system" = "sudo journalctl -u";
         "logs-boot" = "sudo journalctl -b";
         "logs-kernel" = "sudo journalctl -k";
-        
+
         # Security
         "failed-logins" = "sudo journalctl -u sshd | grep 'Failed password'";
         "successful-logins" = "sudo journalctl -u sshd | grep 'Accepted password'";
         "auth-logs" = "sudo journalctl -u sshd -f";
-        
+
         # Hardware monitoring
         "temp" = "sensors";
-        "disk-health" = "sudo smartctl -a /dev/sda";  # Adjust device as needed
-        
+        "disk-health" = "sudo smartctl -a /dev/sda"; # Adjust device as needed
+
         # Container management
         "pods" = "podman pod list";
         "containers" = "podman ps -a";
         "images" = "podman images";
-        
+
         # Quick system info
         "sysinfo" = "echo 'System Information:' && uname -a && echo && echo 'Memory:' && free -h && echo && echo 'Disk:' && df -h && echo && echo 'Load:' && uptime";
-        
+
         # Backup helpers
         "backup-test" = "borg list";
         "backup-check" = "borg check --verify-data";
       };
-      
+
       bashrcExtra = ''
         # Enhanced prompt with system information
         get_load() {
@@ -276,7 +276,7 @@
       clock24 = true;
       terminal = "screen-256color";
       escapeTime = 0;
-      
+
       extraConfig = ''
         # Status bar
         set -g status-bg black
@@ -320,7 +320,7 @@
       controlMaster = "auto";
       controlPersist = "10m";
       compression = true;
-      
+
       # Server-friendly SSH settings
       extraConfig = ''
         ServerAliveInterval 60
@@ -344,7 +344,7 @@
     vim = {
       enable = true;
       defaultEditor = true;
-      
+
       extraConfig = ''
         " Basic settings
         set number
@@ -397,17 +397,17 @@
   services = {
     # SSH agent for key management
     ssh-agent.enable = true;
-    
+
     # GPG agent for key management (if needed)
     gpg-agent = {
       enable = true;
       enableSshSupport = true;
-      pinentryPackage = pkgs.pinentry-curses;  # Text-based for servers
-      
+      pinentryPackage = pkgs.pinentry-curses; # Text-based for servers
+
       # Long timeouts for server work
-      defaultCacheTtl = 7200;      # 2 hours
-      defaultCacheTtlSsh = 7200;   # 2 hours
-      maxCacheTtl = 86400;         # 24 hours
+      defaultCacheTtl = 7200; # 2 hours
+      defaultCacheTtlSsh = 7200; # 2 hours
+      maxCacheTtl = 86400; # 24 hours
     };
   };
 
@@ -420,7 +420,7 @@
           Description = "System Health Monitor";
           After = [ "multi-user.target" ];
         };
-        
+
         Service = {
           Type = "oneshot";
           ExecStart = "${pkgs.writeShellScript "system-monitor" ''
@@ -452,25 +452,25 @@
             fi
           ''}";
         };
-        
+
         Install = {
           WantedBy = [ "default.target" ];
         };
       };
     };
-    
+
     timers = {
       # Run system monitor every 5 minutes
       system-monitor = {
         Unit = {
           Description = "System Health Monitor Timer";
         };
-        
+
         Timer = {
-          OnCalendar = "*:0/5";  # Every 5 minutes
+          OnCalendar = "*:0/5"; # Every 5 minutes
           Persistent = true;
         };
-        
+
         Install = {
           WantedBy = [ "timers.target" ];
         };

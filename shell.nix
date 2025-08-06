@@ -1,48 +1,48 @@
-{ pkgs, inputs, ... }:
+{ pkgs, ... }:
 
 with pkgs;
 {
   default = mkShell {
     name = "nixos-config";
-    
+
     buildInputs = [
       # Nix tools
       nixpkgs-fmt
-      nil                    # Nix LSP
-      nix-output-monitor     # Better nix build output
-      nix-tree              # Visualize Nix dependencies
-      
+      nil # Nix LSP
+      nix-output-monitor # Better nix build output
+      nix-tree # Visualize Nix dependencies
+
       # Code quality tools
-      statix                 # Nix linter and code analyzer
-      deadnix                # Dead code detection
-      vulnix                 # Security vulnerability scanner
-      
+      statix # Nix linter and code analyzer
+      deadnix # Dead code detection
+      vulnix # Security vulnerability scanner
+
       # Build tools
-      just                   # Task runner
+      just # Task runner
       git
-      
+
       # Secrets management
       sops
       ssh-to-pgp
-      
+
       # Documentation
       mdbook
-      
+
       # System utilities
       pciutils
       usbutils
-      
+
       # Development utilities
-      fd                     # Better find
-      ripgrep                # Better grep
-      bat                    # Better cat
-      eza                    # Better ls
-      fzf                    # Fuzzy finder
-      
+      fd # Better find
+      ripgrep # Better grep
+      bat # Better cat
+      eza # Better ls
+      fzf # Fuzzy finder
+
       # Git hooks and automation
-      pre-commit             # Git pre-commit hooks
+      pre-commit # Git pre-commit hooks
     ];
-    
+
     shellHook = ''
       echo "🚀 NixOS Configuration Development Environment"
       echo ""

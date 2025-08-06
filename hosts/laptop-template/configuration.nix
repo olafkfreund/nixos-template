@@ -1,6 +1,6 @@
 # Laptop Configuration Template
 # Optimized for mobile computing with battery life and portability
-{ config, lib, pkgs, inputs, outputs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   imports = [
@@ -13,13 +13,13 @@
 
   # System identification
   networking.hostName = "laptop-template";
-  
+
   # Hardware profile
   modules.hardware.power-management = {
     enable = true;
     profile = "laptop";
     enableThermalManagement = true;
-    
+
     laptop = {
       enableBatteryOptimization = true;
       enableTlp = true;
@@ -33,7 +33,7 @@
     audio.enable = true;
     gnome.enable = true;
   };
-  
+
   # Printing support (often needed for mobile work)
   services.printing.enable = true;
 
@@ -42,15 +42,15 @@
     networkmanager = {
       enable = true;
       wifi = {
-        powersave = true;  # Enable WiFi power saving
-        backend = "iwd";   # Modern WiFi backend
+        powersave = true; # Enable WiFi power saving
+        backend = "iwd"; # Modern WiFi backend
       };
     };
-    
+
     # VPN support for secure remote work
     firewall = {
       enable = true;
-      allowPing = false;  # More secure for mobile use
+      allowPing = false; # More secure for mobile use
     };
   };
 
@@ -58,20 +58,20 @@
   services = {
     # Disable power-profiles-daemon when TLP is used
     power-profiles-daemon.enable = lib.mkForce false;
-    
+
     # Automatic time synchronization (important for mobile devices)
     timesyncd.enable = true;
-    
+
     # Location services for automatic timezone
     geoclue2.enable = true;
-    
+
     # Automatic brightness adjustment
     clight = {
       enable = true;
       settings = {
         verbose = true;
         backlight.disabled = false;
-        dpms.timeouts = [ 600 1200 ];  # Screen timeout on battery
+        dpms.timeouts = [ 600 1200 ]; # Screen timeout on battery
         screen.contrib = 0.1;
         keyboard.disabled = true;
       };
@@ -79,7 +79,7 @@
 
     # Fingerprint authentication (if available)
     fprintd.enable = true;
-    
+
     # Suspend on low battery
     logind = {
       powerKey = "suspend";
@@ -95,14 +95,14 @@
       enable = true;
       enable32Bit = true;
     };
-    
+
     # Audio power management (moved to services)
     # pulseaudio.enable = false;  # Use PipeWire instead
-    
+
     # Bluetooth low energy support
     bluetooth = {
       enable = true;
-      powerOnBoot = false;  # Don't auto-start to save power
+      powerOnBoot = false; # Don't auto-start to save power
     };
   };
 
@@ -119,22 +119,22 @@
   # Kernel modules for laptop hardware
   boot = {
     kernelModules = [
-      "acpi_call"  # For battery threshold control
+      "acpi_call" # For battery threshold control
     ];
-    
+
     extraModulePackages = with config.boot.kernelPackages; [
       acpi_call
     ];
-    
+
     kernelParams = [
       # Intel graphics power saving
       "i915.enable_psr=1"
       "i915.enable_fbc=1"
       "i915.fastboot=1"
-      
+
       # ACPI support
       "acpi_backlight=native"
-      
+
       # Reduce boot time
       "quiet"
       "splash"
@@ -143,10 +143,10 @@
 
   # Laptop-friendly file systems
   fileSystems."/" = {
-    options = [ 
-      "noatime"      # Reduce SSD wear and improve battery life
+    options = [
+      "noatime" # Reduce SSD wear and improve battery life
       "nodiratime"
-      "discard"      # Enable TRIM for SSD
+      "discard" # Enable TRIM for SSD
     ];
   };
 
@@ -154,7 +154,7 @@
   zramSwap = {
     enable = true;
     algorithm = "zstd";
-    memoryPercent = 50;  # Use half of RAM for compressed swap
+    memoryPercent = 50; # Use half of RAM for compressed swap
   };
 
   # Environment variables for laptop use
@@ -163,41 +163,41 @@
       # Enable hardware video acceleration
       VDPAU_DRIVER = "va_gl";
       LIBVA_DRIVER_NAME = "iHD"; # Intel hardware acceleration
-      
+
       # Qt scaling for high DPI screens
       QT_AUTO_SCREEN_SCALE_FACTOR = "1";
       QT_ENABLE_HIGHDPI_SCALING = "1";
-      
+
       # GTK scaling
       GDK_SCALE = "1";
       GDK_DPI_SCALE = "1";
     };
-    
+
     systemPackages = with pkgs; [
       # Laptop-specific utilities
-      brightnessctl    # Backlight control
-      acpi            # Battery information
-      powertop        # Power usage monitoring
-      tlp             # Advanced power management
-      upower          # Battery status
-      
+      brightnessctl # Backlight control
+      acpi # Battery information
+      powertop # Power usage monitoring
+      tlp # Advanced power management
+      upower # Battery status
+
       # Mobile work essentials
-      networkmanager  # Network management
+      networkmanager # Network management
       networkmanagerapplet
-      blueman         # Bluetooth manager
-      
+      blueman # Bluetooth manager
+
       # Document scanning (common laptop use case)
       simple-scan
-      
+
       # VPN clients
       openvpn
       wireguard-tools
-      
+
       # Laptop maintenance
-      smartmontools   # Disk health monitoring
-      
+      smartmontools # Disk health monitoring
+
       # Screen management
-      autorandr       # Automatic display configuration
+      autorandr # Automatic display configuration
     ];
   };
 
@@ -205,7 +205,7 @@
   security = {
     # Protect against physical access
     pam.services.login.enableGnomeKeyring = true;
-    
+
     # Enable sudo with timeout
     sudo = {
       enable = true;
@@ -227,7 +227,7 @@
       fira-code
       fira-code-symbols
     ];
-    
+
     fontconfig = {
       enable = true;
       defaultFonts = {
@@ -242,25 +242,25 @@
   users.users.user = {
     isNormalUser = true;
     description = "Laptop User";
-    extraGroups = [ 
-      "wheel" 
-      "networkmanager" 
-      "audio" 
-      "video" 
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+      "audio"
+      "video"
       "plugdev"
     ];
     group = "users";
   };
-  
+
   # Home Manager integration
   home-manager.users.user = import ./home.nix;
-  
+
   # Enable periodic maintenance
   system = {
     autoUpgrade = {
-      enable = false;  # Don't auto-upgrade on laptops to preserve battery
+      enable = false; # Don't auto-upgrade on laptops to preserve battery
     };
-    
+
     stateVersion = "25.05";
   };
 }

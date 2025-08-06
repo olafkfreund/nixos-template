@@ -29,7 +29,7 @@ in
   config = lib.mkIf cfg.enable {
     programs.git = {
       enable = true;
-      
+
       # Global configuration
       config = lib.mkMerge [
         # Basic configuration
@@ -38,23 +38,23 @@ in
             name = cfg.userName;
             email = cfg.userEmail;
           };
-          
+
           init.defaultBranch = "main";
-          
+
           # Better diffs and merges
           diff.algorithm = "patience";
           merge.conflictstyle = "diff3";
-          
+
           # Push configuration
           push.default = "simple";
           push.autoSetupRemote = true;
-          
+
           # Pull configuration
           pull.rebase = true;
-          
+
           # Color configuration
           color.ui = "auto";
-          
+
           # Aliases
           alias = {
             st = "status -s";
@@ -64,13 +64,13 @@ in
             unstage = "reset HEAD --";
             last = "log -1 HEAD";
             visual = "!gitk";
-            
+
             # Pretty log formats
             lg = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
             ll = "log --oneline";
           };
         }
-        
+
         # Signing configuration
         (lib.mkIf cfg.signing.enable {
           commit.gpgSign = true;
@@ -79,17 +79,17 @@ in
         })
       ];
     };
-    
+
     # Additional Git tools
     environment.systemPackages = with pkgs; [
-      git-lfs        # Large file support
-      gh             # GitHub CLI
-      gitflow        # Git Flow extensions
-      tig            # Text-based Git interface
-      lazygit        # Terminal Git UI
-      gitui          # Another terminal Git UI
+      git-lfs # Large file support
+      gh # GitHub CLI
+      gitflow # Git Flow extensions
+      tig # Text-based Git interface
+      lazygit # Terminal Git UI
+      gitui # Another terminal Git UI
     ];
-    
+
     # GPG support for commit signing
     programs.gnupg.agent = lib.mkIf cfg.signing.enable {
       enable = true;

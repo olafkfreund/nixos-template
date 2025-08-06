@@ -1,8 +1,8 @@
-{ config, lib, pkgs, inputs, outputs, ... }:
+{ config, pkgs, ... }:
 
 {
   # Basic Home Manager configuration for default user
-  
+
   # Import desktop profile (change based on your desktop environment)
   imports = [
     # Choose your desktop profile
@@ -11,7 +11,7 @@
     # ../profiles/hyprland.nix
     # ../profiles/niri.nix
   ];
-  
+
   # Basic user information
   home = {
     username = "user";
@@ -27,7 +27,7 @@
     enable = true;
     userName = "User Name";
     userEmail = "user@example.com";
-    
+
     extraConfig = {
       init.defaultBranch = "main";
       pull.rebase = true;
@@ -39,20 +39,20 @@
   # Shell configuration
   programs.bash = {
     enable = true;
-    
+
     shellAliases = {
       ll = "ls -alF";
       la = "ls -A";
       l = "ls -CF";
       ".." = "cd ..";
       "..." = "cd ../..";
-      
+
       # NixOS specific aliases
       rebuild = "sudo nixos-rebuild switch --flake ~/nixos-config";
       rebuild-test = "sudo nixos-rebuild test --flake ~/nixos-config";
       update = "nix flake update ~/nixos-config";
     };
-    
+
     bashrcExtra = ''
       # Custom prompt
       export PS1="\[\e[32m\]\u@\h\[\e[m\]:\[\e[34m\]\w\[\e[m\]\$ "
@@ -76,27 +76,27 @@
         tree = "eza --tree";
       };
     };
-    
+
     # Better cat
     bat.enable = true;
-    
+
     # Better find
     fd.enable = true;
-    
+
     # Better grep
     ripgrep.enable = true;
-    
+
     # System monitoring
     htop.enable = true;
     btop.enable = true;
-    
+
     # Directory navigation
     zoxide.enable = true;
-    
+
     # SSH configuration
     ssh = {
       enable = true;
-      
+
       matchBlocks = {
         "example-server" = {
           hostname = "server.example.com";
@@ -111,28 +111,28 @@
   home.packages = with pkgs; [
     # Desktop applications
     firefox
-    
+
     # Development tools
     git
     curl
     wget
-    
+
     # Text editors
     nano
     vim
-    
+
     # File management
     file
     which
     tree
     unzip
     zip
-    
+
     # System tools
     pciutils
     usbutils
     lshw
-    
+
     # Network tools
     dig
     nmap
@@ -142,7 +142,7 @@
   # XDG directories
   xdg = {
     enable = true;
-    
+
     userDirs = {
       enable = true;
       createDirectories = true;

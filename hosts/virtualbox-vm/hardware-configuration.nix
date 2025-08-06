@@ -1,9 +1,10 @@
 # VirtualBox VM Hardware Configuration Template
-{ config, lib, pkgs, modulesPath, ... }:
+{ config, lib, modulesPath, ... }:
 
 {
   imports =
-    [ (modulesPath + "/profiles/qemu-guest.nix")
+    [
+      (modulesPath + "/profiles/qemu-guest.nix")
     ];
 
   # Boot loader configuration
@@ -14,15 +15,15 @@
   };
 
   # Kernel modules for VirtualBox
-  boot.initrd.availableKernelModules = [ 
-    "ata_piix" 
-    "ohci_pci" 
-    "ehci_pci" 
-    "ahci" 
-    "sd_mod" 
-    "sr_mod" 
+  boot.initrd.availableKernelModules = [
+    "ata_piix"
+    "ohci_pci"
+    "ehci_pci"
+    "ahci"
+    "sd_mod"
+    "sr_mod"
   ];
-  
+
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "vboxguest" "vboxsf" "vboxvideo" ];
   boot.extraModulePackages = [ ];
@@ -46,7 +47,7 @@
   # Network interfaces
   networking.interfaces = {
     enp0s3.useDHCP = lib.mkDefault true;
-    enp0s8.useDHCP = lib.mkDefault true;  # Host-only adapter
+    enp0s8.useDHCP = lib.mkDefault true; # Host-only adapter
   };
 
   # CPU and hardware configuration

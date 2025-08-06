@@ -1,10 +1,10 @@
-{ config, lib, pkgs, ... }:
+{ lib, ... }:
 
 {
   # Internationalization
   i18n = {
     defaultLocale = lib.mkDefault "en_US.UTF-8";
-    
+
     extraLocaleSettings = {
       LC_ADDRESS = lib.mkDefault "en_US.UTF-8";
       LC_IDENTIFICATION = lib.mkDefault "en_US.UTF-8";
@@ -17,16 +17,16 @@
       LC_TIME = lib.mkDefault "en_US.UTF-8";
     };
   };
-  
+
   # Time zone
   time.timeZone = lib.mkDefault "UTC";
-  
+
   # Console configuration
   console = {
     font = lib.mkDefault "Lat2-Terminus16";
-    useXkbConfig = lib.mkDefault true;  # Use X keyboard config in console
+    useXkbConfig = lib.mkDefault true; # Use X keyboard config in console
   };
-  
+
   # Keyboard layout
   services.xserver.xkb = {
     layout = lib.mkDefault "us";

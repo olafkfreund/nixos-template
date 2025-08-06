@@ -5,9 +5,11 @@ This directory contains age public keys for users and systems that can decrypt s
 ## Key Types
 
 ### User Keys
+
 Personal age keys for individual users. These are typically generated from SSH keys or created specifically for secrets management.
 
 ### System Keys
+
 Age keys derived from SSH host keys of systems/hosts that need access to secrets.
 
 ## Key Management
@@ -15,6 +17,7 @@ Age keys derived from SSH host keys of systems/hosts that need access to secrets
 ### Generating User Keys
 
 **From SSH Key**:
+
 ```bash
 # Convert SSH public key to age public key
 ssh-to-age < ~/.ssh/id_ed25519.pub
@@ -24,6 +27,7 @@ nix-shell -p ssh-to-age --run "ssh-to-age < ~/.ssh/id_ed25519.pub"
 ```
 
 **Direct Age Key Generation**:
+
 ```bash
 # Generate a new age key pair
 age-keygen -o user-key.txt
@@ -34,6 +38,7 @@ age-keygen -o user-key.txt
 ### Generating System Keys
 
 **From SSH Host Keys**:
+
 ```bash
 # On the target system
 sudo ssh-to-age < /etc/ssh/ssh_host_ed25519_key.pub
@@ -45,11 +50,13 @@ ssh root@hostname 'cat /etc/ssh/ssh_host_ed25519_key.pub' | ssh-to-age
 ### Key Storage
 
 **Public Keys** (safe to commit):
+
 - Store in this `keys/` directory
 - Include in `secrets.nix` configuration
 - Can be shared publicly
 
 **Private Keys** (NEVER commit):
+
 - Store securely on local systems only
 - Use proper file permissions (600)
 - Consider hardware security modules

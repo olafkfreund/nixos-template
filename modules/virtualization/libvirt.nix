@@ -8,14 +8,14 @@ in
 {
   options.modules.virtualization.libvirt = {
     enable = mkEnableOption "Libvirt virtualization with QEMU/KVM";
-    
+
     qemu = {
       package = mkOption {
         type = types.package;
         default = pkgs.qemu_kvm;
         description = "QEMU package to use";
       };
-      
+
       ovmf = {
         enable = mkOption {
           type = types.bool;
@@ -23,7 +23,7 @@ in
           description = "Enable OVMF UEFI firmware for virtual machines";
         };
       };
-      
+
       swtpm = {
         enable = mkOption {
           type = types.bool;
@@ -32,14 +32,14 @@ in
         };
       };
     };
-    
+
     networking = {
       defaultNetwork = mkOption {
         type = types.bool;
         default = true;
         description = "Enable default NAT network";
       };
-      
+
       bridgeInterface = mkOption {
         type = types.nullOr types.str;
         default = null;
@@ -47,7 +47,7 @@ in
         example = "enp0s31f6";
       };
     };
-    
+
     storage = {
       pools = mkOption {
         type = types.listOf (types.submodule {
@@ -77,19 +77,19 @@ in
         description = "Storage pools to create";
       };
     };
-    
+
     users = mkOption {
       type = types.listOf types.str;
-      default = [];
+      default = [ ];
       description = "Users to add to libvirtd group";
     };
-    
+
     spiceUSBRedirection = mkOption {
       type = types.bool;
       default = true;
       description = "Enable SPICE USB redirection";
     };
-    
+
     extraConfig = mkOption {
       type = types.lines;
       default = "";
@@ -103,7 +103,7 @@ in
       libvirtd = {
         enable = true;
         package = pkgs.libvirt;
-        
+
         # QEMU configuration
         qemu = {
           package = cfg.qemu.package;
@@ -117,7 +117,7 @@ in
             ];
           };
         };
-        
+
         # Extra configuration
         extraConfig = ''
           # Enable nested virtualization
@@ -140,15 +140,15 @@ in
           
           ${cfg.extraConfig}
         '';
-        
+
         # Daemon configuration
         onBoot = "start";
         onShutdown = "shutdown";
       };
-      
+
       # Enable KVM
       kvmgt.enable = mkDefault true;
-      
+
       # Enable SPICE guest tools
       spiceUSBRedirection.enable = cfg.spiceUSBRedirection;
     };
@@ -158,55 +158,57 @@ in
       # Core virtualization tools
       libvirt
       qemu_kvm
-      
+
       # Guest tools and drivers
       virtio-win
       spice-gtk
       spice-protocol
       win-virtio
-      
+
       # USB redirection
       (mkIf cfg.spiceUSBRedirection spice-gtk)
       (mkIf cfg.spiceUSBRedirection usbredir)
-      
+
       # Network tools
       bridge-utils
       iptables
-      
+
       # Additional utilities
       libguestfs
       guestfs-tools
-      
+
       # UEFI firmware (if enabled)
       (mkIf cfg.qemu.ovmf.enable OVMF)
       (mkIf cfg.qemu.ovmf.enable edk2)
-      
+
       # TPM emulation (if enabled)
       (mkIf cfg.qemu.swtpm.enable swtpm)
     ];
 
     # User groups
-    users.groups.libvirtd = {};
-    
+    users.groups.libvirtd = { };
+
     # Add specified users to libvirtd group
-    users.users = listToAttrs (map (user: {
-      name = user;
-      value = {
-        extraGroups = [ "libvirtd" "kvm" ];
-      };
-    }) cfg.users);
+    users.users = listToAttrs (map
+      (user: {
+        name = user;
+        value = {
+          extraGroups = [ "libvirtd" "kvm" ];
+        };
+      })
+      cfg.users);
 
     # Enable required kernel modules
-    boot.kernelModules = [ 
-      "kvm-intel"    # Intel KVM
-      "kvm-amd"      # AMD KVM
-      "vfio"         # VFIO for device passthrough
+    boot.kernelModules = [
+      "kvm-intel" # Intel KVM
+      "kvm-amd" # AMD KVM
+      "vfio" # VFIO for device passthrough
       "vfio_iommu_type1"
       "vfio_pci"
-      "vhost-net"    # Networking performance
-      "tun"          # TUN/TAP networking
-      "bridge"       # Network bridging
-      "macvtap"      # MacVTap networking
+      "vhost-net" # Networking performance
+      "tun" # TUN/TAP networking
+      "bridge" # Network bridging
+      "macvtap" # MacVTap networking
     ];
 
     # Kernel parameters for virtualization
@@ -214,11 +216,11 @@ in
       # Enable IOMMU for device passthrough
       "intel_iommu=on"
       "amd_iommu=on"
-      
+
       # Nested virtualization
       "kvm-intel.nested=1"
       "kvm-amd.nested=1"
-      
+
       # Huge pages for better performance
       "hugepagesz=2M"
       "hugepages=1024"
@@ -305,16 +307,16 @@ in
           interfaces = [ cfg.networking.bridgeInterface ];
         };
       };
-      
+
       # Firewall rules for virtualization
       firewall = {
         # Allow libvirt bridge traffic
         trustedInterfaces = [ "virbr0" "br0" ];
-        
+
         # Allow SPICE and VNC ports
         allowedTCPPorts = [ 5900 5901 5902 5903 5904 5905 ];
         allowedTCPPortRanges = [
-          { from = 5900; to = 5999; }  # VNC
+          { from = 5900; to = 5999; } # VNC
           { from = 61000; to = 61999; } # SPICE
         ];
       };
@@ -326,12 +328,12 @@ in
       "net.bridge.bridge-nf-call-iptables" = 0;
       "net.bridge.bridge-nf-call-arptables" = 0;
       "net.bridge.bridge-nf-call-ip6tables" = 0;
-      
+
       # Virtual memory
       "vm.swappiness" = 10;
       "vm.dirty_ratio" = 15;
       "vm.dirty_background_ratio" = 5;
-      
+
       # Huge pages
       "vm.nr_hugepages" = 1024;
     };

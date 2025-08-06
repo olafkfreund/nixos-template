@@ -13,13 +13,13 @@ in
   config = lib.mkIf cfg.enable {
     # PipeWire configuration (modern replacement for PulseAudio)
     security.rtkit.enable = true;
-    
+
     services.pipewire = lib.mkIf cfg.pipewire {
       enable = true;
       audio.enable = true;
-      pulse.enable = true;  # PulseAudio compatibility
-      jack.enable = true;   # JACK compatibility
-      
+      pulse.enable = true; # PulseAudio compatibility
+      jack.enable = true; # JACK compatibility
+
       # Low latency configuration
       extraConfig.pipewire = lib.mkIf cfg.lowLatency {
         "92-low-latency" = {
@@ -32,15 +32,15 @@ in
         };
       };
     };
-    
+
     # ALSA support (sound.enable is deprecated)
     # sound.enable = false;  # Disabled when using PipeWire
-    
+
     # Additional audio packages
     environment.systemPackages = with pkgs; [
-      pavucontrol    # PulseAudio volume control
-      playerctl      # Media player control
-      pulseaudio     # For pactl command
+      pavucontrol # PulseAudio volume control
+      playerctl # Media player control
+      pulseaudio # For pactl command
     ];
   };
 }

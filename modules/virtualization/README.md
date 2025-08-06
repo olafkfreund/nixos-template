@@ -11,18 +11,21 @@ Rootless container platform with Docker compatibility and comprehensive tooling.
 #### Features
 
 **Container Platform**:
+
 - Rootless Podman with Docker compatibility
 - OCI-compliant container runtime
 - Comprehensive security policies
 - Automatic container management
 
 **Networking**:
+
 - Netavark backend for modern networking
 - Custom network configuration
 - DNS and registry management
 - Firewall integration
 
 **Storage Management**:
+
 - Configurable storage drivers
 - Multiple storage pool support
 - Automatic cleanup and pruning
@@ -35,16 +38,16 @@ Enable Podman containers:
 ```nix
 modules.virtualization.podman = {
   enable = true;
-  
+
   # Docker compatibility
   dockerCompat = true;
-  
+
   # Rootless configuration
   rootless = {
     enable = true;
     setSocketVariable = true;
   };
-  
+
   # Additional tools
   additionalTools = {
     buildah = true;
@@ -58,6 +61,7 @@ modules.virtualization.podman = {
 #### Advanced Features
 
 **Registry Configuration**:
+
 ```nix
 modules.virtualization.podman = {
   registries = {
@@ -74,6 +78,7 @@ modules.virtualization.podman = {
 ```
 
 **Auto-Update**:
+
 ```nix
 modules.virtualization.podman = {
   autoUpdate = {
@@ -90,18 +95,21 @@ Full KVM/QEMU virtualization with libvirt management layer.
 #### Features
 
 **Virtualization Platform**:
+
 - QEMU/KVM hypervisor
 - UEFI firmware support (OVMF)
 - Software TPM emulation
 - Nested virtualization
 
 **Networking**:
+
 - NAT and bridge networking
 - Custom network pools
 - DHCP and DNS services
 - Advanced routing
 
 **Storage Management**:
+
 - Multiple storage pools
 - Various storage backends
 - Snapshot support
@@ -114,19 +122,19 @@ Enable KVM virtualization:
 ```nix
 modules.virtualization.libvirt = {
   enable = true;
-  
+
   # QEMU configuration
   qemu = {
     ovmf.enable = true;     # UEFI support
     swtpm.enable = true;    # TPM support
   };
-  
+
   # Networking
   networking = {
     defaultNetwork = true;
     bridgeInterface = "enp0s31f6";  # Optional bridging
   };
-  
+
   # Storage pools
   storage.pools = [
     {
@@ -136,11 +144,11 @@ modules.virtualization.libvirt = {
     }
     {
       name = "nvme";
-      type = "dir";  
+      type = "dir";
       path = "/fast/storage/vms";
     }
   ];
-  
+
   # User access
   users = [ "username" ];
 };
@@ -149,6 +157,7 @@ modules.virtualization.libvirt = {
 #### Advanced Configuration
 
 **GPU Passthrough**:
+
 ```nix
 modules.virtualization.libvirt = {
   # Enable IOMMU and VFIO
@@ -161,6 +170,7 @@ modules.virtualization.libvirt = {
 ```
 
 **Performance Tuning**:
+
 ```nix
 boot.kernelParams = [
   "hugepagesz=2M"
@@ -176,17 +186,20 @@ Virtual machine management applications for different desktop environments.
 #### Features
 
 **Management Applications**:
+
 - virt-manager (GTK-based, universal)
 - GNOME Boxes (GNOME native)
 - virt-viewer (console access)
 - Cockpit machines (web-based)
 
 **Remote Management**:
+
 - SSH-based remote connections
 - TLS encrypted connections
 - Web-based management interface
 
 **Desktop Integration**:
+
 - Proper MIME type associations
 - Desktop environment specific features
 - File manager integration
@@ -198,7 +211,7 @@ Enable VM management:
 ```nix
 modules.virtualization.virt-manager = {
   enable = true;
-  
+
   # Applications
   applications = {
     virt-manager = true;      # Universal GTK manager
@@ -206,13 +219,13 @@ modules.virtualization.virt-manager = {
     virt-viewer = true;       # Console viewer
     cockpit-machines = false; # Web interface
   };
-  
+
   # Remote connections
   remoteConnections = {
     enable = true;
     ssh = true;
   };
-  
+
   # Desktop integration
   integrations = {
     nautilus = true;   # GNOME Files integration
@@ -242,11 +255,11 @@ For full virtualization capabilities:
 modules.virtualization = {
   # Containers
   podman.enable = true;
-  
+
   # Virtual machines
   libvirt.enable = true;
-  
-  # Management applications  
+
+  # Management applications
   virt-manager.enable = true;
 };
 ```
@@ -256,11 +269,12 @@ modules.virtualization = {
 ### System Tuning
 
 **CPU Configuration**:
+
 ```nix
 # Enable all CPU virtualization features
-boot.kernelModules = [ 
-  "kvm-intel" "kvm-amd" 
-  "vhost-net" "vfio" 
+boot.kernelModules = [
+  "kvm-intel" "kvm-amd"
+  "vhost-net" "vfio"
 ];
 
 boot.kernelParams = [
@@ -272,6 +286,7 @@ boot.kernelParams = [
 ```
 
 **Memory Management**:
+
 ```nix
 # Sysctl tuning for virtualization
 boot.kernel.sysctl = {
@@ -284,11 +299,13 @@ boot.kernel.sysctl = {
 ### Storage Optimization
 
 **Fast Storage**:
+
 - Use NVMe SSDs for VM images
 - Configure appropriate I/O schedulers
 - Enable host-side caching where appropriate
 
 **Storage Pools**:
+
 - Separate pools for different use cases
 - Raw vs qcow2 based on needs
 - Snapshot and backup strategies
@@ -296,11 +313,13 @@ boot.kernel.sysctl = {
 ### Network Performance
 
 **Bridge Networking**:
+
 ```nix
 networking.bridges.br0.interfaces = [ "enp0s31f6" ];
 ```
 
 **SR-IOV** (for advanced setups):
+
 - Hardware-level network virtualization
 - Direct hardware access for VMs
 - Minimal host networking overhead
@@ -310,11 +329,13 @@ networking.bridges.br0.interfaces = [ "enp0s31f6" ];
 ### Container Security
 
 **Rootless Containers**:
+
 - Run without root privileges
 - User namespace isolation
 - SELinux/AppArmor integration
 
 **Registry Security**:
+
 - Image signing verification
 - Registry authentication
 - Network policy enforcement
@@ -322,11 +343,13 @@ networking.bridges.br0.interfaces = [ "enp0s31f6" ];
 ### VM Security
 
 **Isolation**:
+
 - Hardware-enforced isolation
 - UEFI Secure Boot support
 - TPM for attestation
 
 **Network Security**:
+
 - Firewall integration
 - Network segmentation
 - VPN and encrypted connections
@@ -336,6 +359,7 @@ networking.bridges.br0.interfaces = [ "enp0s31f6" ];
 ### Container Users
 
 Users are automatically configured for containers:
+
 ```bash
 # Container management
 podman ps
@@ -353,6 +377,7 @@ skopeo copy docker://alpine:latest containers-storage:alpine:local
 ### VM Users
 
 For virtual machine management:
+
 ```bash
 # virt-manager GUI
 virt-manager
@@ -373,6 +398,7 @@ virt-manager -c qemu+ssh://user@remote/system
 ### Container Issues
 
 **Permission Problems**:
+
 ```bash
 # Check user namespaces
 cat /proc/sys/user/max_user_namespaces
@@ -382,6 +408,7 @@ systemctl status user@$(id -u).service
 ```
 
 **Network Issues**:
+
 ```bash
 # Check container networking
 podman network ls
@@ -394,6 +421,7 @@ firewall-cmd --list-all
 ### VM Issues
 
 **KVM Not Available**:
+
 ```bash
 # Check KVM support
 lscpu | grep Virtualization
@@ -404,6 +432,7 @@ lsmod | grep kvm
 ```
 
 **Networking Problems**:
+
 ```bash
 # Check libvirt networks
 virsh net-list --all
@@ -415,6 +444,7 @@ brctl show
 ```
 
 **Performance Issues**:
+
 ```bash
 # Check hugepages
 cat /proc/meminfo | grep Huge
@@ -428,6 +458,7 @@ virsh domstats myvm
 ### Development Workflow
 
 **Container Development**:
+
 ```bash
 # Development container
 podman run -it --rm -v $(pwd):/work fedora bash
@@ -441,6 +472,7 @@ podman-compose up -d
 ```
 
 **VM Development**:
+
 ```bash
 # Create development VM
 virt-install --name devvm --ram 4096 --vcpus 2 \
@@ -451,6 +483,7 @@ virt-install --name devvm --ram 4096 --vcpus 2 \
 ### Production Deployment
 
 **Container Services**:
+
 ```systemd
 [Unit]
 Description=My App Container
@@ -466,6 +499,7 @@ WantedBy=multi-user.target
 ```
 
 **VM Services**:
+
 ```bash
 # Autostart VMs
 virsh autostart production-vm

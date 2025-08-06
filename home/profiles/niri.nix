@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
   # Niri-specific Home Manager configuration
@@ -8,48 +8,48 @@
     # Wayland utilities
     wl-clipboard
     wlr-randr
-    
+
     # Application launcher (fuzzel is great for niri)
     fuzzel
     wofi
-    
+
     # Terminal emulators
     alacritty
-    foot            # Lightweight Wayland terminal
-    
+    foot # Lightweight Wayland terminal
+
     # File managers
     thunar
     nautilus
-    
+
     # Screenshot and screen recording
     grim
     slurp
     swappy
     wf-recorder
-    
+
     # Media and viewers
-    imv             # Image viewer
-    mpv             # Video player
-    zathura         # PDF viewer
-    
+    imv # Image viewer
+    mpv # Video player
+    zathura # PDF viewer
+
     # System utilities
     brightnessctl
     pamixer
     pavucontrol
-    
+
     # Theme and appearance
     adwaita-icon-theme
     gnome-themes-extra
-    
+
     # Network management
     networkmanagerapplet
-    
+
     # Archive support
     file-roller
-    
+
     # System info
     fastfetch
-    
+
     # Screen locker
     swaylock
   ];
@@ -66,7 +66,7 @@
         };
         dynamic_title = true;
       };
-      
+
       font = {
         normal = {
           family = "JetBrains Mono";
@@ -82,7 +82,7 @@
         };
         size = 12.0;
       };
-      
+
       # Catppuccin Mocha theme (works well with niri)
       colors = {
         primary = {
@@ -91,17 +91,17 @@
           dim_foreground = "#7f849c";
           bright_foreground = "#cdd6f4";
         };
-        
+
         cursor = {
           text = "#1e1e2e";
           cursor = "#f5e0dc";
         };
-        
+
         vi_mode_cursor = {
           text = "#1e1e2e";
           cursor = "#b4befe";
         };
-        
+
         search = {
           matches = {
             foreground = "#1e1e2e";
@@ -112,12 +112,12 @@
             background = "#a6e3a1";
           };
         };
-        
+
         footer_bar = {
           foreground = "#1e1e2e";
           background = "#a6adc8";
         };
-        
+
         hints = {
           start = {
             foreground = "#1e1e2e";
@@ -128,12 +128,12 @@
             background = "#a6adc8";
           };
         };
-        
+
         selection = {
           text = "#1e1e2e";
           background = "#f5e0dc";
         };
-        
+
         normal = {
           black = "#45475a";
           red = "#f38ba8";
@@ -144,7 +144,7 @@
           cyan = "#94e2d5";
           white = "#bac2de";
         };
-        
+
         bright = {
           black = "#585b70";
           red = "#f38ba8";
@@ -155,7 +155,7 @@
           cyan = "#94e2d5";
           white = "#a6adc8";
         };
-        
+
         dim = {
           black = "#45475a";
           red = "#f38ba8";
@@ -166,13 +166,13 @@
           cyan = "#94e2d5";
           white = "#bac2de";
         };
-        
+
         indexed_colors = [
           { index = 16; color = "#fab387"; }
           { index = 17; color = "#f5e0dc"; }
         ];
       };
-      
+
       bell = {
         animation = "EaseOutExpo";
         duration = 0;
@@ -200,7 +200,7 @@
         vertical-pad = 8;
         inner-pad = 8;
       };
-      
+
       colors = {
         background = "1e1e2edd";
         text = "cdd6f4ff";
@@ -210,7 +210,7 @@
         selection-match = "a6e3a1ff";
         border = "cba6f7ff";
       };
-      
+
       border = {
         width = 2;
         radius = 8;
@@ -228,32 +228,32 @@
         dpi-aware = "yes";
         pad = "8x8";
       };
-      
+
       mouse = {
         hide-when-typing = "yes";
       };
-      
+
       colors = {
         background = "1e1e2e";
         foreground = "cdd6f4";
-        
-        regular0 = "45475a";  # black
-        regular1 = "f38ba8";  # red
-        regular2 = "a6e3a1";  # green
-        regular3 = "f9e2af";  # yellow
-        regular4 = "89b4fa";  # blue
-        regular5 = "f5c2e7";  # magenta
-        regular6 = "94e2d5";  # cyan
-        regular7 = "bac2de";  # white
-        
-        bright0 = "585b70";   # bright black
-        bright1 = "f38ba8";   # bright red
-        bright2 = "a6e3a1";   # bright green
-        bright3 = "f9e2af";   # bright yellow
-        bright4 = "89b4fa";   # bright blue
-        bright5 = "f5c2e7";   # bright magenta
-        bright6 = "94e2d5";   # bright cyan
-        bright7 = "a6adc8";   # bright white
+
+        regular0 = "45475a"; # black
+        regular1 = "f38ba8"; # red
+        regular2 = "a6e3a1"; # green
+        regular3 = "f9e2af"; # yellow
+        regular4 = "89b4fa"; # blue
+        regular5 = "f5c2e7"; # magenta
+        regular6 = "94e2d5"; # cyan
+        regular7 = "bac2de"; # white
+
+        bright0 = "585b70"; # bright black
+        bright1 = "f38ba8"; # bright red
+        bright2 = "a6e3a1"; # bright green
+        bright3 = "f9e2af"; # bright yellow
+        bright4 = "89b4fa"; # bright blue
+        bright5 = "f5c2e7"; # bright magenta
+        bright6 = "94e2d5"; # bright cyan
+        bright7 = "a6adc8"; # bright white
       };
     };
   };
@@ -290,32 +290,32 @@
   # GTK theming for applications
   gtk = {
     enable = true;
-    
+
     theme = {
       package = pkgs.adwaita-qt;
       name = "Adwaita-dark";
     };
-    
+
     iconTheme = {
       package = pkgs.adwaita-icon-theme;
       name = "Adwaita";
     };
-    
+
     cursorTheme = {
       package = pkgs.adwaita-icon-theme;
       name = "Adwaita";
       size = 24;
     };
-    
+
     font = {
       name = "Inter";
       size = 11;
     };
-    
+
     gtk3.extraConfig = {
       gtk-application-prefer-dark-theme = 1;
     };
-    
+
     gtk4.extraConfig = {
       gtk-application-prefer-dark-theme = 1;
     };
@@ -333,24 +333,24 @@
     XDG_CURRENT_DESKTOP = "niri";
     XDG_SESSION_DESKTOP = "niri";
     XDG_SESSION_TYPE = "wayland";
-    
+
     # Qt
     QT_QPA_PLATFORM = "wayland;xcb";
     QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
-    
+
     # Firefox Wayland
     MOZ_ENABLE_WAYLAND = "1";
-    
+
     # Cursor theme
     XCURSOR_THEME = "Adwaita";
     XCURSOR_SIZE = "24";
-    
+
     # Java applications
     _JAVA_AWT_WM_NONREPARENTING = "1";
-    
+
     # SDL
     SDL_VIDEODRIVER = "wayland";
-    
+
     # Niri-specific
     NIRI_CONFIG = "${config.xdg.configHome}/niri/config.kdl";
   };
@@ -362,11 +362,11 @@
       Unit = {
         Description = "Waybar for Niri";
         Documentation = "https://github.com/Alexays/Waybar/wiki";
-        PartOf = ["graphical-session.target"];
-        After = ["graphical-session.target"];
-        Requisite = ["graphical-session.target"];
+        PartOf = [ "graphical-session.target" ];
+        After = [ "graphical-session.target" ];
+        Requisite = [ "graphical-session.target" ];
       };
-      
+
       Service = {
         ExecStart = "${pkgs.waybar}/bin/waybar";
         ExecReload = "${pkgs.coreutils}/bin/kill -SIGUSR2 $MAINPID";
@@ -375,32 +375,32 @@
         TimeoutStopSec = 10;
         KillMode = "mixed";
       };
-      
-      Install.WantedBy = ["graphical-session.target"];
+
+      Install.WantedBy = [ "graphical-session.target" ];
     };
-    
+
     # Background wallpaper service
     swaybg = {
       Unit = {
         Description = "Wallpaper daemon for Wayland";
-        PartOf = ["graphical-session.target"];
-        After = ["graphical-session.target"];
+        PartOf = [ "graphical-session.target" ];
+        After = [ "graphical-session.target" ];
       };
-      
+
       Service = {
         ExecStart = "${pkgs.swaybg}/bin/swaybg -i %h/.config/wallpaper.jpg";
         Restart = "on-failure";
         RestartSec = 1;
       };
-      
-      Install.WantedBy = ["graphical-session.target"];
+
+      Install.WantedBy = [ "graphical-session.target" ];
     };
   };
 
   # XDG directories
   xdg = {
     enable = true;
-    
+
     userDirs = {
       enable = true;
       createDirectories = true;
@@ -411,7 +411,7 @@
       pictures = "${config.home.homeDirectory}/Pictures";
       videos = "${config.home.homeDirectory}/Videos";
     };
-    
+
     mimeApps = {
       enable = true;
       defaultApplications = {
@@ -427,7 +427,7 @@
         "inode/directory" = "thunar.desktop";
       };
     };
-    
+
     # Create niri config directory
     configFile."niri/config.kdl".text = ''
       // Custom Niri configuration
@@ -456,14 +456,14 @@
       "niri-msg" = "niri msg";
       "niri-reload" = "niri msg action reload-config";
       "niri-debug" = "niri msg action toggle-debug-tint";
-      
+
       # Screenshot aliases
       "screenshot" = "grim ~/Pictures/Screenshots/$(date +'%Y%m%d_%H%M%S').png";
       "screenshot-area" = "grim -g \"$(slurp)\" ~/Pictures/Screenshots/$(date +'%Y%m%d_%H%M%S').png";
       "screenshot-clipboard" = "grim - | wl-copy";
       "screenshot-area-clipboard" = "grim -g \"$(slurp)\" - | wl-copy";
     };
-    
+
     sessionVariables = {
       # Niri-specific environment
       NIRI_SOCKET = "$XDG_RUNTIME_DIR/niri/niri.sock";

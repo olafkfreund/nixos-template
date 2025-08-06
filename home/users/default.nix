@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ ... }:
 
 {
   # Available user templates
@@ -11,7 +11,7 @@
   # Example:
   #   cp home/users/developer.nix hosts/my-host/home.nix
   #   # Then edit hosts/my-host/home.nix to customize
-  
+
   imports = [
     # Default user configuration (referenced by flake)
     ./user.nix

@@ -24,6 +24,7 @@ just detect-hardware
 ```
 
 **Detection Methods:**
+
 - Chassis type identification (DMI information)
 - Battery presence and configuration
 - Display setup (built-in vs external)
@@ -38,6 +39,7 @@ just detect-hardware
 Optimized for mobile computing with focus on battery life:
 
 **Features:**
+
 - TLP (Linux Advanced Power Management)
 - Battery charge thresholds (75-80%)
 - CPU frequency scaling (powersave on battery)
@@ -46,11 +48,12 @@ Optimized for mobile computing with focus on battery life:
 - Suspend/hibernate support
 
 **Configuration:**
+
 ```nix
 modules.hardware.power-management = {
   enable = true;
   profile = "laptop";
-  
+
   laptop = {
     enableBatteryOptimization = true;
     enableTlp = true;
@@ -61,6 +64,7 @@ modules.hardware.power-management = {
 ```
 
 **Key Settings:**
+
 - CPU governor: `schedutil` (balanced)
 - USB autosuspend: enabled
 - PCIe ASPM: `powersupersave` on battery
@@ -72,6 +76,7 @@ modules.hardware.power-management = {
 Performance-focused configuration for desktop systems:
 
 **Features:**
+
 - Performance CPU scaling
 - Disabled USB autosuspend (better for peripherals)
 - Optimized memory management
@@ -79,11 +84,12 @@ Performance-focused configuration for desktop systems:
 - No battery management
 
 **Configuration:**
+
 ```nix
 modules.hardware.power-management = {
   enable = true;
   profile = "desktop";
-  
+
   desktop = {
     enablePerformanceMode = true;
     disableUsbAutosuspend = true;
@@ -92,6 +98,7 @@ modules.hardware.power-management = {
 ```
 
 **Key Settings:**
+
 - CPU governor: `ondemand`
 - VM swappiness: 10 (less swapping)
 - Network buffers: increased for performance
@@ -102,17 +109,19 @@ modules.hardware.power-management = {
 Balanced settings for professional workstations:
 
 **Features:**
+
 - Performance optimization
 - Multi-monitor support considerations
 - Professional application support
 - Development-friendly settings
 
 **Configuration:**
+
 ```nix
 modules.hardware.power-management = {
   enable = true;
   profile = "workstation";
-  
+
   desktop = {
     enablePerformanceMode = true;
     disableUsbAutosuspend = true;
@@ -125,17 +134,19 @@ modules.hardware.power-management = {
 Optimized for reliability and consistent performance:
 
 **Features:**
+
 - Consistent performance (no deep C-states)
 - Network optimization
 - Thermal monitoring
 - No power saving features that affect latency
 
 **Configuration:**
+
 ```nix
 modules.hardware.power-management = {
   enable = true;
   profile = "server";
-  
+
   server = {
     enableServerOptimizations = true;
     disableWakeOnLan = false;  # Keep for remote management
@@ -144,6 +155,7 @@ modules.hardware.power-management = {
 ```
 
 **Key Settings:**
+
 - CPU governor: `ondemand`
 - C-states: limited to prevent latency
 - Network: optimized for throughput
@@ -154,12 +166,13 @@ modules.hardware.power-management = {
 Special performance mode for gaming systems:
 
 **Configuration:**
+
 ```nix
 modules.hardware.power-management = {
   enable = true;
   profile = "gaming";
   cpuGovernor = "performance";  # Maximum performance
-  
+
   desktop = {
     enablePerformanceMode = true;
     disableUsbAutosuspend = true;
@@ -168,6 +181,7 @@ modules.hardware.power-management = {
 ```
 
 **Key Settings:**
+
 - CPU governor: `performance`
 - VM swappiness: 1 (minimal swapping)
 - CPU mitigations: disabled for performance
@@ -186,6 +200,7 @@ cp -r hosts/laptop-template hosts/my-laptop
 ```
 
 **Includes:**
+
 - Laptop-optimized power management
 - GNOME desktop (good power management)
 - Battery monitoring services
@@ -196,11 +211,12 @@ cp -r hosts/laptop-template hosts/my-laptop
 ### Desktop Template
 
 ```bash
-# Copy desktop template for new host  
+# Copy desktop template for new host
 cp -r hosts/desktop-template hosts/my-desktop
 ```
 
 **Includes:**
+
 - Performance-optimized settings
 - Full desktop environment (GNOME/KDE)
 - Gaming support (Steam, GameMode)
@@ -216,6 +232,7 @@ cp -r hosts/server-template hosts/my-server
 ```
 
 **Includes:**
+
 - Headless configuration (no desktop)
 - SSH server with hardening
 - System monitoring (Prometheus)
@@ -236,6 +253,7 @@ The setup scripts automatically detect hardware and apply appropriate templates:
 ```
 
 **Hardware Detection Features:**
+
 - Automatic profile selection
 - Template recommendation
 - Desktop environment suggestions
@@ -317,11 +335,11 @@ services.tlp.settings = {
   # Battery charge thresholds
   START_CHARGE_THRESH_BAT0 = 75;
   STOP_CHARGE_THRESH_BAT0 = 80;
-  
+
   # CPU frequency scaling
   CPU_SCALING_GOVERNOR_ON_AC = "performance";
   CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
-  
+
   # Platform profiles
   PLATFORM_PROFILE_ON_AC = "performance";
   PLATFORM_PROFILE_ON_BAT = "low-power";
@@ -536,13 +554,13 @@ Create custom power profiles for specific use cases:
 modules.hardware.power-management = {
   enable = true;
   profile = "gaming";
-  
+
   # Override specific settings
   desktop = {
     enablePerformanceMode = true;
     disableUsbAutosuspend = true;
   };
-  
+
   # Custom kernel parameters
   boot.kernelParams = [
     "isolcpus=2,3"  # Isolate CPU cores for gaming
@@ -558,7 +576,7 @@ environment.sessionVariables = {
   # Graphics optimizations
   DXVK_HUD = "compiler,memory";
   RADV_PERFTEST = "gpl";
-  
+
   # CPU scheduling
   WINE_CPU_TOPOLOGY = "4:2";
 };

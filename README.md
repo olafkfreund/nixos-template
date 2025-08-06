@@ -3,7 +3,7 @@
 A sophisticated, modular NixOS configuration template using flakes, featuring:
 
 - 🏗️ **Modular Architecture** - Organized, reusable modules
-- 🏠 **Home Manager Integration** - Declarative user environments  
+- 🏠 **Home Manager Integration** - Declarative user environments
 - 🔒 **SOPS Secrets Management** - Encrypted secrets in Git
 - 🖥️ **Multiple Host Support** - Desktop, server, VM, and custom configurations
 - 🎮 **GPU Support** - AMD, NVIDIA, Intel with gaming/AI optimizations
@@ -33,9 +33,10 @@ cd my-nixos-config
 ```
 
 The setup scripts will:
+
 - Detect your hardware and VM environment
 - Generate appropriate configurations
-- Guide you through customization options  
+- Guide you through customization options
 - Test and deploy the configuration
 - Provide next steps and usage instructions
 
@@ -69,7 +70,7 @@ just update-switch
 nixos-config/
 ├── flake.nix                 # Main flake configuration
 ├── flake.lock               # Reproducible input locks
-├── 
+├──
 ├── lib/                     # Custom utility functions
 │   ├── default.nix         # Library exports
 │   └── mkHost.nix          # Host builder utility
@@ -125,7 +126,7 @@ nixos-config/
 │   ├── SETUP.md           # Comprehensive setup guide
 │   ├── VM-SUPPORT.md      # Virtual machine documentation
 │   └── GPU-CONFIGURATION.md # GPU setup guide
-├── 
+├──
 ├── justfile              # Task runner with convenient commands
 └── README.md             # This file
 ```
@@ -136,7 +137,7 @@ nixos-config/
 
 ```bash
 just switch           # Build and switch to new configuration
-just test            # Test configuration without switching  
+just test            # Test configuration without switching
 just boot            # Build configuration for next boot
 just update          # Update flake inputs
 just update-switch   # Update flake inputs and rebuild
@@ -165,7 +166,7 @@ just show-inputs        # Show flake input versions
 # Quick automated setup
 ./scripts/quick-setup.sh
 
-# Full interactive setup wizard  
+# Full interactive setup wizard
 ./scripts/nixos-setup.sh
 
 # Hardware type detection
@@ -219,7 +220,7 @@ modules = {
     audio.enable = true;
     fonts.enable = true;
   };
-  
+
   development = {
     git = {
       enable = true;
@@ -264,7 +265,7 @@ modules.hardware.gpu = {
   };
 };
 
-# NVIDIA GPU (AI/compute server) 
+# NVIDIA GPU (AI/compute server)
 modules.hardware.gpu = {
   profile = "ai-compute";
   nvidia = {
@@ -290,7 +291,7 @@ modules.hardware.gpu = {
 ### Supported Features
 
 - **AMD**: ROCm for AI, Vulkan gaming, hardware acceleration
-- **NVIDIA**: CUDA/cuDNN for AI, RTX features, PRIME for laptops  
+- **NVIDIA**: CUDA/cuDNN for AI, RTX features, PRIME for laptops
 - **Intel**: VA-API acceleration, Arc/Xe compute, OneAPI
 
 See [GPU Configuration Guide](docs/GPU-CONFIGURATION.md) for detailed setup instructions.
@@ -343,9 +344,10 @@ make shell
 ```
 
 This provides:
+
 - Nix formatting and LSP tools
 - System utilities
-- Secrets management tools  
+- Secrets management tools
 - Documentation tools
 
 ## Best Practices

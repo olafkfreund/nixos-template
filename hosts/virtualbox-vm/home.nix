@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, lib, ... }:
 
 {
   # User-specific packages for VirtualBox VM
@@ -6,22 +6,22 @@
     # Desktop applications
     firefox
     libreoffice
-    
+
     # File management
     xfce.thunar
     xfce.thunar-volman
-    
+
     # Text editors
     gedit
     mousepad
-    
+
     # Media
     vlc
-    
+
     # Development tools
     vscode
     git
-    
+
     # Utilities
     htop
     neofetch
@@ -52,16 +52,16 @@
     profiles.default = {
       name = "Default";
       isDefault = true;
-      
+
       settings = {
         # Performance optimizations for VMs
-        "gfx.webrender.enabled" = false;  # Disable for VM compatibility
+        "gfx.webrender.enabled" = false; # Disable for VM compatibility
         "layers.acceleration.disabled" = true;
-        
+
         # Privacy settings
         "browser.startup.homepage" = "about:blank";
         "browser.newtabpage.enabled" = false;
-        
+
         # Disable unnecessary features in VMs
         "geo.enabled" = false;
         "media.navigator.enabled" = false;
@@ -72,7 +72,7 @@
   # XDG configuration
   xdg = {
     enable = true;
-    
+
     # Default applications
     mimeApps.defaultApplications = {
       "text/plain" = [ "mousepad.desktop" ];
@@ -101,7 +101,7 @@
     # Redshift for eye strain
     redshift = {
       enable = true;
-      latitude = 40.0;   # Adjust to your location
+      latitude = 40.0; # Adjust to your location
       longitude = -74.0; # Adjust to your location
     };
   };

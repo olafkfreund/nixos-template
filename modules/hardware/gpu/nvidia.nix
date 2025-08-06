@@ -9,14 +9,14 @@ in
 {
   options.modules.hardware.gpu.nvidia = {
     enable = lib.mkEnableOption "NVIDIA GPU support";
-    
+
     # Driver selection
     driver = lib.mkOption {
       type = lib.types.enum [ "stable" "beta" "production" "legacy_470" "legacy_390" "open" ];
       default = "stable";
       description = "NVIDIA driver version to use";
     };
-    
+
     # Hardware configuration
     hardware = {
       # GPU model for specific optimizations  
@@ -25,10 +25,10 @@ in
         default = "auto";
         description = "NVIDIA GPU generation for optimizations";
       };
-      
+
       # Multi-GPU configuration
       sli = lib.mkEnableOption "SLI/NVLink support";
-      
+
       # Power limits
       powerLimit = lib.mkOption {
         type = lib.types.nullOr lib.types.int;
@@ -36,7 +36,7 @@ in
         description = "Power limit in watts (null for default)";
       };
     };
-    
+
     # Desktop/Gaming options
     gaming = {
       enable = lib.mkEnableOption "gaming optimizations";
@@ -60,7 +60,7 @@ in
         };
       };
     };
-    
+
     # AI/Compute options
     compute = {
       enable = lib.mkEnableOption "compute/AI optimizations";
@@ -71,7 +71,7 @@ in
       containers = lib.mkEnableOption "NVIDIA Container Runtime support";
       mig = lib.mkEnableOption "Multi-Instance GPU support";
     };
-    
+
     # Professional/Creator options
     professional = {
       enable = lib.mkEnableOption "professional/creator optimizations";
@@ -83,33 +83,33 @@ in
   config = lib.mkIf cfg.enable {
     # NVIDIA driver configuration
     services.xserver.videoDrivers = [ "nvidia" ];
-    
+
     hardware.nvidia = {
       # Driver version
-      package = 
+      package =
         if cfg.driver == "stable" then config.boot.kernelPackages.nvidiaPackages.stable
-        else if cfg.driver == "beta" then config.boot.kernelPackages.nvidiaPackages.beta  
+        else if cfg.driver == "beta" then config.boot.kernelPackages.nvidiaPackages.beta
         else if cfg.driver == "production" then config.boot.kernelPackages.nvidiaPackages.production
         else if cfg.driver == "legacy_470" then config.boot.kernelPackages.nvidiaPackages.legacy_470
         else if cfg.driver == "legacy_390" then config.boot.kernelPackages.nvidiaPackages.legacy_390
         else if cfg.driver == "open" then config.boot.kernelPackages.nvidiaPackages.open
         else config.boot.kernelPackages.nvidiaPackages.stable;
-      
+
       # Enable modesetting (required for Wayland)
       modesetting.enable = true;
-      
+
       # Power management
       powerManagement = {
         enable = lib.mkDefault true;
         finegrained = lib.mkDefault false;
       };
-      
+
       # Open source kernel modules (for RTX 30+ series)
       open = cfg.driver == "open";
-      
+
       # NVIDIA settings access for users
       nvidiaSettings = isDesktop;
-      
+
       # PRIME configuration for hybrid graphics
       prime = lib.mkIf cfg.gaming.prime.enable {
         offload = lib.mkIf cfg.gaming.prime.offload {
@@ -117,14 +117,16 @@ in
           enableOffloadCmd = true;
         };
         sync.enable = cfg.gaming.prime.sync;
-        
+
         # Auto-detect or use manual bus IDs
-        nvidiaBusId = if cfg.gaming.prime.nvidiaBusId != "" 
+        nvidiaBusId =
+          if cfg.gaming.prime.nvidiaBusId != ""
           then cfg.gaming.prime.nvidiaBusId
-          else "PCI:1:0:0";  # Common default
-        intelBusId = if cfg.gaming.prime.intelBusId != ""
-          then cfg.gaming.prime.intelBusId  
-          else "PCI:0:2:0";   # Common default
+          else "PCI:1:0:0"; # Common default
+        intelBusId =
+          if cfg.gaming.prime.intelBusId != ""
+          then cfg.gaming.prime.intelBusId
+          else "PCI:0:2:0"; # Common default
       };
     };
 
@@ -145,10 +147,10 @@ in
     hardware.graphics = {
       enable = true;
       enable32Bit = isDesktop;
-      
+
       extraPackages = with pkgs; [
         # NVIDIA packages
-        nvidia-vaapi-driver  # VAAPI support
+        nvidia-vaapi-driver # VAAPI support
       ] ++ lib.optionals cfg.gaming.nvenc [
         # Video encoding  
         nv-codec-headers
@@ -161,31 +163,31 @@ in
     # Desktop packages
     environment.systemPackages = lib.mkIf isDesktop (with pkgs; [
       # NVIDIA tools
-      nvidia-system-monitor-qt  # GPU monitoring
-      nvtop                     # Terminal GPU monitor
-      
+      nvidia-system-monitor-qt # GPU monitoring
+      nvtop # Terminal GPU monitor
+
       # Graphics utilities
-      glxinfo        # OpenGL info
-      vulkan-tools   # Vulkan utilities
+      glxinfo # OpenGL info
+      vulkan-tools # Vulkan utilities
       nvidia-settings # NVIDIA control panel
     ] ++ lib.optionals cfg.gaming.enable [
       # Gaming tools
-      mangohud       # Gaming overlay
-      gamemode       # Gaming optimizations
+      mangohud # Gaming overlay
+      gamemode # Gaming optimizations
     ]);
 
     # AI/Compute packages
     environment.systemPackages = lib.mkIf isCompute (with pkgs; [
       # CUDA development
       cudatoolkit
-      
+
       # Monitoring and management
-      nvidia-ml-py   # Python ML interface
-      nvtop          # GPU monitoring
-      
+      nvidia-ml-py # Python ML interface
+      nvtop # GPU monitoring
+
       # Development tools
-      nsight-compute        # CUDA profiler
-      nsight-systems        # System profiler
+      nsight-compute # CUDA profiler
+      nsight-systems # System profiler
     ] ++ lib.optionals cfg.compute.cudnn [
       # Deep learning
       cudnn
@@ -206,27 +208,27 @@ in
         __NV_PRIME_RENDER_OFFLOAD = lib.mkIf cfg.gaming.prime.enable "1";
         __GLX_VENDOR_LIBRARY_NAME = "nvidia";
       }
-      
+
       # Gaming environment
       (lib.mkIf isDesktop {
         # Gaming optimizations
         __GL_SHADER_DISK_CACHE = "1";
         __GL_SHADER_DISK_CACHE_SKIP_CLEANUP = "1";
         __GL_THREADED_OPTIMIZATIONS = "1";
-        
+
         # NVENC
         LIBVA_DRIVER_NAME = lib.mkIf cfg.gaming.nvenc "nvidia";
       })
-      
+
       # Compute environment  
       (lib.mkIf (cfg.compute.enable && cfg.compute.cuda) {
         # CUDA environment
         CUDA_PATH = "${pkgs.cudatoolkit}";
         CUDA_ROOT = "${pkgs.cudatoolkit}";
-        
+
         # Library paths
         LD_LIBRARY_PATH = "${pkgs.cudatoolkit}/lib:${pkgs.cudatoolkit.lib}/lib";
-        
+
         # cuDNN
         CUDNN_PATH = lib.mkIf cfg.compute.cudnn "${pkgs.cudnn}";
       })
@@ -237,7 +239,7 @@ in
       enable = true;
       enableNvidia = true;
     };
-    
+
     virtualisation.podman = lib.mkIf (cfg.compute.enable && cfg.compute.containers) {
       enable = true;
       enableNvidia = true;
@@ -264,7 +266,7 @@ in
           '';
         };
       })
-      
+
       # Persistence mode for compute workloads
       (lib.mkIf isCompute {
         nvidia-persistence = {
@@ -292,17 +294,17 @@ in
 
     # System groups
     users.groups = {
-      video = { };   # For GPU access
+      video = { }; # For GPU access
       docker = lib.mkIf (cfg.compute.enable && cfg.compute.containers) { };
     };
 
     # Add users to appropriate groups
     users.users = lib.mkMerge [
-      (lib.genAttrs 
+      (lib.genAttrs
         (builtins.attrNames (lib.filterAttrs (_: user: user.isNormalUser) config.users.users))
-        (_: { 
-          extraGroups = [ "video" ] 
-            ++ lib.optionals (cfg.compute.enable && cfg.compute.containers) [ "docker" ]; 
+        (_: {
+          extraGroups = [ "video" ]
+            ++ lib.optionals (cfg.compute.enable && cfg.compute.containers) [ "docker" ];
         })
       )
     ];
@@ -310,7 +312,7 @@ in
     # Kernel modules
     boot.kernelModules = [
       "nvidia"
-      "nvidia_modeset" 
+      "nvidia_modeset"
       "nvidia_uvm"
       "nvidia_drm"
     ];

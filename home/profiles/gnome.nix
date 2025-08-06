@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   # GNOME-specific Home Manager configuration
@@ -9,7 +9,7 @@
     gnome-tweaks
     gnome-extension-manager
     dconf-editor
-    
+
     # Additional GNOME apps
     gnome-calculator
     gnome-calendar
@@ -17,7 +17,7 @@
     gnome-maps
     gnome-music
     gnome-photos
-    
+
     # Extensions
     gnomeExtensions.appindicator
     gnomeExtensions.dash-to-dock
@@ -30,36 +30,36 @@
   # GTK theming
   gtk = {
     enable = true;
-    
+
     theme = {
       package = pkgs.adwaita-qt;
       name = "Adwaita-dark";
     };
-    
+
     iconTheme = {
       package = pkgs.adwaita-icon-theme;
       name = "Adwaita";
     };
-    
+
     cursorTheme = {
       package = pkgs.adwaita-icon-theme;
       name = "Adwaita";
       size = 24;
     };
-    
+
     font = {
       name = "Inter";
       size = 11;
     };
-    
+
     gtk2.extraConfig = ''
       gtk-application-prefer-dark-theme=1
     '';
-    
+
     gtk3.extraConfig = {
       gtk-application-prefer-dark-theme = 1;
     };
-    
+
     gtk4.extraConfig = {
       gtk-application-prefer-dark-theme = 1;
     };
@@ -74,12 +74,12 @@
       color-scheme = "prefer-dark";
       enable-hot-corners = false;
     };
-    
+
     "org/gnome/desktop/wm/preferences" = {
       theme = "Adwaita-dark";
       titlebar-font = "Inter Bold 11";
     };
-    
+
     "org/gnome/shell" = {
       enabled-extensions = [
         "appindicatorsupport@rgcjonas.gmail.com"
@@ -89,7 +89,7 @@
         "blur-my-shell@aunetx"
         "clipboard-indicator@tudmotu.com"
       ];
-      
+
       favorite-apps = [
         "org.gnome.Nautilus.desktop"
         "firefox.desktop"
@@ -98,7 +98,7 @@
         "code.desktop"
       ];
     };
-    
+
     "org/gnome/shell/extensions/dash-to-dock" = {
       apply-custom-theme = false;
       custom-theme-shrink = false;
@@ -107,30 +107,30 @@
       preferred-monitor = -2;
       show-mounts = false;
     };
-    
+
     "org/gnome/desktop/peripherals/mouse" = {
       accel-profile = "flat";
       natural-scroll = false;
     };
-    
+
     "org/gnome/desktop/peripherals/touchpad" = {
       natural-scroll = true;
       tap-to-click = true;
       two-finger-scrolling-enabled = true;
     };
-    
+
     "org/gnome/settings-daemon/plugins/media-keys" = {
       custom-keybindings = [
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
       ];
     };
-    
+
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
       binding = "<Control><Alt>t";
       command = "gnome-terminal";
       name = "Open Terminal";
     };
-    
+
     "org/gnome/mutter" = {
       edge-tiling = true;
       dynamic-workspaces = true;

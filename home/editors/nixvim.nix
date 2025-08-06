@@ -12,33 +12,33 @@
 
   programs.nixvim = {
     enable = true;
-    
+
     # Use latest Neovim
     package = pkgs.neovim-unwrapped;
-    
+
     # Enable Vi compatibility mode
     viAlias = true;
     vimAlias = true;
-    
+
     # Global options
     options = {
       # Line numbers
       number = true;
       relativenumber = true;
-      
+
       # Search settings
       ignorecase = true;
       smartcase = true;
       incsearch = true;
       hlsearch = true;
-      
+
       # Indentation
       tabstop = 2;
       shiftwidth = 2;
       expandtab = true;
       autoindent = true;
       smartindent = true;
-      
+
       # UI improvements
       termguicolors = true;
       signcolumn = "yes";
@@ -46,54 +46,54 @@
       wrap = false;
       scrolloff = 8;
       sidescrolloff = 8;
-      
+
       # Splits
       splitright = true;
       splitbelow = true;
-      
+
       # Backup and undo
       backup = false;
       writebackup = false;
       swapfile = false;
       undofile = true;
       undodir = "/home/${config.home.username}/.vim/undodir";
-      
+
       # Timing
       updatetime = 250;
       timeoutlen = 300;
-      
+
       # Mouse support
       mouse = "a";
-      
+
       # Clipboard
       clipboard = "unnamedplus";
-      
+
       # Folding
       foldmethod = "expr";
       foldexpr = "nvim_treesitter#foldexpr()";
       foldlevel = 99;
-      
+
       # Completion
       completeopt = "menu,menuone,noselect";
-      
+
       # Command line
       wildmode = "longest:full,full";
       wildoptions = "pum";
     };
-    
+
     # Global variables
     globals = {
       mapleader = " ";
       maplocalleader = " ";
-      
+
       # Disable netrw (using nvim-tree instead)
       loaded_netrw = 1;
       loaded_netrwPlugin = 1;
-      
+
       # Python providers
       python3_host_prog = "${pkgs.python3}/bin/python";
     };
-    
+
     # Color scheme
     colorschemes.catppuccin = {
       enable = true;
@@ -109,7 +109,7 @@
         indent_blankline.enabled = true;
       };
     };
-    
+
     # Plugins configuration
     plugins = {
       # LSP Configuration
@@ -125,44 +125,44 @@
               };
             };
           };
-          
+
           # Rust
           rust-analyzer = {
             enable = true;
             installCargo = true;
             installRustc = true;
           };
-          
+
           # Go
           gopls = {
             enable = true;
           };
-          
+
           # Python
           pyright = {
             enable = true;
           };
-          
+
           # TypeScript/JavaScript
           tsserver = {
             enable = true;
           };
-          
+
           # Bash
           bashls = {
             enable = true;
           };
-          
+
           # YAML
           yamlls = {
             enable = true;
           };
-          
+
           # JSON
           jsonls = {
             enable = true;
           };
-          
+
           # Lua (for Neovim config)
           lua-ls = {
             enable = true;
@@ -181,7 +181,7 @@
             };
           };
         };
-        
+
         # LSP key mappings
         keymaps = {
           silent = true;
@@ -204,7 +204,7 @@
           };
         };
       };
-      
+
       # Completion
       cmp = {
         enable = true;
@@ -233,7 +233,7 @@
           };
         };
       };
-      
+
       # Snippets
       luasnip = {
         enable = true;
@@ -241,7 +241,7 @@
           enable_autosnippets = true;
         };
       };
-      
+
       # Treesitter for syntax highlighting
       treesitter = {
         enable = true;
@@ -275,7 +275,7 @@
           ];
         };
       };
-      
+
       # File explorer
       nvim-tree = {
         enable = true;
@@ -321,7 +321,7 @@
           };
         };
       };
-      
+
       # Fuzzy finder
       telescope = {
         enable = true;
@@ -352,7 +352,7 @@
           };
         };
       };
-      
+
       # Status line
       lualine = {
         enable = true;
@@ -366,7 +366,7 @@
           lualine_z = [ "location" ];
         };
       };
-      
+
       # Buffer line
       bufferline = {
         enable = true;
@@ -402,7 +402,7 @@
           };
         };
       };
-      
+
       # Git integration
       gitsigns = {
         enable = true;
@@ -422,7 +422,7 @@
           };
         };
       };
-      
+
       # Comments
       comment = {
         enable = true;
@@ -437,7 +437,7 @@
           };
         };
       };
-      
+
       # Auto pairs
       nvim-autopairs = {
         enable = true;
@@ -450,12 +450,12 @@
           };
         };
       };
-      
+
       # Surround text objects
       nvim-surround = {
         enable = true;
       };
-      
+
       # Indent guides
       indent-blankline = {
         enable = true;
@@ -481,7 +481,7 @@
           };
         };
       };
-      
+
       # Which-key for key bindings
       which-key = {
         enable = true;
@@ -494,13 +494,13 @@
           "<leader>t" = "Tab";
         };
       };
-      
+
       # Better escape
       better-escape = {
         enable = true;
         mapping = [ "jk" "jj" ];
       };
-      
+
       # Markdown preview
       markdown-preview = {
         enable = true;
@@ -515,15 +515,15 @@
           echo_preview_url = false;
           browserfunc = "";
           preview_options = {
-            mkit = {};
-            katex = {};
-            uml = {};
-            maid = {};
+            mkit = { };
+            katex = { };
+            uml = { };
+            maid = { };
             disable_sync_scroll = false;
             sync_scroll_type = "middle";
             hide_yaml_meta = true;
-            sequence_diagrams = {};
-            flowchart_diagrams = {};
+            sequence_diagrams = { };
+            flowchart_diagrams = { };
             content_editable = false;
             disable_filename = false;
           };
@@ -534,7 +534,7 @@
           filetypes = [ "markdown" ];
         };
       };
-      
+
       # Terminal integration
       toggleterm = {
         enable = true;
@@ -542,7 +542,7 @@
           size = 20;
           open_mapping = "<c-\\>";
           hide_numbers = true;
-          shade_filetypes = {};
+          shade_filetypes = { };
           shade_terminals = true;
           shading_factor = 2;
           start_in_insert = true;
@@ -561,7 +561,7 @@
           };
         };
       };
-      
+
       # Additional helpful plugins
       nvim-colorizer = {
         enable = true;
@@ -576,12 +576,12 @@
           css_fn = true;
         };
       };
-      
+
       # File icons
       web-devicons = {
         enable = true;
       };
-      
+
       # LSP kind icons for completion
       lspkind = {
         enable = true;
@@ -597,7 +597,7 @@
         };
       };
     };
-    
+
     # Key mappings
     keymaps = [
       # General mappings
@@ -619,7 +619,7 @@
         action = ":x<CR>";
         options.desc = "Save and quit";
       }
-      
+
       # Window navigation
       {
         mode = "n";
@@ -645,7 +645,7 @@
         action = "<C-w>l";
         options.desc = "Go to right window";
       }
-      
+
       # Resize windows
       {
         mode = "n";
@@ -671,7 +671,7 @@
         action = ":vertical resize +2<CR>";
         options.desc = "Increase window width";
       }
-      
+
       # Buffer navigation
       {
         mode = "n";
@@ -691,7 +691,7 @@
         action = ":bdelete<CR>";
         options.desc = "Delete buffer";
       }
-      
+
       # File explorer
       {
         mode = "n";
@@ -699,7 +699,7 @@
         action = ":NvimTreeToggle<CR>";
         options.desc = "Toggle file explorer";
       }
-      
+
       # Clear search highlighting
       {
         mode = "n";
@@ -707,7 +707,7 @@
         action = ":nohl<CR>";
         options.desc = "Clear search highlight";
       }
-      
+
       # Better indenting
       {
         mode = "v";
@@ -721,7 +721,7 @@
         action = ">gv";
         options.desc = "Indent right";
       }
-      
+
       # Move text up and down
       {
         mode = "v";
@@ -735,7 +735,7 @@
         action = ":m '<-2<CR>gv=gv";
         options.desc = "Move text up";
       }
-      
+
       # Terminal mappings
       {
         mode = "t";
@@ -762,7 +762,7 @@
         options.desc = "Terminal right window nav";
       }
     ];
-    
+
     # Extra Lua configuration
     extraConfigLua = ''
       -- Additional Lua configuration
@@ -844,59 +844,59 @@
       
       vim.api.nvim_set_keymap("n", "<leader>gg", "<cmd>lua _LAZYGIT_TOGGLE()<CR>", {noremap = true, silent = true})
     '';
-    
+
     # Extra plugins not available in nixvim yet
     extraPlugins = with pkgs.vimPlugins; [
       # Additional plugins can be added here
-      vim-sleuth              # Automatic indentation detection
-      vim-repeat              # Better repeat functionality
-      plenary-nvim           # Lua utilities (required by many plugins)
+      vim-sleuth # Automatic indentation detection
+      vim-repeat # Better repeat functionality
+      plenary-nvim # Lua utilities (required by many plugins)
     ];
   };
 
   # Additional packages that work with Nixvim
   home.packages = with pkgs; [
     # Language servers (already configured in nixvim)
-    nil                      # Nix LSP
-    rust-analyzer           # Rust LSP
-    gopls                   # Go LSP
-    pyright                 # Python LSP
-    nodePackages.typescript-language-server  # TypeScript LSP
-    nodePackages.bash-language-server        # Bash LSP
-    yaml-language-server    # YAML LSP
-    
+    nil # Nix LSP
+    rust-analyzer # Rust LSP
+    gopls # Go LSP
+    pyright # Python LSP
+    nodePackages.typescript-language-server # TypeScript LSP
+    nodePackages.bash-language-server # Bash LSP
+    yaml-language-server # YAML LSP
+
     # Formatters and linters
-    nixpkgs-fmt            # Nix formatter
-    rustfmt                # Rust formatter
-    gofmt                  # Go formatter
-    black                  # Python formatter
-    prettier               # JavaScript/TypeScript formatter
-    shfmt                  # Shell script formatter
-    
+    nixpkgs-fmt # Nix formatter
+    rustfmt # Rust formatter
+    gofmt # Go formatter
+    black # Python formatter
+    prettier # JavaScript/TypeScript formatter
+    shfmt # Shell script formatter
+
     # Tools for better development experience
-    ripgrep                # Fast search (for telescope)
-    fd                     # Fast find (for telescope)
-    lazygit                # Git TUI
-    
+    ripgrep # Fast search (for telescope)
+    fd # Fast find (for telescope)
+    lazygit # Git TUI
+
     # Terminal multiplexer (works well with toggleterm)
     tmux
-    
+
     # Additional development tools
     git
     curl
     wget
-    jq                     # JSON processor
-    
+    jq # JSON processor
+
     # Node.js for some language servers
     nodejs
-    
+
     # Tree-sitter CLI for parser management
     tree-sitter
-    
+
     # Clipboard tools for system integration
-    xclip                  # X11 clipboard
-    wl-clipboard           # Wayland clipboard
-    
+    xclip # X11 clipboard
+    wl-clipboard # Wayland clipboard
+
     # Fonts for better display
     jetbrains-mono
     fira-code

@@ -6,19 +6,19 @@ in
 {
   options.modules.hardware.gpu = {
     autoDetect = lib.mkEnableOption "automatic GPU detection and configuration" // { default = true; };
-    
+
     # Manual GPU selection (overrides auto-detection)
     amd.enable = lib.mkEnableOption "AMD GPU support";
-    nvidia.enable = lib.mkEnableOption "NVIDIA GPU support"; 
+    nvidia.enable = lib.mkEnableOption "NVIDIA GPU support";
     intel.enable = lib.mkEnableOption "Intel integrated GPU support";
-    
+
     # Workload profiles
     profile = lib.mkOption {
       type = lib.types.enum [ "desktop" "gaming" "ai-compute" "server-compute" ];
       default = "desktop";
       description = "GPU optimization profile";
     };
-    
+
     # Multi-GPU support
     multiGpu = {
       enable = lib.mkEnableOption "multi-GPU configuration";
@@ -33,36 +33,40 @@ in
   config = lib.mkIf cfg.autoDetect {
     # Hardware detection script
     environment.systemPackages = with pkgs; [
-      pciutils  # lspci for GPU detection
-      glxinfo   # GPU info
-      clinfo    # OpenCL info
-      nvtop     # GPU monitoring (works with AMD/NVIDIA)
+      pciutils # lspci for GPU detection
+      glxinfo # GPU info
+      clinfo # OpenCL info
+      nvtop # GPU monitoring (works with AMD/NVIDIA)
     ];
 
     # Auto-detect and enable GPU modules based on hardware
     modules.hardware.gpu = {
       # Detect AMD GPUs
       amd.enable = lib.mkDefault (
-        builtins.any (line: 
-          lib.hasInfix "AMD" line || 
-          lib.hasInfix "ATI" line ||
-          lib.hasInfix "Radeon" line
-        ) (lib.splitString "\n" (builtins.readFile /proc/cpuinfo || ""))
+        builtins.any
+          (line:
+            lib.hasInfix "AMD" line ||
+            lib.hasInfix "ATI" line ||
+            lib.hasInfix "Radeon" line
+          )
+          (lib.splitString "\n" (builtins.readFile /proc/cpuinfo || ""))
       );
-      
+
       # Detect NVIDIA GPUs
       nvidia.enable = lib.mkDefault (
         builtins.pathExists /proc/driver/nvidia/version ||
-        builtins.any (line: lib.hasInfix "NVIDIA" line) 
+        builtins.any (line: lib.hasInfix "NVIDIA" line)
           (lib.splitString "\n" (builtins.readFile /proc/cpuinfo || ""))
       );
-      
+
       # Detect Intel integrated graphics
       intel.enable = lib.mkDefault (
-        builtins.any (line: 
-          lib.hasInfix "Intel" line && 
-          (lib.hasInfix "Graphics" line || lib.hasInfix "UHD" line || lib.hasInfix "Iris" line)
-        ) (lib.splitString "\n" (builtins.readFile /proc/cpuinfo || ""))
+        builtins.any
+          (line:
+            lib.hasInfix "Intel" line &&
+            (lib.hasInfix "Graphics" line || lib.hasInfix "UHD" line || lib.hasInfix "Iris" line)
+          )
+          (lib.splitString "\n" (builtins.readFile /proc/cpuinfo || ""))
       );
     };
 

@@ -1,6 +1,6 @@
 # Server Configuration Template
 # Optimized for reliability, security, and performance
-{ config, lib, pkgs, inputs, outputs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   imports = [
@@ -15,28 +15,28 @@
 
   # System identification
   networking.hostName = "server-template";
-  
+
   # Hardware profile for server
   modules.hardware.power-management = {
     enable = true;
     profile = "server";
-    cpuGovernor = "ondemand";  # Balance performance and efficiency for servers
+    cpuGovernor = "ondemand"; # Balance performance and efficiency for servers
     enableThermalManagement = true;
-    
+
     server = {
       enableServerOptimizations = true;
-      disableWakeOnLan = false;  # Keep WoL enabled for remote management
+      disableWakeOnLan = false; # Keep WoL enabled for remote management
     };
   };
 
   # No desktop environment for server (modules.desktop doesn't have enable option)
-  
+
   # Security hardening (agenix module doesn't have enable option)
   # modules.security.agenix can be enabled per host as needed
 
   # Container support for services
   modules.virtualization.podman.enable = true;
-  
+
   # VM hosting capability
   modules.virtualization.libvirt.enable = true;
 
@@ -45,7 +45,7 @@
     # Use systemd-networkd for servers (more reliable)
     useNetworkd = true;
     useDHCP = false;
-    
+
     # Configure specific interface (adjust as needed)
     interfaces.enp0s31f6 = {
       useDHCP = true;
@@ -54,37 +54,37 @@
       #   address = "192.168.1.100";
       #   prefixLength = 24;
       # }];
-      
+
       # Wake-on-LAN support
       wakeOnLan.enable = true;
     };
-    
+
     # Server firewall configuration
     firewall = {
       enable = true;
-      allowedTCPPorts = [ 
-        22    # SSH
-        80    # HTTP
-        443   # HTTPS
+      allowedTCPPorts = [
+        22 # SSH
+        80 # HTTP
+        443 # HTTPS
       ];
-      
+
       # Additional server ports as needed
       # allowedTCPPorts = [ 3000 5432 6379 ];  # App, PostgreSQL, Redis
-      
+
       # Log rejected connections for monitoring
       logRefusedConnections = true;
       logRefusedPackets = true;
     };
-    
+
     # IPv6 configuration
     enableIPv6 = true;
-    
+
     # DNS settings
-    nameservers = [ 
-      "1.1.1.1" 
-      "1.0.0.1" 
-      "8.8.8.8" 
-      "8.8.4.4" 
+    nameservers = [
+      "1.1.1.1"
+      "1.0.0.1"
+      "8.8.8.8"
+      "8.8.4.4"
     ];
   };
 
@@ -94,31 +94,31 @@
     openssh = {
       enable = true;
       ports = [ 22 ];
-      
+
       settings = {
         # Security settings
         PasswordAuthentication = false;
         PermitRootLogin = "no";
         PubkeyAuthentication = true;
         AuthenticationMethods = "publickey";
-        
+
         # Connection settings
         MaxAuthTries = 3;
         MaxSessions = 10;
         ClientAliveInterval = 300;
         ClientAliveCountMax = 2;
-        
+
         # Protocol settings
         Protocol = 2;
         PermitTunnel = "no";
         AllowTcpForwarding = "yes";
         X11Forwarding = false;
         PrintMotd = false;
-        
+
         # Limit users (uncomment and adjust as needed)
         # AllowUsers = [ "user" "admin" ];
       };
-      
+
       # Additional SSH hardening
       extraConfig = ''
         # Disable unused authentication methods
@@ -150,7 +150,7 @@
     prometheus = {
       enable = true;
       port = 9090;
-      
+
       # Basic system metrics
       exporters = {
         node = {
@@ -170,7 +170,7 @@
           ];
         };
       };
-      
+
       scrapeConfigs = [
         {
           job_name = "node";
@@ -204,7 +204,7 @@
       enable = true;
       servers = [
         "0.nixos.pool.ntp.org"
-        "1.nixos.pool.ntp.org" 
+        "1.nixos.pool.ntp.org"
         "2.nixos.pool.ntp.org"
         "3.nixos.pool.ntp.org"
       ];
@@ -214,14 +214,14 @@
     fail2ban = {
       enable = true;
       maxretry = 3;
-      bantime = lib.mkForce "1h";  # Server uses longer ban times
+      bantime = lib.mkForce "1h"; # Server uses longer ban times
       bantime-increment = {
         enable = true;
         multipliers = "2 4 8 16 32 64";
-        maxtime = "168h";  # 1 week max
+        maxtime = "168h"; # 1 week max
         overalljails = true;
       };
-      
+
       jails = {
         # SSH protection
         sshd = {
@@ -235,10 +235,10 @@
             bantime = 3600;
           };
         };
-        
+
         # Nginx protection (if enabled)
         nginx-http-auth = {
-          enabled = false;  # Enable if using Nginx
+          enabled = false; # Enable if using Nginx
           settings = {
             port = "80,443";
             logpath = "/var/log/nginx/error.log";
@@ -256,7 +256,7 @@
           compress = true;
           copytruncate = true;
         };
-        
+
         "/var/log/*.log" = {
           rotate = 4;
           weekly = true;
@@ -290,14 +290,14 @@
   hardware = {
     # Minimal graphics (headless server)
     graphics.enable = false;
-    
+
     # No audio needed
     pulseaudio.enable = false;
-    
+
     # CPU microcode updates
     cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
     cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-    
+
     # Disable bluetooth
     bluetooth.enable = false;
   };
@@ -306,51 +306,51 @@
   boot = {
     # Stable kernel for servers
     kernelPackages = pkgs.linuxPackages;
-    
+
     kernelParams = [
       # Server optimizations
       "intel_idle.max_cstate=1"
       "processor.max_cstate=1"
-      
+
       # Security
       "slab_nomerge"
       "init_on_alloc=1"
       "init_on_free=1"
       "page_alloc.shuffle=1"
     ];
-    
+
     # System control parameters (moved from kernelParams as they contain spaces)
     kernel.sysctl = {
       # Memory management (server-specific overrides)
       "vm.dirty_ratio" = lib.mkForce 15;
       "vm.dirty_background_ratio" = lib.mkForce 5;
       "vm.swappiness" = lib.mkForce 10;
-      
+
       # Network optimizations
       "net.core.rmem_max" = 134217728;
       "net.core.wmem_max" = 134217728;
       "net.ipv4.tcp_rmem" = "4096 87380 134217728";
       "net.ipv4.tcp_wmem" = "4096 65536 134217728";
     };
-    
+
     # Kernel modules
     kernelModules = [ "kvm-intel" "kvm-amd" ];
-    
+
     # Boot configuration
     loader = {
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
-      timeout = 5;  # Give time for recovery
+      timeout = 5; # Give time for recovery
     };
-    
+
     # Clean /tmp on boot
     tmp.cleanOnBoot = true;
   };
 
   # Server-optimized file systems
   fileSystems."/" = {
-    options = [ 
-      "noatime" 
+    options = [
+      "noatime"
       "nodiratime"
       "discard"
     ];
@@ -361,7 +361,7 @@
   zramSwap = {
     enable = true;
     algorithm = "zstd";
-    memoryPercent = 25;  # Smaller than desktop
+    memoryPercent = 25; # Smaller than desktop
   };
 
   # Environment for server administration
@@ -370,7 +370,7 @@
       EDITOR = "vim";
       PAGER = "less";
     };
-    
+
     systemPackages = with pkgs; [
       # Essential server tools
       vim
@@ -380,7 +380,7 @@
       rsync
       screen
       tmux
-      
+
       # System monitoring
       htop
       iotop
@@ -389,7 +389,7 @@
       lsof
       strace
       tcpdump
-      
+
       # Network tools
       nmap
       netcat
@@ -398,34 +398,34 @@
       whois
       traceroute
       mtr
-      
+
       # Hardware monitoring
       lm_sensors
       smartmontools
       hdparm
-      
+
       # Security tools
       fail2ban
       lynis
       # rkhunter  # Package not available in nixpkgs
-      
+
       # Backup and sync
       borgbackup
       rclone
-      
+
       # Archive tools
       p7zip
       unzip
-      
+
       # Development/scripting
       python3
       nodejs
-      
+
       # Containers
       podman-compose
       buildah
       skopeo
-      
+
       # Virtualization
       qemu
       virt-manager
@@ -436,27 +436,27 @@
   users = {
     # Disable mutable users for security
     mutableUsers = false;
-    
+
     users = {
       root = {
         # Disable root login
         hashedPassword = "!";
       };
-      
+
       user = {
         isNormalUser = true;
         description = "Server Administrator";
-        extraGroups = [ 
-          "wheel" 
+        extraGroups = [
+          "wheel"
           "systemd-journal"
           "docker"
           "libvirtd"
           "podman"
         ];
-        
+
         # Set hashed password (generate with: mkpasswd -m sha-512)
-        hashedPassword = "$6$rounds=4096$...";  # Replace with actual hash
-        
+        hashedPassword = "$6$rounds=4096$..."; # Replace with actual hash
+
         # SSH keys for secure access
         openssh.authorizedKeys.keys = [
           # Add your SSH public keys here
@@ -472,8 +472,8 @@
     sudo = {
       enable = true;
       execWheelOnly = true;
-      wheelNeedsPassword = true;  # Always require password
-      
+      wheelNeedsPassword = true; # Always require password
+
       extraRules = [
         {
           users = [ "user" ];
@@ -490,7 +490,7 @@
         }
       ];
     };
-    
+
     # PAM configuration
     pam.loginLimits = [
       {
@@ -506,10 +506,10 @@
         value = "65536";
       }
     ];
-    
+
     # Kernel security
     lockKernelModules = true;
-    
+
     # AppArmor for additional security
     apparmor = {
       enable = true;
@@ -524,13 +524,13 @@
       runtimeTime = "20s";
       rebootTime = "30s";
     };
-    
+
     # Sleep configuration (servers shouldn't sleep)
     targets.sleep.enable = false;
     targets.suspend.enable = false;
     targets.hibernate.enable = false;
     targets.hybrid-sleep.enable = false;
-    
+
     # Service hardening defaults
     services = {
       # Harden SSH service
@@ -545,15 +545,15 @@
   };
 
   # Duplicate user configuration removed - defined above
-  
+
   # Home Manager (minimal server setup)
   home-manager.users.user = import ./home.nix;
-  
+
   # System maintenance
   system = {
     # Disable auto-upgrade for servers (manual control preferred)
     autoUpgrade.enable = false;
-    
+
     stateVersion = "25.05";
   };
 
@@ -563,17 +563,17 @@
     gc = {
       automatic = true;
       dates = "weekly";
-      options = lib.mkForce "--delete-older-than 30d";  # Server keeps more history
+      options = lib.mkForce "--delete-older-than 30d"; # Server keeps more history
     };
-    
+
     # Optimise store
     settings.auto-optimise-store = true;
-    
+
     # Build settings
     settings = {
-      cores = 0;  # Use all cores
+      cores = 0; # Use all cores
       max-jobs = "auto";
-      
+
       # Substitute settings
       trusted-substituters = [
         "https://cache.nixos.org/"

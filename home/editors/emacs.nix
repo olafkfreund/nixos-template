@@ -12,104 +12,104 @@
 
   programs.emacs = {
     enable = true;
-    package = pkgs.emacs29-pgtk;  # Emacs 29 with pure GTK (better Wayland support)
-    
+    package = pkgs.emacs29-pgtk; # Emacs 29 with pure GTK (better Wayland support)
+
     extraPackages = epkgs: with epkgs; [
       # Core packages for modern Emacs experience
-      use-package          # Package configuration macro
-      diminish            # Hide minor modes from modeline
-      bind-key            # Key binding helpers
-      
+      use-package # Package configuration macro
+      diminish # Hide minor modes from modeline
+      bind-key # Key binding helpers
+
       # Completion and narrowing framework
-      vertico             # Vertical completion UI
-      orderless           # Completion style for matching
-      marginalia          # Rich annotations for minibuffer
-      consult             # Consulting commands (enhanced search/navigation)
-      embark              # Contextual actions
-      embark-consult      # Consult integration for Embark
-      
+      vertico # Vertical completion UI
+      orderless # Completion style for matching
+      marginalia # Rich annotations for minibuffer
+      consult # Consulting commands (enhanced search/navigation)
+      embark # Contextual actions
+      embark-consult # Consult integration for Embark
+
       # Search and navigation
-      avy                 # Jump to visible text
-      swiper              # Interactive search
-      ivy                 # Alternative completion framework (if preferred)
-      counsel             # Ivy-enhanced versions of common commands
-      
+      avy # Jump to visible text
+      swiper # Interactive search
+      ivy # Alternative completion framework (if preferred)
+      counsel # Ivy-enhanced versions of common commands
+
       # File and project management
-      projectile          # Project interaction library
-      dired-single        # Enhanced directory editor
-      dired-ranger        # File operations for dired
-      all-the-icons       # Icon fonts for various packages
+      projectile # Project interaction library
+      dired-single # Enhanced directory editor
+      dired-ranger # File operations for dired
+      all-the-icons # Icon fonts for various packages
       all-the-icons-dired # Icons in dired
-      neotree             # File tree explorer
-      
+      neotree # File tree explorer
+
       # Git integration
-      magit               # Git porcelain
-      git-gutter          # Show git diff in gutter
-      git-timemachine     # Walk through git revisions
-      forge               # GitHub/GitLab integration
-      
+      magit # Git porcelain
+      git-gutter # Show git diff in gutter
+      git-timemachine # Walk through git revisions
+      forge # GitHub/GitLab integration
+
       # LSP and development
-      lsp-mode            # Language Server Protocol client
-      lsp-ui              # UI improvements for LSP
-      lsp-treemacs        # Treemacs integration for LSP
-      company             # Text completion framework
-      company-lsp         # LSP completion backend
-      flycheck            # Syntax checking
-      yasnippet           # Template system
-      yasnippet-snippets  # Snippet collections
-      
+      lsp-mode # Language Server Protocol client
+      lsp-ui # UI improvements for LSP
+      lsp-treemacs # Treemacs integration for LSP
+      company # Text completion framework
+      company-lsp # LSP completion backend
+      flycheck # Syntax checking
+      yasnippet # Template system
+      yasnippet-snippets # Snippet collections
+
       # Language-specific packages
-      nix-mode            # Nix language support
-      rust-mode           # Rust language support
-      cargo               # Cargo integration for Rust
-      go-mode             # Go language support
-      python-mode         # Python language support
-      js2-mode            # JavaScript support
-      typescript-mode     # TypeScript support
-      web-mode            # Web template editing
-      yaml-mode           # YAML support
-      json-mode           # JSON support
-      markdown-mode       # Markdown support
-      dockerfile-mode     # Dockerfile support
-      
+      nix-mode # Nix language support
+      rust-mode # Rust language support
+      cargo # Cargo integration for Rust
+      go-mode # Go language support
+      python-mode # Python language support
+      js2-mode # JavaScript support
+      typescript-mode # TypeScript support
+      web-mode # Web template editing
+      yaml-mode # YAML support
+      json-mode # JSON support
+      markdown-mode # Markdown support
+      dockerfile-mode # Dockerfile support
+
       # Org-mode enhancements
-      org-bullets         # Pretty bullets for org-mode
-      org-roam            # Note-taking system
-      org-journal         # Journaling with org-mode
-      org-present         # Presentation mode
-      
+      org-bullets # Pretty bullets for org-mode
+      org-roam # Note-taking system
+      org-journal # Journaling with org-mode
+      org-present # Presentation mode
+
       # Theme and appearance
-      doom-themes         # Theme collection
-      doom-modeline       # Modern modeline
-      rainbow-delimiters  # Colorful parentheses
-      highlight-indent-guides  # Indent visualization
-      
+      doom-themes # Theme collection
+      doom-modeline # Modern modeline
+      rainbow-delimiters # Colorful parentheses
+      highlight-indent-guides # Indent visualization
+
       # Productivity and utilities
-      which-key           # Key binding help
-      ace-window          # Window switching
-      winner              # Window configuration undo/redo
-      undo-tree           # Visual undo system
-      expand-region       # Expand selection semantically
-      multiple-cursors    # Multiple cursor editing
-      
+      which-key # Key binding help
+      ace-window # Window switching
+      winner # Window configuration undo/redo
+      undo-tree # Visual undo system
+      expand-region # Expand selection semantically
+      multiple-cursors # Multiple cursor editing
+
       # Terminal and shell
-      vterm               # Full-featured terminal emulator
-      shell-pop           # Pop-up shell
-      
+      vterm # Full-featured terminal emulator
+      shell-pop # Pop-up shell
+
       # Writing and editing
-      writegood-mode      # Writing analysis
-      flyspell            # Spell checking
-      abbrev              # Abbreviation expansion
-      
+      writegood-mode # Writing analysis
+      flyspell # Spell checking
+      abbrev # Abbreviation expansion
+
       # Performance and startup
-      gcmh                # Garbage collection magic hack
-      
+      gcmh # Garbage collection magic hack
+
       # Additional utilities
-      helpful             # Better help system
-      dashboard           # Startup dashboard
-      recent-files        # Recent files management
+      helpful # Better help system
+      dashboard # Startup dashboard
+      recent-files # Recent files management
     ];
-    
+
     extraConfig = ''
       ;; Emacs Configuration
       ;; This configuration provides a modern Emacs experience with sensible defaults
@@ -397,34 +397,34 @@
     jetbrains-mono
     fira-code
     source-code-pro
-    
+
     # Language servers for LSP mode
-    nil              # Nix LSP
-    rust-analyzer    # Rust LSP
-    gopls           # Go LSP
-    pyright         # Python LSP
-    nodePackages.typescript-language-server  # TypeScript LSP
-    nodePackages.bash-language-server       # Bash LSP
-    yaml-language-server  # YAML LSP
-    
+    nil # Nix LSP
+    rust-analyzer # Rust LSP
+    gopls # Go LSP
+    pyright # Python LSP
+    nodePackages.typescript-language-server # TypeScript LSP
+    nodePackages.bash-language-server # Bash LSP
+    yaml-language-server # YAML LSP
+
     # Tools for various Emacs packages
-    ripgrep         # Fast search for Emacs
-    fd              # Fast find for Emacs
-    pandoc          # For markdown-mode
-    aspell          # Spell checking
-    aspellDicts.en  # English dictionary
-    
+    ripgrep # Fast search for Emacs
+    fd # Fast find for Emacs
+    pandoc # For markdown-mode
+    aspell # Spell checking
+    aspellDicts.en # English dictionary
+
     # Git tools
     git
-    
+
     # Optional: LaTeX for org-mode export
     # texlive.combined.scheme-medium
-    
+
     # Image viewing (for org-mode images)
     imagemagick
-    
+
     # PDF tools
-    poppler_utils   # For PDF handling
+    poppler_utils # For PDF handling
   ];
 
   # Set environment variables for Emacs
@@ -435,7 +435,7 @@
 
   # Create Emacs service for daemon mode (optional)
   services.emacs = {
-    enable = lib.mkDefault false;  # Disabled by default, enable if desired
+    enable = lib.mkDefault false; # Disabled by default, enable if desired
     client.enable = true;
     defaultEditor = true;
     startWithUserSession = true;

@@ -1,9 +1,9 @@
-{ lib, ... }:
+{ ... }:
 
 {
   imports = [
     ./boot.nix
-    ./locale.nix  
+    ./locale.nix
     ./networking.nix
     ./nix.nix
     ./security.nix

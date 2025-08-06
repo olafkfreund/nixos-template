@@ -13,13 +13,13 @@ in
       # Enable font configuration
       fontconfig = {
         enable = true;
-        
+
         # Better font rendering
         subpixel.rgba = "rgb";
         hinting.enable = true;
         hinting.style = "slight";
         antialias = true;
-        
+
         # Default fonts
         defaultFonts = {
           serif = [ "Noto Serif" "Liberation Serif" ];
@@ -28,7 +28,7 @@ in
           emoji = [ "Noto Color Emoji" ];
         };
       };
-      
+
       # Font packages
       packages = with pkgs; [
         # System fonts
@@ -36,22 +36,22 @@ in
         noto-fonts-cjk
         noto-fonts-emoji
         liberation_ttf
-        
+
         # Programming fonts
         jetbrains-mono
         fira-code
         source-code-pro
-        
+
         # Popular fonts
         roboto
         open-sans
         ubuntu_font_family
-        
+
         # Icon fonts
         font-awesome
         (nerdfonts.override { fonts = [ "JetBrainsMono" "FiraCode" ]; })
       ];
-      
+
       # Enable 32-bit font support
       enableGhostscriptFonts = true;
     };

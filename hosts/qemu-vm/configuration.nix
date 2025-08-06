@@ -1,19 +1,19 @@
-{ config, lib, pkgs, inputs, outputs, ... }:
+{ lib, pkgs, ... }:
 
 {
   imports = [
     # Hardware configuration (generate with nixos-generate-config)
     ./hardware-configuration.nix
-    
+
     # Common configuration
     ../common.nix
-    
+
     # VM guest optimizations
     ../../modules/virtualization/vm-guest.nix
-    
+
     # Core modules  
     ../../modules/core
-    
+
     # Development tools (optional)
     ../../modules/development
   ];
@@ -24,22 +24,22 @@
   # Enable VM guest optimizations
   modules.virtualization.vm-guest = {
     enable = true;
-    type = "qemu";  # Can also use "auto" for auto-detection
-    
+    type = "qemu"; # Can also use "auto" for auto-detection
+
     optimizations = {
       performance = true;
       graphics = true;
       networking = true;
       storage = true;
     };
-    
+
     guestTools = {
       enable = true;
       clipboard = true;
       folderSharing = true;
       timeSync = true;
     };
-    
+
     serial = {
       enable = true;
     };
@@ -50,14 +50,14 @@
     isNormalUser = true;
     description = "VM User";
     extraGroups = [ "wheel" "networkmanager" ];
-    
+
     # Set initial password (change after first login)
     initialPassword = "nixos";
   };
-  
+
   # Allow wheel group to sudo without password (VM convenience)
   security.sudo.wheelNeedsPassword = false;
-  
+
   # Home Manager configuration for the user
   home-manager.users.vm-user = import ./home.nix;
 
@@ -67,7 +67,7 @@
     openssh = {
       enable = true;
       settings = {
-        PasswordAuthentication = true;  # Allow for initial setup
+        PasswordAuthentication = true; # Allow for initial setup
         PermitRootLogin = "no";
       };
     };
@@ -76,7 +76,7 @@
   # Firewall configuration
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [ 22 ];  # SSH
+    allowedTCPPorts = [ 22 ]; # SSH
     allowPing = true;
   };
 
@@ -91,10 +91,10 @@
   environment.systemPackages = with pkgs; [
     # Cloud utilities for VM deployment
     cloud-utils
-    
+
     # Additional network tools
     socat
-    
+
     # Development conveniences
     git
     curl

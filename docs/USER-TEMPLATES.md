@@ -5,30 +5,35 @@ This NixOS template includes several pre-configured user templates for different
 ## Available User Templates
 
 ### Basic User (`user.nix`)
+
 - **Purpose**: Default, general-purpose user configuration
 - **Desktop**: GNOME (configurable)
 - **Features**: Basic shell setup, essential applications, simple git configuration
 - **Best for**: General desktop usage, beginners
 
 ### Developer User (`developer.nix`)
+
 - **Purpose**: Software development focused configuration
 - **Desktop**: GNOME/KDE recommended
 - **Features**: Development tools, enhanced git, IDE integrations, multiple language support
 - **Best for**: Software developers, programmers, DevOps engineers
 
 ### Gaming User (`gamer.nix`)
+
 - **Purpose**: Gaming and entertainment focused configuration
 - **Desktop**: KDE recommended (best gaming integration)
 - **Features**: Steam, Lutris, Discord, streaming tools, gaming optimizations
 - **Best for**: Gamers, content creators, entertainment
 
 ### Minimal User (`minimal.nix`)
+
 - **Purpose**: Lightweight configuration for resource-constrained systems
 - **Desktop**: None (terminal-focused)
 - **Features**: Essential tools only, minimal resource usage
 - **Best for**: Servers, old hardware, embedded systems
 
 ### Server Admin (`server.nix`)
+
 - **Purpose**: System administration and server management
 - **Desktop**: None (terminal-focused)
 - **Features**: Administrative tools, monitoring, networking, security utilities
@@ -59,6 +64,7 @@ cp home/users/developer.nix hosts/myhost/home.nix
 ### 3. Customize Configuration
 
 Edit the created home.nix file to customize:
+
 - Username and email
 - Desktop environment preference
 - Application selection
@@ -79,18 +85,21 @@ just switch myhost
 ### Basic User Template
 
 **Applications included:**
+
 - Firefox (web browser)
 - Git (version control)
 - Basic command line tools
 - File management utilities
 
 **Configuration highlights:**
+
 - Simple bash prompt
 - Basic aliases
 - Essential XDG directories
 - GNOME desktop integration
 
 **Customization points:**
+
 - Desktop environment (import different profile)
 - Git user information
 - Shell aliases and prompt
@@ -99,6 +108,7 @@ just switch myhost
 ### Developer Template
 
 **Applications included:**
+
 - VSCode (IDE)
 - Development languages (Node.js, Python, Rust, Go, C/C++)
 - Git with advanced configuration
@@ -107,6 +117,7 @@ just switch myhost
 - Cloud tools (optional)
 
 **Configuration highlights:**
+
 - Enhanced shell with git branch display
 - Development-focused aliases
 - Multiple language support
@@ -114,6 +125,7 @@ just switch myhost
 - Project directory structure
 
 **Customization points:**
+
 - IDE preference (VSCode, JetBrains, etc.)
 - Programming languages
 - Cloud provider tools
@@ -123,6 +135,7 @@ just switch myhost
 ### Gaming Template
 
 **Applications included:**
+
 - Steam (gaming platform)
 - Lutris (gaming launcher)
 - Discord (communication)
@@ -131,6 +144,7 @@ just switch myhost
 - Emulators (optional)
 
 **Configuration highlights:**
+
 - Gaming-optimized environment variables
 - MangoHud configuration
 - GameMode integration
@@ -138,6 +152,7 @@ just switch myhost
 - Steam and Proton optimizations
 
 **Customization points:**
+
 - Gaming platforms (Steam, Epic, etc.)
 - Emulation systems
 - Streaming software
@@ -147,18 +162,21 @@ just switch myhost
 ### Minimal Template
 
 **Applications included:**
+
 - nano, vim (text editors)
 - Essential file utilities
 - Basic networking tools
 - Minimal system information tools
 
 **Configuration highlights:**
+
 - Lightweight package selection
 - Simple bash configuration
 - Essential-only XDG directories
 - Minimal environment variables
 
 **Customization points:**
+
 - Text editor preference
 - Essential applications only
 - Shell configuration
@@ -167,6 +185,7 @@ just switch myhost
 ### Server Admin Template
 
 **Applications included:**
+
 - System monitoring tools (htop, iotop, nethogs)
 - Network diagnostics (nmap, tcpdump, mtr)
 - Security tools (GPG, OpenSSL)
@@ -175,6 +194,7 @@ just switch myhost
 - Cloud administration tools (optional)
 
 **Configuration highlights:**
+
 - Advanced SSH configuration
 - System information functions
 - Service management aliases
@@ -182,6 +202,7 @@ just switch myhost
 - Security-focused settings
 
 **Customization points:**
+
 - Monitoring tool selection
 - Cloud provider tools
 - Container platform
@@ -211,7 +232,7 @@ Add applications to the `home.packages` section:
 ```nix
 home.packages = with pkgs; [
   # Existing packages...
-  
+
   # Add your custom applications
   thunderbird    # Email client
   gimp          # Image editor
@@ -226,12 +247,12 @@ Modify the bash configuration:
 ```nix
 programs.bash = {
   enable = true;
-  
+
   shellAliases = {
     # Add your custom aliases
     myalias = "my command";
   };
-  
+
   bashrcExtra = ''
     # Add custom bash configuration
     export MY_VARIABLE="value"
@@ -267,19 +288,20 @@ Where each user file is based on a different template.
 
 ## Template Comparison
 
-| Feature | Basic | Developer | Gaming | Minimal | Server |
-|---------|-------|-----------|--------|---------|---------|
-| **Resource Usage** | Low | Medium | High | Very Low | Low |
-| **Applications** | Essential | Development | Gaming | Minimal | Admin Tools |
-| **Desktop** | GNOME | Any | KDE | None | None |
-| **Complexity** | Simple | Advanced | Medium | Very Simple | Advanced |
-| **Use Case** | General | Coding | Gaming | Embedded | Administration |
+| Feature            | Basic     | Developer   | Gaming | Minimal     | Server         |
+| ------------------ | --------- | ----------- | ------ | ----------- | -------------- |
+| **Resource Usage** | Low       | Medium      | High   | Very Low    | Low            |
+| **Applications**   | Essential | Development | Gaming | Minimal     | Admin Tools    |
+| **Desktop**        | GNOME     | Any         | KDE    | None        | None           |
+| **Complexity**     | Simple    | Advanced    | Medium | Very Simple | Advanced       |
+| **Use Case**       | General   | Coding      | Gaming | Embedded    | Administration |
 
 ## Creating Custom Templates
 
 To create your own user template:
 
 1. **Copy existing template:**
+
    ```bash
    cp home/users/user.nix home/users/mytemplate.nix
    ```
@@ -291,6 +313,7 @@ To create your own user template:
    - Configure programs as needed
 
 3. **Test the template:**
+
    ```bash
    just init-user testhost mytemplate
    just test testhost
@@ -306,23 +329,29 @@ To create your own user template:
 ### Common Issues
 
 **Template not found:**
+
 ```bash
 ERROR: Template 'mytemplate' not found
 ```
+
 - Check template exists in `home/users/`
 - Verify filename matches template name
 
 **Configuration conflicts:**
+
 ```bash
 ERROR: The option 'programs.git.userName' is defined multiple times
 ```
+
 - Remove duplicate configurations
 - Check imported profiles for conflicts
 
 **Desktop environment conflicts:**
+
 ```bash
 ERROR: Multiple desktop environments enabled
 ```
+
 - Ensure only one desktop profile is imported
 - Check system configuration matches user config
 
@@ -371,14 +400,14 @@ Create templates that inherit from others:
   imports = [
     ./developer.nix  # Inherit from developer template
   ];
-  
+
   # Override or extend configurations
   home.packages = with pkgs; [
     # Additional packages beyond developer template
     postman
     insomnia
   ];
-  
+
   # Override git configuration
   programs.git.userEmail = lib.mkForce "custom@example.com";
 }

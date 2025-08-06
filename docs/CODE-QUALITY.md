@@ -22,24 +22,24 @@ just quality
 
 ### Core Validation Tools
 
-| Tool | Purpose | Command |
-|------|---------|---------|
-| **nixpkgs-fmt** | Format Nix files | `just fmt` |
-| **statix** | Lint and analyze Nix code | `just lint` |
-| **deadnix** | Detect unused code | `just dead-code-check` |
-| **vulnix** | Security vulnerability scanning | `just security-audit` |
-| **nix flake check** | Validate flake syntax and build | `just check` |
+| Tool                | Purpose                         | Command                |
+| ------------------- | ------------------------------- | ---------------------- |
+| **nixpkgs-fmt**     | Format Nix files                | `just fmt`             |
+| **statix**          | Lint and analyze Nix code       | `just lint`            |
+| **deadnix**         | Detect unused code              | `just dead-code-check` |
+| **vulnix**          | Security vulnerability scanning | `just security-audit`  |
+| **nix flake check** | Validate flake syntax and build | `just check`           |
 
 ### Development Utilities
 
-| Tool | Purpose | Usage |
-|------|---------|-------|
-| **pre-commit** | Git hooks automation | `just install-hooks` |
-| **fd** | Better file finding | `fd pattern` |
-| **ripgrep** | Better text searching | `rg pattern` |
-| **bat** | Better file viewing | `bat file.nix` |
-| **eza** | Better directory listing | `eza -la` |
-| **fzf** | Fuzzy finding | `history \| fzf` |
+| Tool           | Purpose                  | Usage                |
+| -------------- | ------------------------ | -------------------- |
+| **pre-commit** | Git hooks automation     | `just install-hooks` |
+| **fd**         | Better file finding      | `fd pattern`         |
+| **ripgrep**    | Better text searching    | `rg pattern`         |
+| **bat**        | Better file viewing      | `bat file.nix`       |
+| **eza**        | Better directory listing | `eza -la`            |
+| **fzf**        | Fuzzy finding            | `history \| fzf`     |
 
 ## Validation Commands
 
@@ -132,16 +132,19 @@ git commit --no-verify -m "commit message"
 ### Tool Behavior
 
 **Statix (Linter)**:
+
 - Checks for common Nix anti-patterns
 - Suggests improvements and best practices
 - Reports unused variables and imports
 
 **Deadnix (Dead Code Detection)**:
+
 - Finds unused function parameters
 - Detects unreferenced variables
 - Identifies unused imports
 
 **Vulnix (Security)**:
+
 - Scans for known vulnerabilities in dependencies
 - Cross-references with NixOS security database
 - Provides remediation suggestions
@@ -151,12 +154,14 @@ git commit --no-verify -m "commit message"
 ### Recommended Workflow
 
 1. **Initial Setup**:
+
    ```bash
    nix develop
    just dev-setup
    ```
 
 2. **During Development**:
+
    ```bash
    # Make changes to Nix files
    just validate          # Quick validation
@@ -164,6 +169,7 @@ git commit --no-verify -m "commit message"
    ```
 
 3. **Before Committing**:
+
    ```bash
    just quality           # Comprehensive checks
    git add .

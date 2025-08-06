@@ -21,12 +21,14 @@ find . -name "*.nix" -exec nix-instantiate --parse {} \;
 ```
 
 **What it validates:**
+
 - ✅ Nix syntax correctness
 - ✅ Import resolution
 - ✅ Basic type checking
 - ✅ Module structure
 
 **What it doesn't validate:**
+
 - ❌ Runtime functionality
 - ❌ Package availability
 - ❌ Hardware compatibility
@@ -49,6 +51,7 @@ nix build .#nixosConfigurations.laptop-template.config.system.build.toplevel --d
 ```
 
 **What it validates:**
+
 - ✅ All syntax validation +
 - ✅ Package dependencies exist
 - ✅ Module evaluation succeeds
@@ -56,6 +59,7 @@ nix build .#nixosConfigurations.laptop-template.config.system.build.toplevel --d
 - ✅ Configuration generates valid system
 
 **What it doesn't validate:**
+
 - ❌ Runtime behavior
 - ❌ Hardware-specific functionality
 - ❌ Service startup and interaction
@@ -79,6 +83,7 @@ result/bin/run-*-vm
 ```
 
 **What it validates:**
+
 - ✅ All build evaluation +
 - ✅ System boots successfully
 - ✅ Services start correctly
@@ -86,6 +91,7 @@ result/bin/run-*-vm
 - ✅ Basic functionality works
 
 **Resource requirements:**
+
 - 4-8 GB RAM per VM
 - 10-20 GB disk space
 - Virtualization support (KVM/QEMU)
@@ -104,12 +110,14 @@ sudo systemd-nspawn -M test-container --image=result
 ```
 
 **Benefits:**
+
 - ⚡ Faster than VMs
 - 💾 Less resource intensive
 - 🔒 Good isolation
 - 🐧 Linux-only services testable
 
 **Limitations:**
+
 - ❌ No kernel-level testing
 - ❌ No hardware simulation
 - ❌ Limited desktop environment testing
@@ -132,6 +140,7 @@ git commit -m "update configuration"
 ### CI/CD Pipeline
 
 **On every push/PR:**
+
 ```yaml
 # GitHub Actions automatically runs:
 - Syntax validation (nix flake check)
@@ -141,6 +150,7 @@ git commit -m "update configuration"
 ```
 
 **For releases:**
+
 ```bash
 # Full validation including VM tests
 just validate-templates-full
@@ -267,7 +277,7 @@ just validate-templates-full
 
 ```bash
 ✅ SUCCESS Flake syntax validation passed
-✅ SUCCESS All Nix files have valid syntax  
+✅ SUCCESS All Nix files have valid syntax
 ✅ SUCCESS Template laptop-template structure is valid
 ✅ SUCCESS Build evaluation passed for: desktop-template
 ✅ SUCCESS VM build successful for: server-template
@@ -276,27 +286,35 @@ just validate-templates-full
 ### Common Issues and Solutions
 
 #### Syntax Errors
+
 ```bash
 ❌ ERROR Syntax error in: modules/example.nix
 ```
+
 **Solution**: Fix Nix syntax errors, check imports and brackets
 
 #### Missing Dependencies
+
 ```bash
 ❌ ERROR Build evaluation failed for: laptop-template
 ```
+
 **Solution**: Check that all referenced packages exist in nixpkgs
 
 #### VM Build Failures
+
 ```bash
 ❌ ERROR VM build failed for: desktop-template
 ```
+
 **Solution**: Check hardware-configuration.nix, ensure all modules are compatible
 
 #### Template Structure Issues
+
 ```bash
 ❌ ERROR Missing required file in laptop-template: home.nix
 ```
+
 **Solution**: Ensure all templates have required files (configuration.nix, home.nix)
 
 ## Performance Optimization
@@ -306,7 +324,7 @@ just validate-templates-full
 ```bash
 # Validate multiple templates in parallel
 (just validate-template laptop-template &)
-(just validate-template desktop-template &)  
+(just validate-template desktop-template &)
 (just validate-template server-template &)
 wait
 ```
@@ -336,6 +354,7 @@ export NIX_BUILD_CORES=2
 ### VS Code
 
 Add to `.vscode/tasks.json`:
+
 ```json
 {
   "label": "Validate Templates",
@@ -348,6 +367,7 @@ Add to `.vscode/tasks.json`:
 ### Vim/Neovim
 
 Add to configuration:
+
 ```vim
 nnoremap <leader>vt :!just validate-templates<CR>
 nnoremap <leader>vq :!just validate-templates-quick<CR>
@@ -356,14 +376,17 @@ nnoremap <leader>vq :!just validate-templates-quick<CR>
 ## Recommended Workflow
 
 For **daily development**:
+
 1. Quick syntax check: `just validate-templates-quick`
 2. Pre-commit validation: automatic via git hooks
 
 For **feature completion**:
+
 1. Standard validation: `just validate-templates`
 2. CI validation: automatic on push
 
 For **releases**:
+
 1. Full validation: `just validate-templates-full`
 2. Manual VM testing for critical templates
 3. Release preparation: `just prepare-release`

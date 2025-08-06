@@ -5,6 +5,7 @@ This directory contains encrypted secrets managed by [agenix](https://github.com
 ## Overview
 
 Agenix provides secure, declarative secret management by:
+
 - Encrypting secrets with age (modern encryption tool)
 - Storing encrypted secrets in git (safe to commit)
 - Automatically decrypting secrets on target systems
@@ -43,6 +44,7 @@ modules.security.agenix = {
 ### 2. Generate Keys
 
 **Generate your personal age key**:
+
 ```bash
 # From SSH key (recommended)
 ssh-to-age < ~/.ssh/id_ed25519.pub
@@ -52,6 +54,7 @@ age-keygen -o ~/.config/age/key.txt
 ```
 
 **Get system host key**:
+
 ```bash
 # On target system
 sudo ssh-to-age < /etc/ssh/ssh_host_ed25519_key.pub
@@ -63,7 +66,7 @@ Edit `secrets.nix` with your keys:
 
 ```nix
 let
-  alice = "age1xyz...";           # Your age public key  
+  alice = "age1xyz...";           # Your age public key
   laptop = "age1host123...";      # System's age public key
 in
 {
@@ -74,11 +77,13 @@ in
 ### 4. Create and Edit Secrets
 
 **Create/edit a secret**:
+
 ```bash
 agenix -e user-password.age
 ```
 
 **First time setup**:
+
 ```bash
 # Set identity file location
 export EDITOR="vim"
@@ -105,19 +110,19 @@ secrets/
 ```nix
 modules.security.agenix = {
   enable = true;
-  
+
   # Global defaults
   secretsPath = "/run/agenix";       # Where secrets are decrypted
   secretsMode = "0400";              # Default file permissions
   secretsOwner = "root";             # Default owner
   secretsGroup = "root";             # Default group
-  
+
   # Identity files for decryption
   identityPaths = [
     "/etc/ssh/ssh_host_ed25519_key"
     "/etc/ssh/ssh_host_rsa_key"
   ];
-  
+
   # Secrets configuration
   secrets = {
     "wifi-password" = {
@@ -126,7 +131,7 @@ modules.security.agenix = {
       group = "networkmanager";
       mode = "0440";
     };
-    
+
     "user-password" = {
       file = ../../secrets/user-password.age;
       path = "/run/agenix/user-password";
@@ -140,16 +145,16 @@ modules.security.agenix = {
 ```nix
 modules.security.agenix = {
   enable = true;
-  
+
   # Custom installation type
   installationType = "system";  # or "activation"
-  
+
   # Multiple identity sources
   identityPaths = [
     "/etc/ssh/ssh_host_ed25519_key"
     "/home/alice/.ssh/id_ed25519"
   ];
-  
+
   secrets = {
     # Database credentials
     "database-url" = {
@@ -158,7 +163,7 @@ modules.security.agenix = {
       group = "postgres";
       mode = "0400";
     };
-    
+
     # SSL certificates
     "ssl-cert" = {
       file = ../../secrets/ssl-cert.age;
@@ -167,7 +172,7 @@ modules.security.agenix = {
       group = "nginx";
       mode = "0444";
     };
-    
+
     # API keys for services
     "api-keys" = {
       file = ../../secrets/api-keys.age;
@@ -265,16 +270,19 @@ services.restic.backups.home = {
 ### Adding New Secrets
 
 1. **Update secrets.nix**:
+
    ```nix
    "new-secret.age".publicKeys = [ users.alice systems.laptop ];
    ```
 
 2. **Create the secret**:
+
    ```bash
    agenix -e new-secret.age
    ```
 
 3. **Add to host configuration**:
+
    ```nix
    modules.security.agenix.secrets."new-secret" = {
      file = ../../secrets/new-secret.age;
@@ -292,6 +300,7 @@ services.restic.backups.home = {
 ### Rotating Secrets
 
 1. **Edit existing secret**:
+
    ```bash
    agenix -e existing-secret.age
    ```
@@ -301,11 +310,13 @@ services.restic.backups.home = {
 ### Adding New Systems/Users
 
 1. **Get new public key**:
+
    ```bash
    ssh-to-age < /path/to/new/key.pub
    ```
 
 2. **Update secrets.nix**:
+
    ```nix
    let
      newSystem = "age1new...";
@@ -348,6 +359,7 @@ services.restic.backups.home = {
 ### Common Issues
 
 **Secret not decrypting**:
+
 ```bash
 # Check identity files
 ls -la /etc/ssh/ssh_host_*_key
@@ -360,6 +372,7 @@ ls -la /run/agenix/
 ```
 
 **Permission errors**:
+
 ```bash
 # Check service ownership
 systemctl status agenix-secretname
@@ -369,6 +382,7 @@ ls -la /run/agenix/secretname
 ```
 
 **Missing agenix command**:
+
 ```bash
 # Install agenix
 nix-shell -p agenix
@@ -401,21 +415,21 @@ age -d -i /etc/ssh/ssh_host_ed25519_key secret.age
 # hosts/laptop/default.nix
 { config, ... }: {
   imports = [ ../../modules/security/agenix.nix ];
-  
+
   modules.security.agenix = {
     enable = true;
-    
+
     secrets = {
       "user-password" = {
         file = ../../secrets/user-password.age;
       };
-      
+
       "wifi-password" = {
         file = ../../secrets/wifi-password.age;
         owner = "networkmanager";
         group = "networkmanager";
       };
-      
+
       "ssh-key" = {
         file = ../../secrets/ssh-key.age;
         owner = "alice";
@@ -424,12 +438,12 @@ age -d -i /etc/ssh/ssh_host_ed25519_key secret.age
       };
     };
   };
-  
+
   # Use secrets in configuration
   users.users.alice = {
     hashedPasswordFile = config.age.secrets."user-password".path;
   };
-  
+
   networking.wireless.networks."MyWiFi" = {
     pskFile = config.age.secrets."wifi-password".path;
   };
@@ -454,7 +468,7 @@ modules.security.agenix.secrets = {
     owner = "nextcloud";
     group = "nextcloud";
   };
-  
+
   "nextcloud-db-password" = {
     file = ../../secrets/nextcloud-db-password.age;
     owner = "nextcloud";
@@ -468,11 +482,13 @@ modules.security.agenix.secrets = {
 ### From sops-nix
 
 1. **Extract existing secrets**:
+
    ```bash
    sops -d secrets.yaml > decrypted-secrets.yaml
    ```
 
 2. **Convert to agenix**:
+
    ```bash
    # For each secret
    echo "secret-value" | agenix -e secret-name.age
@@ -483,6 +499,7 @@ modules.security.agenix.secrets = {
 ### From manual secret files
 
 1. **Encrypt existing secrets**:
+
    ```bash
    agenix -e existing-secret.age < /path/to/existing/secret
    ```

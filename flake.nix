@@ -28,10 +28,10 @@
     {
       # Custom packages and modifications, exported as overlays
       overlays = import ./overlays { inherit inputs; };
-      
+
       # Custom packages; acessible through 'nix build', 'nix shell', etc
       packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
-      
+
       # Formatter for your nix files, available through 'nix fmt'
       formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixpkgs-fmt);
 
@@ -45,25 +45,25 @@
               nixpkgs-fmt
               statix
               deadnix
-              
+
               # Shell scripting
               shellcheck
               shfmt
-              
+
               # Documentation
               markdownlint-cli
-              
+
               # Development tools
               git
               just
               pre-commit
-              
+
               # Hardware detection dependencies
               pciutils
               usbutils
               lshw
             ];
-            
+
             shellHook = ''
               echo "NixOS Template Development Environment"
               echo "Available commands:"

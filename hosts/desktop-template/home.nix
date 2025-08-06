@@ -8,7 +8,7 @@
     username = "user";
     homeDirectory = lib.mkForce "/home/user";
     stateVersion = "25.05";
-    
+
     packages = with pkgs; [
       # Productivity applications
       firefox
@@ -16,13 +16,13 @@
       thunderbird
       libreoffice
       evince
-      
+
       # Development tools
       vscode
       git
       vim
       jetbrains.idea-community
-      
+
       # Media and creativity
       gimp
       inkscape
@@ -30,12 +30,12 @@
       audacity
       vlc
       obs-studio
-      
+
       # Communication
       discord
       signal-desktop
       slack
-      
+
       # System utilities
       htop
       tree
@@ -44,41 +44,41 @@
       wget
       curl
       gparted
-      
+
       # Gaming
       lutris
       heroic
       steam-run
-      
+
       # Archive tools
       p7zip
       unrar
-      
+
       # Cloud and sync
       rclone
       syncthing
-      
+
       # Graphics and design
       krita
       darktable
-      
+
       # Development utilities
       docker-compose
       postman
       dbeaver-bin
     ];
-    
+
     # Session variables
     sessionVariables = {
       EDITOR = "code";
       BROWSER = "firefox";
       TERMINAL = "gnome-terminal";
-      
+
       # Development
       NODE_OPTIONS = "--max-old-space-size=8192";
-      
+
       # Graphics
-      NIXOS_OZONE_WL = "1";  # Enable Wayland for Electron apps
+      NIXOS_OZONE_WL = "1"; # Enable Wayland for Electron apps
     };
   };
 
@@ -93,11 +93,11 @@
         init.defaultBranch = "main";
         pull.rebase = false;
         push.autoSetupRemote = true;
-        
+
         core.autocrlf = "input";
         fetch.prune = true;
         merge.conflictStyle = "diff3";
-        
+
         # Desktop-friendly settings
         credential.helper = "store";
         rerere.enabled = true;
@@ -110,7 +110,7 @@
       enableCompletion = true;
       historySize = 10000;
       historyControl = [ "ignoreboth" ];
-      
+
       shellAliases = {
         # File operations
         ll = "ls -la";
@@ -118,7 +118,7 @@
         l = "ls -l";
         ".." = "cd ..";
         "..." = "cd ../..";
-        
+
         # Git shortcuts
         "gs" = "git status";
         "ga" = "git add";
@@ -128,27 +128,27 @@
         "gd" = "git diff";
         "gb" = "git branch";
         "gco" = "git checkout";
-        
+
         # Development
         "serve" = "python -m http.server 8000";
         "json" = "python -m json.tool";
-        
+
         # System
         "open" = "xdg-open";
         "pbcopy" = "xclip -selection clipboard";
         "pbpaste" = "xclip -selection clipboard -o";
-        
+
         # Docker shortcuts
         "dps" = "docker ps";
         "dpa" = "docker ps -a";
         "di" = "docker images";
         "dex" = "docker exec -it";
-        
+
         # Nix shortcuts
         "nix-search" = "nix search nixpkgs";
         "nix-shell-dev" = "nix-shell -p";
       };
-      
+
       bashrcExtra = ''
         # Enhanced prompt with git information
         parse_git_branch() {
@@ -219,27 +219,27 @@
           # Performance settings
           "browser.cache.disk.enable" = true;
           "browser.cache.memory.enable" = true;
-          "browser.cache.memory.capacity" = 102400;  # 100MB
-          
+          "browser.cache.memory.capacity" = 102400; # 100MB
+
           # Privacy settings
           "privacy.donottrackheader.enabled" = true;
           "privacy.trackingprotection.enabled" = true;
           "dom.security.https_only_mode" = true;
-          
+
           # UI settings
           "browser.toolbars.bookmarks.visibility" = "always";
           "browser.tabs.drawInTitlebar" = true;
-          "browser.uidensity" = 1;  # Compact
-          
+          "browser.uidensity" = 1; # Compact
+
           # Downloads
           "browser.download.dir" = "${config.home.homeDirectory}/Downloads";
           "browser.download.useDownloadDir" = true;
-          
+
           # Developer settings
           "devtools.theme" = "dark";
           "devtools.toolbox.host" = "right";
         };
-        
+
         # Firefox extensions - using system firefox addons (nur not available)
         # extensions = with pkgs.firefox-addons; [
         #   ublock-origin
@@ -261,27 +261,27 @@
         golang.go
         ms-vscode.cpptools
         bradlc.vscode-tailwindcss
-        
+
         # Nix support
         jnoortheen.nix-ide
-        
+
         # Git integration
         eamodio.gitlens
-        
+
         # Productivity
         vscodevim.vim
         # ms-vscode.vscode-todo-highlight  # Extension not available
         streetsidesoftware.code-spell-checker
-        
+
         # Themes
         dracula-theme.theme-dracula
         pkief.material-icon-theme
-        
+
         # Remote development
         ms-vscode-remote.remote-ssh
         ms-vscode-remote.remote-containers
       ];
-      
+
       userSettings = {
         "editor.fontSize" = 14;
         "editor.fontFamily" = "JetBrains Mono";
@@ -292,23 +292,23 @@
         "editor.minimap.enabled" = true;
         "editor.formatOnSave" = true;
         "editor.rulers" = [ 80 120 ];
-        
+
         "workbench.colorTheme" = "Dracula";
         "workbench.iconTheme" = "material-icon-theme";
         "workbench.startupEditor" = "newUntitledFile";
-        
+
         "terminal.integrated.fontFamily" = "JetBrains Mono";
         "terminal.integrated.fontSize" = 13;
-        
+
         "git.enableSmartCommit" = true;
         "git.confirmSync" = false;
-        
+
         "extensions.autoUpdate" = true;
-        
+
         # Nix settings
         "nix.enableLanguageServer" = true;
         "nix.serverPath" = "nil";
-        
+
         # File associations
         "files.associations" = {
           "*.nix" = "nix";
@@ -329,7 +329,7 @@
       enable = true;
       controlMaster = "auto";
       controlPersist = "10m";
-      
+
       extraConfig = ''
         ServerAliveInterval 60
         ServerAliveCountMax 3
@@ -347,7 +347,7 @@
 
     # Zsh alternative (optional)
     fish = {
-      enable = false;  # Set to true if preferred over bash
+      enable = false; # Set to true if preferred over bash
       shellInit = ''
         # Custom fish configuration would go here
       '';
@@ -369,19 +369,19 @@
           idle_threshold = 120;
           markup = "full";
         };
-        
+
         urgency_low = {
           background = "#2b2b2b";
           foreground = "#ffffff";
           timeout = 5;
         };
-        
+
         urgency_normal = {
           background = "#285577";
           foreground = "#ffffff";
           timeout = 10;
         };
-        
+
         urgency_critical = {
           background = "#900000";
           foreground = "#ffffff";
@@ -411,7 +411,7 @@
       enable = true;
       enableSshSupport = true;
       pinentryPackage = pkgs.pinentry-gnome3;
-      
+
       defaultCacheTtl = 3600;
       defaultCacheTtlSsh = 3600;
       maxCacheTtl = 7200;
@@ -424,7 +424,7 @@
     };
 
     # Desktop services
-    flameshot.enable = true;  # Screenshot tool
+    flameshot.enable = true; # Screenshot tool
   };
 
   # Desktop environment specific configuration
@@ -436,16 +436,16 @@
       font-name = "Cantarell 11";
       document-font-name = "Cantarell 11";
       monospace-font-name = "JetBrains Mono 10";
-      
+
       enable-hot-corners = false;
       show-battery-percentage = true;
     };
-    
+
     "org/gnome/desktop/wm/preferences" = {
       button-layout = "appmenu:minimize,maximize,close";
       resize-with-right-button = true;
     };
-    
+
     "org/gnome/shell" = {
       favorite-apps = [
         "firefox.desktop"
@@ -455,17 +455,17 @@
         "thunderbird.desktop"
       ];
     };
-    
+
     "org/gnome/desktop/input-sources" = {
-      xkb-options = [ "caps:escape" ];  # Caps Lock as Escape
+      xkb-options = [ "caps:escape" ]; # Caps Lock as Escape
     };
-    
+
     "org/gnome/settings-daemon/plugins/media-keys" = {
       custom-keybindings = [
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
       ];
     };
-    
+
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
       binding = "<Super>Return";
       command = "gnome-terminal";
@@ -476,7 +476,7 @@
   # XDG configuration
   xdg = {
     enable = true;
-    
+
     # Default applications
     mimeApps = {
       enable = true;
@@ -486,17 +486,17 @@
         "x-scheme-handler/https" = "firefox.desktop";
         "x-scheme-handler/about" = "firefox.desktop";
         "x-scheme-handler/unknown" = "firefox.desktop";
-        
+
         "application/pdf" = "evince.desktop";
         "image/jpeg" = "eog.desktop";
         "image/png" = "eog.desktop";
-        
+
         "text/plain" = "code.desktop";
         "application/json" = "code.desktop";
         "text/x-python" = "code.desktop";
       };
     };
-    
+
     # User directories
     userDirs = {
       enable = true;
@@ -510,7 +510,7 @@
       templates = "${config.home.homeDirectory}/Templates";
       videos = "${config.home.homeDirectory}/Videos";
     };
-    
+
     # Desktop entries for development
     desktopEntries = {
       "dev-shell" = {
@@ -535,13 +535,13 @@
     cursorTheme = {
       name = "Adwaita";
     };
-    
+
     gtk3.extraConfig = {
       gtk-application-prefer-dark-theme = 1;
       gtk-button-images = 1;
       gtk-menu-images = 1;
     };
-    
+
     gtk4.extraConfig = {
       gtk-application-prefer-dark-theme = 1;
     };

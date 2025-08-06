@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
   # KDE-specific Home Manager configuration
@@ -15,10 +15,10 @@
     ark
     kfind
     kcalc
-    
+
     # KDE development
     kdePackages.kdevelop
-    
+
     # Multimedia
     kdePackages.kdenlive
     kdePackages.krita

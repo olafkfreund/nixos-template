@@ -1,14 +1,14 @@
-{ config, lib, pkgs, inputs, outputs, ... }:
+{ config, lib, inputs, ... }:
 
 {
   imports = [
     # Hardware configuration (generate with nixos-generate-config)
     ./hardware-configuration.nix
-    
+
     # Desktop modules
     ../../modules/desktop
     ../../modules/development
-    
+
     # Hardware support
     ../../modules/hardware
     inputs.nixos-hardware.nixosModules.common-pc
@@ -22,10 +22,10 @@
   modules = {
     desktop = {
       # Choose your desktop environment (enable only one)
-      
+
       # GNOME Desktop (default)
       gnome.enable = true;
-      
+
       # KDE Plasma Desktop
       # kde = {
       #   enable = true;
@@ -34,7 +34,7 @@
       #   wayland.enable = true;      # Wayland support
       #   theme.darkMode = true;      # Dark theme
       # };
-      
+
       # Hyprland Tiling Window Manager  
       # hyprland = {
       #   enable = true;
@@ -50,7 +50,7 @@
       #     browser = "firefox";      # Default browser
       #   };
       # };
-      
+
       # Niri Scrollable Tiling Window Manager
       # niri = {
       #   enable = true;
@@ -70,13 +70,13 @@
       #     columns = true;           # Enable column scrolling
       #   };
       # };
-      
+
       # Common desktop modules
       audio.enable = true;
       fonts.enable = true;
       graphics.enable = true;
     };
-    
+
     development = {
       git = {
         enable = true;
@@ -84,13 +84,13 @@
         userEmail = "your.email@example.com";
       };
     };
-    
+
     # GPU Configuration - Choose your GPU type
     hardware.gpu = {
       # Auto-detect GPUs (recommended)
       autoDetect = true;
-      profile = "desktop";  # Options: desktop, gaming, ai-compute, server-compute
-      
+      profile = "desktop"; # Options: desktop, gaming, ai-compute, server-compute
+
       # Manual GPU selection (uncomment the one you have)
       # AMD GPU
       # amd = {
@@ -101,7 +101,7 @@
       #     vulkan = true;
       #   };
       # };
-      
+
       # NVIDIA GPU  
       # nvidia = {
       #   enable = true;
@@ -117,7 +117,7 @@
       #     };
       #   };
       # };
-      
+
       # Intel integrated GPU
       # intel = {
       #   enable = true;
@@ -127,7 +127,7 @@
       #     vulkan = true;
       #   };
       # };
-      
+
       # Multi-GPU setup (if you have multiple GPUs)
       # multiGpu = {
       #   enable = true;
@@ -141,11 +141,11 @@
     isNormalUser = true;
     description = "Desktop User";
     extraGroups = [ "networkmanager" "wheel" "audio" "video" ];
-    
+
     # Initial password (change after first login)
     initialPassword = "nixos";
   };
-  
+
   # Home Manager configuration for the user
   home-manager.users.user = import ./home.nix;
 
@@ -153,28 +153,28 @@
   services = {
     # Printing support
     printing.enable = true;
-    
+
     # Bluetooth support  
     blueman.enable = true;
-    
+
     # Location services
     geoclue2.enable = true;
-    
+
     # Flatpak support (optional)
     flatpak.enable = lib.mkDefault false;
   };
-  
+
   # Hardware support
   hardware = {
     # Bluetooth
     bluetooth.enable = true;
-    
+
     # OpenGL/graphics
     graphics.enable = true;
-    
+
     # Firmware
     enableRedistributableFirmware = true;
-    
+
     # CPU microcode
     cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
     # cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
@@ -185,7 +185,7 @@
     enable = true;
     powertop.enable = true;
   };
-  
+
   # TLP for laptop power management (disable for desktops)
   services.tlp = {
     enable = lib.mkDefault false;

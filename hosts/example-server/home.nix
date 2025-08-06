@@ -1,8 +1,8 @@
-{ config, lib, pkgs, inputs, outputs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   # Home Manager configuration for server administrator
-  
+
   # Basic user info
   home = {
     username = "server-admin";
@@ -18,7 +18,7 @@
     enable = true;
     userName = "Server Admin";
     userEmail = "admin@example.com";
-    
+
     extraConfig = {
       init.defaultBranch = "main";
       pull.rebase = true;
@@ -29,7 +29,7 @@
   # Shell configuration optimized for server management
   programs.bash = {
     enable = true;
-    
+
     shellAliases = {
       # Basic navigation
       ll = "ls -alF";
@@ -37,33 +37,33 @@
       l = "ls -CF";
       ".." = "cd ..";
       "..." = "cd ../..";
-      
+
       # System monitoring
       "top" = "htop";
       "cpu" = "htop -s PERCENT_CPU";
       "mem" = "htop -s PERCENT_MEM";
-      "gpu" = "nvtop";  # GPU monitoring
-      
+      "gpu" = "nvtop"; # GPU monitoring
+
       # Network tools
       "ports" = "ss -tuln";
       "netstat" = "ss -tuln";
       "ips" = "ip addr show";
-      
+
       # Docker shortcuts (if enabled)
       "dps" = "docker ps";
       "dimg" = "docker images";
       "dlog" = "docker logs -f";
-      
+
       # System information
       "sysinfo" = "echo 'Host:' $(hostname) && echo 'Uptime:' $(uptime -p) && echo 'Load:' $(cat /proc/loadavg | awk '{print $1, $2, $3}') && echo 'Memory:' $(free -h | grep Mem | awk '{print $3\"/\"$2}')";
       "gpuinfo" = "nvidia-smi || radeontop -d - -l 1 || intel_gpu_top -l";
-      
+
       # NixOS specific
       "rebuild" = "sudo nixos-rebuild switch --flake ~/nixos-config";
       "rebuild-test" = "sudo nixos-rebuild test --flake ~/nixos-config";
       "update" = "nix flake update ~/nixos-config";
     };
-    
+
     bashrcExtra = ''
       # Server-focused prompt with system info
       export PS1="\[\e[31m\][\[\e[m\]\[\e[32m\]\u\[\e[m\]\[\e[31m\]@\[\e[m\]\[\e[34m\]\h\[\e[m\]\[\e[31m\]]\[\e[m\] \[\e[33m\]\w\[\e[m\]\$ "
@@ -97,10 +97,10 @@
         tree = "eza --tree";
       };
     };
-    
+
     # Better cat with syntax highlighting
     bat.enable = true;
-    
+
     # System monitoring
     htop = {
       enable = true;
@@ -111,7 +111,7 @@
         highlight_base_name = 1;
       };
     };
-    
+
     # Terminal multiplexer for persistent sessions
     tmux = {
       enable = true;
@@ -119,7 +119,7 @@
       prefix = "C-a";
       keyMode = "vi";
       mouse = true;
-      
+
       extraConfig = ''
         # Server-focused tmux configuration
         set -g history-limit 50000
@@ -143,7 +143,7 @@
         setw -g mode-style bg=green,fg=black
       '';
     };
-    
+
     # Directory navigation
     zoxide.enable = true;
   };
@@ -151,53 +151,53 @@
   # Server management packages
   home.packages = with pkgs; [
     # System monitoring
-    iotop         # I/O monitoring
-    nethogs       # Network usage per process
-    ncdu          # Disk usage analyzer
-    
+    iotop # I/O monitoring
+    nethogs # Network usage per process
+    ncdu # Disk usage analyzer
+
     # Network tools
-    nmap          # Network scanner
-    netcat        # Network utility
-    socat         # Socket utility
-    tcpdump       # Network packet analyzer
-    
+    nmap # Network scanner
+    netcat # Network utility
+    socat # Socket utility
+    tcpdump # Network packet analyzer
+
     # File operations
-    rsync         # File synchronization
-    rclone        # Cloud storage sync
-    
+    rsync # File synchronization
+    rclone # Cloud storage sync
+
     # Text processing
-    jq            # JSON processor
-    yq            # YAML processor
-    ripgrep       # Fast text search
-    
+    jq # JSON processor
+    yq # YAML processor
+    ripgrep # Fast text search
+
     # Archive tools
     zip
     unzip
     p7zip
-    
+
     # Development tools
     git
     vim
     nano
-    
+
     # Container tools (if Docker is enabled)
     docker-compose
-    
+
     # GPU monitoring (automatically included based on GPU type)
-    nvtop         # Universal GPU monitoring
-    
+    nvtop # Universal GPU monitoring
+
     # System utilities
-    lsof          # List open files
-    strace        # System call tracer
-    tree          # Directory tree view
-    which         # Command location
-    file          # File type detection
+    lsof # List open files
+    strace # System call tracer
+    tree # Directory tree view
+    which # Command location
+    file # File type detection
   ];
 
   # SSH configuration for server management
   programs.ssh = {
     enable = true;
-    
+
     extraConfig = ''
       # Server management SSH settings
       Host *
@@ -223,14 +223,14 @@
   home.sessionVariables = {
     EDITOR = "vim";
     PAGER = "less";
-    
+
     # Server identification
     SERVER_ENVIRONMENT = "true";
     SERVER_ROLE = "admin";
-    
+
     # GPU-specific variables (set automatically based on GPU configuration)
     CUDA_CACHE_PATH = "$HOME/.nv/ComputeCache";
-    
+
     # Container environment
     DOCKER_BUILDKIT = "1";
     COMPOSE_DOCKER_CLI_BUILD = "1";
@@ -239,7 +239,7 @@
   # XDG directories (minimal for servers)
   xdg = {
     enable = true;
-    
+
     # Only create essential directories
     userDirs = {
       enable = true;
@@ -257,7 +257,7 @@
         Description = "GPU Monitoring Alert";
         After = [ "graphical-session.target" ];
       };
-      
+
       Service = {
         Type = "oneshot";
         ExecStart = "${pkgs.writeShellScript "gpu-check" ''
@@ -268,7 +268,7 @@
           fi
         ''}";
       };
-      
+
       Install.WantedBy = [ "default.target" ];
     };
   };

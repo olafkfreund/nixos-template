@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
   # Hyprland-specific Home Manager configuration
@@ -8,51 +8,51 @@
     # Wayland utilities
     wl-clipboard
     wlr-randr
-    
+
     # Application launcher and menus
     wofi
     rofi-wayland
-    
+
     # Terminal emulators
     alacritty
     kitty
-    
+
     # File managers
     thunar
     nautilus
-    
+
     # Screenshot and screen recording
     grim
     slurp
     swappy
     wf-recorder
-    
+
     # Media and viewers
-    imv          # Image viewer
-    mpv          # Video player
-    zathura      # PDF viewer
-    
+    imv # Image viewer
+    mpv # Video player
+    zathura # PDF viewer
+
     # System utilities
     brightnessctl
     pamixer
     pavucontrol
-    
+
     # Theme and appearance
     adwaita-icon-theme
     gnome-themes-extra
-    
+
     # Network management
     networkmanagerapplet
-    
+
     # Archive support
     file-roller
-    
+
     # Clipboard management
     clipman
-    
+
     # Color picker
     hyprpicker
-    
+
     # System info
     fastfetch
   ];
@@ -68,7 +68,7 @@
           y = 8;
         };
       };
-      
+
       font = {
         normal = {
           family = "JetBrains Mono";
@@ -84,19 +84,19 @@
         };
         size = 12.0;
       };
-      
+
       # Catppuccin Mocha theme
       colors = {
         primary = {
           background = "#1e1e2e";
           foreground = "#cdd6f4";
         };
-        
+
         cursor = {
           text = "#1e1e2e";
           cursor = "#f5e0dc";
         };
-        
+
         normal = {
           black = "#45475a";
           red = "#f38ba8";
@@ -107,7 +107,7 @@
           cyan = "#94e2d5";
           white = "#bac2de";
         };
-        
+
         bright = {
           black = "#585b70";
           red = "#f38ba8";
@@ -119,7 +119,7 @@
           white = "#a6adc8";
         };
       };
-      
+
       bell = {
         animation = "EaseOutExpo";
         duration = 0;
@@ -147,7 +147,7 @@
       image_size = 40;
       gtk_dark = true;
     };
-    
+
     style = ''
       window {
         margin: 0px;
@@ -211,7 +211,7 @@
 
   # Mako notification daemon (alternative to dunst)
   services.mako = {
-    enable = false;  # Using dunst from system config by default
+    enable = false; # Using dunst from system config by default
     backgroundColor = "#1e1e2e";
     borderColor = "#cba6f7";
     textColor = "#cdd6f4";
@@ -241,32 +241,32 @@
   # GTK theming for Wayland applications
   gtk = {
     enable = true;
-    
+
     theme = {
       package = pkgs.adwaita-qt;
       name = "Adwaita-dark";
     };
-    
+
     iconTheme = {
       package = pkgs.adwaita-icon-theme;
       name = "Adwaita";
     };
-    
+
     cursorTheme = {
       package = pkgs.adwaita-icon-theme;
       name = "Adwaita";
       size = 24;
     };
-    
+
     font = {
       name = "Inter";
       size = 11;
     };
-    
+
     gtk3.extraConfig = {
       gtk-application-prefer-dark-theme = 1;
     };
-    
+
     gtk4.extraConfig = {
       gtk-application-prefer-dark-theme = 1;
     };
@@ -284,21 +284,21 @@
     XDG_CURRENT_DESKTOP = "Hyprland";
     XDG_SESSION_DESKTOP = "Hyprland";
     XDG_SESSION_TYPE = "wayland";
-    
+
     # Qt
     QT_QPA_PLATFORM = "wayland;xcb";
     QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
-    
+
     # Firefox Wayland
     MOZ_ENABLE_WAYLAND = "1";
-    
+
     # Cursor theme
     XCURSOR_THEME = "Adwaita";
     XCURSOR_SIZE = "24";
-    
+
     # Java applications
     _JAVA_AWT_WM_NONREPARENTING = "1";
-    
+
     # SDL
     SDL_VIDEODRIVER = "wayland";
   };
@@ -310,25 +310,25 @@
       Unit = {
         Description = "Highly customizable Wayland bar for Sway and Wlroots based compositors";
         Documentation = "https://github.com/Alexays/Waybar/wiki";
-        PartOf = ["graphical-session.target"];
-        After = ["graphical-session.target"];
+        PartOf = [ "graphical-session.target" ];
+        After = [ "graphical-session.target" ];
       };
-      
+
       Service = {
         ExecStart = "${pkgs.waybar}/bin/waybar";
         Restart = "on-failure";
         RestartSec = 1;
         TimeoutStopSec = 10;
       };
-      
-      Install.WantedBy = ["graphical-session.target"];
+
+      Install.WantedBy = [ "graphical-session.target" ];
     };
   };
 
   # XDG directories
   xdg = {
     enable = true;
-    
+
     userDirs = {
       enable = true;
       createDirectories = true;
@@ -339,7 +339,7 @@
       pictures = "${config.home.homeDirectory}/Pictures";
       videos = "${config.home.homeDirectory}/Videos";
     };
-    
+
     mimeApps = {
       enable = true;
       defaultApplications = {

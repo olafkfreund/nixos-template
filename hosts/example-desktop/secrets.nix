@@ -5,7 +5,7 @@
   # Enable agenix secrets management
   modules.security.agenix = {
     enable = true;
-    
+
     # Desktop-specific secrets
     secrets = {
       # User password
@@ -15,7 +15,7 @@
         group = "root";
         mode = "0400";
       };
-      
+
       # WiFi network password
       "wifi-password" = {
         file = ../../secrets/wifi-password.age;
@@ -23,7 +23,7 @@
         group = "networkmanager";
         mode = "0440";
       };
-      
+
       # SSH private key for user
       "ssh-private-key" = {
         file = ../../secrets/ssh-private-key.age;
@@ -32,7 +32,7 @@
         mode = "0400";
         path = "/home/user/.ssh/id_ed25519";
       };
-      
+
       # Email configuration
       "email-password" = {
         file = ../../secrets/email-password.age;
@@ -40,7 +40,7 @@
         group = "users";
         mode = "0400";
       };
-      
+
       # Development secrets
       "github-token" = {
         file = ../../secrets/github-token.age;
@@ -48,7 +48,7 @@
         group = "users";
         mode = "0400";
       };
-      
+
       # VPN configuration
       "vpn-config" = {
         file = ../../secrets/vpn-config.age;
@@ -57,7 +57,7 @@
         mode = "0400";
         path = "/etc/openvpn/client.conf";
       };
-      
+
       # Backup encryption key
       "restic-password" = {
         file = ../../secrets/restic-password.age;
@@ -67,12 +67,12 @@
       };
     };
   };
-  
+
   # Use secrets in system configuration
   users.users.user = {
     hashedPasswordFile = config.age.secrets."user-password".path;
   };
-  
+
   # WiFi network with secret password
   networking.wireless = {
     enable = true;
@@ -82,7 +82,7 @@
       };
     };
   };
-  
+
   # Backup service using encrypted password
   services.restic.backups.home = {
     enable = true;
@@ -93,11 +93,11 @@
       OnCalendar = "daily";
     };
   };
-  
+
   # Create backup user for restic
   users.users.backup = {
     isSystemUser = true;
     group = "backup";
   };
-  users.groups.backup = {};
+  users.groups.backup = { };
 }

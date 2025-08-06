@@ -1,19 +1,19 @@
-{ config, lib, pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   # User configuration
   users = {
     # Use mutable users (allow passwd, etc.)
     mutableUsers = lib.mkDefault true;
-    
+
     # Default shell
     defaultUserShell = pkgs.bash;
-    
+
     # System groups
     groups = {
       # Additional groups can be defined here
     };
-    
+
     # System users
     users = {
       root = {
@@ -22,13 +22,13 @@
       };
     };
   };
-  
+
   # Shell configuration
   programs = {
     # Enable bash completion (updated option name)
     bash = {
       completion.enable = true;
-      
+
       # Global bashrc additions
       shellInit = ''
         # Custom prompt
@@ -43,10 +43,10 @@
         alias ...="cd ../.."
       '';
     };
-    
+
     # Enable git globally
     git.enable = true;
-    
+
     # Enable vim as default editor
     vim = {
       enable = true;

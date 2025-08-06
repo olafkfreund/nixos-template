@@ -6,11 +6,11 @@ in
 {
   options.modules.virtualization.qemu = {
     enable = lib.mkEnableOption "QEMU/KVM guest configuration";
-    
+
     virtioSupport = lib.mkEnableOption "VirtIO driver support" // { default = true; };
-    
+
     spiceSupport = lib.mkEnableOption "SPICE guest tools" // { default = false; };
-    
+
     qxlSupport = lib.mkEnableOption "QXL graphics driver" // { default = false; };
   };
 
@@ -20,45 +20,45 @@ in
       enable = true;
       qemuGuest = true;
     };
-    
+
     # QEMU guest agent for host communication
     services.qemuGuest.enable = true;
-    
+
     # VirtIO drivers for better performance
     boot = lib.mkIf cfg.virtioSupport {
       initrd = {
         availableKernelModules = [
           # VirtIO drivers
           "virtio_pci"
-          "virtio_scsi" 
+          "virtio_scsi"
           "virtio_blk"
           "virtio_net"
           "virtio_balloon"
           "virtio_console"
           "virtio_rng"
         ];
-        
+
         kernelModules = [
           "virtio_gpu"
         ];
       };
-      
+
       kernelModules = [
         "kvm"
-        "kvm_intel"  # or kvm_amd
+        "kvm_intel" # or kvm_amd
         "vfio"
         "vfio_pci"
       ];
     };
-    
+
     # SPICE guest tools for better desktop integration
     services.spice-vdagentd.enable = lib.mkIf cfg.spiceSupport true;
-    
+
     # QXL graphics driver
     services.xserver = lib.mkIf cfg.qxlSupport {
       videoDrivers = [ "qxl" ];
     };
-    
+
     # Optimize for QEMU/KVM
     environment.systemPackages = with pkgs; [
       # QEMU guest additions
@@ -68,19 +68,19 @@ in
       spice-vdagent
       spice-gtk
     ];
-    
+
     # Network configuration optimized for VMs
     networking = {
       # Use predictable interface names
       usePredictableInterfaceNames = true;
-      
+
       # DHCP on main interface
       interfaces = {
-        enp0s3.useDHCP = lib.mkDefault true;  # Common QEMU interface
-        ens3.useDHCP = lib.mkDefault true;    # Alternative naming
+        enp0s3.useDHCP = lib.mkDefault true; # Common QEMU interface
+        ens3.useDHCP = lib.mkDefault true; # Alternative naming
       };
     };
-    
+
     # Filesystem optimizations for QEMU
     fileSystems = {
       "/" = {
@@ -88,7 +88,7 @@ in
         options = [ "noatime" "discard" ];
       };
     };
-    
+
     # Security optimizations for VMs
     security = {
       # Allow QEMU guest agent
