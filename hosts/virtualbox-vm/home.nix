@@ -108,6 +108,6 @@
       };
     };
 
-    # Home Manager state version
-    home.stateVersion = "25.05";
-  }
+  # Home Manager state version
+  home.stateVersion = "25.05";
+}
