@@ -1,7 +1,7 @@
 # GPU Configuration Guide
 
-This NixOS template includes comprehensive GPU support for AMD, NVIDIA, and Intel graphics cards, with different optimization profiles for desktop/gaming vs
-AI/compute workloads.
+This NixOS template includes comprehensive GPU support for AMD, NVIDIA, and Intel graphics cards,
+with different optimization profiles for desktop/gaming vs AI/compute workloads.
 
 ## Overview
 
