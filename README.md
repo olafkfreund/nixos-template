@@ -2,14 +2,14 @@
 
 A sophisticated, modular NixOS configuration template using flakes, featuring:
 
-- 🏗️ **Modular Architecture** - Organized, reusable modules
-- 🏠 **Home Manager Integration** - Declarative user environments
-- 🔒 **SOPS Secrets Management** - Encrypted secrets in Git
-- 🖥️ **Multiple Host Support** - Desktop, server, VM, and custom configurations
-- 🎮 **GPU Support** - AMD, NVIDIA, Intel with gaming/AI optimizations
-- 🤖 **AI/Compute Ready** - CUDA, ROCm, OneAPI for machine learning
-- 🛠️ **Development Tools** - Scripts and utilities for easy management
-- 📦 **Custom Packages & Overlays** - Extend and customize packages
+- **Modular Architecture** - Organized, reusable modules
+- **Home Manager Integration** - Declarative user environments
+- **SOPS Secrets Management** - Encrypted secrets in Git
+- **Multiple Host Support** - Desktop, server, VM, and custom configurations
+- **GPU Support** - AMD, NVIDIA, Intel with gaming/AI optimizations
+- **AI/Compute Ready** - CUDA, ROCm, OneAPI for machine learning
+- **Development Tools** - Scripts and utilities for easy management
+- **Custom Packages & Overlays** - Extend and customize packages
 
 ## Quick Start
 
@@ -40,7 +40,7 @@ The setup scripts will:
 - Test and deploy the configuration
 - Provide next steps and usage instructions
 
-📖 **[See detailed setup guide →](docs/SETUP.md)**
+**[See detailed setup guide →](docs/SETUP.md)**
 
 ### Advanced Users (Manual Setup)
 
