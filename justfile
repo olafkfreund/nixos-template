@@ -490,10 +490,166 @@ build-vm-image host=hostname:
     nix build .#nixosConfigurations.{{host}}.config.system.build.vm
     @echo "VM image built: result/bin/run-nixos-vm"
 
-# Build ISO installer with VM configurations
+# Build NixOS installer ISO images
+
+# Build minimal installer ISO (lightweight, command-line only)
+build-iso-minimal:
+    @echo "🔥 Building minimal NixOS installer ISO..."
+    nix build .#nixosConfigurations.installer-minimal.config.system.build.isoImage
+    @echo "✅ Minimal installer ISO built!"
+    @echo "📍 Location: result/iso/nixos-minimal-installer.iso"
+    @echo "💾 Size: $(du -h result/iso/*.iso | cut -f1)"
+
+# Build desktop installer ISO (GNOME desktop for graphical installation)  
+build-iso-desktop:
+    @echo "🔥 Building desktop NixOS installer ISO..."
+    nix build .#nixosConfigurations.installer-desktop.config.system.build.isoImage
+    @echo "✅ Desktop installer ISO built!"
+    @echo "📍 Location: result/iso/nixos-desktop-installer.iso"
+    @echo "💾 Size: $(du -h result/iso/*.iso | cut -f1)"
+
+# Build preconfigured installer ISO (includes all templates ready to install)
+build-iso-preconfigured:
+    @echo "🔥 Building preconfigured NixOS installer ISO..."
+    nix build .#nixosConfigurations.installer-preconfigured.config.system.build.isoImage
+    @echo "✅ Preconfigured installer ISO built!"
+    @echo "📍 Location: result/iso/nixos-preconfigured-installer.iso"
+    @echo "💾 Size: $(du -h result/iso/*.iso | cut -f1)"
+    @echo ""
+    @echo "🎯 This ISO includes:"
+    @echo "   • All configuration templates from this repository"
+    @echo "   • Interactive installer with template selection"
+    @echo "   • Development tools (git, just, editors)"
+    @echo "   • Quick installation wizard"
+
+# Build all installer ISOs
+build-all-isos:
+    @echo "🔥 Building all NixOS installer ISOs..."
+    just build-iso-minimal
+    just build-iso-desktop  
+    just build-iso-preconfigured
+    @echo ""
+    @echo "✅ All installer ISOs built!"
+    @echo "📦 Available ISOs:"
+    @find result/iso/ -name "*.iso" -exec echo "   {}" \; 2>/dev/null || echo "   Check result/iso/ directory"
+
+# Show available ISO configurations
+list-isos:
+    @echo "📀 Available NixOS installer ISO configurations:"
+    @echo ""
+    @echo "  🔧 minimal       - Lightweight command-line installer (~800MB)"
+    @echo "     • SSH access enabled"
+    @echo "     • Essential tools (nano, vim, git)"
+    @echo "     • Perfect for server installations"
+    @echo "     • Build: just build-iso-minimal"
+    @echo ""
+    @echo "  🖥️  desktop       - GNOME desktop installer (~2.5GB)"
+    @echo "     • Full GNOME desktop environment" 
+    @echo "     • Firefox browser for documentation"
+    @echo "     • GParted for disk partitioning"
+    @echo "     • Visual tools for easier installation"
+    @echo "     • Build: just build-iso-desktop"
+    @echo ""
+    @echo "  ⚡ preconfigured - Template-enabled installer (~1.5GB)"
+    @echo "     • All configuration templates included"
+    @echo "     • Interactive template selection"
+    @echo "     • Quick installation wizard"
+    @echo "     • Development tools pre-installed"
+    @echo "     • Build: just build-iso-preconfigured"
+    @echo ""
+    @echo "🏗️  Build all ISOs: just build-all-isos"
+
+# Test ISO configuration without building
+test-iso iso="minimal":
+    @echo "🧪 Testing {{iso}} installer ISO configuration..."
+    @case "{{iso}}" in \
+        minimal) \
+            just test installer-minimal ;; \
+        desktop) \
+            just test installer-desktop ;; \
+        preconfigured) \
+            just test installer-preconfigured ;; \
+        *) \
+            echo "❌ Unknown ISO: {{iso}}"; \
+            echo "Available: minimal, desktop, preconfigured"; \
+            exit 1 ;; \
+    esac
+    @echo "✅ {{iso}} ISO configuration is valid"
+
+# Create bootable USB from built ISO (requires USB device path)
+create-bootable-usb iso device:
+    #!/usr/bin/env bash
+    
+    # Validate inputs
+    if [ ! -f "result/iso/{{iso}}" ]; then
+        echo "❌ ISO not found: result/iso/{{iso}}"
+        echo "Build it first with: just build-iso-*"
+        exit 1
+    fi
+    
+    if [ ! -b "{{device}}" ]; then
+        echo "❌ Device not found: {{device}}"
+        echo "Available devices:"
+        lsblk -d -o NAME,SIZE,MODEL | grep -E "sd|nvme"
+        exit 1
+    fi
+    
+    # Safety check
+    echo "⚠️  This will ERASE all data on {{device}}"
+    echo "ISO: {{iso}}"
+    echo "Device: {{device}}"
+    read -p "Continue? [y/N] " -n 1 -r
+    echo
+    
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo "❌ Aborted"
+        exit 1
+    fi
+    
+    # Create bootable USB
+    echo "🔥 Writing ISO to USB device..."
+    sudo dd if="result/iso/{{iso}}" of="{{device}}" bs=4M status=progress oflag=sync
+    sudo sync
+    
+    echo "✅ Bootable USB created!"
+    echo "🚀 You can now boot from {{device}} to install NixOS"
+
+# Show ISO creation workflow
+iso-workflow:
+    @echo "📋 NixOS ISO Creation Workflow:"
+    @echo ""
+    @echo "1️⃣  Choose your installer type:"
+    @echo "   just list-isos              # See available options"
+    @echo ""
+    @echo "2️⃣  Build the ISO:"
+    @echo "   just build-iso-minimal      # Lightweight CLI installer"
+    @echo "   just build-iso-desktop      # GNOME desktop installer"  
+    @echo "   just build-iso-preconfigured # Template-enabled installer"
+    @echo "   just build-all-isos         # Build all types"
+    @echo ""
+    @echo "3️⃣  Create bootable media:"
+    @echo "   just create-bootable-usb nixos-minimal-installer.iso /dev/sdX"
+    @echo ""
+    @echo "4️⃣  Boot and install:"
+    @echo "   • Boot from USB/DVD"
+    @echo "   • Follow installer prompts"
+    @echo "   • Preconfigured ISO includes template selection"
+    @echo ""
+    @echo "💡 Pro tips:"
+    @echo "   • Test ISOs in VM first: just build-vm-image"
+    @echo "   • Minimal ISO perfect for servers"
+    @echo "   • Desktop ISO great for newcomers"
+    @echo "   • Preconfigured ISO has ready-to-use configs"
+
+# Legacy build-iso command (defaults to minimal for compatibility)
 build-iso:
-    nix build .#nixosConfigurations.qemu-vm.config.system.build.isoImage
-    @echo "ISO built: result/iso/nixos.iso"
+    @echo "ℹ️  Using minimal installer (for compatibility)"
+    @echo "   Use specific commands for other types:"
+    @echo "   • just build-iso-minimal"
+    @echo "   • just build-iso-desktop"  
+    @echo "   • just build-iso-preconfigured"
+    @echo ""
+    just build-iso-minimal
 
 # Create QEMU VM with specific configuration
 create-vm host="qemu-vm" memory="2048" disk="10G":

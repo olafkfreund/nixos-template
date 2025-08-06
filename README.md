@@ -4,6 +4,7 @@ A sophisticated, modular NixOS configuration template using flakes, featuring:
 
 - **100% Green CI** - Comprehensive validation ensuring reliability
 - **VM Testing Ready** - Full desktop environment testing in VMs (works on any Linux distro)
+- **Custom ISO Creation** - Build installer ISOs with preconfigured templates
 - **Modular Architecture** - Organized, reusable modules
 - **Home Manager Integration** - Declarative user environments
 - **SOPS Secrets Management** - Encrypted secrets in Git
@@ -120,7 +121,8 @@ nixos-config/
 │   │       ├── intel.nix   # Intel GPU support
 │   │       └── detection.nix # Auto-detection
 │   ├── services/           # Service modules
-│   └── virtualization/     # VM and container modules
+│   ├── virtualization/     # VM and container modules
+│   └── installer/          # Custom installer ISO modules
 │
 ├── hosts/                  # Per-host configurations
 │   ├── common.nix          # Shared host configuration
@@ -133,7 +135,8 @@ nixos-config/
 │   ├── qemu-vm/            # QEMU/KVM virtual machine
 │   ├── virtualbox-vm/      # VirtualBox VM configuration
 │   ├── microvm/            # Minimal MicroVM configuration
-│   └── desktop-test/       # VM desktop testing environment
+│   ├── desktop-test/       # VM desktop testing environment
+│   └── installer-isos/     # Custom installer ISO configurations
 │
 ├── home/                   # Home Manager configurations
 │   ├── profiles/           # Reusable user profiles
@@ -153,6 +156,7 @@ nixos-config/
 ├── docs/                   # Documentation
 │   ├── SETUP.md           # Comprehensive setup guide
 │   ├── NON-NIXOS-USAGE.md # Guide for non-NixOS users
+│   ├── ISO-CREATION.md    # Custom installer ISO guide
 │   ├── VM-SUPPORT.md      # Virtual machine documentation
 │   └── GPU-CONFIGURATION.md # GPU setup guide
 ├──
@@ -186,6 +190,14 @@ just init-vm myhost qemu           # Initialize VM configuration
 just list-vms                      # Show available VM configurations
 just list-desktops                 # Show available desktop environments
 just test-vm myhost                # Test VM configuration
+
+# ISO Creation Commands
+just build-iso-minimal             # Build minimal installer ISO
+just build-iso-desktop             # Build desktop installer ISO  
+just build-iso-preconfigured       # Build preconfigured installer ISO
+just build-all-isos                # Build all installer ISOs
+just list-isos                     # Show available ISO types
+just iso-workflow                  # Show complete ISO creation workflow
 
 # Desktop Environment Commands
 just test-desktop gnome myhost     # Test specific desktop configuration
@@ -449,6 +461,67 @@ just build-vm-image desktop-test
 ```
 
 See [VM Documentation](docs/VM-SUPPORT.md) for detailed VM configuration and troubleshooting.
+
+## Custom NixOS Installer ISOs
+
+Create custom NixOS installer ISOs with preconfigured settings and templates:
+
+### Quick ISO Creation
+
+```bash
+# Build minimal installer (CLI only, ~800MB)
+just build-iso-minimal
+
+# Build desktop installer (GNOME desktop, ~2.5GB)
+just build-iso-desktop
+
+# Build preconfigured installer (includes all templates, ~1.5GB)
+just build-iso-preconfigured
+
+# Build all installer types
+just build-all-isos
+```
+
+### Available ISO Types
+
+**Minimal Installer** - Perfect for servers and experienced users
+- Command-line interface only
+- SSH access enabled
+- Essential installation tools
+- Lightweight at ~800MB
+
+**Desktop Installer** - Great for newcomers and graphical preference
+- Full GNOME desktop environment
+- Firefox browser and GParted included
+- Visual installation tools
+- Auto-login convenience
+
+**Preconfigured Installer** ⭐ **Recommended**
+- Interactive template selection
+- All configuration templates included
+- Quick installation wizard
+- Development tools pre-installed
+
+### Creating Bootable Media
+
+```bash
+# Create bootable USB (replace /dev/sdX with your USB device)
+just create-bootable-usb nixos-preconfigured-installer.iso /dev/sdX
+
+# Show full workflow
+just iso-workflow
+```
+
+### Installation Process
+
+1. **Boot from USB/DVD**
+2. **Network setup** (if needed)
+3. **Choose installation method:**
+   - **Preconfigured:** Select template and auto-install
+   - **Manual:** Standard NixOS installation process
+4. **Reboot and enjoy your configured NixOS system**
+
+See [ISO Creation Guide](docs/ISO-CREATION.md) for detailed instructions and customization options.
 
 ## Host Configurations
 

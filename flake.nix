@@ -175,6 +175,56 @@
             }
           ];
         };
+
+        # Custom installer ISO configurations
+        # Build with: nix build .#nixosConfigurations.installer-minimal.config.system.build.isoImage
+        installer-minimal = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = { inherit inputs outputs; };
+          modules = [
+            ./hosts/installer-isos/minimal-installer.nix
+            {
+              # Allow unfree packages in installer
+              nixpkgs.config.allowUnfree = true;
+              # Allow insecure packages for compatibility
+              nixpkgs.config.permittedInsecurePackages = [
+                "libsoup-2.74.3"
+              ];
+            }
+          ];
+        };
+
+        installer-desktop = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = { inherit inputs outputs; };
+          modules = [
+            ./hosts/installer-isos/desktop-installer.nix
+            {
+              # Allow unfree packages in installer
+              nixpkgs.config.allowUnfree = true;
+              # Allow insecure packages for compatibility
+              nixpkgs.config.permittedInsecurePackages = [
+                "libsoup-2.74.3"
+              ];
+            }
+          ];
+        };
+
+        installer-preconfigured = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = { inherit inputs outputs; };
+          modules = [
+            ./hosts/installer-isos/preconfigured-installer.nix
+            {
+              # Allow unfree packages in installer
+              nixpkgs.config.allowUnfree = true;
+              # Allow insecure packages for compatibility
+              nixpkgs.config.permittedInsecurePackages = [
+                "libsoup-2.74.3"
+              ];
+            }
+          ];
+        };
       };
 
       # Standalone home-manager configuration entrypoint
