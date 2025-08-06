@@ -1,6 +1,7 @@
 # Power Management Guide
 
-This NixOS template includes comprehensive power management optimized for different hardware types: laptops, desktops, workstations, and servers.
+This NixOS template includes comprehensive power management optimized for different hardware types:
+laptops, desktops, workstations, and servers.
 
 ## Overview
 

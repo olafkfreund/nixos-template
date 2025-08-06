@@ -97,18 +97,18 @@
         };
       };
     };
+  };
 
-    # Services
-    services = {
-      # Redshift for eye strain
-      redshift = {
-        enable = true;
-        latitude = 40.0; # Adjust to your location
-        longitude = -74.0; # Adjust to your location
-      };
+  # Services
+  services = {
+    # Redshift for eye strain
+    redshift = {
+      enable = true;
+      latitude = 40.0; # Adjust to your location
+      longitude = -74.0; # Adjust to your location
     };
+  };
 
-    # Home Manager state version
-    home.stateVersion = "25.05";
-  }
-    }
+  # Home Manager state version
+  home.stateVersion = "25.05";
+}

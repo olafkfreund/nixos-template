@@ -10,134 +10,133 @@
     stateVersion = "25.05";
   };
 
-  # Let Home Manager manage itself
-  programs.home-manager.enable = true;
-
-  # Server-focused Git configuration
-  programs.git = {
-    enable = true;
-    userName = "Server Admin";
-    userEmail = "admin@example.com";
-
-    extraConfig = {
-      init.defaultBranch = "main";
-      pull.rebase = true;
-      push.autoSetupRemote = true;
-      core.editor = "vim";
-    };
-  };
-
-  # Server administration shell configuration
-  programs.bash = {
-    enable = true;
-
-    shellAliases = {
-      # Enhanced listing for server management
-      ll = "ls -alF --time-style=long-iso";
-      la = "ls -A";
-      l = "ls -CF";
-
-      # Navigation
-      ".." = "cd ..";
-      "..." = "cd ../..";
-
-      # System administration
-      ports = "ss -tuln";
-      listen = "ss -tuln | grep LISTEN";
-      procs = "ps aux";
-      meminfo = "free -h";
-      diskinfo = "df -h";
-
-      # Service management
-      sysstatus = "systemctl status";
-      sysstart = "sudo systemctl start";
-      sysstop = "sudo systemctl stop";
-      sysrestart = "sudo systemctl restart";
-      sysenable = "sudo systemctl enable";
-      sysdisable = "sudo systemctl disable";
-
-      # Log viewing
-      logs = "journalctl -f";
-      syslogs = "journalctl -u";
-
-      # Network diagnostics
-      netstat = "ss -tuln";
-      connections = "ss -tup";
-
-      # NixOS server management
-      rebuild = "sudo nixos-rebuild switch --flake .";
-      rebuild-test = "sudo nixos-rebuild test --flake .";
-      rollback = "sudo nixos-rebuild --rollback switch";
-
-      # Security and monitoring
-      who-logged = "last";
-      failed-logins = "journalctl _SYSTEMD_UNIT=sshd.service | grep 'Failed'";
-
-      # Docker management (if enabled)
-      dps = "docker ps";
-      dpa = "docker ps -a";
-      di = "docker images";
-      dlog = "docker logs";
-      dex = "docker exec -it";
-
-      # File permissions
-      perm = "stat -c '%A %n'";
-    };
-
-    bashrcExtra = ''
-      # Server admin prompt with system info
-      export PS1="[\u@\h \W]\$ "
-      
-      # History settings for server administration
-      export HISTSIZE=10000
-      export HISTFILESIZE=20000
-      export HISTCONTROL=ignoredups:erasedups
-      export HISTTIMEFORMAT="%F %T "
-      shopt -s histappend
-      
-      # Server environment
-      export EDITOR="vim"
-      export VISUAL="vim"
-      export PAGER="less"
-      
-      # Useful functions
-      sysinfo() {
-        echo "=== System Information ==="
-        echo "Hostname: $(hostname)"
-        echo "Uptime: $(uptime -p)"
-        echo "Load: $(uptime | awk -F'load average:' '{print $2}')"
-        echo "Memory: $(free -h | grep '^Mem:' | awk '{print $3"/"$2}')"
-        echo "Disk: $(df -h / | tail -1 | awk '{print $3"/"$2" ("$5" used)"}')"
-        echo "Users: $(who | wc -l) logged in"
-        echo ""
-      }
-      
-      # Network info function
-      netinfo() {
-        echo "=== Network Information ==="
-        ip -4 addr show | grep -E '^[0-9]+:' -A 2 | grep 'inet' | awk '{print $2}' | head -5
-        echo ""
-        echo "Active connections:"
-        ss -tup | head -10
-      }
-      
-      # Service status function  
-      services() {
-        echo "=== Critical Services Status ==="
-        systemctl is-active sshd nginx postgresql redis docker 2>/dev/null | paste <(echo -e "sshd\nnginx\npostgresql\nredis\ndocker") -
-      }
-      
-      # Show system info on login
-      sysinfo
-    '';
-
-    historyControl = [ "ignoredups" "erasedups" ];
-    historySize = 10000;
-    historyFileSize = 20000;
-  };
-
-  # Server administration programs
+  # Program configurations
   programs = {
+    # Let Home Manager manage itself
+    home-manager.enable = true;
+
+    # Server-focused Git configuration
+    git = {
+      enable = true;
+      userName = "Server Admin";
+      userEmail = "admin@example.com";
+
+      extraConfig = {
+        init.defaultBranch = "main";
+        pull.rebase = true;
+        push.autoSetupRemote = true;
+        core.editor = "vim";
+      };
+    };
+
+    # Server administration shell configuration
+    bash = {
+      enable = true;
+
+      shellAliases = {
+        # Enhanced listing for server management
+        ll = "ls -alF --time-style=long-iso";
+        la = "ls -A";
+        l = "ls -CF";
+
+        # Navigation
+        ".." = "cd ..";
+        "..." = "cd ../..";
+
+        # System administration
+        ports = "ss -tuln";
+        listen = "ss -tuln | grep LISTEN";
+        procs = "ps aux";
+        meminfo = "free -h";
+        diskinfo = "df -h";
+
+        # Service management
+        sysstatus = "systemctl status";
+        sysstart = "sudo systemctl start";
+        sysstop = "sudo systemctl stop";
+        sysrestart = "sudo systemctl restart";
+        sysenable = "sudo systemctl enable";
+        sysdisable = "sudo systemctl disable";
+
+        # Log viewing
+        logs = "journalctl -f";
+        syslogs = "journalctl -u";
+
+        # Network diagnostics
+        netstat = "ss -tuln";
+        connections = "ss -tup";
+
+        # NixOS server management
+        rebuild = "sudo nixos-rebuild switch --flake .";
+        rebuild-test = "sudo nixos-rebuild test --flake .";
+        rollback = "sudo nixos-rebuild --rollback switch";
+
+        # Security and monitoring
+        who-logged = "last";
+        failed-logins = "journalctl _SYSTEMD_UNIT=sshd.service | grep 'Failed'";
+
+        # Docker management (if enabled)
+        dps = "docker ps";
+        dpa = "docker ps -a";
+        di = "docker images";
+        dlog = "docker logs";
+        dex = "docker exec -it";
+
+        # File permissions
+        perm = "stat -c '%A %n'";
+      };
+
+      bashrcExtra = ''
+        # Server admin prompt with system info
+        export PS1="[\u@\h \W]\$ "
+      
+        # History settings for server administration
+        export HISTSIZE=10000
+        export HISTFILESIZE=20000
+        export HISTCONTROL=ignoredups:erasedups
+        export HISTTIMEFORMAT="%F %T "
+        shopt -s histappend
+      
+        # Server environment
+        export EDITOR="vim"
+        export VISUAL="vim"
+        export PAGER="less"
+      
+        # Useful functions
+        sysinfo() {
+          echo "=== System Information ==="
+          echo "Hostname: $(hostname)"
+          echo "Uptime: $(uptime -p)"
+          echo "Load: $(uptime | awk -F'load average:' '{print $2}')"
+          echo "Memory: $(free -h | grep '^Mem:' | awk '{print $3"/"$2}')"
+          echo "Disk: $(df -h / | tail -1 | awk '{print $3"/"$2" ("$5" used)"}')"
+          echo "Users: $(who | wc -l) logged in"
+          echo ""
+        }
+      
+        # Network info function
+        netinfo() {
+          echo "=== Network Information ==="
+          ip -4 addr show | grep -E '^[0-9]+:' -A 2 | grep 'inet' | awk '{print $2}' | head -5
+          echo ""
+          echo "Active connections:"
+          ss -tup | head -10
+        }
+      
+        # Service status function  
+        services() {
+          echo "=== Critical Services Status ==="
+          systemctl is-active sshd nginx postgresql redis docker 2>/dev/null | paste <(echo -e "sshd\nnginx\npostgresql\nredis\ndocker") -
+        }
+      
+        # Show system info on login
+        sysinfo
+      '';
+
+      historyControl = [ "ignoredups" "erasedups" ];
+      historySize = 10000;
+      historyFileSize = 20000;
+    };
     # Enhanced command line tools for server management
     eza = {
       enable = true;
