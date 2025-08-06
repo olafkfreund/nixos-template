@@ -1,6 +1,7 @@
 # Code Quality and Validation Guide
 
-This NixOS template includes comprehensive code quality tools and validation processes to ensure clean, secure, and maintainable configurations.
+This NixOS template includes comprehensive code quality tools and validation processes to ensure clean,
+secure, and maintainable configurations.
 
 ## Quick Start
 
