@@ -81,6 +81,7 @@ just create-bootable-usb nixos-preconfigured-installer.iso /dev/sdX
 ```
 
 The **preconfigured installer** includes:
+
 - Interactive template selection during installation
 - All host configurations (desktop, laptop, server, VM)
 - Automated deployment wizard
@@ -334,24 +335,28 @@ This configuration uses a modular approach where features are organized into reu
 This template provides an end-to-end NixOS experience:
 
 ### 🔧 **Development & Testing**
+
 - **Non-NixOS Support**: Test on Ubuntu, Fedora, Arch, any Linux distribution
 - **VM Testing**: Safe desktop environment testing without system changes
 - **Live Development**: Edit configurations and test in VMs instantly
 - **Multi-Platform**: Same configs work across different systems
 
 ### 📦 **Deployment Options**
+
 - **Custom ISOs**: Build installer images with your configurations
 - **Template Selection**: Interactive installer with pre-built templates
 - **Automated Setup**: Skip manual NixOS configuration entirely
 - **Bootable Media**: Create USB/DVD installers for any environment
 
 ### 🏗️ **Organizational Use**
+
 - **Standardized Deployments**: Consistent configurations across teams
 - **Educational Environments**: Pre-configured learning setups
 - **Client Deployments**: Custom NixOS solutions for consulting
 - **Development Teams**: Shared development environments
 
 ### 🔄 **Full Workflow Coverage**
+
 1. **Develop**: Create configurations using templates
 2. **Test**: Validate in VMs on any Linux system
 3. **Package**: Build custom installer ISOs
@@ -580,27 +585,30 @@ just build-all-isos
 
 ### 📀 Available ISO Types
 
-| Type | Size | Interface | Best For | Key Features |
-|------|------|-----------|----------|--------------|
-| **Minimal** | ~800MB | CLI Only | Servers, Experts | SSH access, essential tools, lightweight |
-| **Desktop** | ~2.5GB | GNOME Desktop | Newcomers, Graphics | Firefox, GParted, visual tools, auto-login |
-| **Preconfigured** ⭐ | ~1.5GB | Interactive CLI | Quick Deploy, Templates | All templates, wizard, dev tools |
+| Type                 | Size   | Interface       | Best For                | Key Features                               |
+| -------------------- | ------ | --------------- | ----------------------- | ------------------------------------------ |
+| **Minimal**          | ~800MB | CLI Only        | Servers, Experts        | SSH access, essential tools, lightweight   |
+| **Desktop**          | ~2.5GB | GNOME Desktop   | Newcomers, Graphics     | Firefox, GParted, visual tools, auto-login |
+| **Preconfigured** ⭐ | ~1.5GB | Interactive CLI | Quick Deploy, Templates | All templates, wizard, dev tools           |
 
 ### 🎯 Preconfigured Installer Features
 
 The **preconfigured installer** is the star feature - it includes:
 
 **📋 Interactive Template Selection**
+
 - Browse all available host configurations during installation
 - Choose from desktop, laptop, server, or VM templates
 - Preview template features and descriptions
 
 **🔧 Automated Installation Wizard**
+
 - Partition disks and select templates in guided workflow
 - Automatic configuration deployment
 - Skip manual NixOS configuration editing
 
 **🛠️ Development Environment Ready**
+
 - Git, just, editors, and development tools pre-installed
 - All templates available at `/etc/nixos-template/`
 - Quick configuration customization workflow
@@ -621,6 +629,7 @@ just iso-workflow
 ### 🚀 Installation Workflow
 
 #### Preconfigured Installer (Recommended)
+
 1. **Boot from USB/DVD** - Installer launches automatically
 2. **Network Setup** - Connect to WiFi if needed
 3. **Interactive Menu** - Select from available templates
@@ -630,6 +639,7 @@ just iso-workflow
 7. **Reboot** - Boot into your fully configured NixOS system
 
 #### Traditional Installers (Minimal/Desktop)
+
 1. **Boot from USB/DVD**
 2. **Network Setup** (if needed)
 3. **Manual Installation** - Follow standard NixOS installation process
@@ -651,7 +661,7 @@ nano modules/installer/preconfigured-installer.nix
 ### 💡 Use Cases
 
 - **Organizations**: Deploy standardized NixOS configurations
-- **Development Teams**: Share development environment setups  
+- **Development Teams**: Share development environment setups
 - **Educational**: Distribute pre-configured learning environments
 - **Personal**: Quick deployment of personal configurations
 - **Consulting**: Client-specific NixOS deployments
