@@ -16,34 +16,34 @@
 
   # Copy this entire configuration template to the ISO
   environment.etc."nixos-template" = {
-    source = ../../..;  # Root of this repository (from modules/installer/)
+    source = ../../..; # Root of this repository (from modules/installer/)
     mode = "0755";
   };
 
   # Enhanced packages for working with the template
   environment.systemPackages = with pkgs; [
     # All base packages plus:
-    
+
     # Development tools
     just
     nixpkgs-fmt
     statix
     deadnix
-    
+
     # Advanced editors
     neovim
-    
+
     # Git for cloning/updating
     git
-    
+
     # JSON/YAML tools
     jq
     yq
-    
+
     # Archive tools
     unzip
     zip
-    
+
     # Advanced terminal tools
     fzf
     ripgrep
@@ -272,11 +272,11 @@
     # Template navigation
     "templates" = "ls -la /etc/nixos-template/hosts/";
     "show-template" = "cat /etc/nixos-template/hosts/";
-    
+
     # Installation helpers  
     "installer" = "/etc/installer/preconfigured-install.sh";
     "quick-install" = "/etc/installer/preconfigured-install.sh";
-    
+
     # Common installation commands
     "mount-boot" = "mkdir -p /mnt/boot && mount /dev/disk/by-label/BOOT /mnt/boot";
     "mount-root" = "mount /dev/disk/by-label/nixos /mnt";

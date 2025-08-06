@@ -14,11 +14,11 @@
   };
   isoImage = {
     volumeID = lib.mkDefault "NIXOS_INSTALLER";
-    
+
     # Modern boot methods
     makeEfiBootable = true;
     makeUsbBootable = true;
-    
+
     # Compression for smaller ISOs
     squashfsCompression = "gzip -Xcompression-level 1";
   };
@@ -40,26 +40,26 @@
     # Text editors
     nano
     vim
-    
+
     # Network tools
     wget
     curl
     git
-    
+
     # Disk utilities
     gptfdisk
     parted
-    
+
     # System utilities
     htop
     tree
     lsof
-    
+
     # Hardware detection
     pciutils
     usbutils
     lshw
-    
+
     # Development tools (for custom configs)
     just
     nixpkgs-fmt
@@ -81,7 +81,7 @@
       experimental-features = [ "nix-command" "flakes" ];
       trusted-users = [ "root" ];
     };
-    
+
     # Include this configuration in the installer
     nixPath = [
       "nixpkgs=${pkgs.path}"

@@ -12,7 +12,7 @@
   image.fileName = "nixos-minimal-installer.iso";
   isoImage = {
     volumeID = "NIXOS_MINIMAL";
-    
+
     # Smaller ISO for minimal installer
     squashfsCompression = "gzip -Xcompression-level 6";
   };
@@ -25,7 +25,7 @@
   console = {
     font = "Lat2-Terminus16";
     keyMap = lib.mkDefault "us";
-    
+
     # Enable early console
     earlySetup = true;
   };
@@ -33,26 +33,26 @@
   # Improved shell experience
   programs.bash = {
     completion.enable = true;
-    
+
     # Helpful aliases for installation
     shellAliases = {
       l = "ls -alh";
       ll = "ls -l";
       ".." = "cd ..";
       "..." = "cd ../..";
-      
+
       # Installation shortcuts
       "mount-boot" = "mkdir -p /mnt/boot && mount /dev/disk/by-label/BOOT /mnt/boot";
       "mount-root" = "mount /dev/disk/by-label/nixos /mnt";
       "gen-config" = "nixos-generate-config --root /mnt";
       "install-nixos" = "nixos-install";
-      
+
       # Hardware detection
       "hw-info" = "lshw -short";
       "disk-info" = "fdisk -l";
       "part-info" = "lsblk -f";
     };
-    
+
     # Helpful prompt
     promptInit = ''
       PS1='\[\e[1;32m\][\u@nixos-installer:\[\e[1;34m\]\w\[\e[1;32m\]]\$\[\e[0m\] '
@@ -145,21 +145,21 @@
   environment.systemPackages = with pkgs; [
     # Keep base packages from base.nix
     # Add minimal-specific tools
-    
+
     # Text-based utilities
-    lynx          # Text web browser for docs
-    tmux          # Terminal multiplexer
-    screen        # Alternative terminal multiplexer
-    
+    lynx # Text web browser for docs
+    tmux # Terminal multiplexer
+    screen # Alternative terminal multiplexer
+
     # Network diagnostics
     iftop
     nethogs
-    
+
     # Minimal text editors (nano/vim already in base)
-    
+
     # Installation helpers
     nixos-install-tools
-    
+
     # Install guide command
     (writeScriptBin "install-guide" ''
       #!/usr/bin/env bash

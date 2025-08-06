@@ -193,7 +193,7 @@ just test-vm myhost                # Test VM configuration
 
 # ISO Creation Commands
 just build-iso-minimal             # Build minimal installer ISO
-just build-iso-desktop             # Build desktop installer ISO  
+just build-iso-desktop             # Build desktop installer ISO
 just build-iso-preconfigured       # Build preconfigured installer ISO
 just build-all-isos                # Build all installer ISOs
 just list-isos                     # Show available ISO types
@@ -485,18 +485,21 @@ just build-all-isos
 ### Available ISO Types
 
 **Minimal Installer** - Perfect for servers and experienced users
+
 - Command-line interface only
 - SSH access enabled
 - Essential installation tools
 - Lightweight at ~800MB
 
 **Desktop Installer** - Great for newcomers and graphical preference
+
 - Full GNOME desktop environment
 - Firefox browser and GParted included
 - Visual installation tools
 - Auto-login convenience
 
 **Preconfigured Installer** ⭐ **Recommended**
+
 - Interactive template selection
 - All configuration templates included
 - Quick installation wizard

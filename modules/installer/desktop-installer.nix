@@ -24,7 +24,7 @@
   # GNOME configuration for installer
   services.gnome = {
     core-apps.enable = true;
-    
+
     # Disable some services we don't need in installer
     games.enable = lib.mkForce false;
   };
@@ -42,28 +42,28 @@
   environment.systemPackages = with pkgs; [
     # Browsers for documentation
     firefox
-    
+
     # Terminal emulator
     gnome-terminal
-    
+
     # File manager
     nautilus
-    
+
     # Text editors with GUI
     gedit
-    
+
     # System monitoring
     gnome-system-monitor
-    
+
     # Disk management
     gnome-disk-utility
-    
+
     # Archive manager
     file-roller
-    
+
     # Additional useful tools
     gparted
-    
+
     # Development
     vscode
   ];

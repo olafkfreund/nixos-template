@@ -7,7 +7,7 @@ This guide shows how to create custom NixOS installer ISOs with preconfigured se
 This template provides three types of NixOS installer ISOs:
 
 1. **Minimal Installer** - Lightweight command-line installer (~800MB)
-2. **Desktop Installer** - GNOME desktop installer (~2.5GB) 
+2. **Desktop Installer** - GNOME desktop installer (~2.5GB)
 3. **Preconfigured Installer** - Template-enabled installer with all configurations (~1.5GB)
 
 ## Quick Start
@@ -19,7 +19,7 @@ just list-isos
 # Build minimal installer
 just build-iso-minimal
 
-# Build desktop installer  
+# Build desktop installer
 just build-iso-desktop
 
 # Build preconfigured installer (recommended)
@@ -40,6 +40,7 @@ just build-iso-minimal
 ```
 
 **Features:**
+
 - Lightweight (~800MB)
 - Command-line interface only
 - SSH access enabled (password: `nixos`)
@@ -59,6 +60,7 @@ just build-iso-desktop
 ```
 
 **Features:**
+
 - Full GNOME desktop environment (~2.5GB)
 - Firefox browser for accessing documentation
 - GParted for disk partitioning
@@ -78,6 +80,7 @@ just build-iso-preconfigured
 ```
 
 **Features:**
+
 - Interactive installer with template selection (~1.5GB)
 - All configuration templates included
 - Quick installation wizard
@@ -87,6 +90,7 @@ just build-iso-preconfigured
 - Advanced shell with helpful aliases
 
 **What's included:**
+
 - Complete copy of this template repository
 - All host configurations (desktop, laptop, server, VM)
 - Interactive template browser
@@ -135,6 +139,7 @@ nix build .#nixosConfigurations.installer-minimal.config.system.build.isoImage -
 ### Creating Bootable Media
 
 #### USB Drive (Recommended)
+
 ```bash
 # Find your USB device
 lsblk
@@ -147,6 +152,7 @@ sudo dd if=result/iso/nixos-minimal-installer.iso of=/dev/sdX bs=4M status=progr
 ```
 
 #### DVD/CD
+
 Burn the ISO using your preferred burning software (K3b, Brasero, etc.)
 
 ### Booting and Installation
@@ -157,10 +163,11 @@ Burn the ISO using your preferred burning software (K3b, Brasero, etc.)
    - Select NixOS installer from boot menu
 
 2. **Network Setup** (if needed)
+
    ```bash
    # WiFi connection
    nmcli dev wifi connect "SSID" password "password"
-   
+
    # Check connection
    ping google.com
    ```
@@ -168,7 +175,9 @@ Burn the ISO using your preferred burning software (K3b, Brasero, etc.)
 3. **Installation Process**
 
 #### Minimal/Desktop Installer
+
 Follow standard NixOS installation:
+
 ```bash
 # Partition disks
 fdisk /dev/sdX
@@ -196,6 +205,7 @@ reboot
 ```
 
 #### Preconfigured Installer ⭐
+
 The preconfigured installer provides an interactive experience:
 
 1. **Automatic Start**: Installer script launches automatically
@@ -204,6 +214,7 @@ The preconfigured installer provides an interactive experience:
 4. **Customization**: Templates can be modified before installation
 
 **Interactive Installation:**
+
 ```bash
 # The installer script starts automatically
 # Or run manually:
@@ -225,25 +236,28 @@ ls /etc/nixos-template/hosts/
 ### Creating Custom ISO Configurations
 
 1. **Create new installer module:**
+
    ```bash
    # Copy existing module
    cp modules/installer/minimal-installer.nix modules/installer/my-installer.nix
-   
+
    # Edit for your needs
    nano modules/installer/my-installer.nix
    ```
 
 2. **Create host configuration:**
+
    ```bash
    # Create ISO host config
    mkdir -p hosts/installer-isos
    cp hosts/installer-isos/minimal-installer.nix hosts/installer-isos/my-installer.nix
-   
+
    # Edit to use your module
    nano hosts/installer-isos/my-installer.nix
    ```
 
 3. **Add to flake.nix:**
+
    ```nix
    my-installer = nixpkgs.lib.nixosSystem {
      system = "x86_64-linux";
@@ -265,6 +279,7 @@ ls /etc/nixos-template/hosts/
 ### Customization Options
 
 #### Adding Packages
+
 ```nix
 # In your installer module
 environment.systemPackages = with pkgs; [
@@ -276,6 +291,7 @@ environment.systemPackages = with pkgs; [
 ```
 
 #### Custom Services
+
 ```nix
 # Enable additional services
 services.openssh.enable = true;
@@ -293,12 +309,13 @@ systemd.services.my-setup = {
 ```
 
 #### Branding and Customization
+
 ```nix
 # Custom ISO metadata
 isoImage = {
   isoName = "my-custom-nixos.iso";
   volumeID = "MY_NIXOS";
-  
+
   # Custom splash screen
   grubTheme = pkgs.nixos-grub2-theme;
 };
@@ -309,6 +326,7 @@ isoImage = {
 ### Development Workflow
 
 1. **Test in VM first:**
+
    ```bash
    # Build VM instead of ISO for testing
    just build-vm-image installer-minimal
@@ -316,20 +334,22 @@ isoImage = {
    ```
 
 2. **Iterative development:**
+
    ```bash
    # Quick syntax check
    just test-iso minimal
-   
+
    # Build and test
    just build-iso-minimal
    # Test in VM or real hardware
    ```
 
 3. **Version control:**
+
    ```bash
    # Tag stable ISO versions
    git tag iso-v1.0
-   
+
    # Build reproducible ISOs
    nix build .#nixosConfigurations.installer-minimal.config.system.build.isoImage --no-link
    ```
@@ -368,10 +388,11 @@ services.udisks2.enable = lib.mkForce false;
 ### Common Issues
 
 1. **Build failures:**
+
    ```bash
    # Check syntax
    nix flake check
-   
+
    # Clean and retry
    nix-collect-garbage
    just build-iso-minimal
@@ -383,19 +404,21 @@ services.udisks2.enable = lib.mkForce false;
    - Try different USB creation method
 
 3. **Network issues in installer:**
+
    ```bash
    # Check network interface
    ip link show
-   
+
    # Manual network setup
    dhcpcd enp0s3
    ```
 
 4. **Storage space:**
+
    ```bash
    # Check available space
    df -h
-   
+
    # Clean Nix store
    nix-collect-garbage -d
    sudo nix-collect-garbage -d
