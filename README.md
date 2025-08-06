@@ -19,7 +19,7 @@ A sophisticated, modular NixOS configuration template using flakes, featuring:
 
 ### Non-NixOS Users (Try NixOS in VMs)
 
-**Want to try NixOS without installing it?** You can test this entire configuration on Ubuntu, 
+**Want to try NixOS without installing it?** You can test this entire configuration on Ubuntu,
 Fedora, Arch, or any Linux distribution:
 
 ```bash

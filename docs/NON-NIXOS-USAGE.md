@@ -5,6 +5,7 @@ This guide shows how to use this NixOS configuration template on Ubuntu, Fedora,
 ## Overview
 
 You can use this repository to:
+
 - Test NixOS configurations in VMs without installing NixOS
 - Try different desktop environments safely
 - Learn NixOS before committing to a full installation
@@ -39,6 +40,7 @@ echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 ```
 
 After installation, restart your shell or run:
+
 ```bash
 source ~/.nix-profile/etc/profile.d/nix.sh
 ```
@@ -48,6 +50,7 @@ source ~/.nix-profile/etc/profile.d/nix.sh
 You need KVM/QEMU for running NixOS VMs:
 
 #### Ubuntu/Debian
+
 ```bash
 sudo apt update
 sudo apt install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virt-manager
@@ -56,6 +59,7 @@ sudo usermod -a -G kvm $USER
 ```
 
 #### Fedora/RHEL/CentOS
+
 ```bash
 sudo dnf install qemu-kvm libvirt virt-manager bridge-utils
 sudo usermod -a -G libvirt $USER
@@ -64,6 +68,7 @@ sudo systemctl enable --now libvirtd
 ```
 
 #### Arch Linux
+
 ```bash
 sudo pacman -S qemu-base libvirt virt-manager bridge-utils
 sudo usermod -a -G libvirt $USER
@@ -72,6 +77,7 @@ sudo systemctl enable --now libvirtd
 ```
 
 #### OpenSUSE
+
 ```bash
 sudo zypper install qemu-kvm libvirt virt-manager bridge-utils
 sudo usermod -a -G libvirt $USER
@@ -123,24 +129,28 @@ nix build .#nixosConfigurations.desktop-test.config.system.build.vm
 ```
 
 Login credentials:
+
 - **Username**: `vm-user`
 - **Password**: `nixos`
 
 ### 3. Available VM Configurations
 
 List available VMs:
+
 ```bash
 # Show all available configurations
 ls hosts/
 ```
 
 Pre-built VMs include:
+
 - **desktop-test** - Full GNOME desktop environment
 - **qemu-vm** - Basic NixOS VM
 - **virtualbox-vm** - VirtualBox-optimized VM
 - **microvm** - Minimal lightweight VM
 
 Build any VM:
+
 ```bash
 # Build specific VM
 nix build .#nixosConfigurations.VMNAME.config.system.build.vm
@@ -199,6 +209,7 @@ nix build .#nixosConfigurations.my-test-vm.config.system.build.vm
 Test different desktop environments in VMs:
 
 ### GNOME Desktop
+
 ```bash
 # Already configured in desktop-test
 nix build .#nixosConfigurations.desktop-test.config.system.build.vm
@@ -206,6 +217,7 @@ nix build .#nixosConfigurations.desktop-test.config.system.build.vm
 ```
 
 ### KDE Plasma
+
 ```bash
 # Use the kde-test configuration
 nix build .#nixosConfigurations.kde-test.config.system.build.vm
@@ -273,44 +285,49 @@ ssh vm-user@localhost -p 2222  # SSH into VM to test
 ### Common Issues
 
 1. **KVM permission denied**:
+
    ```bash
    # Check group membership
    groups
    # Should include 'kvm' and 'libvirt'
-   
+
    # If not, add and re-login
    sudo usermod -a -G kvm,libvirt $USER
    ```
 
 2. **Nix flakes not working**:
+
    ```bash
    # Ensure experimental features are enabled
    echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
    ```
 
 3. **VM won't start**:
+
    ```bash
    # Check if KVM is available
    lsmod | grep kvm
-   
+
    # Try without KVM acceleration
    ./result/bin/run-desktop-test-vm -accel tcg
    ```
 
 4. **Build failures**:
+
    ```bash
    # Check flake syntax
    nix flake check
-   
+
    # Update flake inputs
    nix flake update
    ```
 
 5. **Out of disk space**:
+
    ```bash
    # Clean old Nix builds
    nix-collect-garbage -d
-   
+
    # Clean old VM results
    rm -rf result result-*
    ```
@@ -327,21 +344,25 @@ ssh vm-user@localhost -p 2222  # SSH into VM to test
 This setup is perfect for learning NixOS:
 
 ### 1. Start with Templates
+
 - Use `desktop-test` to explore GNOME on NixOS
 - Try `qemu-vm` for a minimal NixOS experience
 - Experiment with different configurations
 
 ### 2. Modify Configurations
+
 - Edit `hosts/*/configuration.nix` files
 - Try enabling/disabling different modules
 - Test changes in VMs before real installations
 
 ### 3. Explore the Module System
+
 - Look at `modules/` directory structure
 - Understand how modules compose together
 - Create your own custom modules
 
 ### 4. Practice Nix Language
+
 - Read existing configurations
 - Modify and experiment
 - Use `nix repl` to explore Nix interactively
