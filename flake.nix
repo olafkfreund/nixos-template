@@ -159,6 +159,22 @@
             home-manager.nixosModules.home-manager
           ];
         };
+
+        desktop-test = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = { inherit inputs outputs; };
+          modules = [
+            ./hosts/desktop-test/configuration.nix
+            home-manager.nixosModules.home-manager
+            {
+              # VM testing configuration
+              location.latitude = 40.7128;
+              location.longitude = -74.0060;
+              # Allow unfree packages for testing
+              nixpkgs.config.allowUnfree = true;
+            }
+          ];
+        };
       };
 
       # Standalone home-manager configuration entrypoint
@@ -181,6 +197,12 @@
           pkgs = nixpkgs.legacyPackages.x86_64-linux;
           extraSpecialArgs = { inherit inputs outputs; };
           modules = [ ./hosts/server-template/home.nix ];
+        };
+
+        "vm-user@desktop-test" = home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          extraSpecialArgs = { inherit inputs outputs; };
+          modules = [ ./hosts/desktop-test/home.nix ];
         };
       };
     };
