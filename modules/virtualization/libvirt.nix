@@ -106,7 +106,7 @@ in
 
         # QEMU configuration
         qemu = {
-          package = cfg.qemu.package;
+          inherit (cfg.qemu) package;
           runAsRoot = false;
           swtpm.enable = cfg.qemu.swtpm.enable;
           ovmf = mkIf cfg.qemu.ovmf.enable {
@@ -198,33 +198,52 @@ in
       })
       cfg.users);
 
-    # Enable required kernel modules
-    boot.kernelModules = [
-      "kvm-intel" # Intel KVM
-      "kvm-amd" # AMD KVM
-      "vfio" # VFIO for device passthrough
-      "vfio_iommu_type1"
-      "vfio_pci"
-      "vhost-net" # Networking performance
-      "tun" # TUN/TAP networking
-      "bridge" # Network bridging
-      "macvtap" # MacVTap networking
-    ];
+    # Boot configuration for virtualization
+    boot = {
+      # Enable required kernel modules
+      kernelModules = [
+        "kvm-intel" # Intel KVM
+        "kvm-amd" # AMD KVM
+        "vfio" # VFIO for device passthrough
+        "vfio_iommu_type1"
+        "vfio_pci"
+        "vhost-net" # Networking performance
+        "tun" # TUN/TAP networking
+        "bridge" # Network bridging
+        "macvtap" # MacVTap networking
+      ];
 
-    # Kernel parameters for virtualization
-    boot.kernelParams = [
-      # Enable IOMMU for device passthrough
-      "intel_iommu=on"
-      "amd_iommu=on"
+      # Kernel parameters for virtualization
+      kernelParams = [
+        # Enable IOMMU for device passthrough
+        "intel_iommu=on"
+        "amd_iommu=on"
 
-      # Nested virtualization
-      "kvm-intel.nested=1"
-      "kvm-amd.nested=1"
+        # Nested virtualization
+        "kvm-intel.nested=1"
+        "kvm-amd.nested=1"
 
-      # Huge pages for better performance
-      "hugepagesz=2M"
-      "hugepages=1024"
-    ];
+        # Huge pages for better performance
+        "hugepagesz=2M"
+        "hugepages=1024"
+      ];
+
+      # Sysctl parameters for virtualization
+      kernel.sysctl = {
+        # Network performance
+        "net.bridge.bridge-nf-call-iptables" = 0;
+        "net.bridge.bridge-nf-call-arptables" = 0;
+        "net.bridge.bridge-nf-call-ip6tables" = 0;
+
+        # Virtual memory
+        "vm.swappiness" = 10;
+        "vm.dirty_ratio" = 15;
+        "vm.dirty_background_ratio" = 5;
+
+        # Huge pages
+        "vm.nr_hugepages" = 1024;
+      };
+    };
 
     # Systemd services
     systemd.services = {
@@ -322,21 +341,6 @@ in
       };
     };
 
-    # Sysctl parameters for virtualization
-    boot.kernel.sysctl = {
-      # Network performance
-      "net.bridge.bridge-nf-call-iptables" = 0;
-      "net.bridge.bridge-nf-call-arptables" = 0;
-      "net.bridge.bridge-nf-call-ip6tables" = 0;
-
-      # Virtual memory
-      "vm.swappiness" = 10;
-      "vm.dirty_ratio" = 15;
-      "vm.dirty_background_ratio" = 5;
-
-      # Huge pages
-      "vm.nr_hugepages" = 1024;
-    };
 
     # Enable hugepages
     systemd.tmpfiles.rules = [

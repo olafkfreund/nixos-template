@@ -10,54 +10,54 @@
     stateVersion = "25.05";
   };
 
-  # Let Home Manager manage itself
-  programs.home-manager.enable = true;
-
-  # Minimal Git configuration
-  programs.git = {
-    enable = true;
-    userName = "Minimal User";
-    userEmail = "minimal@example.com";
-
-    extraConfig = {
-      init.defaultBranch = "main";
-      pull.rebase = true;
-      core.editor = "nano";
-    };
-  };
-
-  # Lightweight shell configuration
-  programs.bash = {
-    enable = true;
-
-    shellAliases = {
-      ll = "ls -l";
-      la = "ls -la";
-      l = "ls";
-      ".." = "cd ..";
-      "..." = "cd ../..";
-
-      # Essential shortcuts
-      h = "history";
-      c = "clear";
-      e = "nano";
-
-      # NixOS essentials
-      rebuild = "sudo nixos-rebuild switch --flake .";
-    };
-
-    bashrcExtra = ''
-      # Simple prompt
-      export PS1="\u@\h:\w\$ "
-      
-      # Basic history settings
-      export HISTSIZE=1000
-      export HISTFILESIZE=2000
-    '';
-  };
-
-  # Essential command line tools only
+  # Program configurations
   programs = {
+    # Let Home Manager manage itself
+    home-manager.enable = true;
+
+    # Minimal Git configuration
+    git = {
+      enable = true;
+      userName = "Minimal User";
+      userEmail = "minimal@example.com";
+
+      extraConfig = {
+        init.defaultBranch = "main";
+        pull.rebase = true;
+        core.editor = "nano";
+      };
+    };
+
+    # Lightweight shell configuration
+    bash = {
+      enable = true;
+
+      shellAliases = {
+        ll = "ls -l";
+        la = "ls -la";
+        l = "ls";
+        ".." = "cd ..";
+        "..." = "cd ../..";
+
+        # Essential shortcuts
+        h = "history";
+        c = "clear";
+        e = "nano";
+
+        # NixOS essentials
+        rebuild = "sudo nixos-rebuild switch --flake .";
+      };
+
+      bashrcExtra = ''
+        # Simple prompt
+        export PS1="\u@\h:\w\$ "
+        
+        # Basic history settings
+        export HISTSIZE=1000
+        export HISTFILESIZE=2000
+      '';
+    };
+
     # Basic file operations
     bat = {
       enable = true;

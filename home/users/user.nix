@@ -19,53 +19,53 @@
     stateVersion = "25.05";
   };
 
-  # Let Home Manager manage itself
-  programs.home-manager.enable = true;
-
-  # Git configuration
-  programs.git = {
-    enable = true;
-    userName = "User Name";
-    userEmail = "user@example.com";
-
-    extraConfig = {
-      init.defaultBranch = "main";
-      pull.rebase = true;
-      push.autoSetupRemote = true;
-      core.editor = "nano";
-    };
-  };
-
-  # Shell configuration
-  programs.bash = {
-    enable = true;
-
-    shellAliases = {
-      ll = "ls -alF";
-      la = "ls -A";
-      l = "ls -CF";
-      ".." = "cd ..";
-      "..." = "cd ../..";
-
-      # NixOS specific aliases
-      rebuild = "sudo nixos-rebuild switch --flake ~/nixos-config";
-      rebuild-test = "sudo nixos-rebuild test --flake ~/nixos-config";
-      update = "nix flake update ~/nixos-config";
-    };
-
-    bashrcExtra = ''
-      # Custom prompt
-      export PS1="\[\e[32m\]\u@\h\[\e[m\]:\[\e[34m\]\w\[\e[m\]\$ "
-      
-      # History settings
-      export HISTSIZE=10000
-      export HISTFILESIZE=20000
-      export HISTCONTROL=ignoredups:erasedups
-    '';
-  };
-
-  # Terminal applications
+  # Program configurations
   programs = {
+    # Let Home Manager manage itself
+    home-manager.enable = true;
+
+    # Git configuration
+    git = {
+      enable = true;
+      userName = "User Name";
+      userEmail = "user@example.com";
+
+      extraConfig = {
+        init.defaultBranch = "main";
+        pull.rebase = true;
+        push.autoSetupRemote = true;
+        core.editor = "nano";
+      };
+    };
+
+    # Shell configuration
+    bash = {
+      enable = true;
+
+      shellAliases = {
+        ll = "ls -alF";
+        la = "ls -A";
+        l = "ls -CF";
+        ".." = "cd ..";
+        "..." = "cd ../..";
+
+        # NixOS specific aliases
+        rebuild = "sudo nixos-rebuild switch --flake ~/nixos-config";
+        rebuild-test = "sudo nixos-rebuild test --flake ~/nixos-config";
+        update = "nix flake update ~/nixos-config";
+      };
+
+      bashrcExtra = ''
+        # Custom prompt
+        export PS1="\[\e[32m\]\u@\h\[\e[m\]:\[\e[34m\]\w\[\e[m\]\$ "
+        
+        # History settings
+        export HISTSIZE=10000
+        export HISTFILESIZE=20000
+        export HISTCONTROL=ignoredups:erasedups
+      '';
+    };
+
     # Better command line tools
     eza = {
       enable = true;
