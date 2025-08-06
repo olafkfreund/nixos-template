@@ -196,7 +196,9 @@ in
 
       # Proton and compatibility tools
       (mkIf cfg.compattools.proton-ge proton-ge-bin)
-      (mkIf cfg.compattools.luxtorpeda luxtorpeda)
+      # Note: luxtorpeda is not available as standalone package in nixpkgs
+      # It can be managed through protonup-qt or installed manually
+      # (mkIf cfg.compattools.luxtorpeda luxtorpeda)
       protontricks
 
       # Gaming utilities
