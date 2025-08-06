@@ -73,20 +73,17 @@
     enableRedistributableFirmware = true;
   };
 
-  # VM-specific boot options
-  boot = {
-    # Use GRUB for better VM compatibility
-    loader = {
-      grub = {
-        enable = true;
-        device = "/dev/vda"; # Adjust if using different disk naming
-        # For UEFI VMs, use:
-        # efiSupport = true;
-        # device = "nodev";
-      };
-
-      # Explicitly disable systemd-boot to avoid conflicts
-      systemd-boot.enable = lib.mkForce false;
+  # VM-specific boot loader options (merged with above boot configuration)
+  boot.loader = {
+    grub = {
+      enable = true;
+      device = "/dev/vda"; # Adjust if using different disk naming
+      # For UEFI VMs, use:
+      # efiSupport = true;
+      # device = "nodev";
     };
+
+    # Explicitly disable systemd-boot to avoid conflicts
+    systemd-boot.enable = lib.mkForce false;
   };
 }

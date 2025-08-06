@@ -173,7 +173,7 @@ in
       enable = true;
 
       # Docker compatibility
-      inherit (cfg) dockerCompat;
+      dockerCompat = cfg.dockerCompat;
       dockerSocket.enable = cfg.dockerCompat;
 
       # Default network settings
