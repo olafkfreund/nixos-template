@@ -26,39 +26,39 @@
   #   enable = true;
   #   type = "qemu";
   # };
-  
+
   # Manual VM guest settings for maximum reliability
   services.qemuGuest.enable = true;
 
   # Desktop configuration
   modules.desktop.gnome.enable = true;
-  
+
   # VM-specific systemd service overrides to prevent boot hangs
   systemd.services = {
     # Disable problematic services in VMs
     "systemd-hwdb-update".enable = false;
     "systemd-journal-flush".enable = false;
-    
+
     # Disable growpart service (causes failures in VMs)
     "growpart".enable = false;
-    
+
     # Disable logrotate service (causes configuration check failures in VMs)
     "logrotate".enable = false;
     "logrotate-checkconf".enable = false;
-    
+
     # Mask cloud-init related services that cause VM issues
     "cloud-config".enable = false;
     "cloud-final".enable = false;
     "cloud-init".enable = false;
     "cloud-init-local".enable = false;
-    
+
     # Ensure critical services start properly
     "systemd-logind".serviceConfig = {
       Restart = "always";
       RestartSec = 1;
     };
   };
-  
+
   # Disable AppArmor in VMs (can cause boot issues)
   security.apparmor.enable = lib.mkForce false;
 
@@ -88,7 +88,7 @@
         PermitRootLogin = "no";
       };
     };
-    
+
     # Disable problematic services for VMs
     logrotate.enable = lib.mkForce false;
   };
@@ -116,35 +116,35 @@
     git
     curl
     wget
-    
+
     # VM-specific utilities
-    pciutils    # lspci for hardware debugging
-    usbutils    # lsusb for USB debugging
+    pciutils # lspci for hardware debugging
+    usbutils # lsusb for USB debugging
   ];
 
   # Boot configuration for reliable VM startup
   boot = {
     # Disable partition growing in VMs (causes service failures)
     growPartition = lib.mkForce false;
-    
+
     # Kernel parameters for VM stability
     kernelParams = [
-      "quiet"           # Reduce boot messages
-      "systemd.unit=graphical.target"  # Boot directly to graphical target
-      "systemd.mask=growpart.service"  # Mask growpart service
+      "quiet" # Reduce boot messages
+      "systemd.unit=graphical.target" # Boot directly to graphical target
+      "systemd.mask=growpart.service" # Mask growpart service
       "systemd.mask=logrotate.service" # Mask logrotate service
       "systemd.mask=logrotate-checkconf.service" # Mask logrotate check
       "systemd.mask=systemd-hwdb-update.service" # Mask hwdb update
       "systemd.mask=systemd-journal-flush.service" # Mask journal flush
-      "kvm.ignore_msrs=1"              # Ignore missing MSRs in nested virtualization
+      "kvm.ignore_msrs=1" # Ignore missing MSRs in nested virtualization
     ];
-    
+
     # Disable kernel modules that cause issues in VMs
     blacklistedKernelModules = [
-      "kvm_intel"       # Prevents VMX errors in nested virtualization
-      "kvm_amd"         # Prevents SVM errors in nested virtualization
+      "kvm_intel" # Prevents VMX errors in nested virtualization
+      "kvm_amd" # Prevents SVM errors in nested virtualization
     ];
-    
+
     # Timeout settings
     loader.timeout = lib.mkForce 1;
   };
