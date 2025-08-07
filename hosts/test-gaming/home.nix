@@ -4,8 +4,8 @@
 
 {
   imports = [
-    ../../home/roles/gamer.nix       # Gaming tools and environment
-    ../../home/profiles/kde.nix      # KDE desktop environment
+    ../../home/roles/gamer.nix # Gaming tools and environment
+    ../../home/profiles/kde.nix # KDE desktop environment
   ];
 
   # User-specific information
@@ -32,6 +32,6 @@
   # Custom MangoHud settings for this gaming rig
   programs.mangohud.settings = {
     position = "top-right";
-    fps_limit = 60;  # Cap for this test system
+    fps_limit = 60; # Cap for this test system
   };
 }

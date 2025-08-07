@@ -13,45 +13,45 @@
   # Gaming-specific packages
   home.packages = with pkgs; [
     # Game Launchers and Management
-    steam             # Steam gaming platform
-    lutris            # Game launcher for various platforms
-    heroic            # Epic/GOG launcher
-    bottles           # Windows app compatibility
-    
+    steam # Steam gaming platform
+    lutris # Game launcher for various platforms
+    heroic # Epic/GOG launcher
+    bottles # Windows app compatibility
+
     # Performance Monitoring
-    mangohud          # Gaming performance overlay
-    goverlay          # MangoHud GUI configurator
-    corectrl          # GPU/CPU control center
-    
+    mangohud # Gaming performance overlay
+    goverlay # MangoHud GUI configurator
+    corectrl # GPU/CPU control center
+
     # Graphics and Drivers
-    mesa-demos        # OpenGL demos and tests
-    vulkan-tools      # Vulkan utilities
-    clinfo            # OpenCL information
-    
+    mesa-demos # OpenGL demos and tests
+    vulkan-tools # Vulkan utilities
+    clinfo # OpenCL information
+
     # Communication
-    discord           # Gaming communication
-    
+    discord # Gaming communication
+
     # Game Development (optional)
     # godot_4         # Game engine
     # blender         # 3D modeling
-    
+
     # Streaming and Recording
-    obs-studio        # Streaming/recording software
-    kdenlive          # Video editing
-    
+    obs-studio # Streaming/recording software
+    kdenlive # Video editing
+
     # Emulation
     # retroarch       # Multi-system emulator
     # duckstation     # PlayStation emulator
     # pcsx2           # PlayStation 2 emulator
     # dolphin-emu     # GameCube/Wii emulator
-    
+
     # Audio
-    pavucontrol       # Audio control
-    easyeffects       # Audio effects
-    
+    pavucontrol # Audio control
+    easyeffects # Audio effects
+
     # File Management for Games
-    p7zip             # 7z archive support
-    unrar             # RAR archive support
+    p7zip # 7z archive support
+    unrar # RAR archive support
   ];
 
   # Gaming-optimized programs
@@ -62,15 +62,15 @@
         # Steam shortcuts
         steam-native = "steam -native";
         steam-bigpicture = "steam -bigpicture";
-        
+
         # Performance monitoring
         gpu-info = "glxinfo | grep -E '(OpenGL vendor|OpenGL renderer|OpenGL version)'";
         vulkan-info = "vulkaninfo | head -20";
-        
+
         # Game directories
         games = "cd ~/Games";
         steam-games = "cd ~/.steam/steam/steamapps/common";
-        
+
         # System performance
         temps = "watch -n 2 sensors";
         perf = "htop --sort-key PERCENT_CPU";
@@ -82,16 +82,16 @@
       enable = true;
       autosuggestion.enable = true;
       syntaxHighlighting.enable = true;
-      
+
       shellAliases = {
         # Game management
         lutris-debug = "lutris -d";
         steam-logs = "tail -f ~/.steam/logs/stderr.txt";
-        
+
         # Wine/Proton
         winecfg = "winecfg";
         winetricks = "winetricks";
-        
+
         # Performance
         cpu-freq = "watch -n 1 'cat /proc/cpuinfo | grep MHz'";
         gpu-temp = "nvidia-smi -q -d temperature";
@@ -111,12 +111,12 @@
         gpu_load_change = true;
         ram = true;
         vram = true;
-        
+
         # Display settings
         position = "top-left";
         font_size = 24;
         alpha = 0.8;
-        
+
         # Logging
         output_folder = "~/Documents/mangohud-logs";
         log_duration = 30;
@@ -129,8 +129,8 @@
     documents = "$HOME/Documents";
     download = "$HOME/Downloads";
     desktop = "$HOME/Desktop";
-    videos = "$HOME/Videos";  # For recordings
-    
+    videos = "$HOME/Videos"; # For recordings
+
     # Gaming-specific directories
     extraConfig = {
       XDG_GAMES_DIR = "$HOME/Games";

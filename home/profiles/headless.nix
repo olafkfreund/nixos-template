@@ -7,11 +7,11 @@
   programs = {
     # Disable GUI applications that might be enabled by roles
     firefox.enable = lib.mkForce false;
-    
+
     # Focus on terminal-based tools
     bash = {
       enable = true;
-      
+
       shellAliases = {
         # System information aliases useful for headless
         sysinfo = "uname -a && uptime && free -h && df -h";
@@ -22,12 +22,12 @@
   };
 
   # Ensure no GUI packages are installed
-  home.packages = [];
+  home.packages = [ ];
 
   # Minimal XDG configuration for headless
   xdg = {
     enable = true;
-    
+
     # Don't create desktop-related directories
     userDirs = {
       enable = true;
@@ -47,7 +47,7 @@
     tmux = {
       enable = lib.mkDefault true;
     };
-    
+
     # Better terminal tools
     htop = {
       enable = true;

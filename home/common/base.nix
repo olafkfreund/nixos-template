@@ -12,7 +12,7 @@
   # Basic shell configuration
   programs.bash = {
     enable = lib.mkDefault true;
-    
+
     shellAliases = {
       ll = "ls -l";
       la = "ls -la";
@@ -28,7 +28,7 @@
   # Basic file management
   xdg = {
     enable = true;
-    
+
     # Clean up home directory
     userDirs = {
       enable = true;

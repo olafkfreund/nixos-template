@@ -5,7 +5,7 @@
 {
   programs.git = {
     enable = lib.mkDefault true;
-    
+
     # Default identity (override in host-specific config)
     userName = lib.mkDefault "Change Me";
     userEmail = lib.mkDefault "changeme@example.com";
@@ -16,11 +16,11 @@
       pull.rebase = true;
       push.autoSetupRemote = true;
       core.editor = lib.mkDefault "nano";
-      
+
       # Better diff and merge tools
       diff.colorMoved = "default";
       merge.conflictstyle = "diff3";
-      
+
       # Useful aliases
       alias = {
         st = "status -s";
@@ -47,14 +47,14 @@
       ".Trashes"
       "ehthumbs.db"
       "Thumbs.db"
-      
+
       # Editor files
       "*~"
       "*.swp"
       "*.swo"
       ".vscode/"
       ".idea/"
-      
+
       # Build artifacts
       "*.o"
       "*.so"
@@ -64,7 +64,7 @@
       "target/"
       "build/"
       "dist/"
-      
+
       # Temporary files
       "*.tmp"
       "*.temp"

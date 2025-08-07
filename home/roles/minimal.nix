@@ -16,7 +16,7 @@
     fd.enable = false;
     ripgrep.enable = false;
     tree.enable = false;
-    
+
     # Keep only essential bash configuration
     bash = {
       enable = true;
@@ -25,7 +25,7 @@
         la = "ls -la";
         ".." = "cd ..";
       };
-      
+
       # Minimal history settings
       historySize = 1000;
       historyFileSize = 2000;
@@ -47,9 +47,9 @@
   # Minimal XDG setup
   xdg = {
     enable = true;
-    userDirs.enable = false;  # Don't create extra directories
+    userDirs.enable = false; # Don't create extra directories
   };
 
   # Override essential packages with minimal set
-  home.packages = [];  # Will be overridden by essential.nix, but can be further reduced per host
+  home.packages = [ ]; # Will be overridden by essential.nix, but can be further reduced per host
 }

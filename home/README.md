@@ -75,21 +75,25 @@ Each `hosts/*/home.nix` file should be minimal and only contain:
 ## Available Roles
 
 ### Developer Role (`roles/developer.nix`)
+
 - **Includes**: Essential packages, development tools, desktop applications
 - **Programs**: Zsh with autosuggestions, Starship prompt, Direnv, Git with Delta, Bat, Fzf
 - **Use Case**: Full development workstation
 
 ### Gamer Role (`roles/gamer.nix`)
+
 - **Includes**: Essential packages, desktop applications, gaming-specific tools
 - **Programs**: Steam, Lutris, MangoHud, Discord, OBS Studio, performance monitoring
 - **Use Case**: Gaming desktop with streaming capabilities
 
 ### Server Admin Role (`roles/server-admin.nix`)
+
 - **Includes**: Essential packages, server administration tools
 - **Programs**: System monitoring, network tools, containers, backup utilities, Tmux
 - **Use Case**: Server administration and maintenance
 
 ### Minimal Role (`roles/minimal.nix`)
+
 - **Includes**: Only essential packages with minimal footprint
 - **Programs**: Basic bash, minimal git configuration
 - **Use Case**: Resource-constrained environments, embedded systems
@@ -97,6 +101,7 @@ Each `hosts/*/home.nix` file should be minimal and only contain:
 ## Available Profiles
 
 ### Desktop Profiles
+
 - **GNOME** (`profiles/gnome.nix`): GNOME desktop environment configuration
 - **KDE** (`profiles/kde.nix`): KDE Plasma desktop environment configuration
 - **Headless** (`profiles/headless.nix`): No GUI, terminal-only configuration
@@ -104,16 +109,20 @@ Each `hosts/*/home.nix` file should be minimal and only contain:
 ## Package Organization
 
 ### Essential Packages (`common/packages/essential.nix`)
+
 Core command-line tools needed by everyone:
+
 - File management: `file`, `tree`, `less`, `unzip`, `tar`
-- Network: `curl`, `wget`  
+- Network: `curl`, `wget`
 - System: `htop`, `iotop`
 - Editors: `nano`, `vim`
 - Development: `git`
 - Utilities: `jq`, `yq-go`
 
 ### Development Packages (`common/packages/development.nix`)
+
 Tools for software development:
+
 - Version control: `git-lfs`, `gh`
 - Build tools: `make`, `cmake`
 - Languages: `nodejs`, `python3`
@@ -121,7 +130,9 @@ Tools for software development:
 - Analysis: `shellcheck`, `hyperfine`
 
 ### Desktop Packages (`common/packages/desktop.nix`)
+
 GUI applications for desktop environments:
+
 - Browsers: `firefox`
 - Office: `libreoffice`, `evince`
 - Media: `vlc`
@@ -130,11 +141,13 @@ GUI applications for desktop environments:
 ## Migration from Old Structure
 
 ### Old Structure Issues
+
 - Massive duplication across `hosts/*/home.nix` files
 - Unclear relationship between `home/users/*.nix` and host configurations
 - Mixed concerns (packages, user info, host-specific settings all together)
 
 ### Migration Steps
+
 1. **Identify the role**: What is the primary function of this host?
 2. **Choose a profile**: What desktop environment (if any)?
 3. **Update host config**: Use the new minimal structure
@@ -143,6 +156,7 @@ GUI applications for desktop environments:
 ### Example Migration
 
 **Old** `hosts/my-desktop/home.nix` (50+ lines with packages, programs, etc):
+
 ```nix
 { pkgs, ... }: {
   home = {
@@ -160,11 +174,12 @@ GUI applications for desktop environments:
 ```
 
 **New** `hosts/my-desktop/home.nix` (15 lines, clear intent):
+
 ```nix
 { ... }: {
   imports = [
     ../../home/roles/developer.nix
-    ../../home/profiles/gnome.nix  
+    ../../home/profiles/gnome.nix
   ];
   home = {
     username = "user";

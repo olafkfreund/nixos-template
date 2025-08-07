@@ -12,51 +12,51 @@
   # Server administration packages
   home.packages = with pkgs; [
     # System monitoring and management
-    htop              # Process monitor
-    iotop             # I/O monitor
-    nethogs           # Network traffic monitor
-    iftop             # Network bandwidth monitor
-    ncdu              # Disk usage analyzer
-    lsof              # List open files
-    
+    htop # Process monitor
+    iotop # I/O monitor
+    nethogs # Network traffic monitor
+    iftop # Network bandwidth monitor
+    ncdu # Disk usage analyzer
+    lsof # List open files
+
     # Network tools
-    nmap              # Network scanner
-    netcat            # Network utility
-    tcpdump           # Packet analyzer
-    dig               # DNS lookup
-    whois             # Domain information
-    
+    nmap # Network scanner
+    netcat # Network utility
+    tcpdump # Packet analyzer
+    dig # DNS lookup
+    whois # Domain information
+
     # System administration
-    rsync             # File synchronization
-    screen            # Terminal multiplexer
-    tmux              # Modern terminal multiplexer
-    
+    rsync # File synchronization
+    screen # Terminal multiplexer
+    tmux # Modern terminal multiplexer
+
     # Text processing
-    awk               # Text processing
-    sed               # Stream editor
-    grep              # Text search
-    
+    awk # Text processing
+    sed # Stream editor
+    grep # Text search
+
     # Security tools
-    fail2ban          # Intrusion prevention
-    
+    fail2ban # Intrusion prevention
+
     # Backup tools
-    borgbackup        # Deduplicating backup
-    restic            # Modern backup tool
-    
+    borgbackup # Deduplicating backup
+    restic # Modern backup tool
+
     # Container management
-    podman            # Container runtime
-    podman-compose    # Container orchestration
-    
+    podman # Container runtime
+    podman-compose # Container orchestration
+
     # Service management
-    systemctl-tui     # Systemd TUI interface
-    
+    systemctl-tui # Systemd TUI interface
+
     # Log analysis
-    lnav              # Log navigator
-    multitail         # Multi-file tail
-    
+    lnav # Log navigator
+    multitail # Multi-file tail
+
     # Performance analysis
-    sysstat           # System statistics
-    perf-tools        # Performance analysis
+    sysstat # System statistics
+    perf-tools # Performance analysis
   ];
 
   # Server admin shell configuration
@@ -69,25 +69,25 @@
         processes = "ps aux | head -20";
         diskspace = "df -h";
         meminfo = "free -h";
-        
+
         # Service management
         status = "systemctl status";
         restart = "sudo systemctl restart";
         reload = "sudo systemctl reload";
         enable = "sudo systemctl enable";
         disable = "sudo systemctl disable";
-        
+
         # Log viewing
         logs = "journalctl -f";
         errors = "journalctl -p err -f";
-        
+
         # Network
         listening = "ss -tuln";
         connections = "ss -tun";
-        
+
         # File operations
         backup = "rsync -avzh --progress";
-        
+
         # Docker/Podman shortcuts
         psa = "podman ps -a";
         psi = "podman images";
@@ -98,15 +98,15 @@
     # Git with server-focused settings
     git = {
       extraConfig = {
-        core.editor = "vim";  # Vim is more common on servers
-        user.useConfigOnly = true;  # Require explicit user config
+        core.editor = "vim"; # Vim is more common on servers
+        user.useConfigOnly = true; # Require explicit user config
       };
     };
 
     # Vim configuration for server editing
     vim = {
       enable = true;
-      
+
       settings = {
         number = true;
         relativenumber = true;
@@ -125,7 +125,7 @@
     # Tmux for session management
     tmux = {
       enable = true;
-      
+
       extraConfig = ''
         # Improve colors
         set -g default-terminal "screen-256color"

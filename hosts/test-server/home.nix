@@ -5,7 +5,7 @@
 {
   imports = [
     ../../home/roles/server-admin.nix # Server administration tools
-    ../../home/profiles/headless.nix  # No GUI configuration
+    ../../home/profiles/headless.nix # No GUI configuration
   ];
 
   # User-specific information

@@ -4,8 +4,8 @@
 
 {
   imports = [
-    ../../home/roles/developer.nix    # Development environment
-    ../../home/profiles/gnome.nix     # GNOME desktop
+    ../../home/roles/developer.nix # Development environment
+    ../../home/profiles/gnome.nix # GNOME desktop
   ];
 
   # User-specific information

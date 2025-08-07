@@ -5,8 +5,8 @@
 {
   # Import role and profile
   imports = [
-    ../roles/developer.nix      # Development tools and environment
-    ../profiles/gnome.nix       # GNOME desktop environment
+    ../roles/developer.nix # Development tools and environment
+    ../profiles/gnome.nix # GNOME desktop environment
   ];
 
   # User-specific information (the only thing that should vary per host)
@@ -19,7 +19,7 @@
   programs.git = {
     userName = "Jane Developer";
     userEmail = "jane.developer@company.com";
-    
+
     # Add any host-specific git settings
     extraConfig = {
       # Use different signing key per host

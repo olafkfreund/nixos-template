@@ -32,27 +32,27 @@
         "x86_64-darwin"
       ];
       forAllSystems = nixpkgs.lib.genAttrs systems;
-      
+
       # Treefmt configuration
-      treefmtEval = forAllSystems (system: 
+      treefmtEval = forAllSystems (system:
         treefmt-nix.lib.evalModule nixpkgs.legacyPackages.${system} {
           # Project root directory
           projectRootFile = "flake.nix";
-          
+
           # Formatters by language/file type
           programs = {
             # Nix files
             nixpkgs-fmt.enable = true;
-            
+
             # Shell scripts
             shfmt.enable = true;
-            
+
             # Markdown files
             mdformat.enable = true;
-            
+
             # YAML files  
             yamlfmt.enable = true;
-            
+
             # JSON files
             prettier.enable = true;
           };
@@ -63,8 +63,15 @@
               # Git and build artifacts
               ".git/**"
               "result*"
-              "*.png" "*.jpg" "*.jpeg" "*.gif" "*.ico"
-              "*.tar*" "*.zip" "*.rar" "*.7z"
+              "*.png"
+              "*.jpg"
+              "*.jpeg"
+              "*.gif"
+              "*.ico"
+              "*.tar*"
+              "*.zip"
+              "*.rar"
+              "*.7z"
               # Generated files
               "**/hardware-configuration.nix"
               "flake.lock"
@@ -72,7 +79,7 @@
           };
         }
       );
-      
+
       # Pre-commit hooks configuration (simplified for now)
       pre-commit-check = forAllSystems (system:
         git-hooks.lib.${system}.run {
@@ -144,33 +151,33 @@
               statix
               deadnix
               nh
-              
+
               # Code quality tools
               treefmt
               pre-commit
-              
+
               # Shell scripting tools
               shellcheck
               shfmt
-              
+
               # Documentation tools
               markdownlint-cli
-              
+
               # Development utilities
               git
               just
               jq
-              
+
               # Hardware detection
               pciutils
               usbutils
               lshw
             ];
-            
+
             # Environment variables
             NIX_CONFIG = "experimental-features = nix-command flakes";
             LC_ALL = "C.UTF-8";
-            
+
             # Combined shell hook
             shellHook = ''
               echo "🚀 NixOS Template Development Environment"
@@ -274,31 +281,31 @@
       checks = forAllSystems (system: {
         # Pre-commit hooks check
         pre-commit-check = pre-commit-check.${system};
-        
+
         # Treefmt formatting check
         treefmt = treefmtEval.${system}.config.build.check self;
-        
+
         # Flake validation (already included in flake check, but explicit here)
         flake-check = nixpkgs.legacyPackages.${system}.runCommand "flake-check" { } ''
           cd ${self}
           ${nixpkgs.legacyPackages.${system}.nixVersions.latest}/bin/nix flake check --no-build
           touch $out
         '';
-        
+
         # Statix linting
         statix-check = nixpkgs.legacyPackages.${system}.runCommand "statix-check" { } ''
           cd ${self}
           ${nixpkgs.legacyPackages.${system}.statix}/bin/statix check .
           touch $out
         '';
-        
+
         # Deadnix check
         deadnix-check = nixpkgs.legacyPackages.${system}.runCommand "deadnix-check" { } ''
           cd ${self}
           ${nixpkgs.legacyPackages.${system}.deadnix}/bin/deadnix --fail .
           touch $out
         '';
-        
+
         # Shell script validation
         shellcheck-check = nixpkgs.legacyPackages.${system}.runCommand "shellcheck-check" { } ''
           cd ${self}

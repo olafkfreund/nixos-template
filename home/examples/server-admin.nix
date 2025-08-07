@@ -5,8 +5,8 @@
 {
   # Import role and profile
   imports = [
-    ../roles/server-admin.nix   # Server administration tools
-    ../profiles/headless.nix    # No GUI configuration
+    ../roles/server-admin.nix # Server administration tools
+    ../profiles/headless.nix # No GUI configuration
   ];
 
   # User-specific information
@@ -28,12 +28,12 @@
       webapp-logs = "tail -f /var/log/webapp/error.log";
       backup-db = "sudo -u postgres pg_dump myapp > ~/backups/myapp-$(date +%Y%m%d).sql";
       check-services = "systemctl status nginx postgresql redis";
-      
+
       # Monitoring shortcuts
       load = "uptime";
       disk = "df -h | grep -E '^/dev/'";
       mem = "free -h";
-      
+
       # Network shortcuts  
       firewall = "sudo iptables -L";
       connections = "ss -tuln";

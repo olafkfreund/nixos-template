@@ -18,14 +18,14 @@
       enable = true;
       autosuggestion.enable = true;
       syntaxHighlighting.enable = true;
-      
+
       history = {
         size = 50000;
         save = 50000;
         ignoreDups = true;
         share = true;
       };
-      
+
       shellAliases = {
         # Development shortcuts
         gs = "git status";
@@ -34,13 +34,13 @@
         gp = "git push";
         gl = "git pull";
         gd = "git diff";
-        
+
         # Docker shortcuts
         dc = "docker-compose";
         dcu = "docker-compose up";
         dcd = "docker-compose down";
         dcl = "docker-compose logs";
-        
+
         # Directory shortcuts
         dev = "cd ~/Development";
         proj = "cd ~/Projects";
@@ -57,21 +57,21 @@
     # Starship prompt
     starship = {
       enable = true;
-      
+
       settings = {
         add_newline = false;
-        
+
         format = "$all$character";
-        
+
         character = {
           success_symbol = "[➜](bold green)";
           error_symbol = "[➜](bold red)";
         };
-        
+
         git_branch = {
           format = "[$symbol$branch]($style) ";
         };
-        
+
         git_status = {
           format = "([$all_status$ahead_behind]($style) )";
         };
@@ -100,7 +100,7 @@
     documents = "$HOME/Documents";
     download = "$HOME/Downloads";
     desktop = "$HOME/Desktop";
-    
+
     # Development directories
     extraConfig = {
       XDG_DEV_DIR = "$HOME/Development";
