@@ -1,6 +1,6 @@
 # Desktop applications for workstation environments
 # Web browsers, office suite, multimedia apps
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 
 {
   environment.systemPackages = with pkgs; [

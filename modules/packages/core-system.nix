@@ -1,6 +1,6 @@
 # Core system packages shared across configurations
 # Essential tools that should be available on most NixOS systems
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 
 {
   environment.systemPackages = with pkgs; [

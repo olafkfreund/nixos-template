@@ -1,7 +1,7 @@
 # Minimal installer configuration
 # This creates a lightweight ISO for command-line installation
 
-{ config, lib, pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   imports = [

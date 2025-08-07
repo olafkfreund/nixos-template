@@ -2,7 +2,7 @@
 # Minimal configuration for ultra-lightweight virtual machines
 # Replace UUIDs with actual values from your VM
 
-{ config, lib, pkgs, modulesPath, ... }:
+{ lib, modulesPath, ... }:
 
 {
   imports = [

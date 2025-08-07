@@ -1,6 +1,6 @@
 # test-workstation Configuration - Preset-Based
 # Generated using: just new-host test-workstation workstation
-{ config, lib, pkgs, ... }:
+{ ... }:
 
 {
   imports = [

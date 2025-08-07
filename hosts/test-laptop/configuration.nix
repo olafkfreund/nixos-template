@@ -1,6 +1,6 @@
 # test-laptop Configuration - Preset-Based
 # Generated using: just new-host test-laptop laptop
-{ config, lib, pkgs, ... }:
+{ lib, ... }:
 
 {
   imports = [

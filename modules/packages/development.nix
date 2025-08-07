@@ -1,6 +1,6 @@
 # Development packages for system-wide installation
 # IDE, editors, and development utilities
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 
 {
   environment.systemPackages = with pkgs; [

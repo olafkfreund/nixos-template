@@ -1,7 +1,7 @@
 # Desktop installer configuration
 # This creates an ISO with GNOME desktop for easier graphical installation
 
-{ config, lib, pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   imports = [

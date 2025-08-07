@@ -1,6 +1,6 @@
 # Laptop Configuration - New Preset-based Approach
 # Minimal configuration focusing on laptop-specific needs
-{ config, lib, pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
   imports = [

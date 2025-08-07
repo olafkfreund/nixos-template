@@ -1,6 +1,6 @@
 # test-gaming Home Configuration  
 # Generated using: just new-host test-gaming gaming
-{ config, pkgs, ... }:
+{ ... }:
 
 {
   imports = [

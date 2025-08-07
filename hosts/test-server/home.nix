@@ -1,6 +1,6 @@
 # test-server Home Configuration  
 # Generated using: just new-host test-server server
-{ config, pkgs, ... }:
+{ ... }:
 
 {
   imports = [

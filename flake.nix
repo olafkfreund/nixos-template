@@ -38,7 +38,7 @@
         };
 
       # Helper function for home-manager configurations
-      mkHome = { username, hostname, system ? "x86_64-linux" }:
+      mkHome = { hostname, system ? "x86_64-linux" }:
         home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages.${system};
           extraSpecialArgs = { inherit inputs outputs; };

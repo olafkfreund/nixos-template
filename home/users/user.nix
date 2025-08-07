@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, ... }:
 
 {
   # Basic Home Manager configuration for default user

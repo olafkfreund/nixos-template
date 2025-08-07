@@ -1,6 +1,6 @@
 # Desktop Configuration - New Preset-based Approach
 # This replaces 400+ lines of configuration with just the essentials
-{ config, lib, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   imports = [

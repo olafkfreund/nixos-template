@@ -1,6 +1,6 @@
 # HOSTNAME Configuration - Preset-Based
 # Generated using: just new-host HOSTNAME PRESET
-{ config, lib, pkgs, ... }:
+{ lib, ... }:
 
 {
   imports = [

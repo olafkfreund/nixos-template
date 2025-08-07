@@ -1,6 +1,6 @@
 # Presets Module
 # High-level configuration presets that eliminate boilerplate
-{ config, lib, pkgs, ... }:
+{ config, lib, ... }:
 
 let
   cfg = config.modules.presets;

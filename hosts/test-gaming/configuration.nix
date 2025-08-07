@@ -1,6 +1,6 @@
 # test-gaming Configuration - Preset-Based
 # Generated using: just new-host test-gaming gaming
-{ config, lib, pkgs, ... }:
+{ ... }:
 
 {
   imports = [

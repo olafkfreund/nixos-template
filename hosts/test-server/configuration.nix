@@ -1,6 +1,6 @@
 # test-server Configuration - Preset-Based
 # Generated using: just new-host test-server server
-{ config, lib, pkgs, ... }:
+{ ... }:
 
 {
   imports = [

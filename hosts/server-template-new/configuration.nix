@@ -1,6 +1,6 @@
 # Server Configuration - New Preset-based Approach
 # Minimal, secure server configuration
-{ config, lib, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   imports = [

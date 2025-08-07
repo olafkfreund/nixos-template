@@ -1,6 +1,6 @@
 # test-vm Configuration - Preset-Based
 # Generated using: just new-host test-vm vm-guest
-{ config, lib, pkgs, ... }:
+{ lib, ... }:
 
 {
   imports = [

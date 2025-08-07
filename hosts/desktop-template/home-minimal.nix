@@ -1,7 +1,7 @@
 # Minimal Desktop Home Manager Configuration
 # Clean alternative using shared package sets
 
-{ config, pkgs, lib, ... }:
+{ pkgs, lib, ... }:
 
 {
   # Import base user configuration and package sets

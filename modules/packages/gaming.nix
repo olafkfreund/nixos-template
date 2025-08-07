@@ -1,6 +1,6 @@
 # Gaming applications and utilities
 # Game launchers, streaming, and content creation
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 
 {
   environment.systemPackages = with pkgs; [

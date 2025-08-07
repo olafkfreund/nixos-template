@@ -1,6 +1,6 @@
 # Server administration packages
 # Monitoring, networking, and system administration tools
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 
 {
   environment.systemPackages = with pkgs; [

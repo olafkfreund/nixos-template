@@ -1,5 +1,5 @@
 # Minimal installer ISO configuration  
-{ config, lib, pkgs, inputs, outputs, ... }:
+{ pkgs, ... }:
 
 {
   imports = [

@@ -1,7 +1,7 @@
 # Base installer configuration
 # This module provides common settings for all installer ISOs
 
-{ config, lib, pkgs, modulesPath, ... }:
+{ lib, pkgs, modulesPath, ... }:
 
 {
   imports = [

@@ -1,7 +1,7 @@
 # Preconfigured installer with template configurations
 # This installer includes this template's configurations ready to install
 
-{ config, lib, pkgs, inputs, outputs, ... }:
+{ lib, pkgs, ... }:
 
 {
   imports = [

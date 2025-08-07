@@ -2,7 +2,7 @@
 # This file should be replaced with actual hardware detection output:
 # nixos-generate-config --root /mnt --show-hardware-config > hosts/test-laptop/hardware-configuration.nix
 
-{ config, lib, pkgs, modulesPath, ... }:
+{ config, lib, modulesPath, ... }:
 
 {
   imports = [

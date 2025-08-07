@@ -1,6 +1,6 @@
 # test-workstation Home Configuration  
 # Generated using: just new-host test-workstation workstation
-{ config, pkgs, ... }:
+{ ... }:
 
 {
   imports = [

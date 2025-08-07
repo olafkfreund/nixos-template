@@ -1,6 +1,6 @@
 # HOSTNAME Home Configuration  
 # Generated using: just new-host HOSTNAME PRESET
-{ config, pkgs, ... }:
+{ ... }:
 
 {
   imports = [
