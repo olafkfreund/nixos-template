@@ -15,7 +15,7 @@
 
     # Version control
     git
-    gh  # GitHub CLI
+    gh # GitHub CLI
 
     # System monitoring for development
     btop

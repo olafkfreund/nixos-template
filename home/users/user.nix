@@ -107,7 +107,7 @@
     # ../profiles/kde.nix
     # ../profiles/hyprland.nix
     # ../profiles/niri.nix
-    
+
     # Shared package sets
     ../packages/core-system.nix
   ];

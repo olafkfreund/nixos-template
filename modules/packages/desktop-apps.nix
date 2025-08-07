@@ -11,7 +11,7 @@
     # Office and productivity
     libreoffice
     thunderbird
-    evince  # PDF viewer
+    evince # PDF viewer
 
     # File management
     nautilus

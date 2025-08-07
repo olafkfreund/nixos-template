@@ -26,7 +26,7 @@
 
     # Network utilities
     dig
-    iputils  # ping, traceroute, etc.
+    iputils # ping, traceroute, etc.
     nmap
     tcpdump
 

@@ -15,8 +15,8 @@
     tcpdump
     wireshark-cli
     iftop
-    iproute2  # provides ss command
-    net-tools  # provides netstat
+    iproute2 # provides ss command
+    net-tools # provides netstat
 
     # Text editors
     vim
@@ -28,7 +28,7 @@
 
     # File transfer and sync
     rsync
-    openssh  # provides scp
+    openssh # provides scp
 
     # System analysis
     strace
