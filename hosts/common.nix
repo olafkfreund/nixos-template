@@ -5,6 +5,9 @@
     # Core modules
     ../modules/core
 
+    # Core system packages (essential tools for all hosts)
+    ../modules/packages/core-system.nix
+
     # Home Manager integration  
     inputs.home-manager.nixosModules.home-manager
   ];
@@ -23,28 +26,7 @@
   # Enable flakes system-wide
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  # System packages available on all hosts
-  environment.systemPackages = with pkgs; [
-    # Essential tools
-    wget
-    curl
-    git
-    vim
-    htop
-    tree
-    unzip
-    zip
-
-    # System utilities
-    pciutils
-    usbutils
-    psmisc
-    lshw
-
-    # Network tools
-    dig
-    iputils # Provides ping, traceroute, etc.
-  ];
+  # Core packages are now provided by ../modules/packages/core-system.nix
 
   # Enable documentation
   documentation = {

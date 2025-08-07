@@ -4,13 +4,6 @@
   # Basic Home Manager configuration for default user
 
   # Import desktop profile (change based on your desktop environment)
-  imports = [
-    # Choose your desktop profile
-    ../profiles/gnome.nix
-    # ../profiles/kde.nix
-    # ../profiles/hyprland.nix
-    # ../profiles/niri.nix
-  ];
 
   # Basic user information
   home = {
@@ -107,36 +100,16 @@
     };
   };
 
-  # Basic applications
-  home.packages = with pkgs; [
-    # Desktop applications
-    firefox
-
-    # Development tools
-    git
-    curl
-    wget
-
-    # Text editors
-    nano
-    vim
-
-    # File management
-    file
-    which
-    tree
-    unzip
-    zip
-
-    # System tools
-    pciutils
-    usbutils
-    lshw
-
-    # Network tools
-    dig
-    nmap
-    traceroute
+  # Import shared package sets
+  imports = [
+    # Choose your desktop profile
+    ../profiles/gnome.nix
+    # ../profiles/kde.nix
+    # ../profiles/hyprland.nix
+    # ../profiles/niri.nix
+    
+    # Shared package sets
+    ../packages/core-system.nix
   ];
 
   # XDG directories

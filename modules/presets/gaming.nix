@@ -14,6 +14,8 @@ in
     ../hardware/power-management.nix
     ../gaming
     ../development
+    ../packages/gaming.nix
+    ../packages/desktop-apps.nix
   ];
 
   config = lib.mkIf isGaming {
@@ -126,38 +128,11 @@ in
       enableAllFirmware = true;
     };
 
-    # Gaming-focused packages (opinionated gaming preset)
+    # Gaming-specific packages not covered by shared modules
     environment.systemPackages = with pkgs; [
-      # Games and gaming platforms
-      steam
-      lutris
-      heroic
-
-      # Game development
-      godot_4
-      blender
-
-      # Streaming and content creation
-      obs-studio
-      kdePackages.kdenlive
-      audacity
-
-      # Gaming utilities
-      mangohud
-      goverlay
-      gamemode
-
-      # Performance monitoring
-      htop
-      btop
+      # Gaming-specific tools only
       nvidia-system-monitor-qt
-
-      # Communication
-      discord
       teamspeak_client
-
-      # Browsers optimized for gaming
-      firefox
       chromium
 
       # Emulation

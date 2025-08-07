@@ -13,6 +13,8 @@ in
     ../desktop
     ../hardware/power-management.nix
     ../development
+    ../packages/development.nix
+    ../packages/desktop-apps.nix
   ];
 
   config = lib.mkIf isWorkstation {
@@ -71,27 +73,10 @@ in
       "vm.swappiness=10"
     ];
 
-    # Core workstation packages (opinionated preset choice)
+    # Additional workstation-specific packages (core packages provided by shared modules)
     environment.systemPackages = with pkgs; [
-      # Essential development tools
-      firefox
-      chromium
-      vscode
-
-      # System utilities  
-      htop
-      btop
+      # Workstation-specific additions only
       neofetch
-
-      # File management
-      nautilus
-      file-roller
-
-      # Media
-      vlc
-
-      # Graphics
-      gimp
       inkscape
     ];
 

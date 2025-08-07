@@ -14,6 +14,7 @@ in
     ../security
     ../virtualization/podman.nix
     ../virtualization/libvirt.nix
+    ../packages/server-admin.nix
   ];
 
   config = lib.mkIf isServer {
@@ -95,28 +96,9 @@ in
       kernelModules = [ "kvm-intel" "kvm-amd" ];
     };
 
-    # Server system packages (minimal preset - keep mkDefault for customization)
+    # Server-specific packages (core tools provided by shared modules)
     environment.systemPackages = with pkgs; lib.mkDefault [
-      # Essential administration
-      htop
-      iotop
-      nethogs
-      tcpdump
-
-      # Text editing
-      vim
-      nano
-
-      # Network utilities
-      wget
-      curl
-      rsync
-
-      # System utilities
-      tmux
-      screen
-
-      # Monitoring
+      # Server-specific monitoring tools only
       sysstat
       lsof
 

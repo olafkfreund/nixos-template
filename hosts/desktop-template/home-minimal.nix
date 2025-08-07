@@ -1,57 +1,46 @@
-# Minimal Home Manager Configuration
-# Essential settings without excessive customization
+# Minimal Desktop Home Manager Configuration
+# Clean alternative using shared package sets
 
 { config, pkgs, lib, ... }:
 
 {
+  # Import base user configuration and package sets
+  imports = [
+    ../../home/users/user.nix
+    ../../home/packages/development.nix
+    ../../home/packages/desktop-productivity.nix
+    ../../home/packages/gaming.nix
+  ];
+
+  # Override user information
   home = {
     username = "user";
-    homeDirectory = "/home/user";
+    homeDirectory = lib.mkForce "/home/user";
     stateVersion = "25.05";
 
-    # Core applications
+    # Add only host-specific packages here
     packages = with pkgs; [
-      firefox
-      vscode
-      git
-      htop
+      # Host-specific additions
+      gparted
     ];
-  };
 
-  # Essential programs
-  programs = {
-    git = {
-      enable = true;
-      userName = "User";
-      userEmail = "user@example.com";
-    };
-
-    bash = {
-      enable = true;
-      enableCompletion = true;
-      shellAliases = {
-        ll = "ls -la";
-        gs = "git status";
-        ga = "git add";
-        gc = "git commit";
-      };
-    };
-
-    firefox.enable = true;
-    vscode.enable = true;
-    direnv = {
-      enable = true;
-      enableBashIntegration = true;
-      nix-direnv.enable = true;
+    # Session variables
+    sessionVariables = {
+      EDITOR = "code";
+      BROWSER = "firefox";
+      TERMINAL = "gnome-terminal";
+      NODE_OPTIONS = "--max-old-space-size=8192";
+      NIXOS_OZONE_WL = "1"; # Enable Wayland for Electron apps
     };
   };
 
-  # XDG user directories
-  xdg = {
-    enable = true;
-    userDirs = {
-      enable = true;
-      createDirectories = true;
+  # Override Git configuration for desktop use
+  programs.git = {
+    userName = lib.mkForce "Desktop User";
+    userEmail = lib.mkForce "user@example.com";
+    extraConfig = {
+      credential.helper = "store";
+      rerere.enabled = true;
     };
   };
 }
