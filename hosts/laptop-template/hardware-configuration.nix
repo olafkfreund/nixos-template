@@ -1,40 +1,18 @@
-# Laptop Template Hardware Configuration
-# This is a placeholder - replace with your actual hardware configuration
-# Generate with: sudo nixos-generate-config
-
-{ config, lib, ... }:
-
-{
-  imports = [ ];
-
-  # This is a template file - you MUST replace these with your actual hardware details
-  # Generate the real configuration with: sudo nixos-generate-config
-
+# Hardware Configuration Template  
+# Generate your actual hardware config with: sudo nixos-generate-config
+{ config, lib, ... }: {
   boot = {
     initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
-    initrd.kernelModules = [ ];
-    kernelModules = [ "kvm-intel" ]; # Change to "kvm-amd" for AMD
-    extraModulePackages = [ ];
+    kernelModules = [ "kvm-intel" ]; # Change to kvm-amd for AMD
   };
 
-  # PLACEHOLDER - Replace these UUIDs with your actual device UUIDs
-  fileSystems."/" = {
-    device = "/dev/disk/by-uuid/REPLACE-WITH-YOUR-ROOT-UUID";
-    fsType = "ext4";
+  fileSystems = {
+    "/" = { device = "/dev/disk/by-uuid/REPLACE-ROOT-UUID"; fsType = "ext4"; };
+    "/boot" = { device = "/dev/disk/by-uuid/REPLACE-BOOT-UUID"; fsType = "vfat"; };
   };
 
-  fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/REPLACE-WITH-YOUR-BOOT-UUID";
-    fsType = "vfat";
-  };
+  swapDevices = [{ device = "/dev/disk/by-uuid/REPLACE-SWAP-UUID"; }];
 
-  swapDevices = [
-    { device = "/dev/disk/by-uuid/REPLACE-WITH-YOUR-SWAP-UUID"; }
-  ];
-
-  # Enables DHCP on each ethernet and wireless interface
-  networking.useDHCP = lib.mkDefault true;
-
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  nixpkgs.hostPlatform = "x86_64-linux";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }

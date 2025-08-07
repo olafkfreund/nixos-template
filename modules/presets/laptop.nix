@@ -8,7 +8,7 @@ let
 in
 
 {
-  imports = lib.mkIf isLaptop [
+  imports = [
     ../core
     ../desktop
     ../hardware/power-management.nix

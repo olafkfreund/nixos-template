@@ -24,6 +24,41 @@
         "x86_64-darwin"
       ];
       forAllSystems = nixpkgs.lib.genAttrs systems;
+
+      # Helper function to reduce duplication in nixosSystem configurations
+      mkSystem = { hostname, system ? "x86_64-linux", extraModules ? [ ] }:
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = { inherit inputs outputs; };
+          modules = [
+            ./hosts/${hostname}/configuration.nix
+            home-manager.nixosModules.home-manager
+            agenix.nixosModules.default
+          ] ++ extraModules;
+        };
+
+      # Helper function for home-manager configurations
+      mkHome = { username, hostname, system ? "x86_64-linux" }:
+        home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.${system};
+          extraSpecialArgs = { inherit inputs outputs; };
+          modules = [ ./hosts/${hostname}/home.nix ];
+        };
+
+      # Common template validation config
+      templateConfig = {
+        # Set timezone for templates
+        time.timeZone = "Europe/London";
+        # Location for geoclue2 (needed by laptop template)
+        location = {
+          latitude = 51.5074;
+          longitude = -0.1278;
+        };
+        # Allow unfree packages for template validation
+        nixpkgs.config.allowUnfree = true;
+        # Allow insecure packages for template validation
+        nixpkgs.config.permittedInsecurePackages = [ "libsoup-2.74.3" ];
+      };
     in
     {
       # Custom packages and modifications, exported as overlays
@@ -78,103 +113,33 @@
       # Available through 'nixos-rebuild --flake .#your-hostname'
       nixosConfigurations = {
         # Template configurations (examples, not directly usable)
-        laptop-template = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = { inherit inputs outputs; };
-          modules = [
-            ./hosts/laptop-template/configuration.nix
-            home-manager.nixosModules.home-manager
-            agenix.nixosModules.default
-            {
-              # Dummy location for template validation
-              location.latitude = 40.7128;
-              location.longitude = -74.0060;
-              # Allow unfree packages for template validation
-              nixpkgs.config.allowUnfree = true;
-              # Allow insecure packages for template validation
-              nixpkgs.config.permittedInsecurePackages = [
-                "libsoup-2.74.3"
-              ];
-            }
-          ];
+        laptop-template = mkSystem {
+          hostname = "laptop-template";
+          extraModules = [ templateConfig ];
         };
 
-        desktop-template = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = { inherit inputs outputs; };
-          modules = [
-            ./hosts/desktop-template/configuration.nix
-            home-manager.nixosModules.home-manager
-            agenix.nixosModules.default
-            {
-              # Dummy location for template validation
-              location.latitude = 40.7128;
-              location.longitude = -74.0060;
-              # Allow unfree packages for template validation
-              nixpkgs.config.allowUnfree = true;
-              # Allow insecure packages for template validation
-              nixpkgs.config.permittedInsecurePackages = [
-                "libsoup-2.74.3"
-              ];
-            }
-          ];
+        desktop-template = mkSystem {
+          hostname = "desktop-template";
+          extraModules = [ templateConfig ];
         };
 
-        server-template = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = { inherit inputs outputs; };
-          modules = [
-            ./hosts/server-template/configuration.nix
-            home-manager.nixosModules.home-manager
-            agenix.nixosModules.default
-            {
-              # Dummy location for template validation
-              location.latitude = 40.7128;
-              location.longitude = -74.0060;
-              # Allow unfree packages for template validation
-              nixpkgs.config.allowUnfree = true;
-              # Allow insecure packages for template validation
-              nixpkgs.config.permittedInsecurePackages = [
-                "libsoup-2.74.3"
-              ];
-            }
-          ];
+        server-template = mkSystem {
+          hostname = "server-template";
+          extraModules = [ templateConfig ];
         };
 
-        # Example VM configurations
-        qemu-vm = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = { inherit inputs outputs; };
-          modules = [
-            ./hosts/qemu-vm/configuration.nix
-            home-manager.nixosModules.home-manager
-          ];
+        # Example VM configurations  
+        qemu-vm = mkSystem { hostname = "qemu-vm"; };
+        microvm = mkSystem { hostname = "microvm"; };
+        desktop-test = mkSystem {
+          hostname = "desktop-test";
+          extraModules = [ templateConfig ];
         };
 
-        microvm = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = { inherit inputs outputs; };
-          modules = [
-            ./hosts/microvm/configuration.nix
-            home-manager.nixosModules.home-manager
-          ];
-        };
-
-        desktop-test = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = { inherit inputs outputs; };
-          modules = [
-            ./hosts/desktop-test/configuration.nix
-            home-manager.nixosModules.home-manager
-            {
-              # VM testing configuration
-              location.latitude = 40.7128;
-              location.longitude = -74.0060;
-              # Allow unfree packages for testing
-              nixpkgs.config.allowUnfree = true;
-            }
-          ];
-        };
+        # Preset system test configurations
+        test-workstation = mkSystem { hostname = "test-workstation"; };
+        test-gaming = mkSystem { hostname = "test-gaming"; };
+        test-server = mkSystem { hostname = "test-server"; };
 
         # Custom installer ISO configurations
         # Build with: nix build .#nixosConfigurations.installer-minimal.config.system.build.isoImage
@@ -183,14 +148,7 @@
           specialArgs = { inherit inputs outputs; };
           modules = [
             ./hosts/installer-isos/minimal-installer.nix
-            {
-              # Allow unfree packages in installer
-              nixpkgs.config.allowUnfree = true;
-              # Allow insecure packages for compatibility
-              nixpkgs.config.permittedInsecurePackages = [
-                "libsoup-2.74.3"
-              ];
-            }
+            templateConfig
           ];
         };
 
@@ -199,14 +157,7 @@
           specialArgs = { inherit inputs outputs; };
           modules = [
             ./hosts/installer-isos/desktop-installer.nix
-            {
-              # Allow unfree packages in installer
-              nixpkgs.config.allowUnfree = true;
-              # Allow insecure packages for compatibility
-              nixpkgs.config.permittedInsecurePackages = [
-                "libsoup-2.74.3"
-              ];
-            }
+            templateConfig
           ];
         };
 
@@ -215,14 +166,7 @@
           specialArgs = { inherit inputs outputs; };
           modules = [
             ./hosts/installer-isos/preconfigured-installer.nix
-            {
-              # Allow unfree packages in installer
-              nixpkgs.config.allowUnfree = true;
-              # Allow insecure packages for compatibility
-              nixpkgs.config.permittedInsecurePackages = [
-                "libsoup-2.74.3"
-              ];
-            }
+            templateConfig
           ];
         };
 
@@ -232,29 +176,10 @@
       # Available through 'home-manager --flake .#your-username@your-hostname'
       homeConfigurations = {
         # Example home configurations
-        "user@laptop-template" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          extraSpecialArgs = { inherit inputs outputs; };
-          modules = [ ./hosts/laptop-template/home.nix ];
-        };
-
-        "user@desktop-template" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          extraSpecialArgs = { inherit inputs outputs; };
-          modules = [ ./hosts/desktop-template/home.nix ];
-        };
-
-        "user@server-template" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          extraSpecialArgs = { inherit inputs outputs; };
-          modules = [ ./hosts/server-template/home.nix ];
-        };
-
-        "vm-user@desktop-test" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          extraSpecialArgs = { inherit inputs outputs; };
-          modules = [ ./hosts/desktop-test/home.nix ];
-        };
+        "user@laptop-template" = mkHome { username = "user"; hostname = "laptop-template"; };
+        "user@desktop-template" = mkHome { username = "user"; hostname = "desktop-template"; };
+        "user@server-template" = mkHome { username = "user"; hostname = "server-template"; };
+        "vm-user@desktop-test" = mkHome { username = "vm-user"; hostname = "desktop-test"; };
       };
     };
 }

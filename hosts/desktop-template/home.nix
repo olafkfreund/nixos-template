@@ -1,5 +1,5 @@
-# Desktop Home Manager Configuration  
-# Full-featured configuration for desktop productivity
+# Comprehensive Home Manager Configuration  
+# Use home-minimal.nix for a cleaner alternative
 { config, pkgs, lib, ... }:
 
 {

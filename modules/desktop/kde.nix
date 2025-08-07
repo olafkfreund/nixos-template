@@ -113,13 +113,10 @@ in
       upower.enable = true;
 
       # Printing support with KDE integration
-      printing = {
-        enable = lib.mkDefault true;
-        drivers = with pkgs; [ cups-filters ];
-      };
+      printing.enable = true;
 
       # Scanner support  
-      saned.enable = lib.mkDefault true;
+      saned.enable = true;
 
       # Bluetooth with KDE integration
       blueman.enable = false; # Use KDE Bluetooth instead
@@ -127,7 +124,7 @@ in
 
     # Hardware support
     hardware = {
-      bluetooth.enable = lib.mkDefault true;
+      bluetooth.enable = true;
       pulseaudio.enable = false; # Use PipeWire with KDE
     };
 
@@ -266,35 +263,13 @@ in
       networkmanager = { }; # For network management
     };
 
-    # Networking with KDE integration
-    networking.networkmanager = {
-      enable = lib.mkDefault true;
-      # KDE Plasma NetworkManager integration
-      packages = with pkgs; [
-        networkmanager-openvpn
-        networkmanager-openconnect
-      ];
-    };
+    # NetworkManager (managed by core networking)
+    networking.networkmanager.packages = with pkgs; [
+      networkmanager-openvpn
+      networkmanager-openconnect
+    ];
 
-    # Audio configuration optimized for KDE (rtkit auto-enabled by PipeWire)
-    services.pipewire = {
-      enable = lib.mkDefault true;
-      audio.enable = true;
-      pulse.enable = true;
-      jack.enable = false; # Usually not needed for desktop
-
-      # Low latency configuration for better desktop experience
-      extraConfig.pipewire = {
-        "92-low-latency" = {
-          "context.properties" = {
-            "default.clock.rate" = 48000;
-            "default.clock.quantum" = 1024;
-            "default.clock.min-quantum" = 32;
-            "default.clock.max-quantum" = 2048;
-          };
-        };
-      };
-    };
+    # Audio handled by audio.nix module
 
     # Assertions to prevent conflicts
     assertions = [

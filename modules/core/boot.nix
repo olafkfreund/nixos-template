@@ -9,10 +9,7 @@
         configurationLimit = 10; # Limit boot entries
         editor = false; # Disable editing for security
       };
-      efi = {
-        canTouchEfiVariables = lib.mkDefault true;
-        efiSysMountPoint = "/boot";
-      };
+      efi.canTouchEfiVariables = lib.mkDefault true;
       timeout = lib.mkDefault 3;
     };
 
@@ -36,8 +33,7 @@
       tmpfsSize = "50%";
     };
 
-    # Clean /tmp on boot (updated option name)
-    tmp.cleanOnBoot = true;
+    # tmpfs automatically cleans on boot
 
     # Plymouth for graphical boot (optional)
     plymouth = {

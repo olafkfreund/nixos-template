@@ -9,8 +9,7 @@
     # Disable wpa_supplicant when using NetworkManager
     wireless.enable = lib.mkDefault false;
 
-    # Enable IPv6 privacy extensions
-    enableIPv6 = lib.mkDefault true;
+    # IPv6 is enabled by default
 
     # DNS configuration
     nameservers = lib.mkDefault [
@@ -18,11 +17,7 @@
       "8.8.8.8" # Google
     ];
 
-    # Local hostname resolution
-    hosts = {
-      "127.0.0.1" = [ "localhost" ];
-      "::1" = [ "localhost" ];
-    };
+    # Note: localhost mapping is automatic in NixOS
 
     # Firewall
     firewall = {
@@ -34,8 +29,7 @@
       # allowedUDPPorts = [ ];
     };
 
-    # Disable predictable network interface names (optional)
-    usePredictableInterfaceNames = lib.mkDefault true;
+    # Predictable interface names are enabled by default
   };
 
   # mDNS/DNS-SD support
