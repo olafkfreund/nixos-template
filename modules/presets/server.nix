@@ -89,8 +89,8 @@ in
         "net.ipv4.tcp_congestion_control=bbr"
       ];
 
-      # Faster boot for servers (keep mkDefault - users may want grub menu)
-      loader.timeout = lib.mkDefault 1;
+      # Faster boot for servers (servers don't need boot menu delays)
+      loader.timeout = 1;
 
       # Enable virtualization modules (common for servers)
       kernelModules = [ "kvm-intel" "kvm-amd" ];

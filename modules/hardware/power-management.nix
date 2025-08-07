@@ -256,7 +256,7 @@ in
       # Disable USB autosuspend for input devices to prevent lag
       ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="046d", ATTR{idProduct}=="*", TEST=="power/control", ATTR{power/control}="on"
       ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="1532", ATTR{idProduct}=="*", TEST=="power/control", ATTR{power/control}="on"
-      ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="*", ATTRS{idProduct}=="*", SUBSYSTEM=="input", TEST=="power/control", ATTR{power/control}="on"
+      ACTION=="add", SUBSYSTEM=="usb", SUBSYSTEMS=="input", TEST=="power/control", ATTR{power/control}="on"
     '';
 
     # Power monitoring tools
