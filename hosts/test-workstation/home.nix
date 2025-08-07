@@ -1,18 +1,30 @@
 # test-workstation Home Configuration  
-# Generated using: just new-host test-workstation workstation
+# Workstation setup with development tools and desktop environment
 { ... }:
 
 {
   imports = [
-    ../../home/users/user.nix
+    ../../home/roles/developer.nix    # Development environment
+    ../../home/profiles/gnome.nix     # GNOME desktop
   ];
 
-  # Host-specific home configuration
+  # User-specific information
   home = {
     username = "user";
     homeDirectory = "/home/user";
-    stateVersion = "25.05";
   };
 
-  # Add any test-workstation-specific home-manager settings here
+  # User-specific git configuration
+  programs.git = {
+    userName = "Test User";
+    userEmail = "test@workstation.local";
+  };
+
+  # Workstation-specific shell aliases
+  programs.zsh = {
+    shellAliases = {
+      workstation-info = "neofetch";
+      dev-env = "cd ~/Development && code .";
+    };
+  };
 }

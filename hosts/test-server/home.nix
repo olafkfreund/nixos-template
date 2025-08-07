@@ -1,18 +1,31 @@
 # test-server Home Configuration  
-# Generated using: just new-host test-server server
+# Server administration setup without GUI
 { ... }:
 
 {
   imports = [
-    ../../home/users/user.nix
+    ../../home/roles/server-admin.nix # Server administration tools
+    ../../home/profiles/headless.nix  # No GUI configuration
   ];
 
-  # Host-specific home configuration
+  # User-specific information
   home = {
     username = "user";
     homeDirectory = "/home/user";
-    stateVersion = "25.05";
   };
 
-  # Add any test-server-specific home-manager settings here
+  # User-specific git configuration
+  programs.git = {
+    userName = "Test Server Admin";
+    userEmail = "admin@test-server.local";
+  };
+
+  # Server-specific shell aliases
+  programs.bash = {
+    shellAliases = {
+      server-status = "systemctl status nginx postgresql";
+      check-load = "uptime && free -h && df -h";
+      server-logs = "journalctl -f -u nginx -u postgresql";
+    };
+  };
 }
