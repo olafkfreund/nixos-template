@@ -10,12 +10,17 @@ let
       entries = builtins.readDir dir;
 
       # Filter for directories and files that should be imported
+      # Exclude installer directory as it contains ISO-specific modules
       moduleEntries = lib.filterAttrs
         (name: type:
-          # Include directories (which contain default.nix)
-          type == "directory" ||
-          # Include .nix files but exclude this default.nix file
-          (type == "regular" && lib.hasSuffix ".nix" name && name != "default.nix")
+          # Exclude installer directory
+          name != "installer" &&
+          (
+            # Include directories (which contain default.nix)
+            type == "directory" ||
+            # Include .nix files but exclude this default.nix file
+            (type == "regular" && lib.hasSuffix ".nix" name && name != "default.nix")
+          )
         )
         entries;
 

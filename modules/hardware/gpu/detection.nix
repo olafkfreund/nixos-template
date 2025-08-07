@@ -7,10 +7,8 @@ in
   options.modules.hardware.gpu = {
     autoDetect = lib.mkEnableOption "automatic GPU detection and configuration" // { default = true; };
 
-    # Manual GPU selection (overrides auto-detection)
-    amd.enable = lib.mkEnableOption "AMD GPU support";
-    nvidia.enable = lib.mkEnableOption "NVIDIA GPU support";
-    intel.enable = lib.mkEnableOption "Intel integrated GPU support";
+    # Note: Individual GPU enable options are declared in their respective modules
+    # (amd.nix, nvidia.nix, intel.nix) - this module only sets them based on detection
 
     # Workload profiles
     profile = lib.mkOption {
@@ -36,39 +34,14 @@ in
       pciutils # lspci for GPU detection
       glxinfo # GPU info
       clinfo # OpenCL info
-      nvtop # GPU monitoring (works with AMD/NVIDIA)
+      # GPU monitoring tools can be added per-host as needed
     ];
 
-    # Auto-detect and enable GPU modules based on hardware
-    modules.hardware.gpu = {
-      # Detect AMD GPUs
-      amd.enable = lib.mkDefault (
-        builtins.any
-          (line:
-            lib.hasInfix "AMD" line ||
-            lib.hasInfix "ATI" line ||
-            lib.hasInfix "Radeon" line
-          )
-          (lib.splitString "\n" (builtins.readFile /proc/cpuinfo || ""))
-      );
-
-      # Detect NVIDIA GPUs
-      nvidia.enable = lib.mkDefault (
-        builtins.pathExists /proc/driver/nvidia/version ||
-        builtins.any (line: lib.hasInfix "NVIDIA" line)
-          (lib.splitString "\n" (builtins.readFile /proc/cpuinfo || ""))
-      );
-
-      # Detect Intel integrated graphics
-      intel.enable = lib.mkDefault (
-        builtins.any
-          (line:
-            lib.hasInfix "Intel" line &&
-            (lib.hasInfix "Graphics" line || lib.hasInfix "UHD" line || lib.hasInfix "Iris" line)
-          )
-          (lib.splitString "\n" (builtins.readFile /proc/cpuinfo || ""))
-      );
-    };
+    # Note: Auto-detection of GPU modules cannot be done during evaluation
+    # Users should manually enable the appropriate GPU modules:
+    # modules.hardware.gpu.amd.enable = true;
+    # modules.hardware.gpu.nvidia.enable = true;
+    # modules.hardware.gpu.intel.enable = true;
 
     # GPU detection service
     systemd.services.gpu-detection = {
