@@ -8,7 +8,7 @@ let
 in
 
 {
-  imports = lib.mkIf isVmGuest [
+  imports = [
     ../core
     ../desktop
     ../virtualization/vm-guest.nix
@@ -28,11 +28,7 @@ in
     # Lightweight desktop for VMs
     modules.desktop = lib.mkDefault {
       audio.enable = true;
-      gnome = {
-        enable = true;
-        # Minimal GNOME for better VM performance
-        removeDefaultPackages = true;
-      };
+      gnome.enable = true;
     };
 
     # VM guest optimizations
@@ -140,10 +136,10 @@ in
     };
 
     # Systemd optimizations for VMs (preset configuration)
-    systemd.extraConfig = ''
-      DefaultTimeoutStartSec=30s
-      DefaultTimeoutStopSec=10s
-    '';
+    systemd.settings.Manager = {
+      DefaultTimeoutStartSec = "30s";
+      DefaultTimeoutStopSec = "10s";
+    };
 
     # Memory management for VMs (keep mkDefault - memory config is sensitive)
     zramSwap = {

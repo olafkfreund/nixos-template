@@ -7,8 +7,8 @@
   # Time zone (users should set this in host config)
   time.timeZone = lib.mkDefault "UTC";
 
-  # Console uses X keyboard config by default
-  console.useXkbConfig = true;
+  # Console uses X keyboard config by default (keep mkDefault - VMs may override)
+  console.useXkbConfig = lib.mkDefault true;
 
   # Keyboard layout defaults to "us" - no need to explicitly set
 }

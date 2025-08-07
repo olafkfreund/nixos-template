@@ -18,7 +18,7 @@
     # Basic firewall (keep mkDefault - users may want custom firewall)
     firewall = {
       enable = lib.mkDefault true;
-      allowPing = true;  # Generally safe default
+      allowPing = lib.mkDefault true;  # Keep mkDefault - some hosts may want false
     };
   };
 

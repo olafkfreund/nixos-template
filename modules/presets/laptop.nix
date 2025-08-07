@@ -38,10 +38,7 @@ in
     };
 
     # Development environment (lighter than workstation)
-    modules.development = lib.mkDefault {
-      enable = true;
-      git.enable = true;
-    };
+    modules.development.git.enable = lib.mkDefault true;
 
     # Mobile-optimized services
     services = {

@@ -8,7 +8,7 @@ let
 in
 
 {
-  imports = lib.mkIf isServer [
+  imports = [
     ../core
     ../hardware/power-management.nix
     ../security
@@ -37,9 +37,9 @@ in
 
     # Server-optimized services (opinionated preset configuration)
     services = {
-      # SSH is essential for servers (keep mkDefault - users may want custom config)
+      # SSH is essential for servers (override security default)
       openssh = {
-        enable = lib.mkDefault true;
+        enable = true;
         settings = {
           # Secure defaults for server preset
           PasswordAuthentication = false;
@@ -57,8 +57,7 @@ in
         enable = lib.mkDefault false; # Enable per-host as needed
       };
 
-      # Automatic updates (keep mkDefault - dangerous if enabled)
-      automatic-timers.enable = lib.mkDefault false;
+      # Note: Enable automatic updates carefully per host
     };
 
     # Server networking (opinionated server configuration)
@@ -139,33 +138,33 @@ in
       # AppArmor for additional security (keep mkDefault - optional hardening)
       apparmor.enable = lib.mkDefault true;
 
-      # Fail2ban for SSH protection (opinionated server security)
-      fail2ban = {
-        enable = true;
-        jails.ssh-iptables = ''
-          enabled = true
-          filter = sshd
-          action = iptables[name=SSH, port=ssh, protocol=tcp]
-          logpath = /var/log/auth.log
-          maxretry = 5
-          bantime = 3600
-        '';
-      };
     };
+
+    # Fail2ban for SSH protection (opinionated server security)
+    services.fail2ban = {
+      enable = true;
+      jails.ssh-iptables = ''
+        enabled = true
+        filter = sshd
+        action = iptables[name=SSH, port=ssh, protocol=tcp]
+        logpath = /var/log/auth.log
+        maxretry = 5
+        bantime = 3600
+      '';
+    };
+
+
+    # Disable auto-login (inappropriate for servers)
+    services.getty.autologinUser = lib.mkForce null;
 
     # System optimization
     systemd = {
-      # Disable unnecessary services
-      services = {
-        # Disable graphical services
-        getty.autologinUser = lib.mkForce null;
-      };
 
-      # Optimize for server workloads (preset configuration)
-      extraConfig = ''
-        DefaultTimeoutStopSec=10s
-        DefaultTimeoutStartSec=10s
-      '';
+      # Optimize for server workloads (preset configuration) 
+      settings.Manager = {
+        DefaultTimeoutStopSec = "10s";
+        DefaultTimeoutStartSec = "10s";
+      };
     };
 
     # No graphical interface

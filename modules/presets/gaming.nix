@@ -25,10 +25,10 @@ in
       cpuGovernor = "performance";
       enableThermalManagement = true;
 
-      gaming = {
-        enableGameMode = true;
-        optimizeForLatency = true;
-        disablePowerSaving = true;
+      # Gaming uses desktop performance settings
+      desktop = {
+        enablePerformanceMode = true;
+        disableUsbAutosuspend = true;
       };
     };
 
@@ -48,22 +48,16 @@ in
     };
 
     # Development tools for modding/streaming
-    modules.development = lib.mkDefault {
-      enable = true;
-      git.enable = true;
-    };
+    modules.development.git.enable = lib.mkDefault true;
 
     # Gaming-specific services (opinionated preset configuration)
     services = {
       # Disable PulseAudio for lowest latency
       pulseaudio.enable = lib.mkForce false;
-
-      # Gaming optimizations (essential for gaming preset)
-      gamemode.enable = true;
-
-      # Streaming support (gaming preset includes content creation)
-      obs-studio.plugins = [ pkgs.obs-studio-plugins.wlrobs ];
     };
+
+    # Gaming programs
+    programs.gamemode.enable = true;
 
     # Network optimized for gaming (opinionated preset configuration)
     networking = {
@@ -119,7 +113,6 @@ in
       # Full graphics stack (essential for gaming)
       opengl = {
         enable = true;
-        driSupport = true;
         driSupport32Bit = true;
       };
 
@@ -146,7 +139,7 @@ in
 
       # Streaming and content creation
       obs-studio
-      kdenlive
+      kdePackages.kdenlive
       audacity
 
       # Gaming utilities
@@ -175,17 +168,17 @@ in
 
       # RGB and peripheral control
       openrgb
-      ratbagd
+      libratbag
     ];
 
     # Gaming-specific system configuration
     # Note: rtkit auto-enabled by desktop audio modules
 
     # Gaming-specific optimizations (preset configuration)
-    systemd.extraConfig = ''
-      DefaultTimeoutStopSec=10s
-      DefaultLimitNOFILE=1048576
-    '';
+    systemd.settings.Manager = {
+      DefaultTimeoutStopSec = "10s";
+      DefaultLimitNOFILE = "1048576";
+    };
 
     # Gaming group and permissions
     users.groups.gamemode = { };

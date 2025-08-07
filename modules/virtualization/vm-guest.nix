@@ -378,8 +378,8 @@ in
       }
 
       (mkIf cfg.serial.enable {
-        # Enable serial console
-        useXkbConfig = false;
+        # Enable serial console (use mkForce to handle conflict with core locale)
+        useXkbConfig = mkForce false;
       })
     ];
 

@@ -37,10 +37,7 @@ in
     };
 
     # Development environment (preset choice - use lib.mkDefault to allow override) 
-    modules.development = lib.mkDefault {
-      enable = true;
-      git.enable = true;
-    };
+    modules.development.git.enable = lib.mkDefault true;
 
     # Essential services (opinionated preset configuration)
     services = {
@@ -103,7 +100,7 @@ in
       enableDefaultPackages = true;
       packages = with pkgs; [
         noto-fonts
-        noto-fonts-cjk
+        noto-fonts-cjk-sans
         noto-fonts-emoji
         liberation_ttf
         fira-code

@@ -27,7 +27,7 @@
   # Most hardware is auto-detected by the preset
 
   # Timezone (adjust for your location)
-  time.timeZone = lib.mkDefault "Europe/London";
+  time.timeZone = "Europe/London";
 
   system.stateVersion = "25.05";
 }

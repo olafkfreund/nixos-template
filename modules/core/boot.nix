@@ -28,7 +28,7 @@
     tmp.useTmpfs = lib.mkDefault true;  # Keep: not everyone wants tmpfs
     tmp.tmpfsSize = "50%";
 
-    # Plymouth disabled by default
-    plymouth.enable = false;  # Remove mkDefault: rarely wanted in templates
+    # Plymouth disabled by default (keep mkDefault - some hosts may want boot splash)
+    plymouth.enable = lib.mkDefault false;
   };
 }
