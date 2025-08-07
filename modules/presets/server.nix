@@ -24,7 +24,7 @@ in
       profile = "server";
       cpuGovernor = "ondemand";
       enableThermalManagement = true;
-      
+
       server = {
         enableServerOptimizations = true;
         disableWakeOnLan = false;
@@ -50,12 +50,12 @@ in
 
       # Time synchronization critical for servers
       ntp.enable = lib.mkDefault true;
-      
+
       # System monitoring
       prometheus.exporters.node = {
         enable = lib.mkDefault false; # Enable per-host as needed
       };
-      
+
       # Automatic updates (careful!)
       automatic-timers.enable = lib.mkDefault false;
     };
@@ -65,7 +65,7 @@ in
       # Use systemd-networkd for servers (more reliable)
       useNetworkd = lib.mkDefault true;
       useDHCP = lib.mkDefault false;
-      
+
       # Firewall essential for servers
       firewall = {
         enable = lib.mkForce true;
@@ -73,7 +73,7 @@ in
         allowedTCPPorts = lib.mkDefault [ 22 ]; # SSH only
         allowPing = lib.mkDefault true;
       };
-      
+
       # DNS configuration
       nameservers = lib.mkDefault [ "1.1.1.1" "8.8.8.8" ];
     };
@@ -87,10 +87,10 @@ in
         "net.core.default_qdisc=fq"
         "net.ipv4.tcp_congestion_control=bbr"
       ];
-      
+
       # Faster boot for servers
       loader.timeout = lib.mkDefault 1;
-      
+
       # Enable all kernel modules that might be needed
       kernelModules = lib.mkDefault [ "kvm-intel" "kvm-amd" ];
     };
@@ -102,27 +102,27 @@ in
       iotop
       nethogs
       tcpdump
-      
+
       # Text editing
       vim
       nano
-      
+
       # Network utilities
       wget
       curl
       rsync
-      
+
       # System utilities
       tmux
       screen
-      
+
       # Monitoring
       sysstat
       lsof
-      
+
       # Container management
       podman-compose
-      
+
       # Backup tools
       borgbackup
     ];
@@ -134,10 +134,10 @@ in
         enable = lib.mkDefault true;
         wheelNeedsPassword = lib.mkDefault true;
       };
-      
+
       # AppArmor for additional security
       apparmor.enable = lib.mkDefault true;
-      
+
       # Fail2ban for SSH protection
       fail2ban = {
         enable = lib.mkDefault true;
@@ -159,7 +159,7 @@ in
         # Disable graphical services
         getty.autologinUser = lib.mkForce null;
       };
-      
+
       # Optimize for server workloads
       extraConfig = lib.mkDefault ''
         DefaultTimeoutStopSec=10s
@@ -169,7 +169,7 @@ in
 
     # No graphical interface
     services.xserver.enable = lib.mkForce false;
-    
+
     # User customizations can be applied in the host configuration
     # by simply adding more configuration after the preset import
   };

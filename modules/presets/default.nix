@@ -25,7 +25,7 @@ in
     preset = lib.mkOption {
       type = lib.types.nullOr (lib.types.enum [
         "workstation"
-        "laptop" 
+        "laptop"
         "server"
         "gaming"
         "vm-guest"
@@ -40,7 +40,7 @@ in
   config = lib.mkIf cfg.enable {
     # Preset configurations are handled by individual preset modules
     # based on the preset option
-    
+
     assertions = [
       {
         assertion = cfg.preset != null;

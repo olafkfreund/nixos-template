@@ -22,7 +22,7 @@ in
       enable = true;
       profile = "laptop";
       enableThermalManagement = true;
-      
+
       laptop = {
         enableBatteryOptimization = true;
         enableTlp = true;
@@ -47,16 +47,16 @@ in
     services = {
       # Disable PulseAudio (PipeWire handles audio)
       pulseaudio.enable = lib.mkForce false;
-      
+
       # Essential for mobile work
       printing.enable = lib.mkDefault true;
-      
+
       # Bluetooth for peripherals
       blueman.enable = lib.mkDefault true;
-      
+
       # Location services
       geoclue2.enable = lib.mkDefault true;
-      
+
       # Automatic time synchronization
       ntp.enable = lib.mkDefault true;
     };
@@ -70,7 +70,7 @@ in
           backend = "iwd";
         };
       };
-      
+
       # VPN support for secure remote work
       firewall = {
         enable = lib.mkDefault true;
@@ -91,14 +91,14 @@ in
     hardware = {
       # Enable all firmware (including WiFi)
       enableAllFirmware = lib.mkDefault true;
-      
+
       # CPU microcode updates
       cpu.intel.updateMicrocode = lib.mkDefault true;
       cpu.amd.updateMicrocode = lib.mkDefault true;
-      
+
       # Graphics acceleration
       opengl.enable = lib.mkDefault true;
-      
+
       # Bluetooth
       bluetooth = {
         enable = lib.mkDefault true;
@@ -110,20 +110,20 @@ in
     environment.systemPackages = with pkgs; lib.mkDefault [
       # Essential productivity
       firefox
-      
+
       # Communication
       thunderbird
-      
+
       # System monitoring (battery focused)
       htop
       powertop
-      
+
       # File management
       nautilus
-      
+
       # Quick text editing
       gedit
-      
+
       # Network utilities
       networkmanager-openvpn
       networkmanager-openconnect

@@ -10,7 +10,7 @@
     ./gaming
     ./hardware
     ./installer
-    ./presets  # New preset system
+    ./presets # New preset system
     ./security
     ./virtualization
   ];

@@ -24,7 +24,7 @@ in
       profile = "gaming";
       cpuGovernor = "performance";
       enableThermalManagement = true;
-      
+
       gaming = {
         enableGameMode = true;
         optimizeForLatency = true;
@@ -57,10 +57,10 @@ in
     services = {
       # Disable PulseAudio for lowest latency
       pulseaudio.enable = lib.mkForce false;
-      
+
       # Gaming optimizations
       gamemode.enable = lib.mkDefault true;
-      
+
       # Streaming support
       obs-studio.plugins = lib.mkDefault [ pkgs.obs-studio-plugins.wlrobs ];
     };
@@ -71,14 +71,23 @@ in
       firewall = {
         enable = lib.mkDefault true;
         # Gaming and streaming ports
-        allowedTCPPorts = lib.mkDefault [ 
+        allowedTCPPorts = lib.mkDefault [
           27015 # Steam
-          3478 3479 # Steam Voice
+          3478
+          3479 # Steam Voice
           1935 # OBS Streaming
         ];
         allowedUDPPorts = lib.mkDefault [
-          27015 27031 27032 27033 27034 27035 27036 # Steam
-          3478 4379 4380 # Steam Voice
+          27015
+          27031
+          27032
+          27033
+          27034
+          27035
+          27036 # Steam
+          3478
+          4379
+          4380 # Steam Voice
         ];
       };
     };
@@ -97,10 +106,10 @@ in
         # Low latency
         "preempt=full"
       ];
-      
+
       # Gaming kernel for lower latency
       kernelPackages = lib.mkDefault pkgs.linuxPackages_zen;
-      
+
       # Load gaming-related modules
       kernelModules = lib.mkDefault [ "uinput" "kvm-intel" "kvm-amd" ];
     };
@@ -113,13 +122,13 @@ in
         driSupport = lib.mkDefault true;
         driSupport32Bit = lib.mkDefault true;
       };
-      
+
       # Gaming peripherals
       steam-hardware.enable = lib.mkDefault true;
-      
+
       # Audio for gaming
       pulseaudio.enable = lib.mkForce false;
-      
+
       # Enable all firmware for gaming hardware
       enableAllFirmware = lib.mkDefault true;
     };
@@ -130,40 +139,40 @@ in
       steam
       lutris
       heroic
-      
+
       # Game development
       godot_4
       blender
-      
+
       # Streaming and content creation
       obs-studio
       kdenlive
       audacity
-      
+
       # Gaming utilities
       mangohud
       goverlay
       gamemode
-      
+
       # Performance monitoring
       htop
       btop
       nvidia-system-monitor-qt
-      
+
       # Communication
       discord
       teamspeak_client
-      
+
       # Browsers optimized for gaming
       firefox
       chromium
-      
+
       # Emulation
       retroarch
-      
+
       # System utilities for gamers
       corectrl
-      
+
       # RGB and peripheral control
       openrgb
       ratbagd
@@ -171,7 +180,7 @@ in
 
     # Gaming-specific system configuration
     # Note: rtkit auto-enabled by desktop audio modules
-    
+
     # Optimizations
     systemd.extraConfig = lib.mkDefault ''
       DefaultTimeoutStopSec=10s
@@ -179,7 +188,7 @@ in
     '';
 
     # Gaming group and permissions
-    users.groups.gamemode = {};
+    users.groups.gamemode = { };
     security.wrappers.gamemode = {
       owner = "root";
       group = "gamemode";

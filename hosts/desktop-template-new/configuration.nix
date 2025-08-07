@@ -16,7 +16,7 @@
   modules.presets = {
     enable = true;
     preset = "workstation";
-    
+
     # Override specific settings for this desktop
     customizations = {
       # Add gaming support to workstation preset
@@ -27,7 +27,7 @@
           performance.mangohud = true;
         };
       };
-      
+
       # Custom packages for this specific desktop
       environment.systemPackages = with pkgs; [
         # Add desktop-specific packages beyond preset defaults
@@ -36,7 +36,7 @@
         blender
         obs-studio
       ];
-      
+
       # Custom firewall rules for development
       networking.firewall.allowedTCPPorts = [ 3000 8000 8080 9000 ];
     };
@@ -44,7 +44,7 @@
 
   # Host-specific hardware configuration would go here
   # (anything that can't be auto-detected)
-  
+
   # Location for weather/timezone (optional)
   location = {
     latitude = 40.7128;

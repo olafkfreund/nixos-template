@@ -43,11 +43,11 @@ in
       # Disable unnecessary services in VMs
       upower.enable = lib.mkDefault false; # No battery management needed
       thermald.enable = lib.mkDefault false; # No thermal management needed
-      
+
       # VM guest services
       spice-vdagentd.enable = lib.mkDefault true;
       qemuGuest.enable = lib.mkDefault true;
-      
+
       # X11 forwarding support
       openssh = {
         enable = lib.mkDefault true;
@@ -65,25 +65,25 @@ in
         "noapic"
         "acpi=off"
       ];
-      
+
       # Fast boot for VMs
       loader.timeout = lib.mkDefault 1;
-      
+
       # VM-specific modules
       kernelModules = lib.mkDefault [
         "virtio_net"
-        "virtio_pci" 
+        "virtio_pci"
         "virtio_blk"
         "virtio_scsi"
         "9p"
         "9pnet_virtio"
       ];
-      
+
       # Initialize VM-specific hardware early
       initrd.kernelModules = lib.mkDefault [
         "virtio_pci"
         "virtio_blk"
-        "virtio_scsi" 
+        "virtio_scsi"
         "virtio_net"
       ];
     };
@@ -92,7 +92,7 @@ in
     hardware = {
       # Basic OpenGL for VM
       opengl.enable = lib.mkDefault true;
-      
+
       # Disable features not relevant for VMs
       bluetooth.enable = lib.mkForce false;
       enableAllFirmware = lib.mkDefault false;
@@ -113,19 +113,19 @@ in
       # Essential VM tools
       firefox
       gnome.gnome-terminal
-      
+
       # File management
       gnome.nautilus
-      
+
       # Text editing
       gedit
-      
+
       # System utilities
       htop
-      
+
       # VM guest utilities
       spice-vdagent
-      
+
       # Development basics
       git
       vim

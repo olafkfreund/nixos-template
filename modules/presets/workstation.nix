@@ -23,7 +23,7 @@ in
       profile = "desktop";
       cpuGovernor = "ondemand";
       enableThermalManagement = true;
-      
+
       desktop = {
         enablePerformanceMode = true;
         disableUsbAutosuspend = true;
@@ -46,10 +46,10 @@ in
     services = {
       # Disable PulseAudio (PipeWire handles audio)
       pulseaudio.enable = lib.mkForce false;
-      
+
       # Printing support
       printing.enable = lib.mkDefault true;
-      
+
       # Network discovery
       avahi = lib.mkDefault {
         enable = true;
@@ -81,19 +81,19 @@ in
       firefox
       chromium
       vscode
-      
+
       # System utilities  
       htop
       btop
       neofetch
-      
+
       # File management
       nautilus
       file-roller
-      
+
       # Media
       vlc
-      
+
       # Graphics
       gimp
       inkscape

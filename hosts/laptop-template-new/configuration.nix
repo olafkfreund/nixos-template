@@ -16,7 +16,7 @@
   modules.presets = {
     enable = true;
     preset = "laptop";
-    
+
     # Laptop-specific customizations
     customizations = {
       # Enable development tools for mobile work
@@ -31,22 +31,22 @@
           };
         };
       };
-      
+
       # Add laptop-specific packages
       environment.systemPackages = with pkgs; [
         # Mobile productivity
         libreoffice
         thunderbird
-        
+
         # VPN clients for remote work
         openvpn
         networkmanager-openvpn
-        
+
         # Battery monitoring
         powertop
         tlp
       ];
-      
+
       # Custom power settings
       services.tlp = {
         enable = true;

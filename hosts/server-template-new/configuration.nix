@@ -16,7 +16,7 @@
   modules.presets = {
     enable = true;
     preset = "server";
-    
+
     # Server-specific customizations
     customizations = {
       # Enable specific services for this server
@@ -28,22 +28,22 @@
             root = "/var/www";
           };
         };
-        
+
         # Database (optional)
         postgresql = {
           enable = false; # Enable per deployment
           package = pkgs.postgresql_15;
         };
-        
+
         # Monitoring
         prometheus.exporters.node.enable = true;
       };
-      
+
       # Server-specific networking
       networking = {
         # Open HTTP/HTTPS ports
         firewall.allowedTCPPorts = [ 22 80 443 9100 ]; # SSH, HTTP, HTTPS, Node Exporter
-        
+
         # Static IP configuration (adjust per deployment)
         interfaces.ens18 = {
           ipv4.addresses = [{
@@ -54,21 +54,21 @@
         defaultGateway = "192.168.1.1";
         nameservers = [ "1.1.1.1" "8.8.8.8" ];
       };
-      
+
       # Server-specific packages
       environment.systemPackages = with pkgs; [
         # Server management
         docker-compose
         kubernetes
-        
+
         # Monitoring
         prometheus
         grafana
-        
+
         # Backup
         restic
         borgbackup
-        
+
         # Security
         fail2ban
         ufw
