@@ -1,8 +1,7 @@
 # Modern NixOS Configuration Template
 
-A sophisticated, modular NixOS configuration template using flakes, featuring:
+A modular NixOS configuration template using flakes, featuring:
 
-- **100% Green CI** - Comprehensive validation ensuring reliability
 - **VM Testing Ready** - Full desktop environment testing in VMs (works on any Linux distro)
 - **Custom ISO Creation** - Build installer ISOs with preconfigured templates
 - **Interactive Installers** - Template selection and automated deployment
@@ -16,9 +15,9 @@ A sophisticated, modular NixOS configuration template using flakes, featuring:
 - **Development Tools** - Scripts and utilities for easy management
 - **Custom Packages & Overlays** - Extend and customize packages
 - **Boot Reliability** - Fixed VM systemd conflicts and boot issues
-- **NixOS 25.05 Compatible** - Latest NixOS features and deprecation fixes
+- **NixOS 25.05/25.11 Compatible** - Latest NixOS features and deprecation fixes
 
-**[📚 Complete Features Overview →](docs/FEATURES-OVERVIEW.md)**
+**[Complete Features Overview →](docs/FEATURES-OVERVIEW.md)**
 
 ## Table of Contents
 
@@ -243,7 +242,7 @@ just list-vms                      # Show available VM configurations
 just list-desktops                 # Show available desktop environments
 just test-vm myhost                # Test VM configuration
 
-# 💿 ISO Creation Commands
+#  ISO Creation Commands
 just list-isos                     # List available ISO types with features
 just build-iso-preconfigured       # Build preconfigured installer (⭐ recommended)
 just build-iso-minimal             # Build minimal CLI installer (~800MB)
@@ -289,7 +288,7 @@ just show-inputs                   # Show flake input versions
 ./scripts/setup-agenix.sh
 ```
 
-### 💿 ISO Creation Workflow
+### ISO Creation Workflow
 
 ```bash
 # Complete ISO creation and deployment workflow
@@ -330,32 +329,32 @@ nix develop
 
 This configuration uses a modular approach where features are organized into reusable modules, providing a complete NixOS ecosystem from development to deployment.
 
-## 🌟 Complete NixOS Ecosystem
+## Complete NixOS Ecosystem
 
 This template provides an end-to-end NixOS experience:
 
-### 🔧 **Development & Testing**
+### **Development & Testing**
 
 - **Non-NixOS Support**: Test on Ubuntu, Fedora, Arch, any Linux distribution
 - **VM Testing**: Safe desktop environment testing without system changes
 - **Live Development**: Edit configurations and test in VMs instantly
 - **Multi-Platform**: Same configs work across different systems
 
-### 📦 **Deployment Options**
+### **Deployment Options**
 
 - **Custom ISOs**: Build installer images with your configurations
 - **Template Selection**: Interactive installer with pre-built templates
 - **Automated Setup**: Skip manual NixOS configuration entirely
 - **Bootable Media**: Create USB/DVD installers for any environment
 
-### 🏗️ **Organizational Use**
+### **Organizational Use**
 
 - **Standardized Deployments**: Consistent configurations across teams
 - **Educational Environments**: Pre-configured learning setups
 - **Client Deployments**: Custom NixOS solutions for consulting
 - **Development Teams**: Shared development environments
 
-### 🔄 **Full Workflow Coverage**
+### **Full Workflow Coverage**
 
 1. **Develop**: Create configurations using templates
 2. **Test**: Validate in VMs on any Linux system
@@ -564,13 +563,13 @@ See [VM Documentation](docs/VM-SUPPORT.md) for detailed VM configuration and tro
 
 Transform this template into bootable NixOS installer ISOs with preconfigured settings and interactive template selection. Perfect for organizational deployments, development environments, and educational use.
 
-### 🚀 Quick ISO Creation
+### Quick ISO Creation
 
 ```bash
 # List available installer types and their features
 just list-isos
 
-# Build preconfigured installer (⭐ RECOMMENDED)
+# Build preconfigured installer (RECOMMENDED)
 just build-iso-preconfigured
 
 # Build minimal CLI installer (lightweight for servers)
@@ -583,37 +582,37 @@ just build-iso-desktop
 just build-all-isos
 ```
 
-### 📀 Available ISO Types
+### Available ISO Types
 
-| Type                 | Size   | Interface       | Best For                | Key Features                               |
-| -------------------- | ------ | --------------- | ----------------------- | ------------------------------------------ |
-| **Minimal**          | ~800MB | CLI Only        | Servers, Experts        | SSH access, essential tools, lightweight   |
-| **Desktop**          | ~2.5GB | GNOME Desktop   | Newcomers, Graphics     | Firefox, GParted, visual tools, auto-login |
-| **Preconfigured** ⭐ | ~1.5GB | Interactive CLI | Quick Deploy, Templates | All templates, wizard, dev tools           |
+| Type | Size | Interface | Best For | Key Features |
+|------|------|-----------|----------|--------------|
+| **Minimal** | ~800MB | CLI Only | Servers, Experts | SSH access, essential tools, lightweight |
+| **Desktop** | ~2.5GB | GNOME Desktop | Newcomers, Graphics | Firefox, GParted, visual tools, auto-login |
+| **Preconfigured** | ~1.5GB | Interactive CLI | Quick Deploy, Templates | All templates, wizard, dev tools |
 
-### 🎯 Preconfigured Installer Features
+### Preconfigured Installer Features
 
 The **preconfigured installer** is the star feature - it includes:
 
-**📋 Interactive Template Selection**
+**Interactive Template Selection**
 
 - Browse all available host configurations during installation
 - Choose from desktop, laptop, server, or VM templates
 - Preview template features and descriptions
 
-**🔧 Automated Installation Wizard**
+**Automated Installation Wizard**
 
 - Partition disks and select templates in guided workflow
 - Automatic configuration deployment
 - Skip manual NixOS configuration editing
 
-**🛠️ Development Environment Ready**
+**Development Environment Ready**
 
 - Git, just, editors, and development tools pre-installed
 - All templates available at `/etc/nixos-template/`
 - Quick configuration customization workflow
 
-### 💾 Creating Bootable Media
+### Creating Bootable Media
 
 ```bash
 # Check available USB devices
@@ -626,7 +625,7 @@ just create-bootable-usb nixos-preconfigured-installer.iso /dev/sdX
 just iso-workflow
 ```
 
-### 🚀 Installation Workflow
+### Installation Workflow
 
 #### Preconfigured Installer (Recommended)
 
@@ -645,7 +644,7 @@ just iso-workflow
 3. **Manual Installation** - Follow standard NixOS installation process
 4. **Browse Templates** - Templates available for reference at `/etc/nixos-template/`
 
-### 🎨 Customization Options
+### Customization Options
 
 ```bash
 # Test ISO configuration without building
@@ -658,7 +657,7 @@ nano modules/installer/preconfigured-installer.nix
 # Edit hosts/installer-isos/*/configuration.nix
 ```
 
-### 💡 Use Cases
+### Use Cases
 
 - **Organizations**: Deploy standardized NixOS configurations
 - **Development Teams**: Share development environment setups
@@ -772,28 +771,6 @@ Our comprehensive CI pipeline runs on every commit:
 # Full validation including VM builds
 ./scripts/validate-templates.sh full
 ```
-
-**CI Pipeline Status:**
-
-- **Nix Code Validation** - Flake check, syntax validation, module imports
-- **Code Quality Checks** - nixpkgs-fmt, statix linting, deadnix analysis
-- **Shell Script Validation** - shellcheck compliance, executability checks
-- **Documentation Validation** - Markdown linting, broken link detection
-- **Template Validation** - Host templates, user templates, structure validation
-- **Security Scanning** - Hardcoded secrets detection, permission auditing
-- **Integration Testing** - Flake evaluation, development shell, justfile commands
-- **Pre-commit Hooks** - Automated formatting and linting
-
-### Quality Improvements
-
-Recent quality improvements ensuring 100% CI success:
-
-- **Fixed Undefined Variables** - Resolved flake validation failures
-- **Code Formatting** - Consistent nixpkgs-fmt across all files
-- **Linting Compliance** - Addressed statix warnings and suggestions
-- **Shell Script Quality** - All scripts pass shellcheck validation
-- **Documentation Quality** - Markdown files follow style guidelines
-- **VM Boot Reliability** - Fixed systemd conflicts and boot hangs
 
 ### NixOS 25.05 Compatibility
 
