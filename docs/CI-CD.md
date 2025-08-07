@@ -242,25 +242,25 @@ Excludes build artifacts, secrets, and local configuration files.
 
 **All deprecation warnings resolved:**
 
--  Updated `services.gpg-agent.pinentryPackage` → `pinentry.package`
--  Updated `programs.vscode.extensions/userSettings` → `profiles.default.*`
--  Updated `hardware.pulseaudio` → `services.pulseaudio`
--  Updated `systemd.watchdog.*` → `settings.Manager.*`
+- Updated `services.gpg-agent.pinentryPackage` → `pinentry.package`
+- Updated `programs.vscode.extensions/userSettings` → `profiles.default.*`
+- Updated `hardware.pulseaudio` → `services.pulseaudio`
+- Updated `systemd.watchdog.*` → `settings.Manager.*`
 
 **Syntax Error Fixes:**
 
--  Fixed missing function arguments in all Nix files
--  Resolved duplicate `environment.systemPackages` declarations
--  Fixed GPU module configuration conflicts
--  Corrected authentication configuration for templates
+- Fixed missing function arguments in all Nix files
+- Resolved duplicate `environment.systemPackages` declarations
+- Fixed GPU module configuration conflicts
+- Corrected authentication configuration for templates
 
 **Enhanced Validation:**
 
--  All 77+ Nix files pass syntax validation
--  Zero flake check warnings or errors
--  Complete GitHub Actions pipeline functional
--  VM building capabilities verified
--  Template validation script enhanced
+- All 77+ Nix files pass syntax validation
+- Zero flake check warnings or errors
+- Complete GitHub Actions pipeline functional
+- VM building capabilities verified
+- Template validation script enhanced
 
 ## Quality Standards
 

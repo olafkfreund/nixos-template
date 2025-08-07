@@ -449,13 +449,13 @@ Instead of duplicating configurations across hosts, use role-based imports:
 ### Available Profiles
 
 - **GNOME** (`profiles/gnome.nix`) - GNOME desktop environment configuration
-- **KDE** (`profiles/kde.nix`) - KDE Plasma desktop environment configuration  
+- **KDE** (`profiles/kde.nix`) - KDE Plasma desktop environment configuration
 - **Headless** (`profiles/headless.nix`) - No GUI, terminal-only configuration
 
 ### Benefits
 
 - **No Duplication** - Common configurations shared across all hosts
-- **Clear Intent** - Role and profile imports make purpose obvious  
+- **Clear Intent** - Role and profile imports make purpose obvious
 - **Easy Maintenance** - Update once, apply everywhere
 - **Flexible Override** - Host-specific customizations still possible
 - **Type Safety** - Fully typed with NixOS module system
@@ -806,16 +806,19 @@ nh home switch . # Enhanced home-manager
 The development environment provides:
 
 **Code Quality & Formatting**
+
 - **treefmt-nix** - Multi-language code formatting (Nix, Shell, Markdown, YAML, JSON)
 - **git-hooks.nix** - Pre-commit hooks with deadnix, statix, nixpkgs-fmt
 - **Automatic formatting** - Format entire codebase with `just fmt`
 
-**Enhanced System Management**  
+**Enhanced System Management**
+
 - **nh (Nix Helper)** - Modern replacement for nixos-rebuild and home-manager
 - **Enhanced rebuild commands** - Better output, progress indication, error handling
 - **System state management** - Track generations and rollback easily
 
 **Development Utilities**
+
 - **Nix LSP tools** - Language server support for editors
 - **System utilities** - Git, just, direnv, and essential tools
 - **Secrets management** - SOPS/agenix integration
@@ -886,7 +889,7 @@ Our comprehensive CI pipeline runs on every commit:
 All configurations are updated for the latest NixOS:
 
 - Modern option syntax (no deprecated warnings)
-- Updated module system patterns  
+- Updated module system patterns
 - Latest GPU driver configurations
 - Current Home Manager integration
 - Fixed podman system-generators conflicts
