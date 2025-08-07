@@ -11,9 +11,17 @@
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    git-hooks = {
+      url = "github:cachix/git-hooks.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, agenix, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, agenix, treefmt-nix, git-hooks, ... }@inputs:
     let
       inherit (self) outputs;
       systems = [
@@ -24,6 +32,58 @@
         "x86_64-darwin"
       ];
       forAllSystems = nixpkgs.lib.genAttrs systems;
+      
+      # Treefmt configuration
+      treefmtEval = forAllSystems (system: 
+        treefmt-nix.lib.evalModule nixpkgs.legacyPackages.${system} {
+          # Project root directory
+          projectRootFile = "flake.nix";
+          
+          # Formatters by language/file type
+          programs = {
+            # Nix files
+            nixpkgs-fmt.enable = true;
+            
+            # Shell scripts
+            shfmt.enable = true;
+            
+            # Markdown files
+            mdformat.enable = true;
+            
+            # YAML files  
+            yamlfmt.enable = true;
+            
+            # JSON files
+            prettier.enable = true;
+          };
+
+          # File patterns and exclusions
+          settings = {
+            global.excludes = [
+              # Git and build artifacts
+              ".git/**"
+              "result*"
+              "*.png" "*.jpg" "*.jpeg" "*.gif" "*.ico"
+              "*.tar*" "*.zip" "*.rar" "*.7z"
+              # Generated files
+              "**/hardware-configuration.nix"
+              "flake.lock"
+            ];
+          };
+        }
+      );
+      
+      # Pre-commit hooks configuration (simplified for now)
+      pre-commit-check = forAllSystems (system:
+        git-hooks.lib.${system}.run {
+          src = ./.;
+          hooks = {
+            nixpkgs-fmt.enable = true;
+            statix.enable = true;
+            shellcheck.enable = true;
+          };
+        }
+      );
 
       # Helper function to reduce duplication in nixosSystem configurations
       mkSystem = { hostname, system ? "x86_64-linux", extraModules ? [ ] }:
@@ -68,43 +128,70 @@
       packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
 
       # Formatter for your nix files, available through 'nix fmt'
-      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixpkgs-fmt);
+      # Uses treefmt for multi-language formatting
+      formatter = forAllSystems (system: treefmtEval.${system}.config.build.wrapper);
 
       # Development shell for working on the template
       devShells = forAllSystems (system:
-        let pkgs = nixpkgs.legacyPackages.${system}; in
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
         {
           default = pkgs.mkShell {
             buildInputs = with pkgs; [
-              # Nix tools
+              # Nix development tools
               nixpkgs-fmt
               statix
               deadnix
-
-              # Shell scripting
+              nh
+              
+              # Code quality tools
+              treefmt
+              pre-commit
+              
+              # Shell scripting tools
               shellcheck
               shfmt
-
-              # Documentation
+              
+              # Documentation tools
               markdownlint-cli
-
-              # Development tools
+              
+              # Development utilities
               git
               just
-              pre-commit
-
-              # Hardware detection dependencies
+              jq
+              
+              # Hardware detection
               pciutils
               usbutils
               lshw
             ];
-
+            
+            # Environment variables
+            NIX_CONFIG = "experimental-features = nix-command flakes";
+            LC_ALL = "C.UTF-8";
+            
+            # Combined shell hook
             shellHook = ''
-              echo "NixOS Template Development Environment"
-              echo "Available commands:"
-              echo "  just --list    - Show available commands"
-              echo "  just validate  - Run validation suite"
-              echo "  just dev-setup - Setup development environment"
+              echo "🚀 NixOS Template Development Environment"
+              echo ""
+              echo "📋 Available commands:"
+              echo "  just --list       - Show all available tasks"
+              echo "  nix fmt           - Format Nix code"
+              echo "  nh --help         - Better NixOS system management"
+              echo ""
+              echo "🔧 Development tools loaded:"
+              echo "  nixpkgs-fmt, statix, deadnix, shellcheck, pre-commit"
+              echo ""
+              
+              # Setup pre-commit hooks if not already done
+              if [[ ! -f .git/hooks/pre-commit ]] && command -v pre-commit >/dev/null; then
+                echo "🔗 Setting up pre-commit hooks..."
+                pre-commit install --install-hooks
+                echo "✅ Pre-commit hooks installed"
+              fi
+              
+              ${pre-commit-check.${system}.shellHook or ""}
             '';
           };
         });
@@ -181,5 +268,43 @@
         "user@server-template" = mkHome { username = "user"; hostname = "server-template"; };
         "vm-user@desktop-test" = mkHome { username = "vm-user"; hostname = "desktop-test"; };
       };
+
+      # Checks for CI/CD and development
+      # Available through 'nix flake check'
+      checks = forAllSystems (system: {
+        # Pre-commit hooks check
+        pre-commit-check = pre-commit-check.${system};
+        
+        # Treefmt formatting check
+        treefmt = treefmtEval.${system}.config.build.check self;
+        
+        # Flake validation (already included in flake check, but explicit here)
+        flake-check = nixpkgs.legacyPackages.${system}.runCommand "flake-check" { } ''
+          cd ${self}
+          ${nixpkgs.legacyPackages.${system}.nixVersions.latest}/bin/nix flake check --no-build
+          touch $out
+        '';
+        
+        # Statix linting
+        statix-check = nixpkgs.legacyPackages.${system}.runCommand "statix-check" { } ''
+          cd ${self}
+          ${nixpkgs.legacyPackages.${system}.statix}/bin/statix check .
+          touch $out
+        '';
+        
+        # Deadnix check
+        deadnix-check = nixpkgs.legacyPackages.${system}.runCommand "deadnix-check" { } ''
+          cd ${self}
+          ${nixpkgs.legacyPackages.${system}.deadnix}/bin/deadnix --fail .
+          touch $out
+        '';
+        
+        # Shell script validation
+        shellcheck-check = nixpkgs.legacyPackages.${system}.runCommand "shellcheck-check" { } ''
+          cd ${self}
+          ${nixpkgs.legacyPackages.${system}.shellcheck}/bin/shellcheck scripts/*.sh
+          touch $out
+        '';
+      });
     };
 }

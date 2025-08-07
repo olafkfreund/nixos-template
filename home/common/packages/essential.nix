@@ -31,6 +31,9 @@
     # Development basics
     git               # Version control
     
+    # NixOS utilities
+    nh                # NixOS helper - better nixos-rebuild interface
+    
     # Utilities
     jq                # JSON processor
     yq-go             # YAML/XML processor
