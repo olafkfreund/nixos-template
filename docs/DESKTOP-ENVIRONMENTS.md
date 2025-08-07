@@ -4,7 +4,7 @@ This NixOS template supports multiple desktop environments with optimized config
 
 ## Available Desktop Environments
 
-### 🖥️ GNOME Desktop
+### GNOME Desktop
 
 Modern desktop with excellent Wayland support and polished user experience.
 
@@ -28,7 +28,7 @@ modules.desktop.gnome = {
 
 **Best for:** Users who want a polished, modern desktop experience with minimal configuration.
 
-### 🎨 KDE Plasma Desktop
+### KDE Plasma Desktop
 
 Highly customizable desktop environment with extensive features.
 
@@ -83,7 +83,7 @@ modules.desktop.kde = {
 
 **Best for:** Power users who want extensive customization options and a feature-rich desktop.
 
-### 🪟 Hyprland Tiling Window Manager
+### Hyprland Tiling Window Manager
 
 Modern Wayland compositor with advanced tiling capabilities.
 
@@ -106,7 +106,7 @@ modules.desktop.hyprland = {
 };
 ```
 
-### 🌊 Niri Scrollable Tiling Window Manager
+### Niri Scrollable Tiling Window Manager
 
 Unique scrollable tiling compositor with innovative column-based layout.
 
@@ -273,7 +273,7 @@ modules.desktop.hyprland = {
 
 **Best for:** Advanced users who prefer keyboard-driven workflows and tiling window management.
 
-### 🌊 Niri Best Use Cases
+### Niri Best Use Cases
 
 **Best for:** Users who want a unique tiling experience with smooth scrolling workflows, especially those with ultrawide monitors or multiple displays.
 

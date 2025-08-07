@@ -386,4 +386,4 @@ Once comfortable with NixOS in VMs:
 
 ---
 
-**Happy NixOS exploration!** 🚀
+**Happy NixOS exploration!**

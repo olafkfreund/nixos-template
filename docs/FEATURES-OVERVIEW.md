@@ -2,7 +2,7 @@
 
 This document provides a comprehensive overview of all features available in this modern NixOS configuration template.
 
-## 🎯 Core Philosophy
+## Core Philosophy
 
 This template provides a **complete NixOS ecosystem** covering the entire workflow from development to deployment:
 
@@ -12,7 +12,7 @@ This template provides a **complete NixOS ecosystem** covering the entire workfl
 1. **Deploy**: Boot and install with interactive template selection
 1. **Maintain**: Update and manage configurations
 
-## 🔧 Development Features
+## Development Features
 
 ### Multi-Platform Development
 
@@ -20,21 +20,29 @@ This template provides a **complete NixOS ecosystem** covering the entire workfl
 - **VM Testing**: Test configurations safely without affecting your host system
 - **Live Development**: Edit configurations and test changes instantly in VMs
 
+### Modern Development Tooling
+
+- **treefmt-nix**: Multi-language code formatting (Nix, Shell, Markdown, YAML, JSON)
+- **git-hooks.nix**: Pre-commit hooks with deadnix, statix, nixpkgs-fmt
+- **nh (Nix Helper)**: Enhanced system management with better UX than nixos-rebuild
+- **Automatic formatting**: Format entire codebase with `just fmt`
+
 ### Code Quality & Validation
 
 - **100% Green CI**: Comprehensive validation pipeline
 - **Multi-Level Testing**: Syntax, build evaluation, VM testing, ISO validation
-- **Code Quality Tools**: nixpkgs-fmt, statix, deadnix, shellcheck
-- **Pre-commit Hooks**: Automated code quality checks
+- **Pre-commit Hooks**: Automated code quality checks on every commit
+- **Continuous Integration**: GitHub Actions with full validation matrix
 
 ### Development Environment
 
-- **Development Shell**: Nix develop environment with all tools
+- **Development Shell**: Nix develop environment with all modern tools
 - **Just Commands**: Convenient task runner with 50+ commands
 - **Git Integration**: Pre-configured git hooks and workflows
 - **Documentation**: Comprehensive guides and examples
+- **Enhanced System Management**: nh commands for better rebuild experience
 
-## 🖥️ Testing & Experimentation
+## Testing & Experimentation
 
 ### Virtual Machine Testing
 
@@ -57,25 +65,25 @@ This template provides a **complete NixOS ecosystem** covering the entire workfl
 - **Comprehensive Documentation**: Step-by-step guides for every platform
 - **Learning Environment**: Perfect for NixOS education and evaluation
 
-## 📦 Deployment Solutions
+## Deployment Solutions
 
 ### Custom NixOS Installer ISOs
 
-#### 🔧 Minimal Installer (~800MB)
+#### Minimal Installer (~800MB)
 
 - **Command-line interface** for experienced users
 - **SSH access enabled** for remote installation
 - **Essential tools** for system administration
 - **Perfect for servers** and headless installations
 
-#### 🖥️ Desktop Installer (~2.5GB)
+#### Desktop Installer (~2.5GB)
 
 - **Full GNOME desktop** for newcomers
 - **Visual tools**: Firefox, GParted, file managers
 - **Auto-login convenience** for ease of use
 - **Perfect for desktop** installations and GUI preference
 
-#### ⚡ Preconfigured Installer (~1.5GB) ⭐ **RECOMMENDED**
+#### Preconfigured Installer (~1.5GB) **RECOMMENDED**
 
 - **Interactive template selection** during installation
 - **All host configurations included** in the installer
@@ -90,7 +98,7 @@ This template provides a **complete NixOS ecosystem** covering the entire workfl
 - **Automated Deployment**: Select template → automatic configuration setup
 - **Customization Ready**: Templates can be modified before or after installation
 
-## 🏗️ Architecture & Organization
+## Architecture & Organization
 
 ### Modular System
 
@@ -113,7 +121,7 @@ This template provides a **complete NixOS ecosystem** covering the entire workfl
 - **Auto-Detection**: Intelligent hardware detection and configuration
 - **Multiple Profiles**: Desktop, gaming, AI-compute, server-compute
 
-## 🔐 Security & Secrets
+## Security & Secrets
 
 ### Secrets Management
 
@@ -129,7 +137,7 @@ This template provides a **complete NixOS ecosystem** covering the entire workfl
 - **Permission Management**: Proper user and group configurations
 - **Audit Tools**: Security scanning and vulnerability checking
 
-## 🛠️ Management & Maintenance
+## Management & Maintenance
 
 ### Command Line Interface
 
@@ -153,7 +161,7 @@ This template provides a **complete NixOS ecosystem** covering the entire workfl
 - **Version Control**: Proper gitignore and repository structure
 - **Release Management**: Tagged releases and version control
 
-## 🌐 Multi-Platform Support
+## Multi-Platform Support
 
 ### Platform Compatibility
 
@@ -170,7 +178,7 @@ This template provides a **complete NixOS ecosystem** covering the entire workfl
 - **Arch Linux**: Native Nix package manager support
 - **OpenSUSE**: Full compatibility and testing
 
-## 📚 Documentation & Learning
+## Documentation & Learning
 
 ### Comprehensive Guides
 
@@ -187,7 +195,7 @@ This template provides a **complete NixOS ecosystem** covering the entire workfl
 - **Examples**: Real-world configuration examples
 - **References**: Links to NixOS documentation and community resources
 
-## 🚀 Advanced Features
+## Advanced Features
 
 ### Custom Package Support
 
@@ -210,7 +218,7 @@ This template provides a **complete NixOS ecosystem** covering the entire workfl
 - **Educational Use**: Pre-configured learning environments
 - **Team Collaboration**: Shared development environments
 
-## 🎯 Use Cases
+## Use Cases
 
 ### Personal Use
 
@@ -233,7 +241,7 @@ This template provides a **complete NixOS ecosystem** covering the entire workfl
 - **Research Environments**: Scientific computing configurations
 - **Compliance Deployments**: Standardized, auditable configurations
 
-## 🔄 Continuous Improvement
+## Continuous Improvement
 
 ### Quality Assurance
 

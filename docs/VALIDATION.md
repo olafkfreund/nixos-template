@@ -4,18 +4,18 @@ This document explains the comprehensive validation system for NixOS template co
 All validations are
 NixOS 25.05 compatible with zero deprecation warnings.
 
-## 🎯 Current Status
+## Current Status
 
 **All validations pass successfully:**
 
-- ✅ **77+ Nix files** - Perfect syntax, zero errors
-- ✅ **5 Template configurations** - laptop, desktop, server, qemu-vm, microvm
-- ✅ **6 User profiles** - Complete Home Manager integration
-- ✅ **25+ Modules** - GPU, desktop, virtualization, security
-- ✅ **Management scripts** - All utilities working
-- ✅ **VM builds** - QEMU and MicroVM configurations build successfully
-- ✅ **GitHub Actions CI** - Complete pipeline validation
-- ✅ **NixOS 25.05** - No deprecation warnings, latest features
+- **77+ Nix files** - Perfect syntax, zero errors
+- **5 Template configurations** - laptop, desktop, server, qemu-vm, microvm
+- **6 User profiles** - Complete Home Manager integration
+- **25+ Modules** - GPU, desktop, virtualization, security
+- **Management scripts** - All utilities working
+- **VM builds** - QEMU and MicroVM configurations build successfully
+- **GitHub Actions CI** - Complete pipeline validation
+- **NixOS 25.05** - No deprecation warnings, latest features
 
 ## Validation Levels
 
@@ -37,19 +37,19 @@ find . -name "*.nix" -exec nix-instantiate --parse {} \;
 
 **What it validates:**
 
-- ✅ Nix syntax correctness (77+ files)
-- ✅ Import resolution
-- ✅ Function argument completeness
-- ✅ Module structure and option definitions
-- ✅ No deprecation warnings (NixOS 25.05 compatible)
-- ✅ Flake metadata integrity
+- PASS Nix syntax correctness (77+ files)
+- PASS Import resolution
+- PASS Function argument completeness
+- PASS Module structure and option definitions
+- PASS No deprecation warnings (NixOS 25.05 compatible)
+- PASS Flake metadata integrity
 
 **What it doesn't validate:**
 
-- ❌ Runtime functionality
-- ❌ Package availability
-- ❌ Hardware compatibility
-- ❌ Service interactions
+- FAIL Runtime functionality
+- FAIL Package availability
+- FAIL Hardware compatibility
+- FAIL Service interactions
 
 ### 2. **Build Evaluation** (Medium - 2-5 minutes)
 
@@ -69,18 +69,18 @@ nix build --no-link '.#nixosConfigurations.qemu-vm.config.system.build.vm'
 
 **What it validates:**
 
-- ✅ All syntax validation +
-- ✅ Package dependencies exist
-- ✅ Module evaluation succeeds
-- ✅ System closure can be built
-- ✅ Configuration generates valid system
+- PASS All syntax validation +
+- PASS Package dependencies exist
+- PASS Module evaluation succeeds
+- PASS System closure can be built
+- PASS Configuration generates valid system
 
 **What it doesn't validate:**
 
-- ❌ Runtime behavior
-- ❌ Hardware-specific functionality
-- ❌ Service startup and interaction
-- ❌ User experience
+- FAIL Runtime behavior
+- FAIL Hardware-specific functionality
+- FAIL Service startup and interaction
+- FAIL User experience
 
 ### 3. **VM Testing** (Comprehensive - 10-20 minutes)
 
@@ -101,11 +101,11 @@ result/bin/run-*-vm
 
 **What it validates:**
 
-- ✅ All build evaluation +
-- ✅ System boots successfully
-- ✅ Services start correctly
-- ✅ Desktop environment loads
-- ✅ Basic functionality works
+- PASS All build evaluation +
+- PASS System boots successfully
+- PASS Services start correctly
+- PASS Desktop environment loads
+- PASS Basic functionality works
 
 **Resource requirements:**
 
@@ -128,16 +128,16 @@ sudo systemd-nspawn -M test-container --image=result
 
 **Benefits:**
 
-- ⚡ Faster than VMs
-- 💾 Less resource intensive
-- 🔒 Good isolation
-- 🐧 Linux-only services testable
+- Faster than VMs
+- Less resource intensive
+- Good isolation
+- Linux-only services testable
 
 **Limitations:**
 
-- ❌ No kernel-level testing
-- ❌ No hardware simulation
-- ❌ Limited desktop environment testing
+- FAIL No kernel-level testing
+- FAIL No hardware simulation
+- FAIL Limited desktop environment testing
 
 ## Our Validation Strategy
 
@@ -297,11 +297,11 @@ just validate-templates-full
 ### Success Indicators
 
 ```bash
-✅ SUCCESS Flake syntax validation passed
-✅ SUCCESS All Nix files have valid syntax
-✅ SUCCESS Template laptop-template structure is valid
-✅ SUCCESS Build evaluation passed for: desktop-template
-✅ SUCCESS VM build successful for: server-template
+SUCCESS Flake syntax validation passed
+SUCCESS All Nix files have valid syntax
+SUCCESS Template laptop-template structure is valid
+SUCCESS Build evaluation passed for: desktop-template
+SUCCESS VM build successful for: server-template
 ```
 
 ### Common Issues and Solutions
@@ -309,7 +309,7 @@ just validate-templates-full
 #### Syntax Errors
 
 ```bash
-❌ ERROR Syntax error in: modules/example.nix
+ERROR Syntax error in: modules/example.nix
 ```
 
 **Solution**: Fix Nix syntax errors, check imports and brackets
@@ -317,7 +317,7 @@ just validate-templates-full
 #### Missing Dependencies
 
 ```bash
-❌ ERROR Build evaluation failed for: laptop-template
+ERROR Build evaluation failed for: laptop-template
 ```
 
 **Solution**: Check that all referenced packages exist in nixpkgs
@@ -325,7 +325,7 @@ just validate-templates-full
 #### VM Build Failures
 
 ```bash
-❌ ERROR VM build failed for: desktop-template
+ERROR VM build failed for: desktop-template
 ```
 
 **Solution**: Check hardware-configuration.nix, ensure all modules are compatible
@@ -333,7 +333,7 @@ just validate-templates-full
 #### Template Structure Issues
 
 ```bash
-❌ ERROR Missing required file in laptop-template: home.nix
+ERROR Missing required file in laptop-template: home.nix
 ```
 
 **Solution**: Ensure all templates have required files (configuration.nix, home.nix)

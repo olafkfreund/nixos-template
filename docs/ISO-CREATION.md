@@ -71,7 +71,7 @@ just build-iso-desktop
 
 **Login:** `installer` / `installer` (desktop user) or `root` / `nixos`
 
-### 3. Preconfigured Installer ⭐ **Recommended**
+### 3. Preconfigured Installer **Recommended**
 
 **Best for:** Quick deployment, template-based installations, development
 
@@ -204,7 +204,7 @@ nixos-install
 reboot
 ```
 
-#### Preconfigured Installer ⭐
+#### Preconfigured Installer
 
 The preconfigured installer provides an interactive experience:
 

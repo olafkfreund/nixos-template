@@ -15,7 +15,10 @@ A modular NixOS configuration template using flakes, featuring:
 - **Development Tools** - Scripts and utilities for easy management
 - **Custom Packages & Overlays** - Extend and customize packages
 - **Boot Reliability** - Fixed VM systemd conflicts and boot issues
+- **Modern Development Tooling** - treefmt-nix formatting, git-hooks pre-commit, nh helper
 - **NixOS 25.05/25.11 Compatible** - Latest NixOS features and deprecation fixes
+- **Container Support** - Fixed podman system-generators conflicts, full container ecosystem
+- **Modular Home Configuration** - Role-based Home Manager with common/host-specific separation
 
 **[Complete Features Overview →](docs/FEATURES-OVERVIEW.md)**
 
@@ -189,8 +192,20 @@ nixos-config/
 │   └── installer-isos/     # Custom installer ISO configurations
 │
 ├── home/                   # Home Manager configurations
-│   ├── profiles/           # Reusable user profiles
-│   └── users/             # Per-user configurations
+│   ├── common/             # Shared configurations used by all roles
+│   │   ├── base.nix        # Universal settings (shell, XDG, basic programs)
+│   │   ├── git.nix         # Common git configuration with user overrides
+│   │   └── packages/       # Package groups (essential, development, desktop)
+│   ├── roles/              # Role-based configurations
+│   │   ├── developer.nix   # Full development environment
+│   │   ├── gamer.nix      # Gaming setup with performance tools
+│   │   ├── server-admin.nix # Server administration tools
+│   │   └── minimal.nix    # Bare minimum for resource-constrained systems
+│   ├── profiles/           # Desktop environment profiles
+│   │   ├── gnome.nix      # GNOME-specific configuration
+│   │   ├── kde.nix        # KDE-specific configuration
+│   │   └── headless.nix   # No GUI configuration for servers
+│   └── users/             # Legacy user configurations (deprecated)
 │
 ├── overlays/              # Package overlays
 ├── pkgs/                  # Custom packages
@@ -244,7 +259,7 @@ just test-vm myhost                # Test VM configuration
 
 #  ISO Creation Commands
 just list-isos                     # List available ISO types with features
-just build-iso-preconfigured       # Build preconfigured installer (⭐ recommended)
+just build-iso-preconfigured       # Build preconfigured installer (recommended)
 just build-iso-minimal             # Build minimal CLI installer (~800MB)
 just build-iso-desktop             # Build desktop installer with GNOME (~2.5GB)
 just build-all-isos                # Build all installer types
@@ -387,6 +402,65 @@ modules = {
 ### Creating Custom Modules
 
 Add new modules in the `modules/` directory following the existing patterns.
+
+## Home Manager Configuration
+
+This template features a revolutionary Home Manager structure that eliminates duplication and provides clear separation between common and host-specific settings.
+
+### Role-Based Configuration System
+
+Instead of duplicating configurations across hosts, use role-based imports:
+
+```nix
+# hosts/my-workstation/home.nix
+{ ... }:
+{
+  imports = [
+    ../../home/roles/developer.nix    # Development environment
+    ../../home/profiles/gnome.nix     # GNOME desktop
+  ];
+
+  # User-specific information (required)
+  home = {
+    username = "johndoe";
+    homeDirectory = "/home/johndoe";
+  };
+
+  # User-specific git configuration (required)
+  programs.git = {
+    userName = "John Doe";
+    userEmail = "john.doe@company.com";
+  };
+
+  # Host-specific overrides (optional)
+  programs.zsh.shellAliases = {
+    work = "cd ~/Work";
+  };
+}
+```
+
+### Available Roles
+
+- **Developer** (`roles/developer.nix`) - Full development workstation with Zsh, Starship, Direnv, development tools
+- **Gamer** (`roles/gamer.nix`) - Gaming setup with Steam, MangoHud, Discord, performance monitoring
+- **Server Admin** (`roles/server-admin.nix`) - System monitoring, network tools, containers, Tmux configuration
+- **Minimal** (`roles/minimal.nix`) - Bare minimum for resource-constrained environments
+
+### Available Profiles
+
+- **GNOME** (`profiles/gnome.nix`) - GNOME desktop environment configuration
+- **KDE** (`profiles/kde.nix`) - KDE Plasma desktop environment configuration  
+- **Headless** (`profiles/headless.nix`) - No GUI, terminal-only configuration
+
+### Benefits
+
+- **No Duplication** - Common configurations shared across all hosts
+- **Clear Intent** - Role and profile imports make purpose obvious  
+- **Easy Maintenance** - Update once, apply everywhere
+- **Flexible Override** - Host-specific customizations still possible
+- **Type Safety** - Fully typed with NixOS module system
+
+See `home/README.md` for detailed usage examples and migration guide.
 
 ## GPU Configuration
 
@@ -706,20 +780,55 @@ sops.secrets."my-secret" = {
 
 ## Development Shell
 
-Enter a development environment with all necessary tools:
+This template includes modern Nix development tooling for a productive workflow:
+
+### Quick Start
 
 ```bash
+# Enter development shell
 nix develop
+
+# Format all code
+just fmt
 # or
-make shell
+nix fmt
+
+# Setup pre-commit hooks
+nix develop -c pre-commit install
+
+# Use NixOS helper for system operations
+nh os switch .  # Enhanced nixos-rebuild
+nh home switch . # Enhanced home-manager
 ```
 
-This provides:
+### Modern Development Tools
 
-- Nix formatting and LSP tools
-- System utilities
-- Secrets management tools
-- Documentation tools
+The development environment provides:
+
+**Code Quality & Formatting**
+- **treefmt-nix** - Multi-language code formatting (Nix, Shell, Markdown, YAML, JSON)
+- **git-hooks.nix** - Pre-commit hooks with deadnix, statix, nixpkgs-fmt
+- **Automatic formatting** - Format entire codebase with `just fmt`
+
+**Enhanced System Management**  
+- **nh (Nix Helper)** - Modern replacement for nixos-rebuild and home-manager
+- **Enhanced rebuild commands** - Better output, progress indication, error handling
+- **System state management** - Track generations and rollback easily
+
+**Development Utilities**
+- **Nix LSP tools** - Language server support for editors
+- **System utilities** - Git, just, direnv, and essential tools
+- **Secrets management** - SOPS/agenix integration
+- **Documentation tools** - Markdown processing and validation
+
+### Development Workflow
+
+1. **Setup**: `nix develop` to enter the environment
+2. **Code**: Edit configurations with full LSP support
+3. **Format**: `just fmt` runs treefmt on all code
+4. **Commit**: Pre-commit hooks ensure code quality
+5. **Deploy**: `nh os switch .` for enhanced rebuilds
+6. **Test**: `just test` validates without switching
 
 ## Best Practices
 
@@ -777,9 +886,11 @@ Our comprehensive CI pipeline runs on every commit:
 All configurations are updated for the latest NixOS:
 
 - Modern option syntax (no deprecated warnings)
-- Updated module system patterns
+- Updated module system patterns  
 - Latest GPU driver configurations
 - Current Home Manager integration
+- Fixed podman system-generators conflicts
+- Updated hardware.graphics options (replaced hardware.opengl)
 
 ## Troubleshooting
 
