@@ -6,11 +6,7 @@
   imports = [
     ./hardware-configuration.nix
     ../common.nix
-    ../../modules/core
-    ../../modules/hardware/power-management.nix
-    ../../modules/security
-    ../../modules/virtualization/podman.nix
-    ../../modules/virtualization/libvirt.nix
+    ../../modules # Import all modules via automatic discovery
   ];
 
   # System identification

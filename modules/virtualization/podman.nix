@@ -168,13 +168,13 @@ in
   };
 
   config = mkIf cfg.enable {
-    # Enable Podman
+    # Enable Podman (use mkDefault to avoid conflicts with other modules like nvidia.nix)
     virtualisation.podman = {
-      enable = true;
+      enable = mkDefault true;
 
       # Docker compatibility
-      inherit (cfg) dockerCompat;
-      dockerSocket.enable = cfg.dockerCompat;
+      dockerCompat = mkDefault cfg.dockerCompat;
+      dockerSocket.enable = mkDefault cfg.dockerCompat;
 
       # Default network settings
       defaultNetwork.settings = mkIf cfg.networking.enable {
@@ -185,15 +185,15 @@ in
 
       # Rootless configuration
       autoPrune = {
-        enable = true;
-        dates = "weekly";
-        flags = [ "--all" ];
+        enable = mkDefault true;
+        dates = mkDefault "weekly";
+        flags = mkDefault [ "--all" ];
       };
     };
 
-    # Enable rootless podman
+    # Enable rootless podman (use mkDefault to avoid conflicts)
     virtualisation.containers = {
-      enable = true;
+      enable = mkDefault true;
 
       # Rootless configuration
       # Note: Users must be manually added to extraGroups in host configuration

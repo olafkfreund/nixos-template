@@ -242,9 +242,10 @@ in
       enableNvidia = true;
     };
 
+    # NVIDIA container support (only when compute and containers are explicitly enabled)
     virtualisation.podman = lib.mkIf (cfg.compute.enable && cfg.compute.containers) {
-      enable = true;
-      enableNvidia = true;
+      enable = lib.mkDefault true;
+      enableNvidia = lib.mkDefault true;
     };
 
     # System services
