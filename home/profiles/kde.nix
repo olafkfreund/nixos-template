@@ -30,14 +30,11 @@
     indicator = true;
   };
 
-  # Qt/KDE theming
+  # Qt/KDE theming (updated for newer NixOS versions)
   qt = {
     enable = true;
-    platformTheme.name = "kde";
-    style = {
-      name = "breeze";
-      package = pkgs.kdePackages.breeze;
-    };
+    platformTheme = "kde6";
+    style = "breeze";
   };
 
   # KDE-specific configurations

@@ -15,11 +15,7 @@
       "8.8.8.8" # Google  
     ];
 
-    # Basic firewall (keep mkDefault - users may want custom firewall)
-    firewall = {
-      enable = lib.mkDefault true;
-      allowPing = lib.mkDefault true; # Keep mkDefault - some hosts may want false
-    };
+    # Firewall configuration moved to modules/core/security.nix to avoid duplication
   };
 
   # mDNS/DNS-SD support (keep mkDefault - not everyone wants mDNS)
