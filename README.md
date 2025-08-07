@@ -10,7 +10,7 @@ A modular NixOS configuration template using flakes, featuring:
 - **Home Manager Integration** - Declarative user environments
 - **SOPS Secrets Management** - Encrypted secrets in Git
 - **Multiple Host Support** - Desktop, laptop, server, VM configurations
-- **GPU Support** - AMD, NVIDIA, Intel with gaming/AI optimizations
+- **GPU Support** - Manual configuration for AMD, NVIDIA, Intel with gaming/AI optimizations
 - **AI/Compute Ready** - CUDA, ROCm, OneAPI for machine learning
 - **Development Tools** - Scripts and utilities for easy management
 - **Custom Packages & Overlays** - Extend and customize packages
@@ -405,7 +405,7 @@ Add new modules in the `modules/` directory following the existing patterns.
 
 ## Home Manager Configuration
 
-This template features a revolutionary Home Manager structure that eliminates duplication and provides clear separation between common and host-specific settings.
+This template features a Home Manager structure that eliminates duplication and provides clear separation between common and host-specific settings.
 
 ### Role-Based Configuration System
 
@@ -464,23 +464,29 @@ See `home/README.md` for detailed usage examples and migration guide.
 
 ## GPU Configuration
 
-This template includes comprehensive GPU support with automatic detection and optimization profiles.
+This template includes comprehensive GPU support for AMD, NVIDIA, and Intel graphics cards with optimization profiles for different workloads.
 
-### Quick GPU Setup
+### GPU Setup
 
-The system can automatically detect and configure your GPU:
+GPU modules must be manually enabled in your host configuration. The system provides detection tools but cannot automatically configure drivers during evaluation:
 
 ```nix
-# In your host configuration
+# In your host configuration - you must manually enable your GPU type
 modules.hardware.gpu = {
+  # Optional: Enable detection service that logs found GPUs to /run/gpu-info
   autoDetect = true;
   profile = "desktop";  # desktop, gaming, ai-compute, server-compute
+  
+  # You must manually enable your specific GPU:
+  # nvidia.enable = true;  # For NVIDIA GPUs
+  # amd.enable = true;     # For AMD GPUs  
+  # intel.enable = true;   # For Intel GPUs
 };
 ```
 
-### Manual GPU Configuration
+### Detailed GPU Configuration Examples
 
-For manual control, specify your GPU type:
+Enable and configure your specific GPU type:
 
 ```nix
 # AMD GPU (desktop/gaming)

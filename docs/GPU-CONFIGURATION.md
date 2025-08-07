@@ -5,7 +5,7 @@ with different optimization profiles for desktop/gaming vs AI/compute workloads.
 
 ## Overview
 
-The GPU configuration system automatically detects your hardware and provides optimized settings for different use cases:
+The GPU configuration system provides optimized settings for different use cases. You must manually enable the appropriate GPU modules:
 
 - **Desktop/Gaming**: Optimized for graphics, gaming, and multimedia
 - **AI/Compute**: Optimized for machine learning, CUDA/ROCm, and compute workloads
@@ -19,12 +19,14 @@ For desktop systems, edit `hosts/your-hostname/configuration.nix`:
 
 ```nix
 modules.hardware.gpu = {
-  # Auto-detect and configure GPUs (recommended)
+  # Optional: Enable detection service for logging GPU info
   autoDetect = true;
   profile = "desktop";  # or "gaming" for gaming-focused optimizations
 
-  # The system will automatically enable the appropriate GPU module
-  # based on detected hardware
+  # You must manually enable your GPU type:
+  # nvidia.enable = true;  # For NVIDIA GPUs
+  # amd.enable = true;     # For AMD GPUs  
+  # intel.enable = true;   # For Intel GPUs
 };
 ```
 
@@ -34,10 +36,11 @@ For AI/compute servers, edit `hosts/your-hostname/configuration.nix`:
 
 ```nix
 modules.hardware.gpu = {
+  # Optional: Enable detection service for logging GPU info  
   autoDetect = true;
   profile = "ai-compute";  # or "server-compute"
 
-  # Manual override example for NVIDIA AI server:
+  # Example NVIDIA AI server configuration:
   nvidia = {
     enable = true;
     compute = {
