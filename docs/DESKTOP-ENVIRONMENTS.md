@@ -614,10 +614,10 @@ just niri-config-info    # Show config paths and commands
 To switch desktop environments:
 
 1. Edit your host configuration
-2. Disable current desktop (`enable = false`)
-3. Enable new desktop (`enable = true`)
-4. Rebuild system (`just switch`)
-5. Reboot for clean session
+1. Disable current desktop (`enable = false`)
+1. Enable new desktop (`enable = true`)
+1. Rebuild system (`just switch`)
+1. Reboot for clean session
 
 ### Concurrent Desktop Support
 
@@ -666,11 +666,11 @@ Users can choose at the login screen, but this increases system resource usage.
    - KDE: `journalctl --user -u plasma-\*`
    - Hyprland: Check Hyprland logs in terminal
 
-2. Verify configuration:
+1. Verify configuration:
    - `nix flake check` - Validate flake
    - `just test-desktop [name]` - Test specific desktop
 
-3. Community resources:
+1. Community resources:
    - NixOS Discourse for NixOS-specific issues
    - Desktop-specific documentation and forums
    - Home Manager documentation for user configs

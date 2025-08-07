@@ -61,9 +61,9 @@ imports = [
    nvim
    ```
 
-2. **The configuration is ready to use** - all plugins and language servers are pre-configured
+1. **The configuration is ready to use** - all plugins and language servers are pre-configured
 
-3. **Get help**: Press `<Space>` (leader key) to see available commands
+1. **Get help**: Press `<Space>` (leader key) to see available commands
 
 ### Basic Usage
 
@@ -117,10 +117,10 @@ imports = [
 #### Modes and Workflow
 
 1. **File Navigation**: Use `<leader>ff` to quickly find files
-2. **Text Search**: Use `<leader>fg` to search across your project
-3. **Code Navigation**: Use `gd` to jump to definitions, `gr` for references
-4. **Editing**: The editor provides intelligent completion as you type
-5. **Git Workflow**: Use `<leader>gg` for LazyGit or observe git changes in the gutter
+1. **Text Search**: Use `<leader>fg` to search across your project
+1. **Code Navigation**: Use `gd` to jump to definitions, `gr` for references
+1. **Editing**: The editor provides intelligent completion as you type
+1. **Git Workflow**: Use `<leader>gg` for LazyGit or observe git changes in the gutter
 
 ## Customization
 
@@ -362,41 +362,41 @@ toggleterm = {
 **LSP not working**:
 
 1. Check if language server is installed: `which rust-analyzer`
-2. Restart LSP: `:LspRestart`
-3. Check LSP status: `:LspInfo`
-4. View LSP logs: `:LspLog`
+1. Restart LSP: `:LspRestart`
+1. Check LSP status: `:LspInfo`
+1. View LSP logs: `:LspLog`
 
 **Treesitter errors**:
 
 1. Update parsers: `:TSUpdate`
-2. Check installation: `:TSInstallInfo`
-3. Reinstall parser: `:TSInstall language-name`
+1. Check installation: `:TSInstallInfo`
+1. Reinstall parser: `:TSInstall language-name`
 
 **Completion not working**:
 
 1. Check if LSP is running: `:LspInfo`
-2. Check completion sources: Type something and see if menu appears
-3. Check if nvim-cmp is loaded: `:lua print(vim.inspect(require('cmp')))`
+1. Check completion sources: Type something and see if menu appears
+1. Check if nvim-cmp is loaded: `:lua print(vim.inspect(require('cmp')))`
 
 **Telescope not finding files**:
 
 1. Check if ripgrep is installed: `which rg`
-2. Check if fd is installed: `which fd`
-3. Try from project root: `:cd /path/to/project`
+1. Check if fd is installed: `which fd`
+1. Try from project root: `:cd /path/to/project`
 
 ### Performance Issues
 
 **Slow startup**:
 
 1. Check plugin count: Too many plugins can slow startup
-2. Profile startup: `nvim --startuptime startup.log`
-3. Lazy load plugins when possible
+1. Profile startup: `nvim --startuptime startup.log`
+1. Lazy load plugins when possible
 
 **High memory usage**:
 
 1. Check LSP memory usage
-2. Disable unused language servers
-3. Reduce Treesitter parsers to only needed ones
+1. Disable unused language servers
+1. Reduce Treesitter parsers to only needed ones
 
 **Slow completion**:
 
@@ -439,9 +439,9 @@ toggleterm = {
 The configuration integrates with NixOS/Home Manager by:
 
 1. **Declarative packages**: All plugins and tools defined in Nix
-2. **Language servers**: Automatically installed and configured
-3. **System clipboard**: Works with X11 and Wayland
-4. **Desktop integration**: Proper MIME type associations
+1. **Language servers**: Automatically installed and configured
+1. **System clipboard**: Works with X11 and Wayland
+1. **Desktop integration**: Proper MIME type associations
 
 ### Updating Configuration
 
@@ -451,19 +451,19 @@ The configuration integrates with NixOS/Home Manager by:
    $EDITOR home/editors/nixvim.nix
    ```
 
-2. **Test changes**:
+1. **Test changes**:
 
    ```bash
    just test hostname
    ```
 
-3. **Apply changes**:
+1. **Apply changes**:
 
    ```bash
    just switch hostname
    ```
 
-4. **Restart Neovim** to load new configuration
+1. **Restart Neovim** to load new configuration
 
 ### Version Management
 
@@ -527,10 +527,10 @@ programs.nixvim = {
 To contribute improvements to this configuration:
 
 1. **Test thoroughly** on multiple languages and systems
-2. **Document changes** in this README
-3. **Follow Nixvim conventions** for configuration
-4. **Maintain backward compatibility** where possible
-5. **Add appropriate comments** to complex configurations
+1. **Document changes** in this README
+1. **Follow Nixvim conventions** for configuration
+1. **Maintain backward compatibility** where possible
+1. **Add appropriate comments** to complex configurations
 
 ## Customization Examples
 

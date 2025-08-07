@@ -7,8 +7,8 @@ This guide shows how to create custom NixOS installer ISOs with preconfigured se
 This template provides three types of NixOS installer ISOs:
 
 1. **Minimal Installer** - Lightweight command-line installer (~800MB)
-2. **Desktop Installer** - GNOME desktop installer (~2.5GB)
-3. **Preconfigured Installer** - Template-enabled installer with all configurations (~1.5GB)
+1. **Desktop Installer** - GNOME desktop installer (~2.5GB)
+1. **Preconfigured Installer** - Template-enabled installer with all configurations (~1.5GB)
 
 ## Quick Start
 
@@ -162,7 +162,7 @@ Burn the ISO using your preferred burning software (K3b, Brasero, etc.)
    - Boot from USB/DVD (may need BIOS/UEFI settings change)
    - Select NixOS installer from boot menu
 
-2. **Network Setup** (if needed)
+1. **Network Setup** (if needed)
 
    ```bash
    # WiFi connection
@@ -172,7 +172,7 @@ Burn the ISO using your preferred burning software (K3b, Brasero, etc.)
    ping google.com
    ```
 
-3. **Installation Process**
+1. **Installation Process**
 
 #### Minimal/Desktop Installer
 
@@ -209,9 +209,9 @@ reboot
 The preconfigured installer provides an interactive experience:
 
 1. **Automatic Start**: Installer script launches automatically
-2. **Template Selection**: Choose from available configurations
-3. **Quick Install**: Automated setup with chosen template
-4. **Customization**: Templates can be modified before installation
+1. **Template Selection**: Choose from available configurations
+1. **Quick Install**: Automated setup with chosen template
+1. **Customization**: Templates can be modified before installation
 
 **Interactive Installation:**
 
@@ -245,7 +245,7 @@ ls /etc/nixos-template/hosts/
    nano modules/installer/my-installer.nix
    ```
 
-2. **Create host configuration:**
+1. **Create host configuration:**
 
    ```bash
    # Create ISO host config
@@ -256,7 +256,7 @@ ls /etc/nixos-template/hosts/
    nano hosts/installer-isos/my-installer.nix
    ```
 
-3. **Add to flake.nix:**
+1. **Add to flake.nix:**
 
    ```nix
    my-installer = nixpkgs.lib.nixosSystem {
@@ -271,7 +271,8 @@ ls /etc/nixos-template/hosts/
    };
    ```
 
-4. **Build custom ISO:**
+1. **Build custom ISO:**
+
    ```bash
    nix build .#nixosConfigurations.my-installer.config.system.build.isoImage
    ```
@@ -333,7 +334,7 @@ isoImage = {
    ./result/bin/run-installer-minimal-vm
    ```
 
-2. **Iterative development:**
+1. **Iterative development:**
 
    ```bash
    # Quick syntax check
@@ -344,7 +345,7 @@ isoImage = {
    # Test in VM or real hardware
    ```
 
-3. **Version control:**
+1. **Version control:**
 
    ```bash
    # Tag stable ISO versions
@@ -398,12 +399,12 @@ services.udisks2.enable = lib.mkForce false;
    just build-iso-minimal
    ```
 
-2. **ISO won't boot:**
+1. **ISO won't boot:**
    - Verify ISO integrity: `sha256sum result/iso/*.iso`
    - Check UEFI/BIOS boot settings
    - Try different USB creation method
 
-3. **Network issues in installer:**
+1. **Network issues in installer:**
 
    ```bash
    # Check network interface
@@ -413,7 +414,7 @@ services.udisks2.enable = lib.mkForce false;
    dhcpcd enp0s3
    ```
 
-4. **Storage space:**
+1. **Storage space:**
 
    ```bash
    # Check available space

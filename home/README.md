@@ -36,8 +36,8 @@ home/
 Each `hosts/*/home.nix` file should be minimal and only contain:
 
 1. **Role and Profile Imports**: Choose the appropriate role and profile
-2. **User-specific Information**: Username, email, home directory
-3. **Host-specific Customizations**: Only settings unique to that host
+1. **User-specific Information**: Username, email, home directory
+1. **Host-specific Customizations**: Only settings unique to that host
 
 ### Example Host Configuration
 
@@ -149,9 +149,9 @@ GUI applications for desktop environments:
 ### Migration Steps
 
 1. **Identify the role**: What is the primary function of this host?
-2. **Choose a profile**: What desktop environment (if any)?
-3. **Update host config**: Use the new minimal structure
-4. **Move customizations**: Extract any host-specific settings to the minimal host config
+1. **Choose a profile**: What desktop environment (if any)?
+1. **Update host config**: Use the new minimal structure
+1. **Move customizations**: Extract any host-specific settings to the minimal host config
 
 ### Example Migration
 
@@ -195,11 +195,11 @@ GUI applications for desktop environments:
 ## Benefits
 
 1. **No Duplication**: Common configurations are shared across all hosts
-2. **Clear Intent**: Role and profile imports make the purpose obvious
-3. **Easy Maintenance**: Update once, apply everywhere
-4. **Flexible Override**: Host-specific customizations are still possible
-5. **Type Safety**: All configurations are still fully typed with NixOS module system
-6. **Consistent Experience**: Same tools and aliases across all hosts with the same role
+1. **Clear Intent**: Role and profile imports make the purpose obvious
+1. **Easy Maintenance**: Update once, apply everywhere
+1. **Flexible Override**: Host-specific customizations are still possible
+1. **Type Safety**: All configurations are still fully typed with NixOS module system
+1. **Consistent Experience**: Same tools and aliases across all hosts with the same role
 
 ## Legacy Support
 

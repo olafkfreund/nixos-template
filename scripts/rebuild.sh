@@ -67,35 +67,35 @@ UPDATE=""
 
 while [[ $# -gt 0 ]]; do
   case $1 in
-    -h | --help)
-      usage
-      exit 0
-      ;;
-    -H | --host)
-      HOSTNAME="$2"
-      shift 2
-      ;;
-    -v | --verbose)
-      VERBOSE="--verbose"
-      shift
-      ;;
-    --no-check)
-      NO_CHECK="1"
-      shift
-      ;;
-    --update)
-      UPDATE="1"
-      shift
-      ;;
-    switch | test | boot | build | dry-run)
-      COMMAND="$1"
-      shift
-      ;;
-    *)
-      error "Unknown option: $1"
-      usage
-      exit 1
-      ;;
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  -H | --host)
+    HOSTNAME="$2"
+    shift 2
+    ;;
+  -v | --verbose)
+    VERBOSE="--verbose"
+    shift
+    ;;
+  --no-check)
+    NO_CHECK="1"
+    shift
+    ;;
+  --update)
+    UPDATE="1"
+    shift
+    ;;
+  switch | test | boot | build | dry-run)
+    COMMAND="$1"
+    shift
+    ;;
+  *)
+    error "Unknown option: $1"
+    usage
+    exit 1
+    ;;
   esac
 done
 
@@ -109,13 +109,13 @@ if [[ ! -f "flake.nix" ]]; then
 fi
 
 # Update flake inputs if requested
-if [[ -n "$UPDATE" ]]; then
+if [[ -n $UPDATE ]]; then
   log "Updating flake inputs..."
   nix flake update
 fi
 
 # Check flake if not disabled
-if [[ -z "$NO_CHECK" ]]; then
+if [[ -z $NO_CHECK ]]; then
   log "Checking flake..."
   if ! nix flake check; then
     warning "Flake check failed, but continuing..."
@@ -127,27 +127,27 @@ log "Building configuration for host: $HOSTNAME"
 log "Command: $COMMAND"
 
 case $COMMAND in
-  switch)
-    sudo nixos-rebuild switch --flake ".#$HOSTNAME" $VERBOSE
-    ;;
-  test)
-    sudo nixos-rebuild test --flake ".#$HOSTNAME" $VERBOSE
-    ;;
-  boot)
-    sudo nixos-rebuild boot --flake ".#$HOSTNAME" $VERBOSE
-    ;;
-  build)
-    sudo nixos-rebuild build --flake ".#$HOSTNAME" $VERBOSE
-    ;;
-  dry-run)
-    nixos-rebuild dry-run --flake ".#$HOSTNAME" $VERBOSE
-    ;;
+switch)
+  sudo nixos-rebuild switch --flake ".#$HOSTNAME" $VERBOSE
+  ;;
+test)
+  sudo nixos-rebuild test --flake ".#$HOSTNAME" $VERBOSE
+  ;;
+boot)
+  sudo nixos-rebuild boot --flake ".#$HOSTNAME" $VERBOSE
+  ;;
+build)
+  sudo nixos-rebuild build --flake ".#$HOSTNAME" $VERBOSE
+  ;;
+dry-run)
+  nixos-rebuild dry-run --flake ".#$HOSTNAME" $VERBOSE
+  ;;
 esac
 
 success "Configuration $COMMAND completed successfully!"
 
 # Show generation info
-if [[ "$COMMAND" == "switch" || "$COMMAND" == "boot" ]]; then
+if [[ $COMMAND == "switch" || $COMMAND == "boot" ]]; then
   log "Current generation:"
   sudo nix-env --list-generations --profile /nix/var/nix/profiles/system | tail -1
 fi

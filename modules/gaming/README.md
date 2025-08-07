@@ -137,18 +137,18 @@ After enabling the module:
    # Users are automatically added to required groups
    ```
 
-2. **Launch Steam**:
+1. **Launch Steam**:
 
    ```bash
    steam
    ```
 
-3. **Enable Proton** in Steam settings:
+1. **Enable Proton** in Steam settings:
    - Steam > Settings > Steam Play
    - Enable Steam Play for supported titles
    - Enable Steam Play for all other titles
 
-4. **Use GameMode**:
+1. **Use GameMode**:
 
    ```bash
    # GameMode activates automatically with Steam games
@@ -267,9 +267,9 @@ The gaming configuration includes:
 For optimal gaming performance:
 
 1. Use a fast SSD for game storage
-2. Ensure adequate RAM (16GB+ recommended)
-3. Use a modern GPU with Vulkan support
-4. Configure appropriate screen refresh rates
+1. Ensure adequate RAM (16GB+ recommended)
+1. Use a modern GPU with Vulkan support
+1. Configure appropriate screen refresh rates
 
 ## Updates
 

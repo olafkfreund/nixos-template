@@ -307,20 +307,20 @@ To create your own user template:
    cp home/users/user.nix home/users/mytemplate.nix
    ```
 
-2. **Customize the configuration:**
+1. **Customize the configuration:**
    - Modify applications in `home.packages`
    - Adjust shell configuration
    - Add specific environment variables
    - Configure programs as needed
 
-3. **Test the template:**
+1. **Test the template:**
 
    ```bash
    just init-user testhost mytemplate
    just test testhost
    ```
 
-4. **Document your template:**
+1. **Document your template:**
    - Add comments explaining the purpose
    - Document customization points
    - Include usage examples
@@ -359,33 +359,33 @@ ERROR: Multiple desktop environments enabled
 ### Getting Help
 
 1. **Check template documentation** in comments
-2. **Validate configuration:** `just validate`
-3. **Test before switching:** `just test hostname`
-4. **Check Home Manager documentation**
-5. **Review NixOS options search**
+1. **Validate configuration:** `just validate`
+1. **Test before switching:** `just test hostname`
+1. **Check Home Manager documentation**
+1. **Review NixOS options search**
 
 ## Best Practices
 
 ### Template Selection
 
 1. **Start simple**: Begin with basic template, add features as needed
-2. **Match use case**: Choose template that fits your primary usage
-3. **Consider resources**: Ensure system can handle template requirements
-4. **Plan for growth**: Choose template that can grow with your needs
+1. **Match use case**: Choose template that fits your primary usage
+1. **Consider resources**: Ensure system can handle template requirements
+1. **Plan for growth**: Choose template that can grow with your needs
 
 ### Customization
 
 1. **Document changes**: Add comments for custom modifications
-2. **Test thoroughly**: Always test before applying to main system
-3. **Backup configurations**: Keep working configurations safe
-4. **Version control**: Use git to track configuration changes
+1. **Test thoroughly**: Always test before applying to main system
+1. **Backup configurations**: Keep working configurations safe
+1. **Version control**: Use git to track configuration changes
 
 ### Maintenance
 
 1. **Regular updates**: Keep templates updated with system
-2. **Clean unused**: Remove packages and configurations not needed
-3. **Monitor resources**: Check system performance regularly
-4. **Security updates**: Keep security-sensitive applications current
+1. **Clean unused**: Remove packages and configurations not needed
+1. **Monitor resources**: Check system performance regularly
+1. **Security updates**: Keep security-sensitive applications current
 
 ## Advanced Usage
 
@@ -466,9 +466,9 @@ imports = [
 To contribute a new template:
 
 1. **Create template** following existing patterns
-2. **Test thoroughly** on multiple systems
-3. **Document features** and use cases
-4. **Add to template list** in this documentation
-5. **Submit for review**
+1. **Test thoroughly** on multiple systems
+1. **Document features** and use cases
+1. **Add to template list** in this documentation
+1. **Submit for review**
 
 Template naming convention: `purpose.nix` (e.g., `scientist.nix`, `artist.nix`)

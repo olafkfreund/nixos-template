@@ -275,13 +275,13 @@ services.restic.backups.home = {
    "new-secret.age".publicKeys = [ users.alice systems.laptop ];
    ```
 
-2. **Create the secret**:
+1. **Create the secret**:
 
    ```bash
    agenix -e new-secret.age
    ```
 
-3. **Add to host configuration**:
+1. **Add to host configuration**:
 
    ```nix
    modules.security.agenix.secrets."new-secret" = {
@@ -290,7 +290,7 @@ services.restic.backups.home = {
    };
    ```
 
-4. **Use in configuration**:
+1. **Use in configuration**:
 
    ```nix
    services.myservice = {
@@ -306,7 +306,7 @@ services.restic.backups.home = {
    agenix -e existing-secret.age
    ```
 
-2. **System will automatically reload** on next rebuild
+1. **System will automatically reload** on next rebuild
 
 ### Adding New Systems/Users
 
@@ -316,7 +316,7 @@ services.restic.backups.home = {
    ssh-to-age < /path/to/new/key.pub
    ```
 
-2. **Update secrets.nix**:
+1. **Update secrets.nix**:
 
    ```nix
    let
@@ -327,7 +327,7 @@ services.restic.backups.home = {
    }
    ```
 
-3. **Re-encrypt secrets**:
+1. **Re-encrypt secrets**:
 
    ```bash
    agenix -r  # Rekey all secrets
@@ -338,23 +338,23 @@ services.restic.backups.home = {
 ### Key Management
 
 1. **Use SSH-derived keys** when possible for consistency
-2. **Store private keys securely** (never commit to git)
-3. **Use hardware security modules** for high-security environments
-4. **Rotate keys regularly** and update secret encryption
+1. **Store private keys securely** (never commit to git)
+1. **Use hardware security modules** for high-security environments
+1. **Rotate keys regularly** and update secret encryption
 
 ### Access Control
 
 1. **Principle of least privilege** - only necessary keys per secret
-2. **Separate user and system keys** for different access patterns
-3. **Regular access audits** of who can decrypt what secrets
-4. **Document key ownership** and purpose
+1. **Separate user and system keys** for different access patterns
+1. **Regular access audits** of who can decrypt what secrets
+1. **Document key ownership** and purpose
 
 ### Operational Security
 
 1. **Secure workstation** for secret management operations
-2. **Audit secret access** through system logs
-3. **Backup private keys** securely and separately
-4. **Test disaster recovery** procedures
+1. **Audit secret access** through system logs
+1. **Backup private keys** securely and separately
+1. **Test disaster recovery** procedures
 
 ## Troubleshooting
 
@@ -489,14 +489,14 @@ modules.security.agenix.secrets = {
    sops -d secrets.yaml > decrypted-secrets.yaml
    ```
 
-2. **Convert to agenix**:
+1. **Convert to agenix**:
 
    ```bash
    # For each secret
    echo "secret-value" | agenix -e secret-name.age
    ```
 
-3. **Update configurations** to use agenix paths
+1. **Update configurations** to use agenix paths
 
 ### From manual secret files
 
@@ -506,8 +506,9 @@ modules.security.agenix.secrets = {
    agenix -e existing-secret.age < /path/to/existing/secret
    ```
 
-2. **Update file paths** in configurations
-3. **Remove old secret files** after verification
+1. **Update file paths** in configurations
+
+1. **Remove old secret files** after verification
 
 ## Additional Resources
 

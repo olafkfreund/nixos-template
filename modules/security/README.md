@@ -109,13 +109,13 @@ modules.security.agenix = {
    inputs.agenix.url = "github:ryantm/agenix";
    ```
 
-2. **Run setup script**:
+1. **Run setup script**:
 
    ```bash
    just setup-secrets
    ```
 
-3. **Configure secrets in host**:
+1. **Configure secrets in host**:
 
    ```nix
    imports = [ ../../modules/security/agenix.nix ];
@@ -126,14 +126,14 @@ modules.security.agenix = {
    };
    ```
 
-4. **Create and edit secrets**:
+1. **Create and edit secrets**:
 
    ```bash
    just new-secret user-password
    just edit-secret wifi-password
    ```
 
-5. **Use in configuration**:
+1. **Use in configuration**:
 
    ```nix
    users.users.alice = {
@@ -422,13 +422,13 @@ just check-secrets
    cat /path/to/existing/secret
    ```
 
-2. **Encrypt with agenix**:
+1. **Encrypt with agenix**:
 
    ```bash
    echo "secret-value" | agenix -e secret-name.age
    ```
 
-3. **Update configurations**:
+1. **Update configurations**:
    - Replace file paths with `config.age.secrets."name".path`
    - Update service configurations
    - Remove old secret files after verification
@@ -466,7 +466,7 @@ Future security modules may include:
 When adding new security modules:
 
 1. Follow the established pattern with comprehensive options
-2. Include proper documentation and examples
-3. Ensure secure defaults
-4. Add appropriate assertions and validation
-5. Include troubleshooting information
+1. Include proper documentation and examples
+1. Ensure secure defaults
+1. Add appropriate assertions and validation
+1. Include troubleshooting information

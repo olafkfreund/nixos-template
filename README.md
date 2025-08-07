@@ -26,18 +26,18 @@ A modular NixOS configuration template using flakes, featuring:
    - [Custom NixOS Installer ISOs](#custom-nixos-installer-isos)
    - [New NixOS Users (Automated Setup)](#new-nixos-users-automated-setup)
    - [Advanced Users (Manual Setup)](#advanced-users-manual-setup)
-2. [Project Structure](#project-structure)
-3. [Available Commands](#available-commands)
-4. [Module System](#module-system)
-5. [GPU Configuration](#gpu-configuration)
-6. [Virtual Machine Testing](#virtual-machine-testing)
-7. [Custom NixOS Installer ISOs](#custom-nixos-installer-isos-1)
-8. [Host Configurations](#host-configurations)
-9. [Secrets Management](#secrets-management)
-10. [Development Shell](#development-shell)
-11. [Best Practices](#best-practices)
-12. [Validation & CI/CD](#validation--cicd)
-13. [Troubleshooting](#troubleshooting)
+1. [Project Structure](#project-structure)
+1. [Available Commands](#available-commands)
+1. [Module System](#module-system)
+1. [GPU Configuration](#gpu-configuration)
+1. [Virtual Machine Testing](#virtual-machine-testing)
+1. [Custom NixOS Installer ISOs](#custom-nixos-installer-isos-1)
+1. [Host Configurations](#host-configurations)
+1. [Secrets Management](#secrets-management)
+1. [Development Shell](#development-shell)
+1. [Best Practices](#best-practices)
+1. [Validation & CI/CD](#validation--cicd)
+1. [Troubleshooting](#troubleshooting)
 
 ## Quick Start
 
@@ -357,10 +357,10 @@ This template provides an end-to-end NixOS experience:
 ### **Full Workflow Coverage**
 
 1. **Develop**: Create configurations using templates
-2. **Test**: Validate in VMs on any Linux system
-3. **Package**: Build custom installer ISOs
-4. **Deploy**: Boot and install with template selection
-5. **Maintain**: Update and redeploy as needed
+1. **Test**: Validate in VMs on any Linux system
+1. **Package**: Build custom installer ISOs
+1. **Deploy**: Boot and install with template selection
+1. **Maintain**: Update and redeploy as needed
 
 ### Enabling Modules
 
@@ -516,12 +516,12 @@ just build-vm-image gnome-test
 
 The VMs include:
 
-**Boot Reliability** - Fixed systemd service conflicts and AppArmor issues  
-**Desktop Ready** - Full GNOME with Wayland, optimized for VM performance  
-**Guest Optimizations** - VirtIO drivers, shared clipboard, graphics acceleration  
-**Development Tools** - Git, VS Code, terminal applications  
-**SSH Access** - Port 22 open for remote development  
-**User Environment** - Home Manager configuration with dotfiles  
+**Boot Reliability** - Fixed systemd service conflicts and AppArmor issues\
+**Desktop Ready** - Full GNOME with Wayland, optimized for VM performance\
+**Guest Optimizations** - VirtIO drivers, shared clipboard, graphics acceleration\
+**Development Tools** - Git, VS Code, terminal applications\
+**SSH Access** - Port 22 open for remote development\
+**User Environment** - Home Manager configuration with dotfiles\
 **Network Access** - NAT networking with internet connectivity
 
 ### VM Troubleshooting
@@ -630,19 +630,19 @@ just iso-workflow
 #### Preconfigured Installer (Recommended)
 
 1. **Boot from USB/DVD** - Installer launches automatically
-2. **Network Setup** - Connect to WiFi if needed
-3. **Interactive Menu** - Select from available templates
-4. **Partition Disks** - Standard disk partitioning
-5. **Template Deployment** - Automatic configuration setup
-6. **Installation** - `nixos-install` runs automatically
-7. **Reboot** - Boot into your fully configured NixOS system
+1. **Network Setup** - Connect to WiFi if needed
+1. **Interactive Menu** - Select from available templates
+1. **Partition Disks** - Standard disk partitioning
+1. **Template Deployment** - Automatic configuration setup
+1. **Installation** - `nixos-install` runs automatically
+1. **Reboot** - Boot into your fully configured NixOS system
 
 #### Traditional Installers (Minimal/Desktop)
 
 1. **Boot from USB/DVD**
-2. **Network Setup** (if needed)
-3. **Manual Installation** - Follow standard NixOS installation process
-4. **Browse Templates** - Templates available for reference at `/etc/nixos-template/`
+1. **Network Setup** (if needed)
+1. **Manual Installation** - Follow standard NixOS installation process
+1. **Browse Templates** - Templates available for reference at `/etc/nixos-template/`
 
 ### Customization Options
 
@@ -672,9 +672,9 @@ See [ISO Creation Guide](docs/ISO-CREATION.md) for detailed instructions, custom
 ### Adding a New Host
 
 1. Create a new directory under `hosts/`
-2. Add `configuration.nix` and `hardware-configuration.nix`
-3. Optional: Add `home.nix` for Home Manager configuration
-4. Add the host to `flake.nix` nixosConfigurations
+1. Add `configuration.nix` and `hardware-configuration.nix`
+1. Optional: Add `home.nix` for Home Manager configuration
+1. Add the host to `flake.nix` nixosConfigurations
 
 ### Hardware Configuration
 
@@ -691,8 +691,8 @@ This template includes SOPS for encrypted secrets management.
 ### Setup
 
 1. Generate a key: `ssh-keygen -t ed25519 -f ~/.config/sops/age/keys.txt`
-2. Configure `.sops.yaml` in the repository root
-3. Create encrypted files: `sops secrets/example.yaml`
+1. Configure `.sops.yaml` in the repository root
+1. Create encrypted files: `sops secrets/example.yaml`
 
 ### Using Secrets
 
@@ -726,22 +726,22 @@ This provides:
 ### Configuration Management
 
 1. **Keep modules focused** - Each module should handle one concern
-2. **Use lib.mkDefault** - Allow easy overriding in host configs
-3. **Document your modules** - Add descriptions to module options
-4. **Test changes** - Use `make test` before `make switch`
+1. **Use lib.mkDefault** - Allow easy overriding in host configs
+1. **Document your modules** - Add descriptions to module options
+1. **Test changes** - Use `make test` before `make switch`
 
 ### Security
 
 1. **Review secrets** - Never commit unencrypted secrets
-2. **Update regularly** - Keep system and inputs updated
-3. **Minimal permissions** - Only enable needed services
-4. **Backup configurations** - Keep your configuration in version control
+1. **Update regularly** - Keep system and inputs updated
+1. **Minimal permissions** - Only enable needed services
+1. **Backup configurations** - Keep your configuration in version control
 
 ### Performance
 
 1. **Use binary caches** - Configure trusted substituters
-2. **Enable auto-optimization** - Let Nix optimize the store
-3. **Regular cleanup** - Use `make clean` periodically
+1. **Enable auto-optimization** - Let Nix optimize the store
+1. **Regular cleanup** - Use `make clean` periodically
 
 ## Validation & CI/CD
 
@@ -792,14 +792,14 @@ All configurations are updated for the latest NixOS:
    just validate            # Run full validation suite
    ```
 
-2. **VM boot hangs**:
+1. **VM boot hangs**:
 
    ```bash
    just build-vm-image desktop-test    # Use latest boot fixes
    pkill -f qemu                       # Kill stuck VMs
    ```
 
-3. **ISO creation issues**:
+1. **ISO creation issues**:
 
    ```bash
    just test-iso minimal               # Test without building
@@ -807,28 +807,28 @@ All configurations are updated for the latest NixOS:
    nix-collect-garbage -d              # Free up disk space
    ```
 
-4. **Hardware issues**:
+1. **Hardware issues**:
 
    ```bash
    sudo nixos-generate-config --show-hardware-config > hardware-configuration.nix
    ```
 
-5. **Module conflicts**: Check for conflicting options using `lib.mkForce`
+1. **Module conflicts**: Check for conflicting options using `lib.mkForce`
 
-6. **Permission errors**: Ensure user is in wheel group
+1. **Permission errors**: Ensure user is in wheel group
 
    ```bash
    sudo usermod -a -G wheel $USER
    ```
 
-7. **Flake lock issues**:
+1. **Flake lock issues**:
 
    ```bash
    nix flake update         # Update all inputs
    git add flake.lock       # Commit lock changes
    ```
 
-8. **Bootable USB creation**:
+1. **Bootable USB creation**:
 
    ```bash
    lsblk                    # Verify USB device path
@@ -838,17 +838,17 @@ All configurations are updated for the latest NixOS:
 ### Getting Help
 
 1. Check the [NixOS Manual](https://nixos.org/manual/nixos/stable/)
-2. Browse [NixOS Options](https://search.nixos.org/options)
-3. Visit the [NixOS Discourse](https://discourse.nixos.org/)
-4. Join the [NixOS Matrix](https://matrix.to/#/#nixos:nixos.org)
+1. Browse [NixOS Options](https://search.nixos.org/options)
+1. Visit the [NixOS Discourse](https://discourse.nixos.org/)
+1. Join the [NixOS Matrix](https://matrix.to/#/#nixos:nixos.org)
 
 ## Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+1. Create a feature branch
+1. Make your changes
+1. Test thoroughly
+1. Submit a pull request
 
 ## License
 

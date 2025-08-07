@@ -69,22 +69,22 @@ detect_system() {
 
   # Adjust recommendations based on hardware type
   case "$hardware_type" in
-    laptop)
-      desktop_recommended="GNOME" # Good power management
-      development_recommended="yes"
-      ;;
-    desktop)
-      desktop_recommended="GNOME"
-      development_recommended="yes"
-      ;;
-    workstation)
-      desktop_recommended="KDE" # More features for professionals
-      development_recommended="yes"
-      ;;
-    server)
-      desktop_recommended="none" # Headless
-      development_recommended="minimal"
-      ;;
+  laptop)
+    desktop_recommended="GNOME" # Good power management
+    development_recommended="yes"
+    ;;
+  desktop)
+    desktop_recommended="GNOME"
+    development_recommended="yes"
+    ;;
+  workstation)
+    desktop_recommended="KDE" # More features for professionals
+    development_recommended="yes"
+    ;;
+  server)
+    desktop_recommended="none" # Headless
+    development_recommended="minimal"
+    ;;
   esac
 
   # Detect memory for desktop recommendation override
@@ -115,18 +115,18 @@ generate_quick_config() {
   # Choose base template based on hardware type
   local template_dir=""
   case "$hardware_type" in
-    laptop)
-      template_dir="laptop-template"
-      ;;
-    server)
-      template_dir="server-template"
-      ;;
-    workstation)
-      template_dir="desktop-template" # Use desktop template for workstations
-      ;;
-    *)
-      template_dir="desktop-template"
-      ;;
+  laptop)
+    template_dir="laptop-template"
+    ;;
+  server)
+    template_dir="server-template"
+    ;;
+  workstation)
+    template_dir="desktop-template" # Use desktop template for workstations
+    ;;
+  *)
+    template_dir="desktop-template"
+    ;;
   esac
 
   # Copy base template if it exists
@@ -304,7 +304,7 @@ main() {
   echo
 
   read -rp "Proceed with setup? [Y/n]: " confirm
-  if [[ "$confirm" =~ ^[Nn] ]]; then
+  if [[ $confirm =~ ^[Nn] ]]; then
     print_info "Setup cancelled"
     exit 0
   fi
@@ -330,7 +330,7 @@ main() {
   echo
 
   read -rp "Apply configuration now? [y/N]: " apply
-  if [[ "$apply" =~ ^[Yy] ]]; then
+  if [[ $apply =~ ^[Yy] ]]; then
     print_info "Applying configuration..."
     if sudo nixos-rebuild switch --flake ".#$hostname"; then
       print_success "System configuration applied successfully!"
@@ -358,6 +358,6 @@ main() {
 }
 
 # Check if script is being sourced or executed
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
   main "$@"
 fi

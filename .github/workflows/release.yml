@@ -1,200 +1,90 @@
 name: Release
-
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - "v*.*.*"
   workflow_dispatch:
     inputs:
       version:
-        description: 'Release version (e.g., v1.0.0)'
+        description: "Release version (e.g., v1.0.0)"
         required: true
         type: string
-
 permissions:
   contents: write
   pull-requests: read
-
 jobs:
   validate-release:
     name: Validate Release
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      
-    - name: Install Nix
-      uses: cachix/install-nix-action@v25
-      with:
-        nix_path: nixpkgs=channel:nixos-unstable
-        extra_nix_config: |
-          experimental-features = nix-command flakes
-          
-    - name: Run full validation
-      run: |
-        echo "Running comprehensive validation for release..."
-        
-        # Validate flake
-        nix flake check --show-trace
-        
-        # Install quality tools
-        nix profile install nixpkgs#nixpkgs-fmt
-        nix profile install nixpkgs#statix  
-        nix profile install nixpkgs#deadnix
-        
-        # Check formatting
-        nixpkgs-fmt --check . || {
-          echo "ERROR: Code is not properly formatted"
-          exit 1
-        }
-        
-        # Run linting
-        statix check .
-        
-        # Check for dead code
-        deadnix --fail .
-        
-        echo "✓ All validation checks passed"
-        
-    - name: Test template functionality
-      run: |
-        echo "Testing template functionality..."
-        
-        # Test that critical scripts exist and are executable
-        test -x scripts/nixos-setup.sh || { echo "ERROR: nixos-setup.sh missing or not executable"; exit 1; }
-        test -x scripts/quick-setup.sh || { echo "ERROR: quick-setup.sh missing or not executable"; exit 1; }
-        test -x scripts/check-prerequisites.sh || { echo "ERROR: check-prerequisites.sh missing or not executable"; exit 1; }
-        test -x scripts/detect-hardware.sh || { echo "ERROR: detect-hardware.sh missing or not executable"; exit 1; }
-        test -x scripts/detect-vm.sh || { echo "ERROR: detect-vm.sh missing or not executable"; exit 1; }
-        
-        # Test that templates exist
-        test -d hosts/laptop-template || { echo "ERROR: laptop-template missing"; exit 1; }
-        test -d hosts/desktop-template || { echo "ERROR: desktop-template missing"; exit 1; }
-        test -d hosts/server-template || { echo "ERROR: server-template missing"; exit 1; }
-        
-        # Test that documentation exists
-        test -f docs/SETUP.md || { echo "ERROR: SETUP.md missing"; exit 1; }
-        test -f docs/POWER-MANAGEMENT.md || { echo "ERROR: POWER-MANAGEMENT.md missing"; exit 1; }
-        test -f docs/VM-SUPPORT.md || { echo "ERROR: VM-SUPPORT.md missing"; exit 1; }
-        
-        echo "✓ Template functionality validation passed"
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install Nix
+        uses: cachix/install-nix-action@v25
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+      - name: Run full validation
+        run: "echo \"Running comprehensive validation for release...\"\n\n# Validate flake\nnix flake check --show-trace\n\n# Install quality tools\nnix profile install nixpkgs#nixpkgs-fmt\nnix profile install nixpkgs#statix  \nnix profile install nixpkgs#deadnix\n\n# Check formatting\nnixpkgs-fmt --check . || {\n  echo \"ERROR: Code is not properly formatted\"\n  exit 1\n}\n\n# Run linting\nstatix check .\n\n# Check for dead code\ndeadnix --fail .\n\necho \"✓ All validation checks passed\"\n"
+      - name: Test template functionality
+        run: |
+          echo "Testing template functionality..."
 
+          # Test that critical scripts exist and are executable
+          test -x scripts/nixos-setup.sh || { echo "ERROR: nixos-setup.sh missing or not executable"; exit 1; }
+          test -x scripts/quick-setup.sh || { echo "ERROR: quick-setup.sh missing or not executable"; exit 1; }
+          test -x scripts/check-prerequisites.sh || { echo "ERROR: check-prerequisites.sh missing or not executable"; exit 1; }
+          test -x scripts/detect-hardware.sh || { echo "ERROR: detect-hardware.sh missing or not executable"; exit 1; }
+          test -x scripts/detect-vm.sh || { echo "ERROR: detect-vm.sh missing or not executable"; exit 1; }
+
+          # Test that templates exist
+          test -d hosts/laptop-template || { echo "ERROR: laptop-template missing"; exit 1; }
+          test -d hosts/desktop-template || { echo "ERROR: desktop-template missing"; exit 1; }
+          test -d hosts/server-template || { echo "ERROR: server-template missing"; exit 1; }
+
+          # Test that documentation exists
+          test -f docs/SETUP.md || { echo "ERROR: SETUP.md missing"; exit 1; }
+          test -f docs/POWER-MANAGEMENT.md || { echo "ERROR: POWER-MANAGEMENT.md missing"; exit 1; }
+          test -f docs/VM-SUPPORT.md || { echo "ERROR: VM-SUPPORT.md missing"; exit 1; }
+
+          echo "✓ Template functionality validation passed"
   create-release:
     name: Create Release
     needs: validate-release
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0  # Fetch full history for changelog
-        
-    - name: Get version
-      id: get-version
-      run: |
-        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-          VERSION="${{ github.event.inputs.version }}"
-        else
-          VERSION="${GITHUB_REF#refs/tags/}"
-        fi
-        echo "version=$VERSION" >> $GITHUB_OUTPUT
-        echo "Release version: $VERSION"
-        
-    - name: Generate changelog
-      id: changelog
-      run: |
-        echo "Generating changelog..."
-        
-        # Get the previous tag
-        PREV_TAG=$(git tag --sort=-version:refname | grep -v "${{ steps.get-version.outputs.version }}" | head -n1)
-        
-        if [ -n "$PREV_TAG" ]; then
-          echo "Generating changelog from $PREV_TAG to ${{ steps.get-version.outputs.version }}"
-          CHANGELOG=$(git log --pretty=format:"- %s (%h)" "$PREV_TAG..${{ steps.get-version.outputs.version }}" | head -20)
-        else
-          echo "No previous tag found, generating changelog from beginning"
-          CHANGELOG=$(git log --pretty=format:"- %s (%h)" | head -20)
-        fi
-        
-        # Create release notes
-        cat > release-notes.md << 'EOF'
-        ## NixOS Template Release ${{ steps.get-version.outputs.version }}
-        
-        This release includes the following changes:
-        
-        ### Changes
-        $CHANGELOG
-        
-        ### Features
-        
-        - Comprehensive hardware detection (laptop/desktop/workstation/server)
-        - Power management optimization for all hardware types
-        - Automated setup scripts with smart defaults
-        - VM support with automatic detection and optimization
-        - Gaming configuration with Steam and performance optimizations  
-        - Container support with Podman
-        - Virtualization support with libvirt
-        - Secrets management with agenix
-        - Editor configurations (Emacs, Nixvim) with LSP
-        - Multiple desktop environments (GNOME, KDE, Hyprland, Niri)
-        - User template system with 5 predefined profiles
-        - Comprehensive documentation and guides
-        
-        ### Installation
-        
-        ```bash
-        # Clone the template
-        git clone https://github.com/your-username/nixos-template.git
-        cd nixos-template
-        
-        # Check prerequisites
-        ./scripts/check-prerequisites.sh
-        
-        # Quick setup
-        ./scripts/quick-setup.sh
-        
-        # Or full interactive setup
-        ./scripts/nixos-setup.sh
-        ```
-        
-        ### Documentation
-        
-        - [Setup Guide](docs/SETUP.md) - Comprehensive setup instructions
-        - [Power Management](docs/POWER-MANAGEMENT.md) - Hardware-specific power optimization
-        - [VM Support](docs/VM-SUPPORT.md) - Virtual machine configuration guide
-        
-        ### Requirements
-        
-        - NixOS 23.11 or later
-        - Nix with flakes enabled
-        - 4GB+ RAM recommended
-        - 10GB+ free disk space
-        EOF
-        
-        # Set output for release creation
-        {
-          echo 'release-notes<<EOF'
-          cat release-notes.md
-          echo 'EOF'
-        } >> $GITHUB_OUTPUT
-        
-    - name: Create GitHub Release
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: ${{ steps.get-version.outputs.version }}
-        name: NixOS Template ${{ steps.get-version.outputs.version }}
-        body: ${{ steps.changelog.outputs.release-notes }}
-        draft: false
-        prerelease: false
-        generate_release_notes: true
-        files: |
-          README.md
-          docs/*.md
-          justfile
-        
-    - name: Update documentation
-      run: |
-        echo "Release ${{ steps.get-version.outputs.version }} created successfully!"
-        echo "Documentation and guides are available in the release assets."
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch full history for changelog
+      - name: Get version
+        id: get-version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION="${GITHUB_REF#refs/tags/}"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Release version: $VERSION"
+      - name: Generate changelog
+        id: changelog
+        run: "echo \"Generating changelog...\"\n\n# Get the previous tag\nPREV_TAG=$(git tag --sort=-version:refname | grep -v \"${{ steps.get-version.outputs.version }}\" | head -n1)\n\nif [ -n \"$PREV_TAG\" ]; then\n  echo \"Generating changelog from $PREV_TAG to ${{ steps.get-version.outputs.version }}\"\n  CHANGELOG=$(git log --pretty=format:\"- %s (%h)\" \"$PREV_TAG..${{ steps.get-version.outputs.version }}\" | head -20)\nelse\n  echo \"No previous tag found, generating changelog from beginning\"\n  CHANGELOG=$(git log --pretty=format:\"- %s (%h)\" | head -20)\nfi\n\n# Create release notes\ncat > release-notes.md << 'EOF'\n## NixOS Template Release ${{ steps.get-version.outputs.version }}\n\nThis release includes the following changes:\n\n### Changes\n$CHANGELOG\n\n### Features\n\n- Comprehensive hardware detection (laptop/desktop/workstation/server)\n- Power management optimization for all hardware types\n- Automated setup scripts with smart defaults\n- VM support with automatic detection and optimization\n- Gaming configuration with Steam and performance optimizations  \n- Container support with Podman\n- Virtualization support with libvirt\n- Secrets management with agenix\n- Editor configurations (Emacs, Nixvim) with LSP\n- Multiple desktop environments (GNOME, KDE, Hyprland, Niri)\n- User template system with 5 predefined profiles\n- Comprehensive documentation and guides\n\n### Installation\n\n```bash\n# Clone the template\ngit clone https://github.com/your-username/nixos-template.git\ncd nixos-template\n\n# Check prerequisites\n./scripts/check-prerequisites.sh\n\n# Quick setup\n./scripts/quick-setup.sh\n\n# Or full interactive setup\n./scripts/nixos-setup.sh\n```\n\n### Documentation\n\n- [Setup Guide](docs/SETUP.md) - Comprehensive setup instructions\n- [Power Management](docs/POWER-MANAGEMENT.md) - Hardware-specific power optimization\n- [VM Support](docs/VM-SUPPORT.md) - Virtual machine configuration guide\n\n### Requirements\n\n- NixOS 23.11 or later\n- Nix with flakes enabled\n- 4GB+ RAM recommended\n- 10GB+ free disk space\nEOF\n\n# Set output for release creation\n{\n  echo 'release-notes<<EOF'\n  cat release-notes.md\n  echo 'EOF'\n} >> $GITHUB_OUTPUT\n"
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.get-version.outputs.version }}
+          name: NixOS Template ${{ steps.get-version.outputs.version }}
+          body: ${{ steps.changelog.outputs.release-notes }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          files: |
+            README.md
+            docs/*.md
+            justfile
+      - name: Update documentation
+        run: |
+          echo "Release ${{ steps.get-version.outputs.version }} created successfully!"
+          echo "Documentation and guides are available in the release assets."

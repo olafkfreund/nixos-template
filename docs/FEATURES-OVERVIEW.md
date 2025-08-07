@@ -7,10 +7,10 @@ This document provides a comprehensive overview of all features available in thi
 This template provides a **complete NixOS ecosystem** covering the entire workflow from development to deployment:
 
 1. **Develop**: Create and customize configurations
-2. **Test**: Validate in VMs on any Linux system
-3. **Package**: Build custom installer ISOs
-4. **Deploy**: Boot and install with interactive template selection
-5. **Maintain**: Update and manage configurations
+1. **Test**: Validate in VMs on any Linux system
+1. **Package**: Build custom installer ISOs
+1. **Deploy**: Boot and install with interactive template selection
+1. **Maintain**: Update and manage configurations
 
 ## 🔧 Development Features
 

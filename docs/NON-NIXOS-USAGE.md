@@ -268,9 +268,9 @@ qemu-img create -f qcow2 nixos-vm.qcow2 20G
 Use VMs for NixOS configuration development:
 
 1. **Edit configurations** on your host system
-2. **Rebuild VMs** to test changes
-3. **SSH into VMs** for testing
-4. **Iterate quickly** without affecting your host
+1. **Rebuild VMs** to test changes
+1. **SSH into VMs** for testing
+1. **Iterate quickly** without affecting your host
 
 ```bash
 # Development cycle
@@ -295,14 +295,14 @@ ssh vm-user@localhost -p 2222  # SSH into VM to test
    sudo usermod -a -G kvm,libvirt $USER
    ```
 
-2. **Nix flakes not working**:
+1. **Nix flakes not working**:
 
    ```bash
    # Ensure experimental features are enabled
    echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
    ```
 
-3. **VM won't start**:
+1. **VM won't start**:
 
    ```bash
    # Check if KVM is available
@@ -312,7 +312,7 @@ ssh vm-user@localhost -p 2222  # SSH into VM to test
    ./result/bin/run-desktop-test-vm -accel tcg
    ```
 
-4. **Build failures**:
+1. **Build failures**:
 
    ```bash
    # Check flake syntax
@@ -322,7 +322,7 @@ ssh vm-user@localhost -p 2222  # SSH into VM to test
    nix flake update
    ```
 
-5. **Out of disk space**:
+1. **Out of disk space**:
 
    ```bash
    # Clean old Nix builds
@@ -335,9 +335,9 @@ ssh vm-user@localhost -p 2222  # SSH into VM to test
 ### Performance Tips
 
 1. **Enable KVM acceleration** (much faster than emulation)
-2. **Allocate sufficient RAM** (minimum 2GB, recommend 4GB+)
-3. **Use SSD storage** for better VM performance
-4. **Close unused applications** when running VMs
+1. **Allocate sufficient RAM** (minimum 2GB, recommend 4GB+)
+1. **Use SSD storage** for better VM performance
+1. **Close unused applications** when running VMs
 
 ## Learning NixOS
 
@@ -372,9 +372,9 @@ This setup is perfect for learning NixOS:
 Once comfortable with NixOS in VMs:
 
 1. **Install NixOS** on real hardware using your tested configurations
-2. **Contribute back** improvements to this template
-3. **Create your own** NixOS configurations repository
-4. **Join the community** - NixOS Discord, Matrix, or Discourse
+1. **Contribute back** improvements to this template
+1. **Create your own** NixOS configurations repository
+1. **Join the community** - NixOS Discord, Matrix, or Discourse
 
 ## Getting Help
 

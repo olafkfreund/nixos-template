@@ -161,7 +161,7 @@ git commit --no-verify -m "commit message"
    just dev-setup
    ```
 
-2. **During Development**:
+1. **During Development**:
 
    ```bash
    # Make changes to Nix files
@@ -169,7 +169,7 @@ git commit --no-verify -m "commit message"
    just test host         # Test configuration
    ```
 
-3. **Before Committing**:
+1. **Before Committing**:
 
    ```bash
    just quality           # Comprehensive checks
@@ -177,7 +177,7 @@ git commit --no-verify -m "commit message"
    git commit             # Hooks run automatically
    ```
 
-4. **Regular Maintenance**:
+1. **Regular Maintenance**:
 
    ```bash
    just update            # Update dependencies
@@ -238,23 +238,23 @@ ERROR: pre-commit hook failed
 ### Code Quality
 
 1. **Format Early and Often**: Run `just fmt` frequently
-2. **Validate Before Committing**: Use `just validate`
-3. **Regular Security Audits**: Run `just security-audit` weekly
-4. **Keep Dependencies Updated**: Use `just update` regularly
+1. **Validate Before Committing**: Use `just validate`
+1. **Regular Security Audits**: Run `just security-audit` weekly
+1. **Keep Dependencies Updated**: Use `just update` regularly
 
 ### Development Environment
 
 1. **Use Development Shell**: Always work in `nix develop`
-2. **Install Hooks**: Set up pre-commit hooks early
-3. **Test Configurations**: Use `just test` before switching
-4. **Document Changes**: Update relevant documentation
+1. **Install Hooks**: Set up pre-commit hooks early
+1. **Test Configurations**: Use `just test` before switching
+1. **Document Changes**: Update relevant documentation
 
 ### Git Workflow
 
 1. **Small, Focused Commits**: Easier to validate and review
-2. **Meaningful Messages**: Describe what and why
-3. **Clean History**: Use interactive rebase to clean up
-4. **Pre-push Validation**: Run `just quality` before pushing
+1. **Meaningful Messages**: Describe what and why
+1. **Clean History**: Use interactive rebase to clean up
+1. **Pre-push Validation**: Run `just quality` before pushing
 
 ## Continuous Integration
 
@@ -325,13 +325,13 @@ Edit `.pre-commit-config.yaml` to add new hooks:
 When contributing to this template:
 
 1. **Follow the Quality Standards**: All code must pass `just quality`
-2. **Update Documentation**: Keep docs in sync with changes
-3. **Test Thoroughly**: Validate on multiple configurations
-4. **Use Conventional Commits**: Follow commit message conventions
+1. **Update Documentation**: Keep docs in sync with changes
+1. **Test Thoroughly**: Validate on multiple configurations
+1. **Use Conventional Commits**: Follow commit message conventions
 
 ## Getting Help
 
 1. **Check Documentation**: Start with this guide and tool docs
-2. **Run Diagnostics**: Use `just --list` to see all commands
-3. **Validate Environment**: Ensure `nix develop` works correctly
-4. **Community Resources**: NixOS Discord, Reddit, and Discourse
+1. **Run Diagnostics**: Use `just --list` to see all commands
+1. **Validate Environment**: Ensure `nix develop` works correctly
+1. **Community Resources**: NixOS Discord, Reddit, and Discourse

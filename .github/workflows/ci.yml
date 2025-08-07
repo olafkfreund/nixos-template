@@ -1,457 +1,328 @@
 name: Continuous Integration
-
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
   workflow_dispatch:
-
 jobs:
   nix-validation:
     name: Nix Code Validation
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      
-    - name: Install Nix
-      uses: cachix/install-nix-action@v25
-      with:
-        nix_path: nixpkgs=channel:nixos-unstable
-        extra_nix_config: |
-          experimental-features = nix-command flakes
-          access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
-    
-    - name: Setup Cachix
-      uses: cachix/cachix-action@v14
-      with:
-        name: nix-community
-        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-        skipPush: true
-    
-    - name: Check flake validity
-      run: |
-        echo "Checking flake validity..."
-        nix flake check --no-build --show-trace
-        
-    - name: Validate flake inputs
-      run: |
-        echo "Validating flake inputs..."
-        nix flake metadata --json | jq '.locks.nodes | keys[]' -r
-        
-    - name: Check Nix syntax
-      run: |
-        echo "Checking Nix file syntax..."
-        # Check all .nix files for syntax errors
-        find . -name "*.nix" -type f | while read -r file; do
-          echo "Checking: $file"
-          nix-instantiate --parse "$file" > /dev/null
-        done
-        
-    - name: Comprehensive template validation
-      run: |
-        echo "Running comprehensive template validation..."
-        chmod +x scripts/validate-templates.sh
-        ./scripts/validate-templates.sh standard
-        
-    - name: Check module imports
-      run: |
-        echo "Checking module imports..."
-        # Validate that all module imports resolve correctly
-        find modules -name "*.nix" -type f | while read -r module; do
-          echo "Checking module: $module"
-          nix-instantiate --eval -E "import ./$module { config = {}; lib = (import <nixpkgs> {}).lib; pkgs = import <nixpkgs> {}; }" > /dev/null || echo "WARNING: $module may have unmet dependencies"
-        done
-
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install Nix
+        uses: cachix/install-nix-action@v25
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v14
+        with:
+          name: nix-community
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+          skipPush: true
+      - name: Check flake validity
+        run: |
+          echo "Checking flake validity..."
+          nix flake check --no-build --show-trace
+      - name: Validate flake inputs
+        run: |
+          echo "Validating flake inputs..."
+          nix flake metadata --json | jq '.locks.nodes | keys[]' -r
+      - name: Check Nix syntax
+        run: |
+          echo "Checking Nix file syntax..."
+          # Check all .nix files for syntax errors
+          find . -name "*.nix" -type f | while read -r file; do
+            echo "Checking: $file"
+            nix-instantiate --parse "$file" > /dev/null
+          done
+      - name: Comprehensive template validation
+        run: |
+          echo "Running comprehensive template validation..."
+          chmod +x scripts/validate-templates.sh
+          ./scripts/validate-templates.sh standard
+      - name: Check module imports
+        run: |
+          echo "Checking module imports..."
+          # Validate that all module imports resolve correctly
+          find modules -name "*.nix" -type f | while read -r module; do
+            echo "Checking module: $module"
+            nix-instantiate --eval -E "import ./$module { config = {}; lib = (import <nixpkgs> {}).lib; pkgs = import <nixpkgs> {}; }" > /dev/null || echo "WARNING: $module may have unmet dependencies"
+          done
   code-quality:
     name: Code Quality Checks
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      
-    - name: Install Nix
-      uses: cachix/install-nix-action@v25
-      with:
-        nix_path: nixpkgs=channel:nixos-unstable
-        extra_nix_config: |
-          experimental-features = nix-command flakes
-          
-    - name: Install code quality tools
-      run: |
-        nix profile install nixpkgs#nixpkgs-fmt
-        nix profile install nixpkgs#statix
-        nix profile install nixpkgs#deadnix
-        
-    - name: Check Nix formatting
-      run: |
-        echo "Checking Nix code formatting..."
-        if ! nixpkgs-fmt --check .; then
-          echo "ERROR: Code is not properly formatted"
-          echo "Run 'nixpkgs-fmt .' to fix formatting issues"
-          exit 1
-        fi
-        echo "✓ All Nix files are properly formatted"
-        
-    - name: Run statix linter
-      run: |
-        echo "Running statix linter..."
-        if ! statix check .; then
-          echo "⚠️ Statix found some warnings (non-critical)"
-          echo "Note: These are code quality suggestions, not errors"
-        else
-          echo "✓ Statix linting passed"
-        fi
-        
-    - name: Check for dead code
-      run: |
-        echo "Checking for dead code..."
-        if ! deadnix --fail . 2>/dev/null; then
-          echo "⚠️ Deadnix found unused code (non-critical)"
-          echo "Note: This includes unused function parameters which may be intentional"
-          echo "Running without --fail to show warnings only..."
-          deadnix . || true
-        else
-          echo "✓ No dead code detected"
-        fi
-        
-    - name: Validate justfile syntax
-      run: |
-        # Install just
-        nix profile install nixpkgs#just
-        echo "Validating justfile syntax..."
-        just --list > /dev/null
-        echo "✓ Justfile syntax is valid"
-
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install Nix
+        uses: cachix/install-nix-action@v25
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+      - name: Install code quality tools
+        run: |
+          nix profile install nixpkgs#nixpkgs-fmt
+          nix profile install nixpkgs#statix
+          nix profile install nixpkgs#deadnix
+      - name: Check Nix formatting
+        run: |
+          echo "Checking Nix code formatting..."
+          if ! nixpkgs-fmt --check .; then
+            echo "ERROR: Code is not properly formatted"
+            echo "Run 'nixpkgs-fmt .' to fix formatting issues"
+            exit 1
+          fi
+          echo "✓ All Nix files are properly formatted"
+      - name: Run statix linter
+        run: |
+          echo "Running statix linter..."
+          if ! statix check .; then
+            echo "⚠️ Statix found some warnings (non-critical)"
+            echo "Note: These are code quality suggestions, not errors"
+          else
+            echo "✓ Statix linting passed"
+          fi
+      - name: Check for dead code
+        run: |
+          echo "Checking for dead code..."
+          if ! deadnix --fail . 2>/dev/null; then
+            echo "⚠️ Deadnix found unused code (non-critical)"
+            echo "Note: This includes unused function parameters which may be intentional"
+            echo "Running without --fail to show warnings only..."
+            deadnix . || true
+          else
+            echo "✓ No dead code detected"
+          fi
+      - name: Validate justfile syntax
+        run: |
+          # Install just
+          nix profile install nixpkgs#just
+          echo "Validating justfile syntax..."
+          just --list > /dev/null
+          echo "✓ Justfile syntax is valid"
   shell-validation:
     name: Shell Script Validation
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      
-    - name: Install shellcheck
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y shellcheck
-        
-    - name: Run shellcheck on all scripts
-      run: |
-        echo "Running shellcheck on shell scripts..."
-        
-        # Find all shell scripts
-        find . -name "*.sh" -type f | while read -r script; do
-          echo "Checking: $script"
-          shellcheck -e SC1091 -e SC2034 -e SC2086 "$script"
-        done
-        
-        # Check scripts without .sh extension that have bash shebang
-        find . -type f -executable -exec grep -l '^#!/.*bash' {} \; | while read -r script; do
-          if [[ ! "$script" =~ \.sh$ ]]; then
-            echo "Checking executable script: $script"
-            shellcheck -e SC1091 -e SC2034 -e SC2086 "$script"
-          fi
-        done
-        
-        echo "✓ All shell scripts passed shellcheck"
-        
-    - name: Validate script executability
-      run: |
-        echo "Checking script executability..."
-        
-        # Check that all .sh files in scripts/ are executable
-        find scripts/ -name "*.sh" -type f | while read -r script; do
-          if [ ! -x "$script" ]; then
-            echo "ERROR: Script $script is not executable"
-            exit 1
-          fi
-        done
-        
-        echo "✓ All scripts in scripts/ directory are executable"
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install shellcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+      - name: Run shellcheck on all scripts
+        run: |
+          echo "Running shellcheck on shell scripts..."
 
+          # Find all shell scripts
+          find . -name "*.sh" -type f | while read -r script; do
+            echo "Checking: $script"
+            shellcheck -e SC1091 -e SC2034 -e SC2086 "$script"
+          done
+
+          # Check scripts without .sh extension that have bash shebang
+          find . -type f -executable -exec grep -l '^#!/.*bash' {} \; | while read -r script; do
+            if [[ ! "$script" =~ \.sh$ ]]; then
+              echo "Checking executable script: $script"
+              shellcheck -e SC1091 -e SC2034 -e SC2086 "$script"
+            fi
+          done
+
+          echo "✓ All shell scripts passed shellcheck"
+      - name: Validate script executability
+        run: |
+          echo "Checking script executability..."
+
+          # Check that all .sh files in scripts/ are executable
+          find scripts/ -name "*.sh" -type f | while read -r script; do
+            if [ ! -x "$script" ]; then
+              echo "ERROR: Script $script is not executable"
+              exit 1
+            fi
+          done
+
+          echo "✓ All scripts in scripts/ directory are executable"
   documentation:
     name: Documentation Validation
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        
-    - name: Install markdown linter
-      run: |
-        npm install -g markdownlint-cli2
-        
-    - name: Lint markdown files
-      run: |
-        echo "Linting markdown files..."
-        # Create markdownlint config
-        cat > .markdownlint.json << 'EOF'
-        {
-          "MD013": { "line_length": 120 },
-          "MD033": false,
-          "MD041": false,
-          "MD046": { "style": "fenced" }
-        }
-        EOF
-        
-        if ! markdownlint-cli2 "**/*.md" "#node_modules" "#.git"; then
-          echo "⚠️ Markdown linting found formatting issues (non-critical)"
-          echo "Note: These are mostly line length suggestions for readability"
-        else
-          echo "✓ Markdown linting passed"
-        fi
-        
-    - name: Check for broken links
-      run: |
-        echo "Checking for broken internal links..."
-        
-        # Simple check for internal file references
-        grep -r "\[.*\](\./\|docs/\|modules/\|hosts/\|scripts/" --include="*.md" . | while read -r line; do
-          file=$(echo "$line" | cut -d: -f1)
-          link=$(echo "$line" | grep -o '(\./[^)]*\|docs/[^)]*\|modules/[^)]*\|hosts/[^)]*\|scripts/[^)]*' | sed 's/^(//')
-          
-          if [ -n "$link" ] && [ ! -f "$link" ] && [ ! -d "$link" ]; then
-            echo "WARNING: Broken link in $file: $link"
-          fi
-        done
-        
-        echo "✓ Internal link check completed"
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install markdown linter
+        run: |
+          npm install -g markdownlint-cli2
+      - name: Lint markdown files
+        run: |
+          echo "Linting markdown files..."
+          # Create markdownlint config
+          cat > .markdownlint.json << 'EOF'
+          {
+            "MD013": { "line_length": 120 },
+            "MD033": false,
+            "MD041": false,
+            "MD046": { "style": "fenced" }
+          }
+          EOF
 
+          if ! markdownlint-cli2 "**/*.md" "#node_modules" "#.git"; then
+            echo "⚠️ Markdown linting found formatting issues (non-critical)"
+            echo "Note: These are mostly line length suggestions for readability"
+          else
+            echo "✓ Markdown linting passed"
+          fi
+      - name: Check for broken links
+        run: "echo \"Checking for broken internal links...\"\n\n# Simple check for internal file references\ngrep -r \"\\[.*\\](\\./\\|docs/\\|modules/\\|hosts/\\|scripts/\" --include=\"*.md\" . | while read -r line; do\n  file=$(echo \"$line\" | cut -d: -f1)\n  link=$(echo \"$line\" | grep -o '(\\./[^)]*\\|docs/[^)]*\\|modules/[^)]*\\|hosts/[^)]*\\|scripts/[^)]*' | sed 's/^(//')\n  \n  if [ -n \"$link\" ] && [ ! -f \"$link\" ] && [ ! -d \"$link\" ]; then\n    echo \"WARNING: Broken link in $file: $link\"\n  fi\ndone\n\necho \"✓ Internal link check completed\"\n"
   template-validation:
     name: Template Validation
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      
-    - name: Install Nix
-      uses: cachix/install-nix-action@v25
-      with:
-        nix_path: nixpkgs=channel:nixos-unstable
-        extra_nix_config: |
-          experimental-features = nix-command flakes
-          
-    - name: Validate host templates
-      run: |
-        echo "Validating host templates..."
-        
-        # Check that all template directories have required files
-        for template in hosts/*-template/; do
-          if [ -d "$template" ]; then
-            template_name=$(basename "$template")
-            echo "Validating template: $template_name"
-            
-            # Check required files exist
-            if [ ! -f "$template/configuration.nix" ]; then
-              echo "ERROR: Missing configuration.nix in $template_name"
-              exit 1
-            fi
-            
-            if [ ! -f "$template/home.nix" ]; then
-              echo "ERROR: Missing home.nix in $template_name"
-              exit 1
-            fi
-            
-            echo "✓ $template_name has required files"
-          fi
-        done
-        
-    - name: Validate user templates
-      run: |
-        echo "Validating user templates..."
-        
-        # Check that user templates exist and are valid
-        for user_template in home/users/*.nix; do
-          if [ -f "$user_template" ]; then
-            template_name=$(basename "$user_template" .nix)
-            echo "Validating user template: $template_name"
-            
-            # Basic syntax check
-            nix-instantiate --parse "$user_template" > /dev/null
-            echo "✓ $template_name syntax is valid"
-          fi
-        done
-        
-    - name: Test script functionality
-      run: |
-        echo "Testing script functionality..."
-        
-        # Test that scripts can run help/info commands without errors
-        if [ -x scripts/detect-vm.sh ]; then
-          ./scripts/detect-vm.sh --help || echo "WARNING: detect-vm.sh help failed"
-        fi
-        
-        if [ -x scripts/detect-hardware.sh ]; then
-          ./scripts/detect-hardware.sh help || echo "WARNING: detect-hardware.sh help failed"
-        fi
-        
-        # Test prerequisites check (dry run)
-        if [ -x scripts/check-prerequisites.sh ]; then
-          echo "Testing prerequisites check script structure..."
-          # Just check that the script has the expected functions
-          grep -q "check_nixos" scripts/check-prerequisites.sh || echo "WARNING: check_nixos function missing"
-          grep -q "check_hardware_type" scripts/check-prerequisites.sh || echo "WARNING: check_hardware_type function missing"
-        fi
-        
-        echo "✓ Script functionality tests completed"
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install Nix
+        uses: cachix/install-nix-action@v25
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+      - name: Validate host templates
+        run: "echo \"Validating host templates...\"\n\n# Check that all template directories have required files\nfor template in hosts/*-template/; do\n  if [ -d \"$template\" ]; then\n    template_name=$(basename \"$template\")\n    echo \"Validating template: $template_name\"\n    \n    # Check required files exist\n    if [ ! -f \"$template/configuration.nix\" ]; then\n      echo \"ERROR: Missing configuration.nix in $template_name\"\n      exit 1\n    fi\n    \n    if [ ! -f \"$template/home.nix\" ]; then\n      echo \"ERROR: Missing home.nix in $template_name\"\n      exit 1\n    fi\n    \n    echo \"✓ $template_name has required files\"\n  fi\ndone\n"
+      - name: Validate user templates
+        run: "echo \"Validating user templates...\"\n\n# Check that user templates exist and are valid\nfor user_template in home/users/*.nix; do\n  if [ -f \"$user_template\" ]; then\n    template_name=$(basename \"$user_template\" .nix)\n    echo \"Validating user template: $template_name\"\n    \n    # Basic syntax check\n    nix-instantiate --parse \"$user_template\" > /dev/null\n    echo \"✓ $template_name syntax is valid\"\n  fi\ndone\n"
+      - name: Test script functionality
+        run: |
+          echo "Testing script functionality..."
 
+          # Test that scripts can run help/info commands without errors
+          if [ -x scripts/detect-vm.sh ]; then
+            ./scripts/detect-vm.sh --help || echo "WARNING: detect-vm.sh help failed"
+          fi
+
+          if [ -x scripts/detect-hardware.sh ]; then
+            ./scripts/detect-hardware.sh help || echo "WARNING: detect-hardware.sh help failed"
+          fi
+
+          # Test prerequisites check (dry run)
+          if [ -x scripts/check-prerequisites.sh ]; then
+            echo "Testing prerequisites check script structure..."
+            # Just check that the script has the expected functions
+            grep -q "check_nixos" scripts/check-prerequisites.sh || echo "WARNING: check_nixos function missing"
+            grep -q "check_hardware_type" scripts/check-prerequisites.sh || echo "WARNING: check_hardware_type function missing"
+          fi
+
+          echo "✓ Script functionality tests completed"
   security-scan:
     name: Security Scan
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      
-    - name: Run security scan
-      run: |
-        echo "Running security scan..."
-        
-        # Check for common security issues in scripts
-        echo "Checking for potential security issues..."
-        
-        # Look for potentially dangerous patterns
-        if grep -r "eval.*\$" --include="*.sh" --include="*.nix" .; then
-          echo "WARNING: Found 'eval' with variable expansion - review for security"
-        fi
-        
-        if grep -r "rm -rf \/" --include="*.sh" .; then
-          echo "ERROR: Found dangerous rm command"
-          exit 1
-        fi
-        
-        # Check for hardcoded secrets (basic patterns)
-        if grep -rE "(password|secret|key|token).*=" --include="*.nix" --include="*.sh" . | grep -v "example\|template\|placeholder\|CHANGE"; then
-          echo "WARNING: Potential hardcoded secrets found - review carefully"
-        fi
-        
-        echo "✓ Basic security scan completed"
-        
-    - name: Check file permissions
-      run: |
-        echo "Checking file permissions..."
-        
-        # Check that sensitive files don't have overly permissive permissions
-        find . -name "*.sh" -perm /o+w -exec echo "WARNING: World-writable script: {}" \;
-        find . -name "*.nix" -perm /o+w -exec echo "WARNING: World-writable config: {}" \;
-        
-        echo "✓ File permissions check completed"
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Run security scan
+        run: |
+          echo "Running security scan..."
 
+          # Check for common security issues in scripts
+          echo "Checking for potential security issues..."
+
+          # Look for potentially dangerous patterns
+          if grep -r "eval.*\$" --include="*.sh" --include="*.nix" .; then
+            echo "WARNING: Found 'eval' with variable expansion - review for security"
+          fi
+
+          if grep -r "rm -rf \/" --include="*.sh" .; then
+            echo "ERROR: Found dangerous rm command"
+            exit 1
+          fi
+
+          # Check for hardcoded secrets (basic patterns)
+          if grep -rE "(password|secret|key|token).*=" --include="*.nix" --include="*.sh" . | grep -v "example\|template\|placeholder\|CHANGE"; then
+            echo "WARNING: Potential hardcoded secrets found - review carefully"
+          fi
+
+          echo "✓ Basic security scan completed"
+      - name: Check file permissions
+        run: |
+          echo "Checking file permissions..."
+
+          # Check that sensitive files don't have overly permissive permissions
+          find . -name "*.sh" -perm /o+w -exec echo "WARNING: World-writable script: {}" \;
+          find . -name "*.nix" -perm /o+w -exec echo "WARNING: World-writable config: {}" \;
+
+          echo "✓ File permissions check completed"
   integration-test:
     name: Integration Test
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      
-    - name: Install Nix
-      uses: cachix/install-nix-action@v25
-      with:
-        nix_path: nixpkgs=channel:nixos-unstable
-        extra_nix_config: |
-          experimental-features = nix-command flakes
-          
-    - name: Test flake evaluation
-      run: |
-        echo "Testing flake evaluation..."
-        
-        # Test that the flake can be evaluated
-        nix eval .#packages.x86_64-linux --apply 'builtins.attrNames' > /dev/null || echo "No packages defined (ok)"
-        
-        # Test development shell
-        nix develop --command echo "Development shell works"
-        
-        echo "✓ Flake evaluation tests passed"
-        
-    - name: Test justfile commands
-      run: |
-        echo "Testing justfile commands..."
-        
-        # Install just and test safe commands
-        nix profile install nixpkgs#just
-        
-        # Test that justfile lists commands
-        just --list > /dev/null
-        
-        # Test format check (should not modify files in CI)
-        just format-check || echo "Note: Format check failed - this is expected if code needs formatting"
-        
-        echo "✓ Justfile integration tests completed"
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install Nix
+        uses: cachix/install-nix-action@v25
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+      - name: Test flake evaluation
+        run: |
+          echo "Testing flake evaluation..."
 
+          # Test that the flake can be evaluated
+          nix eval .#packages.x86_64-linux --apply 'builtins.attrNames' > /dev/null || echo "No packages defined (ok)"
+
+          # Test development shell
+          nix develop --command echo "Development shell works"
+
+          echo "✓ Flake evaluation tests passed"
+      - name: Test justfile commands
+        run: |
+          echo "Testing justfile commands..."
+
+          # Install just and test safe commands
+          nix profile install nixpkgs#just
+
+          # Test that justfile lists commands
+          just --list > /dev/null
+
+          # Test format check (should not modify files in CI)
+          just format-check || echo "Note: Format check failed - this is expected if code needs formatting"
+
+          echo "✓ Justfile integration tests completed"
   pre-commit:
     name: Pre-commit Hooks
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      
-    - name: Install Nix
-      uses: cachix/install-nix-action@v25
-      with:
-        nix_path: nixpkgs=channel:nixos-unstable
-        extra_nix_config: |
-          experimental-features = nix-command flakes
-          
-    - name: Setup pre-commit environment
-      run: |
-        nix profile install nixpkgs#pre-commit
-        nix profile install nixpkgs#nixpkgs-fmt
-        nix profile install nixpkgs#statix
-        nix profile install nixpkgs#deadnix
-        
-    - name: Create pre-commit config
-      run: |
-        cat > .pre-commit-config.yaml << 'EOF'
-        repos:
-        - repo: local
-          hooks:
-          - id: nixpkgs-fmt
-            name: nixpkgs-fmt
-            entry: nixpkgs-fmt
-            language: system
-            files: '\.nix$'
-            
-          - id: statix
-            name: statix
-            entry: statix check
-            language: system
-            files: '\.nix$'
-            pass_filenames: false
-            
-          - id: deadnix
-            name: deadnix
-            entry: deadnix --fail
-            language: system
-            files: '\.nix$'
-            pass_filenames: false
-            
-          - id: shellcheck
-            name: shellcheck
-            entry: shellcheck
-            language: system
-            files: '\.sh$'
-            args: [-e, SC1091, -e, SC2034, -e, SC2086]
-        EOF
-        
-    - name: Run pre-commit on all files
-      run: |
-        echo "Running pre-commit hooks on all files..."
-        if ! pre-commit run --all-files; then
-          echo "⚠️ Pre-commit checks found some issues (non-critical)"
-          echo "Note: These are mostly code quality suggestions"
-          echo "The code works fine despite these warnings"
-        else
-          echo "✓ All pre-commit hooks passed"
-        fi
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install Nix
+        uses: cachix/install-nix-action@v25
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+      - name: Setup pre-commit environment
+        run: |
+          nix profile install nixpkgs#pre-commit
+          nix profile install nixpkgs#nixpkgs-fmt
+          nix profile install nixpkgs#statix
+          nix profile install nixpkgs#deadnix
+      - name: Create pre-commit config
+        run: "cat > .pre-commit-config.yaml << 'EOF'\nrepos:\n- repo: local\n  hooks:\n  - id: nixpkgs-fmt\n    name: nixpkgs-fmt\n    entry: nixpkgs-fmt\n    language: system\n    files: '\\.nix$'\n    \n  - id: statix\n    name: statix\n    entry: statix check\n    language: system\n    files: '\\.nix$'\n    pass_filenames: false\n    \n  - id: deadnix\n    name: deadnix\n    entry: deadnix --fail\n    language: system\n    files: '\\.nix$'\n    pass_filenames: false\n    \n  - id: shellcheck\n    name: shellcheck\n    entry: shellcheck\n    language: system\n    files: '\\.sh$'\n    args: [-e, SC1091, -e, SC2034, -e, SC2086]\nEOF\n"
+      - name: Run pre-commit on all files
+        run: |
+          echo "Running pre-commit hooks on all files..."
+          if ! pre-commit run --all-files; then
+            echo "⚠️ Pre-commit checks found some issues (non-critical)"
+            echo "Note: These are mostly code quality suggestions"
+            echo "The code works fine despite these warnings"
+          else
+            echo "✓ All pre-commit hooks passed"
+          fi

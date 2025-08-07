@@ -399,17 +399,17 @@ nnoremap <leader>vq :!just validate-templates-quick<CR>
 For **daily development**:
 
 1. Quick syntax check: `just validate-templates-quick`
-2. Pre-commit validation: automatic via git hooks
+1. Pre-commit validation: automatic via git hooks
 
 For **feature completion**:
 
 1. Standard validation: `just validate-templates`
-2. CI validation: automatic on push
+1. CI validation: automatic on push
 
 For **releases**:
 
 1. Full validation: `just validate-templates-full`
-2. Manual VM testing for critical templates
-3. Release preparation: `just prepare-release`
+1. Manual VM testing for critical templates
+1. Release preparation: `just prepare-release`
 
 This multi-layered validation approach ensures code quality while balancing speed and thoroughness based on the development stage.

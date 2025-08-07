@@ -348,19 +348,19 @@ git tag --list | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$'
    just dev-setup
    ```
 
-2. **Make Changes**
+1. **Make Changes**
    - Edit configuration files
    - Add new features
    - Update documentation
 
-3. **Validate Changes**
+1. **Validate Changes**
 
    ```bash
    just validate
    just test
    ```
 
-4. **Commit Changes**
+1. **Commit Changes**
 
    ```bash
    git add .
@@ -368,7 +368,7 @@ git tag --list | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$'
    # Pre-commit hooks run automatically
    ```
 
-5. **Push Changes**
+1. **Push Changes**
 
    ```bash
    git push origin feature-branch
@@ -383,13 +383,13 @@ git tag --list | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$'
    just prepare-release v1.0.0
    ```
 
-2. **Push Tag**
+1. **Push Tag**
 
    ```bash
    git push origin v1.0.0
    ```
 
-3. **Automated Release**
+1. **Automated Release**
    - GitHub Actions creates release
    - Changelog generated automatically
    - Documentation assets included

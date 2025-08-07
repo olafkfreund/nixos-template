@@ -424,7 +424,7 @@ Automatically installed based on GPU type:
 ## Getting Help
 
 1. Check system logs: `journalctl -u gpu-detection`
-2. Verify hardware detection: `lspci | grep -i gpu`
-3. Test GPU functionality with appropriate tools
-4. Review module configuration in your host config
-5. Check NixOS hardware database for your specific GPU
+1. Verify hardware detection: `lspci | grep -i gpu`
+1. Test GPU functionality with appropriate tools
+1. Review module configuration in your host config
+1. Check NixOS hardware database for your specific GPU

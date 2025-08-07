@@ -71,7 +71,7 @@ Minimal interaction setup with sensible defaults:
 #### Features
 
 - Automatic VM type detection (QEMU, VirtualBox, VMware, Hyper-V)
-- Memory-based desktop recommendation (XFCE for <4GB, GNOME for >8GB)
+- Memory-based desktop recommendation (XFCE for \<4GB, GNOME for >8GB)
 - Hardware configuration generation
 - Basic development tools inclusion
 - SSH server setup with secure defaults
@@ -129,7 +129,7 @@ Specialized script for virtual machine environments:
    - Boot from USB/DVD
    - Connect to internet
 
-2. **Partition and Format Disks**
+1. **Partition and Format Disks**
 
    ```bash
    # Example for UEFI systems
@@ -146,7 +146,7 @@ Specialized script for virtual machine environments:
    sudo mount /dev/disk/by-label/boot /mnt/boot
    ```
 
-3. **Setup Template**
+1. **Setup Template**
 
    ```bash
    cd /mnt
@@ -156,7 +156,7 @@ Specialized script for virtual machine environments:
    sudo ./scripts/nixos-setup.sh
    ```
 
-4. **Install NixOS**
+1. **Install NixOS**
 
    ```bash
    # The setup script will guide you through installation
@@ -172,13 +172,13 @@ Specialized script for virtual machine environments:
    cd ~/.config/nixos-template
    ```
 
-2. **Check Prerequisites**
+1. **Check Prerequisites**
 
    ```bash
    ./scripts/check-prerequisites.sh
    ```
 
-3. **Run Setup**
+1. **Run Setup**
 
    ```bash
    # Quick setup
@@ -188,7 +188,7 @@ Specialized script for virtual machine environments:
    ./scripts/nixos-setup.sh
    ```
 
-4. **Apply Configuration**
+1. **Apply Configuration**
 
    ```bash
    # Generated configuration will be tested and applied automatically
@@ -349,20 +349,20 @@ cat /sys/class/dmi/id/product_name
    journalctl -xeu nixos-rebuild
    ```
 
-2. **Validate Configuration**
+1. **Validate Configuration**
 
    ```bash
    just validate
    nixos-rebuild dry-run --flake .#hostname
    ```
 
-3. **Test Without Applying**
+1. **Test Without Applying**
 
    ```bash
    just test hostname
    ```
 
-4. **Restore Previous Generation**
+1. **Restore Previous Generation**
 
    ```bash
    sudo nixos-rebuild switch --rollback
@@ -378,12 +378,12 @@ If automated setup doesn't meet your needs:
    cp -r hosts/example-desktop hosts/my-host
    ```
 
-2. **Customize Configuration**
+1. **Customize Configuration**
    - Edit `hosts/my-host/configuration.nix`
    - Update `hosts/my-host/home.nix`
    - Generate hardware config: `sudo nixos-generate-config --show-hardware-config > hosts/my-host/hardware-configuration.nix`
 
-3. **Add to Flake**
+1. **Add to Flake**
 
    ```nix
    # In flake.nix
@@ -394,7 +394,7 @@ If automated setup doesn't meet your needs:
    };
    ```
 
-4. **Build and Switch**
+1. **Build and Switch**
 
    ```bash
    just switch my-host
@@ -409,19 +409,19 @@ After successful setup:
    - Modify applications and settings
    - Add custom modules
 
-2. **Learn NixOS**
+1. **Learn NixOS**
    - Read the NixOS manual: <https://nixos.org/manual/nixos/stable/>
    - Explore Nix language: <https://nix.dev/>
    - Join the community: <https://discourse.nixos.org/>
 
-3. **Keep Updated**
+1. **Keep Updated**
 
    ```bash
    just update        # Update flake inputs
    just switch        # Apply updates
    ```
 
-4. **Backup Your Configuration**
+1. **Backup Your Configuration**
    - Commit changes to git
    - Consider hosting on GitHub/GitLab
    - Document custom modifications

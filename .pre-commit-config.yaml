@@ -1,105 +1,88 @@
 repos:
-- repo: local
-  hooks:
-  - id: nixpkgs-fmt
-    name: Format Nix files
-    entry: nixpkgs-fmt
-    language: system
-    files: '\.nix$'
-    description: Format Nix files using nixpkgs-fmt
-    
-  - id: statix
-    name: Lint Nix files
-    entry: statix check
-    language: system
-    files: '\.nix$'
-    pass_filenames: false
-    description: Lint Nix files for common issues
-    
-  - id: deadnix
-    name: Check for dead Nix code
-    entry: deadnix --fail
-    language: system
-    files: '\.nix$'
-    pass_filenames: false
-    description: Check for dead/unused Nix code
-    
-  - id: shellcheck
-    name: Lint shell scripts
-    entry: shellcheck
-    language: system
-    files: '\.sh$'
-    args: [-e, SC1091, -e, SC2034, -e, SC2086]
-    description: Lint shell scripts with shellcheck
-    
-  - id: shfmt
-    name: Format shell scripts
-    entry: shfmt
-    language: system
-    files: '\.sh$'
-    args: [-w, -i, '2', -bn, -ci]
-    description: Format shell scripts with shfmt
-
-- repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.5.0
-  hooks:
-  - id: trailing-whitespace
-    description: Remove trailing whitespace
-    
-  - id: end-of-file-fixer
-    description: Ensure files end with newline
-    
-  - id: check-merge-conflict
-    description: Check for merge conflict markers
-    
-  - id: check-yaml
-    description: Validate YAML files
-    
-  - id: check-json
-    description: Validate JSON files
-    
-  - id: check-toml
-    description: Validate TOML files
-    
-  - id: mixed-line-ending
-    description: Check for mixed line endings
-    
-  - id: check-executables-have-shebangs
-    description: Ensure executables have shebangs
-    
-  - id: check-shebang-scripts-are-executable
-    description: Ensure shebang scripts are executable
-
-- repo: https://github.com/igorshubovych/markdownlint-cli
-  rev: v0.38.0
-  hooks:
-  - id: markdownlint
-    name: Lint Markdown files
-    args: [--fix, --config, .markdownlint.json]
-    description: Lint and fix Markdown files
-
-- repo: https://github.com/pre-commit/mirrors-prettier
-  rev: v4.0.0-alpha.8
-  hooks:
-  - id: prettier
-    name: Format files with Prettier
-    types_or: [json, yaml, markdown]
-    description: Format JSON, YAML, and Markdown files
-
-- repo: local
-  hooks:
-  - id: flake-check
-    name: Check Nix flake
-    entry: nix flake check --no-build
-    language: system
-    files: 'flake\.(nix|lock)$'
-    pass_filenames: false
-    description: Validate Nix flake configuration
-    
-  - id: just-validate
-    name: Validate justfile
-    entry: just --list
-    language: system
-    files: 'justfile$'
-    pass_filenames: false
-    description: Validate justfile syntax
+  - repo: local
+    hooks:
+      - id: nixpkgs-fmt
+        name: Format Nix files
+        entry: nixpkgs-fmt
+        language: system
+        files: '\.nix$'
+        description: Format Nix files using nixpkgs-fmt
+      - id: statix
+        name: Lint Nix files
+        entry: statix check
+        language: system
+        files: '\.nix$'
+        pass_filenames: false
+        description: Lint Nix files for common issues
+      - id: deadnix
+        name: Check for dead Nix code
+        entry: deadnix --fail
+        language: system
+        files: '\.nix$'
+        pass_filenames: false
+        description: Check for dead/unused Nix code
+      - id: shellcheck
+        name: Lint shell scripts
+        entry: shellcheck
+        language: system
+        files: '\.sh$'
+        args: [-e, SC1091, -e, SC2034, -e, SC2086]
+        description: Lint shell scripts with shellcheck
+      - id: shfmt
+        name: Format shell scripts
+        entry: shfmt
+        language: system
+        files: '\.sh$'
+        args: [-w, -i, "2", -bn, -ci]
+        description: Format shell scripts with shfmt
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        description: Remove trailing whitespace
+      - id: end-of-file-fixer
+        description: Ensure files end with newline
+      - id: check-merge-conflict
+        description: Check for merge conflict markers
+      - id: check-yaml
+        description: Validate YAML files
+      - id: check-json
+        description: Validate JSON files
+      - id: check-toml
+        description: Validate TOML files
+      - id: mixed-line-ending
+        description: Check for mixed line endings
+      - id: check-executables-have-shebangs
+        description: Ensure executables have shebangs
+      - id: check-shebang-scripts-are-executable
+        description: Ensure shebang scripts are executable
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.38.0
+    hooks:
+      - id: markdownlint
+        name: Lint Markdown files
+        args: [--fix, --config, .markdownlint.json]
+        description: Lint and fix Markdown files
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        name: Format files with Prettier
+        types_or: [json, yaml, markdown]
+        description: Format JSON, YAML, and Markdown files
+  - repo: local
+    hooks:
+      - id: flake-check
+        name: Check Nix flake
+        entry: nix flake check --no-build
+        language: system
+        files: 'flake\.(nix|lock)$'
+        pass_filenames: false
+        description: Validate Nix flake configuration
+      - id: just-validate
+        name: Validate justfile
+        entry: just --list
+        language: system
+        files: "justfile$"
+        pass_filenames: false
+        description: Validate justfile syntax

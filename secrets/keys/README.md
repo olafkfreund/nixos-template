@@ -100,7 +100,7 @@ in
 ## Security Notes
 
 1. **Public Key Distribution**: Public keys can be safely committed to git
-2. **Private Key Security**: Never commit private keys to version control
-3. **Key Rotation**: Regularly rotate keys and re-encrypt secrets
-4. **Access Control**: Only include necessary keys for each secret
-5. **Backup**: Maintain secure backups of private keys
+1. **Private Key Security**: Never commit private keys to version control
+1. **Key Rotation**: Regularly rotate keys and re-encrypt secrets
+1. **Access Control**: Only include necessary keys for each secret
+1. **Backup**: Maintain secure backups of private keys

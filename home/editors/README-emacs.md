@@ -60,11 +60,11 @@ imports = [
    emacs
    ```
 
-2. **Install all-the-icons fonts** (required for UI):
+1. **Install all-the-icons fonts** (required for UI):
    - Run `M-x all-the-icons-install-fonts` in Emacs
    - Or manually install from the system
 
-3. **LSP Servers**: Language servers are automatically installed via Nix
+1. **LSP Servers**: Language servers are automatically installed via Nix
 
 ### Basic Usage
 
@@ -285,20 +285,20 @@ M-x all-the-icons-install-fonts
 **LSP not working**:
 
 1. Check if language server is installed: `which rust-analyzer`
-2. Restart LSP: `M-x lsp-workspace-restart`
-3. Check LSP logs: `M-x lsp-workspace-show-log`
+1. Restart LSP: `M-x lsp-workspace-restart`
+1. Check LSP logs: `M-x lsp-workspace-show-log`
 
 **Slow startup**:
 
 1. Check package loading: `M-x emacs-init-time`
-2. Profile startup: `emacs --debug-init`
-3. Consider daemon mode
+1. Profile startup: `emacs --debug-init`
+1. Consider daemon mode
 
 **Completion not working**:
 
 1. Check if company-mode is enabled: `M-x company-mode`
-2. Force completion: `M-x company-complete`
-3. Check company backends: `M-x company-diag`
+1. Force completion: `M-x company-complete`
+1. Check company backends: `M-x company-diag`
 
 ### Performance Issues
 
@@ -311,7 +311,7 @@ M-x all-the-icons-install-fonts
    (setq lsp-enable-folding nil)
    ```
 
-2. Reduce UI updates:
+1. Reduce UI updates:
 
    ```elisp
    (setq lsp-ui-sideline-enable nil)
@@ -349,9 +349,9 @@ M-x describe-variable RET user-init-file
 The configuration integrates with NixOS/Home Manager by:
 
 1. **Declarative packages**: All packages defined in Nix
-2. **Language servers**: Installed via Nix packages
-3. **System fonts**: Available system-wide
-4. **Desktop integration**: Proper MIME type associations
+1. **Language servers**: Installed via Nix packages
+1. **System fonts**: Available system-wide
+1. **Desktop integration**: Proper MIME type associations
 
 ### Updating Configuration
 
@@ -361,19 +361,19 @@ The configuration integrates with NixOS/Home Manager by:
    $EDITOR home/editors/emacs.nix
    ```
 
-2. **Test changes**:
+1. **Test changes**:
 
    ```bash
    just test hostname
    ```
 
-3. **Apply changes**:
+1. **Apply changes**:
 
    ```bash
    just switch hostname
    ```
 
-4. **Restart Emacs** to load new configuration
+1. **Restart Emacs** to load new configuration
 
 ### Version Management
 
@@ -413,10 +413,10 @@ programs.emacs = {
 To contribute improvements to this configuration:
 
 1. **Test thoroughly** on multiple systems
-2. **Document changes** in this README
-3. **Follow Nix conventions** for package management
-4. **Maintain backward compatibility** where possible
-5. **Add appropriate comments** to elisp code
+1. **Document changes** in this README
+1. **Follow Nix conventions** for package management
+1. **Maintain backward compatibility** where possible
+1. **Add appropriate comments** to elisp code
 
 ## Migration from Other Configs
 
