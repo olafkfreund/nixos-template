@@ -21,13 +21,13 @@ in
             default = 10;
             description = "VM swappiness value (0-100, lower = less swap usage)";
           };
-          
+
           cacheOptimization = mkOption {
             type = types.bool;
             default = true;
             description = "Enable file system cache optimizations";
           };
-          
+
           hugepages = mkOption {
             type = types.bool;
             default = false;
@@ -47,13 +47,13 @@ in
             default = true;
             description = "Enable filesystem mount optimizations for WSL2";
           };
-          
+
           tmpfsSize = mkOption {
             type = types.str;
             default = "2G";
             description = "Size limit for /tmp tmpfs";
           };
-          
+
           noCOW = mkOption {
             type = types.bool;
             default = true;
@@ -73,7 +73,7 @@ in
             default = true;
             description = "Disable services not needed in WSL2";
           };
-          
+
           optimizeSystemd = mkOption {
             type = types.bool;
             default = true;
@@ -93,7 +93,7 @@ in
             default = true;
             description = "Enable fast build optimizations for development";
           };
-          
+
           cacheNix = mkOption {
             type = types.bool;
             default = true;
@@ -126,8 +126,8 @@ in
 
       # Hugepages configuration
       (mkIf cfg.memory.hugepages {
-        "vm.nr_hugepages" = 0;  # Let system decide
-        "kernel.shmmax" = 68719476736;  # 64GB
+        "vm.nr_hugepages" = 0; # Let system decide
+        "kernel.shmmax" = 68719476736; # 64GB
       })
 
       # WSL2-specific kernel optimizations (additional)
@@ -135,10 +135,10 @@ in
         # Scheduler optimizations for WSL2
         "kernel.sched_migration_cost_ns" = 5000000;
         "kernel.sched_autogroup_enabled" = 1;
-        
+
         # I/O scheduler optimizations
-        "vm.page-cluster" = 0;  # Disable page clustering for better latency
-        
+        "vm.page-cluster" = 0; # Disable page clustering for better latency
+
         # Network optimizations (already covered in networking.nix, but ensuring key ones)
         "net.core.default_qdisc" = "fq";
         "net.ipv4.tcp_congestion_control" = "bbr";
@@ -152,12 +152,12 @@ in
         "/tmp" = {
           device = "tmpfs";
           fsType = "tmpfs";
-          options = [ 
-            "rw" 
-            "nosuid" 
-            "nodev" 
+          options = [
+            "rw"
+            "nosuid"
+            "nodev"
             "size=${cfg.filesystem.tmpfsSize}"
-            "mode=1777" 
+            "mode=1777"
           ];
         };
       }
@@ -165,13 +165,13 @@ in
       # WSL2 mount optimizations
       (mkIf cfg.filesystem.mountOptimizations {
         "/mnt/c" = {
-          options = [ 
-            "metadata" 
-            "uid=1000" 
-            "gid=1000" 
-            "umask=022" 
-            "fmask=011" 
-            "case=off" 
+          options = [
+            "metadata"
+            "uid=1000"
+            "gid=1000"
+            "umask=022"
+            "fmask=011"
+            "case=off"
           ];
         };
       })
@@ -208,13 +208,13 @@ in
           # Power management not needed in WSL
           upower.enable = false;
           thermald.enable = false;
-          
+
           # Hardware services not applicable
           fwupd.enable = false;
-          
+
           # Desktop services not needed for headless
           accounts-daemon.enable = mkDefault false;
-          
+
           # Bluetooth not available
           bluetooth.enable = false;
         };
@@ -233,20 +233,20 @@ in
       settings = {
         # Build optimizations
         max-jobs = "auto";
-        cores = 0;  # Use all available cores
-        
+        cores = 0; # Use all available cores
+
         # Storage optimizations
         auto-optimise-store = true;
-        
+
         # Cache optimizations
         keep-outputs = true;
         keep-derivations = true;
-        
+
         # Faster downloads
         http-connections = 25;
-        
+
         # WSL2-specific optimizations
-        sandbox = false;  # Sandbox can be problematic in WSL2
+        sandbox = false; # Sandbox can be problematic in WSL2
       };
 
       # Garbage collection optimization
@@ -262,13 +262,13 @@ in
       variables = {
         # Compiler optimizations
         MAKEFLAGS = "-j$(nproc)";
-        
+
         # Rust optimizations
         CARGO_BUILD_JOBS = "$(nproc)";
-        
+
         # Node.js optimizations
         UV_THREADPOOL_SIZE = "$(nproc)";
-        
+
         # Python optimizations
         PYTHONDONTWRITEBYTECODE = "1";
         PYTHONUNBUFFERED = "1";
@@ -279,7 +279,7 @@ in
     boot = {
       # Disable modules not needed in WSL2
       blacklistedKernelModules = [
-        "pcspkr"  # PC speaker
+        "pcspkr" # PC speaker
         "snd_pcsp" # PC speaker sound
       ];
 
@@ -291,18 +291,18 @@ in
       htop
       iotop
       iftop
-      
+
       # Performance analysis
-      sysstat  # iostat, vmstat, etc.
+      sysstat # iostat, vmstat, etc.
       perf-tools
-      
+
       # WSL2-specific utilities
-      pciutils  # lspci
-      usbutils  # lsusb
-      
+      pciutils # lspci
+      usbutils # lsusb
+
       # Development performance tools
       time
-      hyperfine  # Benchmarking tool
+      hyperfine # Benchmarking tool
     ];
 
     # WSL2 performance tuning script
@@ -360,12 +360,12 @@ in
       description = "WSL2 Performance Initialization";
       after = [ "multi-user.target" ];
       wantedBy = [ "multi-user.target" ];
-      
+
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
       };
-      
+
       script = ''
         # Apply WSL2-specific performance optimizations
         echo "Applying WSL2 performance optimizations..."

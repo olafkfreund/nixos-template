@@ -43,16 +43,16 @@
     # No real hardware in WSL2
     enableAllFirmware = false;
     enableRedistributableFirmware = false;
-    
+
     # Graphics handled by Windows
     graphics = {
       enable = true;
-      enable32Bit = false;  # Usually not needed in WSL2
+      enable32Bit = false; # Usually not needed in WSL2
     };
 
     # Audio through PulseAudio
     pulseaudio.enable = true;
-    
+
     # No Bluetooth in WSL2
     bluetooth.enable = false;
   };
@@ -60,8 +60,8 @@
   # Virtualization settings for nested containers
   virtualisation = {
     # Docker/Podman support
-    docker.enable = false;  # Can be enabled per-host
-    podman.enable = false;  # Can be enabled per-host
+    docker.enable = false; # Can be enabled per-host
+    podman.enable = false; # Can be enabled per-host
   };
 
   # Power management not applicable in WSL2

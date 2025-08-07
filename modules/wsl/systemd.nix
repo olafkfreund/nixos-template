@@ -39,13 +39,13 @@ in
             default = true;
             description = "Optimize logging for WSL2";
           };
-          
+
           maxLogSize = mkOption {
             type = types.str;
             default = "100M";
             description = "Maximum size for journal logs";
           };
-          
+
           retention = mkOption {
             type = types.str;
             default = "1week";
@@ -69,14 +69,14 @@ in
           "systemd-hwdb-update".enable = false;
           "systemd-udev-trigger".enable = false;
           "systemd-udevd".enable = false;
-          
+
           # Power management (not applicable in WSL2)
           "systemd-logind".enable = mkDefault false;
-          
+
           # Console services (WSL2 uses Windows terminal)
           "getty@tty1".enable = false;
           "autovt@tty1".enable = false;
-          
+
           # Disable module loading (WSL2 kernel is managed by Windows)
           "systemd-modules-load".enable = false;
           "kmod-static-nodes".enable = false;
@@ -156,13 +156,13 @@ in
           wants = [ "network.target" ];
           after = [ "network.target" ];
           wantedBy = [ "multi-user.target" ];
-          
+
           serviceConfig = {
             Type = "oneshot";
             RemainAfterExit = true;
             TimeoutStartSec = "30s";
           };
-          
+
           script = ''
             # WSL2 environment setup
             echo "Initializing WSL2 environment..."
@@ -185,13 +185,13 @@ in
           description = "WSL2 Environment Cleanup";
           conflicts = [ "shutdown.target" "reboot.target" ];
           before = [ "shutdown.target" "reboot.target" ];
-          
+
           serviceConfig = {
             Type = "oneshot";
             TimeoutStopSec = "10s";
             RemainAfterExit = true;
           };
-          
+
           script = ''
             # WSL2 cleanup tasks
             echo "Performing WSL2 cleanup..."
@@ -211,14 +211,14 @@ in
         "user-wsl-setup@" = {
           description = "WSL2 User Environment Setup";
           after = [ "user-runtime-dir@%i.service" ];
-          
+
           serviceConfig = {
             Type = "oneshot";
             RemainAfterExit = true;
             User = "%i";
             TimeoutStartSec = "10s";
           };
-          
+
           script = ''
             # User-specific WSL2 setup
             mkdir -p "$HOME/.local/share/wsl"
@@ -245,12 +245,12 @@ in
         description = "WSL2 User Environment";
         wantedBy = [ "default.target" ];
         after = [ "graphical-session-pre.target" ];
-        
+
         serviceConfig = {
           Type = "oneshot";
           RemainAfterExit = true;
         };
-        
+
         script = ''
           # Set up user-specific WSL2 environment
           export WSL_USER_ENV_LOADED=1
@@ -268,13 +268,13 @@ in
       "wsl-dev-services" = {
         description = "WSL2 Development Services Manager";
         wantedBy = [ "default.target" ];
-        
+
         serviceConfig = {
           Type = "simple";
           Restart = "no";
           RemainAfterExit = true;
         };
-        
+
         script = ''
           # Development services coordination
           echo "Development services manager started"
@@ -292,7 +292,7 @@ in
     environment.systemPackages = with pkgs; [
       # Systemd analysis tools
       systemd-analyze
-      
+
       # Service management
       systemctl-tui
     ];
@@ -392,6 +392,6 @@ in
 
     # Enable systemd in WSL2 (this is typically handled by NixOS-WSL)
     boot.initrd.systemd.enable = true;
-    systemd.enableEmergencyMode = false;  # Disable emergency mode in WSL2
+    systemd.enableEmergencyMode = false; # Disable emergency mode in WSL2
   };
 }

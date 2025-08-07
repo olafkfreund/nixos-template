@@ -788,6 +788,7 @@ sudo nixos-rebuild switch --flake /etc/nixos#wsl2-template
 ### WSL2 Complete Feature Set
 
 **Windows Integration**
+
 - **Seamless File Access** - Windows drives mounted at `/mnt/c`, `/mnt/d` with proper permissions
 - **Clipboard Sharing** - Bidirectional clipboard integration between Windows and WSL2
 - **Application Launching** - Launch Windows apps from WSL2 command line (`code.exe`, `explorer.exe`)
@@ -795,18 +796,21 @@ sudo nixos-rebuild switch --flake /etc/nixos#wsl2-template
 - **Start Menu Integration** - Linux GUI applications appear in Windows Start Menu
 
 **Performance Optimizations**
+
 - **Memory Management** - Optimized swappiness and caching for WSL2 environment
 - **Network Stack** - BBR congestion control and optimized TCP settings
 - **Filesystem Performance** - tmpfs for `/tmp`, optimized mount options for Windows drives
 - **Service Optimization** - Disabled unnecessary services, faster boot times
 
 **Development Environment**
+
 - **Modern Shell** - Zsh with Oh-My-Zsh, Starship prompt, and WSL2-specific functions
 - **Development Tools** - Node.js, Python, Rust, Go, with WSL2 performance optimizations
 - **Container Support** - Podman configured for Windows integration
 - **Editor Integration** - Pre-configured for VS Code with WSL2 extension support
 
 **System Integration**
+
 - **Systemd Support** - Full systemd functionality with WSL2 optimizations
 - **SSH Server** - OpenSSH configured for remote development access
 - **Audio Support** - PulseAudio configured for WSL2 audio forwarding
@@ -837,6 +841,7 @@ dev-env-setup                    # Setup development directories
 ### Windows Integration Examples
 
 **File System Integration**
+
 ```bash
 # Navigate between Windows and WSL filesystems
 cd /mnt/c/Users/YourName/Documents    # Access Windows files
@@ -845,6 +850,7 @@ cp /mnt/c/file.txt ~/project/         # Copy from Windows to WSL
 ```
 
 **Application Integration**
+
 ```bash
 # Launch Windows applications from WSL2
 explorer.exe .                        # Open current directory in Explorer
@@ -860,6 +866,7 @@ npm run dev                           # Development server accessible from Windo
 ```
 
 **Network and System Integration**
+
 ```bash
 # Access development servers from Windows browser
 # http://localhost:3000 automatically works
@@ -873,6 +880,7 @@ host-ip                              # Get Windows host IP address
 ### WSL2 Development Workflow
 
 **1. Initial Setup and Configuration**
+
 ```bash
 # After installation, customize your environment
 nano ~/.config/git/config            # Configure Git (or use wsl-edit)
@@ -880,6 +888,7 @@ dev-env-setup                        # Create development directories
 ```
 
 **2. Optimal File Organization**
+
 ```bash
 # For best performance, use WSL2 filesystem for development
 mkdir -p ~/Development/projects/{web,api,mobile}
@@ -891,6 +900,7 @@ ln -s /mnt/c/Tools ~/Tools            # Link to Windows tools
 ```
 
 **3. Development Server Workflow**
+
 ```bash
 cd ~/Development/projects/web/myproject
 code.exe .                            # Opens in VS Code with WSL extension
@@ -903,6 +913,7 @@ npm run dev                           # Start development server
 ```
 
 **4. Container Development**
+
 ```bash
 # Podman configured for Windows integration
 podman run -d -p 8080:80 --name webapp nginx
@@ -924,6 +935,7 @@ The WSL2 implementation includes specialized modules:
 ### Advanced WSL2 Configuration
 
 **Custom Windows Integration**
+
 ```nix
 # In your WSL2 host configuration
 modules.wsl = {
@@ -933,7 +945,7 @@ modules.wsl = {
     clipboard = true;         # Bidirectional clipboard
     fileAssociations = true;  # Open files with Windows apps
   };
-  
+
   networking = {
     enable = true;
     firewallConfig = "minimal";  # or "disabled" for development
@@ -942,7 +954,7 @@ modules.wsl = {
       api = 8080;
     };
   };
-  
+
   optimization = {
     enable = true;
     memory.swappiness = 10;       # Lower swap usage
@@ -953,6 +965,7 @@ modules.wsl = {
 ```
 
 **Performance Tuning**
+
 ```bash
 # Available performance monitoring and tuning
 wsl-performance-tune                   # System performance analysis
@@ -969,6 +982,7 @@ system-info                           # Comprehensive system information
 ### WSL2 Troubleshooting
 
 **Common Issues and Solutions**
+
 ```bash
 # WSL2 instance not starting
 wsl --shutdown                         # Shutdown all WSL instances
@@ -987,6 +1001,7 @@ sudo systemctl restart wsl-network-setup  # Restart WSL services
 ```
 
 **System Maintenance**
+
 ```bash
 # Regular maintenance tasks
 sudo nix-collect-garbage -d            # Clean Nix store

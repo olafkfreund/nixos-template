@@ -10,21 +10,21 @@
 
   # User identification (REQUIRED - must be customized per user)
   home = {
-    username = "nixos";  # Change to your username
-    homeDirectory = "/home/nixos";  # Change to your home directory
+    username = "nixos"; # Change to your username
+    homeDirectory = "/home/nixos"; # Change to your home directory
     stateVersion = "25.05";
   };
 
   # User-specific git configuration (REQUIRED)
   programs.git = {
-    userName = "Your Name";  # Change to your name
-    userEmail = "your.email@example.com";  # Change to your email
+    userName = "Your Name"; # Change to your name
+    userEmail = "your.email@example.com"; # Change to your email
   };
 
   # WSL2-specific shell configuration
   programs.zsh = {
     enable = true;
-    
+
     # WSL2-specific shell aliases
     shellAliases = {
       # Windows integration
@@ -32,18 +32,18 @@
       notepad = "notepad.exe";
       code = "code.exe";
       pwsh = "powershell.exe";
-      
+
       # WSL2 utilities
       wsl-shutdown = "wsl.exe --shutdown";
       wsl-restart = "wsl.exe --terminate $WSL_DISTRO_NAME && wsl.exe -d $WSL_DISTRO_NAME";
-      
+
       # Development shortcuts
       ll = "ls -la";
       la = "ls -la";
       "cd.." = "cd ..";
       ".." = "cd ..";
       "..." = "cd ../..";
-      
+
       # Git shortcuts
       gs = "git status";
       ga = "git add";
@@ -51,11 +51,11 @@
       gp = "git push";
       gl = "git log --oneline -10";
       gd = "git diff";
-      
+
       # System shortcuts
       cls = "clear";
       h = "history | tail -20";
-      
+
       # WSL2-specific network helpers
       wsl-ip = "ip route show default | awk '{print $3}'";
       host-ip = "cat /etc/resolv.conf | grep nameserver | awk '{print $2}'";
@@ -66,15 +66,15 @@
       # Windows integration
       DISPLAY = ":0.0";
       LIBGL_ALWAYS_INDIRECT = "1";
-      
+
       # WSL environment
       WSLENV = "DISPLAY/u:LIBGL_ALWAYS_INDIRECT/u";
       WSL_DISTRO_NAME = "NixOS";
-      
+
       # Development environment
       EDITOR = "vim";
       BROWSER = "/mnt/c/Program Files/Mozilla Firefox/firefox.exe";
-      
+
       # Performance optimizations
       PYTHONUNBUFFERED = "1";
       PYTHONDONTWRITEBYTECODE = "1";
@@ -185,7 +185,7 @@
     # Oh-My-Zsh configuration optimized for WSL2
     oh-my-zsh = {
       enable = true;
-      theme = "robbyrussell";  # Fast, clean theme
+      theme = "robbyrussell"; # Fast, clean theme
       plugins = [
         "git"
         "docker"
@@ -209,7 +209,7 @@
       add_newline = false;
       scan_timeout = 10;
       command_timeout = 1000;
-      
+
       # WSL2-specific format
       format = lib.concatStrings [
         "$username"
@@ -255,22 +255,22 @@
       # Language versions (useful for development)
       nodejs = {
         format = "via [⬢ $version](bold green) ";
-        detect_files = ["package.json" ".nvmrc"];
+        detect_files = [ "package.json" ".nvmrc" ];
       };
 
       python = {
         format = "via [🐍 $version](bold yellow) ";
-        detect_files = ["requirements.txt" "pyproject.toml" ".python-version"];
+        detect_files = [ "requirements.txt" "pyproject.toml" ".python-version" ];
       };
 
       rust = {
         format = "via [🦀 $version](bold red) ";
-        detect_files = ["Cargo.toml"];
+        detect_files = [ "Cargo.toml" ];
       };
 
       golang = {
         format = "via [🐹 $version](bold cyan) ";
-        detect_files = ["go.mod" "go.sum"];
+        detect_files = [ "go.mod" "go.sum" ];
       };
     };
   };
@@ -285,48 +285,48 @@
   # Git configuration optimized for WSL2
   programs.git = {
     enable = true;
-    
+
     # Performance optimizations for WSL2
     extraConfig = {
       # WSL2-specific optimizations
       core = {
-        fileMode = false;  # Windows filesystem compatibility
-        autocrlf = false;  # Handle line endings properly
+        fileMode = false; # Windows filesystem compatibility
+        autocrlf = false; # Handle line endings properly
         safecrlf = false;
-        preloadindex = true;  # Speed up git status
-        fscache = true;  # Windows filesystem cache
+        preloadindex = true; # Speed up git status
+        fscache = true; # Windows filesystem cache
       };
-      
+
       # Performance improvements
       feature = {
         manyFiles = true;
       };
-      
+
       index = {
-        version = 4;  # Faster index format
+        version = 4; # Faster index format
       };
-      
+
       # WSL2 credential handling
       credential = {
         helper = "/mnt/c/Program\\ Files/Git/mingw64/bin/git-credential-manager.exe";
       };
-      
+
       # Better diff algorithm
       diff = {
         algorithm = "histogram";
       };
-      
+
       # Faster status
       status = {
         showUntrackedFiles = "normal";
       };
-      
+
       # Push configuration
       push = {
         default = "simple";
         autoSetupRemote = true;
       };
-      
+
       # Pull configuration
       pull = {
         rebase = true;
@@ -338,7 +338,7 @@
   programs.vim = {
     enable = true;
     defaultEditor = true;
-    
+
     extraConfig = ''
       " WSL2-specific vim configuration
       set number
@@ -382,7 +382,7 @@
   # Tmux for session management in WSL2
   programs.tmux = {
     enable = true;
-    
+
     extraConfig = ''
       # WSL2-optimized tmux configuration
       
@@ -427,50 +427,50 @@
   # WSL2-specific packages
   home.packages = with pkgs; [
     # Windows integration tools
-    wslu  # WSL utilities
-    
+    wslu # WSL utilities
+
     # Development tools
     curl
     wget
     tree
     jq
     yq
-    
+
     # System utilities
     htop
     iotop
     ncdu
     lsof
-    
+
     # Network tools
     netcat
     nmap
-    
+
     # Archive tools
     unzip
     zip
     p7zip
-    
+
     # Development languages and tools
     nodejs
     python3
     rustc
     cargo
     go
-    
+
     # Editors and IDEs
     nano
-    
+
     # Version control
     lazygit
-    
+
     # File management
     ranger
     fzf
-    
+
     # Performance monitoring
     neofetch
-    
+
     # WSL2-specific utilities
     pciutils
     usbutils
@@ -479,7 +479,7 @@
   # XDG directories (important for WSL2)
   xdg = {
     enable = true;
-    
+
     # Custom user directories for WSL2
     userDirs = {
       enable = true;
@@ -501,7 +501,7 @@
     ssh-agent = {
       enable = true;
     };
-    
+
     # GPG agent for signing
     gpg-agent = {
       enable = true;
@@ -535,7 +535,7 @@
       echo "Development directories created in ~/Development/"
       echo "Windows user directory linked as ~/WindowsHome"
     '';
-    
+
     ".local/bin/dev-env-setup".executable = true;
 
     # WSL2 system information script
@@ -581,7 +581,7 @@
       command -v go >/dev/null && echo "  Go: $(go version | awk '{print $3}')"
       command -v git >/dev/null && echo "  Git: $(git --version | awk '{print $3}')"
     '';
-    
+
     ".local/bin/system-info".executable = true;
 
     # WSL2 performance monitoring script
@@ -624,7 +624,7 @@
       echo "3. Use 'wsl --shutdown' periodically to free up memory"
       echo "4. Consider adjusting .wslconfig for memory limits"
     '';
-    
+
     ".local/bin/performance-monitor".executable = true;
   };
 

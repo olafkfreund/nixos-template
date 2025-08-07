@@ -52,10 +52,10 @@ in
       code = "code.exe";
       pwsh = "pwsh.exe";
       cmd = "cmd.exe";
-      
+
       # Development tools
       "visual-studio" = "/mnt/c/Program\\ Files/Microsoft\\ Visual\\ Studio/*/Community/Common7/IDE/devenv.exe";
-      
+
       # Windows utilities
       ipconfig = "ipconfig.exe";
       tasklist = "tasklist.exe";
@@ -66,8 +66,8 @@ in
     environment.systemPackages = with pkgs; mkMerge [
       # Clipboard integration tools
       (mkIf cfg.clipboard [
-        xclip  # For X11 clipboard access
-        wl-clipboard  # For Wayland clipboard access
+        xclip # For X11 clipboard access
+        wl-clipboard # For Wayland clipboard access
       ])
 
       # Windows integration script wrappers
@@ -86,10 +86,10 @@ in
       # Display configuration for GUI apps
       DISPLAY = ":0.0";
       LIBGL_ALWAYS_INDIRECT = "1";
-      
+
       # WSL environment variables
       WSLENV = "DISPLAY/u:LIBGL_ALWAYS_INDIRECT/u";
-      
+
       # Windows browser integration
       BROWSER = "/mnt/c/Program Files/Mozilla Firefox/firefox.exe";
     };

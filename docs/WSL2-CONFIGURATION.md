@@ -64,6 +64,7 @@ The template includes dedicated WSL2 modules:
 ### Software Prerequisites
 
 1. **Enable WSL 2**:
+
    ```powershell
    # Run as Administrator
    wsl --install
@@ -73,6 +74,7 @@ The template includes dedicated WSL2 modules:
    ```
 
 2. **Set WSL 2 as default**:
+
    ```powershell
    wsl --set-default-version 2
    ```
@@ -85,12 +87,14 @@ The template includes dedicated WSL2 modules:
 ### Automated Installation (Recommended)
 
 1. **Download the template**:
+
    ```powershell
    git clone https://github.com/yourusername/nixos-template
    cd nixos-template
    ```
 
 2. **Run the installation script**:
+
    ```powershell
    # Run PowerShell as Administrator
    .\scripts\install-wsl2.sh
@@ -103,11 +107,13 @@ The template includes dedicated WSL2 modules:
 ### Manual Installation
 
 1. **Download NixOS-WSL**:
+
    ```powershell
    wget https://github.com/nix-community/NixOS-WSL/releases/latest/download/nixos-wsl-installer.tar.gz
    ```
 
 2. **Import the distribution**:
+
    ```powershell
    wsl --import NixOS-Template C:\WSL\NixOS-Template nixos-wsl-installer.tar.gz --version 2
    ```
@@ -150,7 +156,7 @@ modules.wsl = {
     clipboard = true;        # Bidirectional clipboard sharing
     fileAssociations = true; # Open files with Windows applications
   };
-  
+
   networking = {
     enable = true;
     dnsConfig = "auto";      # "auto" | "wsl" | "custom"
@@ -162,7 +168,7 @@ modules.wsl = {
       api = 8080;
     };
   };
-  
+
   optimization = {
     enable = true;
     memory = {
@@ -184,7 +190,7 @@ modules.wsl = {
       cacheNix = true;       # Nix store optimizations
     };
   };
-  
+
   systemd = {
     enable = true;           # Systemd optimizations for WSL2
     networkOptimizations = true; # Network service optimizations
@@ -218,7 +224,7 @@ Optimizes network performance and configuration:
 Performance tuning for WSL2 environment:
 
 - **Memory Management**: Swappiness, cache pressure, transparent hugepages
-- **Filesystem**: tmpfs configuration, mount optimizations, COW settings  
+- **Filesystem**: tmpfs configuration, mount optimizations, COW settings
 - **Services**: Disable unnecessary services, optimize systemd timeouts
 - **Development**: Parallel builds, Nix store optimizations, compiler flags
 
@@ -252,11 +258,13 @@ programs.zsh.shellAliases = {
 ### Customization
 
 1. **Edit system configuration**:
+
    ```bash
    sudo nano /etc/nixos/configuration.nix
    ```
 
 2. **Edit user configuration**:
+
    ```bash
    nano ~/.config/home-manager/home.nix
    ```
@@ -330,6 +338,7 @@ cmd.exe
 The template includes custom utilities for WSL2 integration:
 
 **System Information and Monitoring**
+
 - `wsl-info` - Comprehensive WSL2 system information
 - `wsl-network-info` - Network configuration and diagnostics
 - `wsl-performance-tune` - Performance analysis and optimization
@@ -337,12 +346,14 @@ The template includes custom utilities for WSL2 integration:
 - `performance-monitor` - Real-time system performance monitoring
 
 **Windows Integration Utilities**
+
 - `wsl-open <path>` - Open files/directories in Windows Explorer
 - `wsl-edit <file>` - Edit files in Windows applications (VS Code, Notepad)
 - `wsl-ports` - Show listening ports and services
 - `wsl-network-diagnostics` - Network troubleshooting and connectivity tests
 
 **Development Environment Helpers**
+
 - `dev-start` - Start development environment services
 - `dev-stop` - Stop development servers and processes
 - `dev-env-setup` - Initialize development directory structure
@@ -352,6 +363,7 @@ The template includes custom utilities for WSL2 integration:
 ### Development Workflow
 
 1. **Clone projects to WSL filesystem**:
+
    ```bash
    cd ~
    git clone https://github.com/user/project.git
@@ -359,21 +371,23 @@ The template includes custom utilities for WSL2 integration:
    ```
 
 2. **Use integrated development tools**:
+
    ```bash
    # Open project in VS Code
    code .
-   
+
    # Start development server
    npm run dev
-   
+
    # Access from Windows browser: http://localhost:3000
    ```
 
 3. **Container development**:
+
    ```bash
    # Docker works with Windows Docker Desktop
    docker run -p 8080:80 nginx
-   
+
    # Or use Podman
    podman run -p 8080:80 nginx
    ```
@@ -449,12 +463,14 @@ performance-monitor
 #### WSL2 Won't Start
 
 1. **Check WSL status**:
+
    ```powershell
    wsl --status
    wsl --list --verbose
    ```
 
 2. **Restart WSL service**:
+
    ```powershell
    # As Administrator
    Restart-Service LxssManager
@@ -470,11 +486,13 @@ performance-monitor
 #### Network Issues
 
 1. **Check network configuration**:
+
    ```bash
    wsl-network-diagnostics
    ```
 
 2. **Reset network settings**:
+
    ```bash
    sudo systemctl restart systemd-networkd
    sudo systemctl restart systemd-resolved
@@ -490,12 +508,14 @@ performance-monitor
 #### Performance Issues
 
 1. **Check resource usage**:
+
    ```bash
    performance-monitor
    htop
    ```
 
 2. **Optimize WSL2 settings**:
+
    ```bash
    wsl-performance-tune
    ```
@@ -511,6 +531,7 @@ performance-monitor
 
 1. **Install VcXsrv or similar X server on Windows**
 2. **Set DISPLAY variable**:
+
    ```bash
    export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0.0
    ```
@@ -526,11 +547,13 @@ performance-monitor
 #### NixOS Rebuild Fails
 
 1. **Check configuration syntax**:
+
    ```bash
    sudo nixos-rebuild dry-run
    ```
 
 2. **Rollback to previous generation**:
+
    ```bash
    sudo nixos-rebuild switch --rollback
    ```
@@ -543,6 +566,7 @@ performance-monitor
 #### Home Manager Issues
 
 1. **Check configuration**:
+
    ```bash
    home-manager build
    ```
@@ -556,12 +580,14 @@ performance-monitor
 ### Getting Help
 
 1. **Check system logs**:
+
    ```bash
    sudo journalctl -u multi-user.target
    sudo journalctl -f  # Follow logs in real-time
    ```
 
 2. **WSL logs**:
+
    ```powershell
    # In PowerShell
    Get-EventLog -LogName Application -Source "Microsoft-Windows-Subsystem-Linux"
@@ -587,7 +613,7 @@ Create custom WSL2-specific modules:
   environment.systemPackages = with pkgs; [
     # Your custom packages
   ];
-  
+
   # Custom services
   systemd.user.services.my-dev-service = {
     # Service configuration
@@ -617,6 +643,7 @@ wsl -d NixOS-Dev
 
 1. **Install WSL extension**
 2. **Open project in WSL**:
+
    ```bash
    code .
    ```
@@ -637,7 +664,7 @@ wsl -d NixOS-Dev
 # Backup system configuration
 sudo cp -r /etc/nixos ~/nixos-backup
 
-# Backup Home Manager configuration  
+# Backup Home Manager configuration
 cp -r ~/.config/home-manager ~/home-manager-backup
 
 # Export WSL distribution
@@ -699,7 +726,7 @@ networking = {
     enable = true;
     allowedTCPPorts = [ 22 80 443 8080 ];
   };
-  
+
   # Custom DNS
   nameservers = [ "1.1.1.1" "8.8.8.8" ];
 };
@@ -723,6 +750,7 @@ To improve WSL2 support in this template:
 4. Submit a pull request with detailed description
 
 Common areas for contribution:
+
 - Performance optimizations
 - Windows integration improvements
 - Additional development tools

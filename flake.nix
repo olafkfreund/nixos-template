@@ -332,31 +332,35 @@
         '';
 
         # WSL2 configuration validation (x86_64-linux only)
-        wsl2-config-check = if system == "x86_64-linux" then
-          nixpkgs.legacyPackages.${system}.runCommand "wsl2-config-check" { } ''
-            echo "Validating WSL2 configuration..."
-            # Check that WSL2 configuration builds without errors
-            ${nixpkgs.legacyPackages.${system}.nixVersions.latest}/bin/nix build ${self}#nixosConfigurations.wsl2-template.config.system.build.toplevel --no-link
-            echo "✅ WSL2 configuration builds successfully"
-            touch $out
-          ''
-        else nixpkgs.legacyPackages.${system}.runCommand "skip-wsl2-check" { } ''
-          echo "Skipping WSL2 check on ${system} (WSL2 only supports x86_64-linux)"
-          touch $out
-        '';
+        wsl2-config-check =
+          if system == "x86_64-linux" then
+            nixpkgs.legacyPackages.${system}.runCommand "wsl2-config-check" { } ''
+              echo "Validating WSL2 configuration..."
+              # Check that WSL2 configuration builds without errors
+              ${nixpkgs.legacyPackages.${system}.nixVersions.latest}/bin/nix build ${self}#nixosConfigurations.wsl2-template.config.system.build.toplevel --no-link
+              echo "✅ WSL2 configuration builds successfully"
+              touch $out
+            ''
+          else
+            nixpkgs.legacyPackages.${system}.runCommand "skip-wsl2-check" { } ''
+              echo "Skipping WSL2 check on ${system} (WSL2 only supports x86_64-linux)"
+              touch $out
+            '';
 
         # WSL2 Home Manager validation (x86_64-linux only)  
-        wsl2-home-check = if system == "x86_64-linux" then
-          nixpkgs.legacyPackages.${system}.runCommand "wsl2-home-check" { } ''
-            echo "Validating WSL2 Home Manager configuration..."
-            ${nixpkgs.legacyPackages.${system}.nixVersions.latest}/bin/nix build ${self}#homeConfigurations."nixos@wsl2-template".activationPackage --no-link
-            echo "✅ WSL2 Home Manager configuration builds successfully"
-            touch $out
-          ''
-        else nixpkgs.legacyPackages.${system}.runCommand "skip-wsl2-home-check" { } ''
-          echo "Skipping WSL2 Home Manager check on ${system}"
-          touch $out
-        '';
+        wsl2-home-check =
+          if system == "x86_64-linux" then
+            nixpkgs.legacyPackages.${system}.runCommand "wsl2-home-check" { } ''
+              echo "Validating WSL2 Home Manager configuration..."
+              ${nixpkgs.legacyPackages.${system}.nixVersions.latest}/bin/nix build ${self}#homeConfigurations."nixos@wsl2-template".activationPackage --no-link
+              echo "✅ WSL2 Home Manager configuration builds successfully"
+              touch $out
+            ''
+          else
+            nixpkgs.legacyPackages.${system}.runCommand "skip-wsl2-home-check" { } ''
+              echo "Skipping WSL2 Home Manager check on ${system}"
+              touch $out
+            '';
       });
     };
 }

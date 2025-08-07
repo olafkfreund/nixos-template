@@ -61,27 +61,27 @@ in
       # Use WSL's built-in networking by default
       useNetworkd = false;
       useDHCP = true;
-      
+
       # DNS configuration based on mode
       nameservers = mkIf (cfg.dnsConfig == "custom") cfg.customDnsServers;
-      
+
       # Firewall configuration
       firewall = {
         enable = cfg.firewallConfig != "disabled";
-        
+
         # Firewall TCP ports based on configuration
         allowedTCPPorts = mkMerge [
           # Minimal firewall rules for WSL2
           (mkIf (cfg.firewallConfig == "minimal") [
-            22  # SSH
+            22 # SSH
           ])
-          
+
           # Standard firewall rules
           (mkIf (cfg.firewallConfig == "standard") [
-            22    # SSH
-            80    # HTTP
-            443   # HTTPS
-            8080  # Alternative HTTP
+            22 # SSH
+            80 # HTTP
+            443 # HTTPS
+            8080 # Alternative HTTP
           ])
 
           # Custom port forwarding
@@ -99,13 +99,13 @@ in
       "net.core.wmem_max" = 134217728;
       "net.ipv4.tcp_rmem" = "4096 87380 134217728";
       "net.ipv4.tcp_wmem" = "4096 65536 134217728";
-      
+
       # Network buffer optimizations
       "net.core.netdev_max_backlog" = 5000;
       "net.ipv4.tcp_window_scaling" = 1;
       "net.ipv4.tcp_timestamps" = 1;
       "net.ipv4.tcp_sack" = 1;
-      
+
       # WSL2-specific optimizations
       "net.ipv4.ip_local_port_range" = "32768 65535";
       "net.ipv4.tcp_fin_timeout" = 30;
@@ -135,17 +135,17 @@ in
       iperf3
       tcpdump
       wireshark-cli
-      
+
       # DNS utilities
       dig
       host
       nslookup
-      
+
       # Network debugging
       traceroute
       mtr
       ping
-      
+
       # WSL-specific networking tools
       iproute2
 
@@ -160,12 +160,12 @@ in
       description = "WSL2 Network Setup and Optimization";
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
-      
+
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
       };
-      
+
       script = ''
         # WSL2 network setup script
         echo "Setting up WSL2 network optimizations..."
@@ -187,12 +187,12 @@ in
       description = "WSL2 Port Forwarding Helper";
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
-      
+
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
       };
-      
+
       script = ''
         # Port forwarding information for Windows
         echo "WSL2 Port Forwarding Information:"

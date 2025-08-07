@@ -24,23 +24,23 @@
   wsl = {
     enable = true;
     defaultUser = "nixos";
-    
+
     # Windows integration features
-    startMenuLaunchers = true;  # Add GUI apps to Windows Start Menu
+    startMenuLaunchers = true; # Add GUI apps to Windows Start Menu
     interop = {
-      includePath = true;       # Include Windows PATH in WSL PATH
-      register = true;          # Register WSL interop
+      includePath = true; # Include Windows PATH in WSL PATH
+      register = true; # Register WSL interop
     };
-    
+
     # Docker Desktop integration (optional)
     docker-desktop.enable = false; # Enable if using Docker Desktop
-    
+
     # Use Windows OpenGL driver for better GPU performance
     useWindowsDriver = true;
-    
+
     # USB/IP support for hardware devices
     usbip.enable = false; # Enable if you need USB device access
-    
+
     # WSL configuration optimizations
     wslConf = {
       automount.root = "/mnt";
@@ -55,7 +55,7 @@
   users = {
     # Enable mutable users for WSL (easier password management)
     mutableUsers = true;
-    
+
     users.nixos = {
       isNormalUser = true;
       description = "NixOS WSL User";
@@ -67,7 +67,7 @@
         "docker"
         "plugdev"
       ];
-      
+
       # Set initial password (change after first login)
       initialPassword = "nixos";
     };
@@ -79,10 +79,10 @@
       enable = true;
       wheelNeedsPassword = false; # Convenient for WSL development
     };
-    
+
     # AppArmor not needed in WSL
     apparmor.enable = lib.mkForce false;
-    
+
     # Polkit for GUI applications
     polkit.enable = true;
   };
@@ -92,10 +92,10 @@
     # Use WSL's built-in networking
     useNetworkd = false;
     useDHCP = true;
-    
+
     # Firewall disabled by default in WSL (Windows firewall handles this)
     firewall.enable = lib.mkForce false;
-    
+
     # DNS configuration
     nameservers = [ "8.8.8.8" "1.1.1.1" ];
   };
@@ -112,10 +112,10 @@
       };
       ports = [ 22 ];
     };
-    
+
     # D-Bus for GUI applications
     dbus.enable = true;
-    
+
     # PulseAudio for audio (works with WSL2)
     pulseaudio = {
       enable = true;
@@ -124,13 +124,13 @@
         load-module module-native-protocol-tcp auth-ip-acl=127.0.0.1
       '';
     };
-    
+
     # X11 forwarding support
     xserver = {
       enable = false; # No display manager needed in WSL
       # WSL2 uses Windows display server
     };
-    
+
     # Automatic time synchronization
     ntp.enable = true;
   };
@@ -142,10 +142,10 @@
       enable = true;
       enable32Bit = lib.mkDefault true;
     };
-    
+
     # PulseAudio support
     pulseaudio.enable = true;
-    
+
     # No Bluetooth in WSL
     bluetooth.enable = false;
   };
@@ -162,21 +162,21 @@
       tree
       htop
       lsof
-      
+
       # WSL-specific tools
       wslu # WSL utilities
-      
+
       # Development tools
       nodejs
       python3
       go
       rustc
       cargo
-      
+
       # GUI applications (will integrate with Windows)
       firefox
       vscode
-      
+
       # System utilities
       file
       which
@@ -184,44 +184,44 @@
       less
       tmux
       screen
-      
+
       # Network tools
       netcat
       nmap
       iperf
-      
+
       # Archive tools
       p7zip
       zip
     ];
-    
+
     # Environment variables for WSL
     variables = {
       # Fix for GUI applications
       DISPLAY = ":0.0";
       LIBGL_ALWAYS_INDIRECT = "1";
-      
+
       # WSL-specific paths
       WSLENV = "DISPLAY/u:LIBGL_ALWAYS_INDIRECT/u";
-      
+
       # Development environment
       EDITOR = "vim";
       BROWSER = "/mnt/c/Program Files/Mozilla Firefox/firefox.exe";
     };
-    
+
     # Shell aliases for Windows interop
     shellAliases = {
       # Windows command shortcuts
       explorer = "explorer.exe";
       notepad = "notepad.exe";
       code = "code.exe";
-      
+
       # Common commands
       ll = "ls -la";
       la = "ls -la";
       ".." = "cd ..";
       "..." = "cd ../..";
-      
+
       # Git shortcuts
       gs = "git status";
       ga = "git add";
@@ -242,7 +242,7 @@
       fira-code
       fira-code-symbols
     ];
-    
+
     # Font configuration for better rendering
     fontconfig = {
       enable = true;
@@ -257,10 +257,10 @@
   boot = {
     # No bootloader needed
     loader.grub.enable = false;
-    
+
     # Kernel modules for WSL
     kernelModules = [ ];
-    
+
     # System control parameters
     kernel.sysctl = {
       # Network optimizations for WSL
@@ -278,11 +278,11 @@
       # Disable services not needed in WSL
       systemd-resolved.enable = false;
       systemd-networkd.enable = false;
-      
+
       # Optimize boot time
       nixos-upgrade.enable = false;
     };
-    
+
     # User services for development
     user.services = {
       # SSH agent for development
@@ -314,29 +314,29 @@
     settings = {
       # Enable flakes
       experimental-features = [ "nix-command" "flakes" ];
-      
+
       # Optimize for WSL storage
       auto-optimise-store = true;
-      
+
       # Build settings optimized for Windows host
       max-jobs = "auto";
       cores = 0;
-      
+
       # Trusted users
       trusted-users = [ "root" "nixos" ];
-      
+
       # Substituters
       substituters = [
         "https://cache.nixos.org/"
         "https://nix-community.cachix.org"
       ];
-      
+
       trusted-public-keys = [
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       ];
     };
-    
+
     # Garbage collection
     gc = {
       automatic = true;
