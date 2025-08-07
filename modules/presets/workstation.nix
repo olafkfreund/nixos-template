@@ -30,53 +30,52 @@ in
       };
     };
 
-    # Desktop environment
+    # Desktop environment (preset choice - use lib.mkDefault to allow override)
     modules.desktop = lib.mkDefault {
       audio.enable = true;
       gnome.enable = true;
     };
 
-    # Development environment
+    # Development environment (preset choice - use lib.mkDefault to allow override) 
     modules.development = lib.mkDefault {
       enable = true;
       git.enable = true;
     };
 
-    # Essential services
+    # Essential services (opinionated preset configuration)
     services = {
       # Disable PulseAudio (PipeWire handles audio)
       pulseaudio.enable = lib.mkForce false;
 
-      # Printing support
-      printing.enable = lib.mkDefault true;
+      # Printing support (workstations typically need printing)
+      printing.enable = true;
 
-      # Network discovery
-      avahi = lib.mkDefault {
+      # Network discovery (helpful for workstations)
+      avahi = {
         enable = true;
         nssmdns4 = true;
         openFirewall = true;
       };
     };
 
-    # Networking optimized for desktop
+    # Networking optimized for desktop  
     networking = {
-      networkmanager.enable = lib.mkDefault true;
+      networkmanager.enable = true;
       firewall = {
-        enable = lib.mkDefault true;
-        # Allow common development ports
-        allowedTCPPorts = lib.mkDefault [ 3000 8000 8080 ];
+        enable = true;
+        # Common development ports (opinionated for workstation preset)
+        allowedTCPPorts = [ 3000 8000 8080 ];
       };
     };
 
-    # Performance optimizations
-    boot.kernelParams = lib.mkDefault [
-      # Desktop performance optimizations
+    # Performance optimizations (workstation-specific)
+    boot.kernelParams = [
       "transparent_hugepage=madvise"
       "vm.swappiness=10"
     ];
 
-    # System packages for workstation
-    environment.systemPackages = with pkgs; lib.mkDefault [
+    # Core workstation packages (opinionated preset choice)
+    environment.systemPackages = with pkgs; [
       # Essential development tools
       firefox
       chromium
@@ -99,10 +98,10 @@ in
       inkscape
     ];
 
-    # Font configuration
+    # Font configuration (workstation needs good fonts)
     fonts = {
-      enableDefaultPackages = lib.mkDefault true;
-      packages = with pkgs; lib.mkDefault [
+      enableDefaultPackages = true;
+      packages = with pkgs; [
         noto-fonts
         noto-fonts-cjk
         noto-fonts-emoji

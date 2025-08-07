@@ -38,26 +38,26 @@ in
     # VM guest optimizations
     modules.virtualization.vm-guest.enable = lib.mkDefault true;
 
-    # VM-optimized services
+    # VM-optimized services (preset configuration)
     services = {
-      # Disable unnecessary services in VMs
-      upower.enable = lib.mkDefault false; # No battery management needed
-      thermald.enable = lib.mkDefault false; # No thermal management needed
+      # Disable unnecessary services in VMs (VMs don't have batteries/thermal)
+      upower.enable = false; # No battery management needed
+      thermald.enable = false; # No thermal management needed
 
-      # VM guest services
-      spice-vdagentd.enable = lib.mkDefault true;
-      qemuGuest.enable = lib.mkDefault true;
+      # VM guest services (essential for VM operation)
+      spice-vdagentd.enable = true;
+      qemuGuest.enable = true;
 
-      # X11 forwarding support
+      # X11 forwarding support (keep mkDefault - not everyone needs SSH)
       openssh = {
         enable = lib.mkDefault true;
         settings.X11Forwarding = lib.mkDefault true;
       };
     };
 
-    # VM-optimized boot parameters
+    # VM-optimized boot parameters (preset configuration)
     boot = {
-      kernelParams = lib.mkDefault [
+      kernelParams = [
         # VM optimizations
         "quiet"
         "splash"
@@ -66,11 +66,11 @@ in
         "acpi=off"
       ];
 
-      # Fast boot for VMs
+      # Fast boot for VMs (keep mkDefault - users may want grub menu)
       loader.timeout = lib.mkDefault 1;
 
-      # VM-specific modules
-      kernelModules = lib.mkDefault [
+      # VM-specific modules (essential for VM operation)
+      kernelModules = [
         "virtio_net"
         "virtio_pci"
         "virtio_blk"
@@ -79,8 +79,8 @@ in
         "9pnet_virtio"
       ];
 
-      # Initialize VM-specific hardware early
-      initrd.kernelModules = lib.mkDefault [
+      # Initialize VM-specific hardware early (required for boot)
+      initrd.kernelModules = [
         "virtio_pci"
         "virtio_blk"
         "virtio_scsi"
@@ -88,23 +88,23 @@ in
       ];
     };
 
-    # VM hardware configuration
+    # VM hardware configuration (preset configuration)
     hardware = {
-      # Basic OpenGL for VM
+      # Basic OpenGL for VM (keep mkDefault - some VMs may not support)
       opengl.enable = lib.mkDefault true;
 
       # Disable features not relevant for VMs
       bluetooth.enable = lib.mkForce false;
-      enableAllFirmware = lib.mkDefault false;
+      enableAllFirmware = false; # VMs don't need proprietary firmware
     };
 
-    # Network configuration for VMs
+    # Network configuration for VMs (preset configuration)
     networking = {
-      networkmanager.enable = lib.mkDefault true;
+      networkmanager.enable = true;
       # Simple firewall for VM
       firewall = {
-        enable = lib.mkDefault true;
-        allowedTCPPorts = lib.mkDefault [ 22 ]; # SSH
+        enable = true;
+        allowedTCPPorts = [ 22 ]; # SSH for VM management
       };
     };
 
@@ -131,21 +131,21 @@ in
       vim
     ];
 
-    # VM-specific optimizations
+    # VM-specific optimizations (preset configuration)
     fileSystems = {
-      # Optimize for virtual disks
+      # Optimize for virtual disks (keep mkDefault - affects root filesystem)
       "/" = {
         options = lib.mkDefault [ "noatime" "discard" ];
       };
     };
 
-    # Systemd optimizations for VMs
-    systemd.extraConfig = lib.mkDefault ''
+    # Systemd optimizations for VMs (preset configuration)
+    systemd.extraConfig = ''
       DefaultTimeoutStartSec=30s
       DefaultTimeoutStopSec=10s
     '';
 
-    # Memory management for VMs
+    # Memory management for VMs (keep mkDefault - memory config is sensitive)
     zramSwap = {
       enable = lib.mkDefault true;
       memoryPercent = lib.mkDefault 25;

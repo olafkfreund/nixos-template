@@ -35,52 +35,53 @@ in
     modules.virtualization.podman.enable = lib.mkDefault true;
     modules.virtualization.libvirt.enable = lib.mkDefault true;
 
-    # Server-optimized services
+    # Server-optimized services (opinionated preset configuration)
     services = {
-      # SSH is essential for servers
+      # SSH is essential for servers (keep mkDefault - users may want custom config)
       openssh = {
         enable = lib.mkDefault true;
         settings = {
-          PasswordAuthentication = lib.mkDefault false;
-          PermitRootLogin = lib.mkDefault "no";
-          KbdInteractiveAuthentication = lib.mkDefault false;
+          # Secure defaults for server preset
+          PasswordAuthentication = false;
+          PermitRootLogin = "no";
+          KbdInteractiveAuthentication = false;
         };
-        ports = lib.mkDefault [ 22 ];
+        ports = [ 22 ];
       };
 
       # Time synchronization critical for servers
-      ntp.enable = lib.mkDefault true;
+      ntp.enable = true;
 
-      # System monitoring
+      # System monitoring (keep mkDefault - optional service)
       prometheus.exporters.node = {
         enable = lib.mkDefault false; # Enable per-host as needed
       };
 
-      # Automatic updates (careful!)
+      # Automatic updates (keep mkDefault - dangerous if enabled)
       automatic-timers.enable = lib.mkDefault false;
     };
 
-    # Server networking (more explicit than desktop)
+    # Server networking (opinionated server configuration)
     networking = {
-      # Use systemd-networkd for servers (more reliable)
+      # Use systemd-networkd for servers (keep mkDefault - some prefer NetworkManager)
       useNetworkd = lib.mkDefault true;
       useDHCP = lib.mkDefault false;
 
       # Firewall essential for servers
       firewall = {
         enable = lib.mkForce true;
-        # Restrictive by default - open ports per service
+        # Restrictive by default - open ports per service (keep mkDefault - users customize)
         allowedTCPPorts = lib.mkDefault [ 22 ]; # SSH only
-        allowPing = lib.mkDefault true;
+        allowPing = true; # Standard server behavior
       };
 
-      # DNS configuration
-      nameservers = lib.mkDefault [ "1.1.1.1" "8.8.8.8" ];
+      # Fast DNS servers (opinionated choice)
+      nameservers = [ "1.1.1.1" "8.8.8.8" ];
     };
 
-    # Server-optimized boot parameters
+    # Server-optimized boot parameters (preset configuration)
     boot = {
-      kernelParams = lib.mkDefault [
+      kernelParams = [
         # Server performance optimizations
         "transparent_hugepage=always"
         "vm.swappiness=1"
@@ -88,14 +89,14 @@ in
         "net.ipv4.tcp_congestion_control=bbr"
       ];
 
-      # Faster boot for servers
+      # Faster boot for servers (keep mkDefault - users may want grub menu)
       loader.timeout = lib.mkDefault 1;
 
-      # Enable all kernel modules that might be needed
-      kernelModules = lib.mkDefault [ "kvm-intel" "kvm-amd" ];
+      # Enable virtualization modules (common for servers)
+      kernelModules = [ "kvm-intel" "kvm-amd" ];
     };
 
-    # Server system packages (minimal)
+    # Server system packages (minimal preset - keep mkDefault for customization)
     environment.systemPackages = with pkgs; lib.mkDefault [
       # Essential administration
       htop
@@ -127,21 +128,21 @@ in
       borgbackup
     ];
 
-    # Security hardening for servers
+    # Security hardening for servers (preset configuration)
     security = {
-      # Restrict sudo
+      # Restrict sudo (secure server defaults)
       sudo = {
-        enable = lib.mkDefault true;
-        wheelNeedsPassword = lib.mkDefault true;
+        enable = true;
+        wheelNeedsPassword = true;
       };
 
-      # AppArmor for additional security
+      # AppArmor for additional security (keep mkDefault - optional hardening)
       apparmor.enable = lib.mkDefault true;
 
-      # Fail2ban for SSH protection
+      # Fail2ban for SSH protection (opinionated server security)
       fail2ban = {
-        enable = lib.mkDefault true;
-        jails.ssh-iptables = lib.mkDefault ''
+        enable = true;
+        jails.ssh-iptables = ''
           enabled = true
           filter = sshd
           action = iptables[name=SSH, port=ssh, protocol=tcp]
@@ -160,8 +161,8 @@ in
         getty.autologinUser = lib.mkForce null;
       };
 
-      # Optimize for server workloads
-      extraConfig = lib.mkDefault ''
+      # Optimize for server workloads (preset configuration)
+      extraConfig = ''
         DefaultTimeoutStopSec=10s
         DefaultTimeoutStartSec=10s
       '';

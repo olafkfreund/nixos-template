@@ -53,31 +53,31 @@ in
       git.enable = true;
     };
 
-    # Gaming-specific services
+    # Gaming-specific services (opinionated preset configuration)
     services = {
       # Disable PulseAudio for lowest latency
       pulseaudio.enable = lib.mkForce false;
 
-      # Gaming optimizations
-      gamemode.enable = lib.mkDefault true;
+      # Gaming optimizations (essential for gaming preset)
+      gamemode.enable = true;
 
-      # Streaming support
-      obs-studio.plugins = lib.mkDefault [ pkgs.obs-studio-plugins.wlrobs ];
+      # Streaming support (gaming preset includes content creation)
+      obs-studio.plugins = [ pkgs.obs-studio-plugins.wlrobs ];
     };
 
-    # Network optimized for gaming
+    # Network optimized for gaming (opinionated preset configuration)
     networking = {
-      networkmanager.enable = lib.mkDefault true;
+      networkmanager.enable = true;
       firewall = {
-        enable = lib.mkDefault true;
-        # Gaming and streaming ports
-        allowedTCPPorts = lib.mkDefault [
+        enable = true;
+        # Gaming and streaming ports (specific to gaming needs)
+        allowedTCPPorts = [
           27015 # Steam
           3478
           3479 # Steam Voice
           1935 # OBS Streaming
         ];
-        allowedUDPPorts = lib.mkDefault [
+        allowedUDPPorts = [
           27015
           27031
           27032
@@ -92,9 +92,9 @@ in
       };
     };
 
-    # Maximum performance boot configuration
+    # Maximum performance boot configuration (gaming preset is opinionated)
     boot = {
-      kernelParams = lib.mkDefault [
+      kernelParams = [
         # Gaming performance optimizations
         "transparent_hugepage=always"
         "vm.swappiness=1"
@@ -107,34 +107,34 @@ in
         "preempt=full"
       ];
 
-      # Gaming kernel for lower latency
-      kernelPackages = lib.mkDefault pkgs.linuxPackages_zen;
+      # Gaming kernel for lower latency (opinionated choice for gaming)
+      kernelPackages = pkgs.linuxPackages_zen;
 
-      # Load gaming-related modules
-      kernelModules = lib.mkDefault [ "uinput" "kvm-intel" "kvm-amd" ];
+      # Load gaming-related modules (required for gaming hardware)
+      kernelModules = [ "uinput" "kvm-intel" "kvm-amd" ];
     };
 
-    # Hardware optimizations for gaming
+    # Hardware optimizations for gaming (opinionated preset configuration)
     hardware = {
-      # Full graphics stack
+      # Full graphics stack (essential for gaming)
       opengl = {
-        enable = lib.mkDefault true;
-        driSupport = lib.mkDefault true;
-        driSupport32Bit = lib.mkDefault true;
+        enable = true;
+        driSupport = true;
+        driSupport32Bit = true;
       };
 
-      # Gaming peripherals
-      steam-hardware.enable = lib.mkDefault true;
+      # Gaming peripherals (required for Steam controllers, etc.)
+      steam-hardware.enable = true;
 
       # Audio for gaming
       pulseaudio.enable = lib.mkForce false;
 
-      # Enable all firmware for gaming hardware
-      enableAllFirmware = lib.mkDefault true;
+      # Enable all firmware for gaming hardware (including proprietary)
+      enableAllFirmware = true;
     };
 
-    # Gaming-focused packages
-    environment.systemPackages = with pkgs; lib.mkDefault [
+    # Gaming-focused packages (opinionated gaming preset)
+    environment.systemPackages = with pkgs; [
       # Games and gaming platforms
       steam
       lutris
@@ -181,8 +181,8 @@ in
     # Gaming-specific system configuration
     # Note: rtkit auto-enabled by desktop audio modules
 
-    # Optimizations
-    systemd.extraConfig = lib.mkDefault ''
+    # Gaming-specific optimizations (preset configuration)
+    systemd.extraConfig = ''
       DefaultTimeoutStopSec=10s
       DefaultLimitNOFILE=1048576
     '';

@@ -5,40 +5,30 @@
     # Modern systemd boot loader (recommended for UEFI)
     loader = {
       systemd-boot = {
-        enable = lib.mkDefault true;
-        configurationLimit = 10; # Limit boot entries
-        editor = false; # Disable editing for security
+        enable = lib.mkDefault true;  # Keep: users may want GRUB
+        configurationLimit = 10;
+        editor = false; # Security: disable boot editing
       };
-      efi.canTouchEfiVariables = lib.mkDefault true;
-      timeout = lib.mkDefault 3;
+      efi.canTouchEfiVariables = lib.mkDefault true;  # Keep: depends on system
+      timeout = lib.mkDefault 3;  # Keep: users may want different timeout
     };
 
     # Kernel parameters for better security and performance
     kernelParams = [
-      # Security
       "kernel.yama.ptrace_scope=1"
-      "kernel.kptr_restrict=2"
+      "kernel.kptr_restrict=2" 
       "kernel.dmesg_restrict=1"
-
-      # Performance
       "mitigations=auto"
     ];
 
-    # Enable latest kernel by default
+    # Latest kernel (users may prefer LTS)
     kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
 
-    # Temporary file systems
-    tmp = {
-      useTmpfs = lib.mkDefault true;
-      tmpfsSize = "50%";
-    };
+    # Fast tmpfs for /tmp
+    tmp.useTmpfs = lib.mkDefault true;  # Keep: not everyone wants tmpfs
+    tmp.tmpfsSize = "50%";
 
-    # tmpfs automatically cleans on boot
-
-    # Plymouth for graphical boot (optional)
-    plymouth = {
-      enable = lib.mkDefault false;
-      theme = "breeze";
-    };
+    # Plymouth disabled by default
+    plymouth.enable = false;  # Remove mkDefault: rarely wanted in templates
   };
 }

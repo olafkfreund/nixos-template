@@ -3,36 +3,26 @@
 {
   # Networking configuration
   networking = {
-    # Use NetworkManager for desktop systems
+    # NetworkManager for desktop systems (keep mkDefault - some may want systemd-networkd)
     networkmanager.enable = lib.mkDefault true;
 
-    # Disable wpa_supplicant when using NetworkManager
-    wireless.enable = lib.mkDefault false;
+    # wpa_supplicant conflicts with NetworkManager (automatic)
+    wireless.enable = false;
 
-    # IPv6 is enabled by default
-
-    # DNS configuration
-    nameservers = lib.mkDefault [
+    # Fast DNS servers (opinionated choice for template)
+    nameservers = [
       "1.1.1.1" # Cloudflare
-      "8.8.8.8" # Google
+      "8.8.8.8" # Google  
     ];
 
-    # Note: localhost mapping is automatic in NixOS
-
-    # Firewall
+    # Basic firewall (keep mkDefault - users may want custom firewall)
     firewall = {
       enable = lib.mkDefault true;
-      allowPing = lib.mkDefault true;
-
-      # Common ports that might need to be opened per host
-      # allowedTCPPorts = [ ];
-      # allowedUDPPorts = [ ];
+      allowPing = true;  # Generally safe default
     };
-
-    # Predictable interface names are enabled by default
   };
 
-  # mDNS/DNS-SD support
+  # mDNS/DNS-SD support (keep mkDefault - not everyone wants mDNS)
   services.avahi = {
     enable = lib.mkDefault true;
     nssmdns4 = true;

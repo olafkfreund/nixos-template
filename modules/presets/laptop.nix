@@ -49,21 +49,21 @@ in
       pulseaudio.enable = lib.mkForce false;
 
       # Essential for mobile work
-      printing.enable = lib.mkDefault true;
+      printing.enable = true;
 
-      # Bluetooth for peripherals
-      blueman.enable = lib.mkDefault true;
+      # Bluetooth for peripherals (common on laptops)
+      blueman.enable = true;
 
-      # Location services
-      geoclue2.enable = lib.mkDefault true;
+      # Location services (useful for laptops that move around)
+      geoclue2.enable = true;
 
-      # Automatic time synchronization
-      ntp.enable = lib.mkDefault true;
+      # Time synchronization (important for mobile devices)
+      ntp.enable = true;
     };
 
     # Mobile networking configuration
     networking = {
-      networkmanager = lib.mkDefault {
+      networkmanager = {
         enable = true;
         wifi = {
           powersave = true;
@@ -71,11 +71,11 @@ in
         };
       };
 
-      # VPN support for secure remote work
+      # Secure firewall (laptops are more exposed)
       firewall = {
-        enable = lib.mkDefault true;
-        # More restrictive than workstation
-        allowedTCPPorts = lib.mkDefault [ ];
+        enable = true;
+        # More restrictive than workstation (no dev ports)
+        allowedTCPPorts = [ ];
       };
     };
 
