@@ -79,6 +79,7 @@ install_nix() {
 
     # Source Nix environment
     if [[ -f ~/.nix-profile/etc/profile.d/nix.sh ]]; then
+      # shellcheck disable=SC1090
       . ~/.nix-profile/etc/profile.d/nix.sh
     fi
 
@@ -267,7 +268,7 @@ main() {
 
   # Ask which VM to build
   echo "Which VM would you like to try?"
-  read -p "VM name [desktop-test]: " vm_choice
+  read -r -p "VM name [desktop-test]: " vm_choice
   vm_choice=${vm_choice:-desktop-test}
 
   # Build and optionally run VM
