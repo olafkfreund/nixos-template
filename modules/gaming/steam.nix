@@ -195,7 +195,8 @@ in
       (mkIf cfg.performance.gamemode gamemode)
 
       # Proton and compatibility tools
-      (mkIf cfg.compattools.proton-ge proton-ge-bin)
+      # Note: proton-ge-bin should be managed through protonup-qt or Steam directly
+      # (mkIf cfg.compattools.proton-ge proton-ge-bin)
       # Note: luxtorpeda is not available as standalone package in nixpkgs
       # It can be managed through protonup-qt or installed manually
       # (mkIf cfg.compattools.luxtorpeda luxtorpeda)

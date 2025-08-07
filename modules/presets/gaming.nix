@@ -113,16 +113,13 @@ in
     # Hardware optimizations for gaming (opinionated preset configuration)
     hardware = {
       # Full graphics stack (essential for gaming)
-      opengl = {
+      graphics = {
         enable = true;
-        driSupport32Bit = true;
+        enable32Bit = true;
       };
 
       # Gaming peripherals (required for Steam controllers, etc.)
       steam-hardware.enable = true;
-
-      # Audio for gaming
-      pulseaudio.enable = lib.mkForce false;
 
       # Enable all firmware for gaming hardware (including proprietary)
       enableAllFirmware = true;
