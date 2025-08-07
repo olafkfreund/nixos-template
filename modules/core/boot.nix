@@ -13,7 +13,7 @@
         canTouchEfiVariables = lib.mkDefault true;
         efiSysMountPoint = "/boot";
       };
-      timeout = 3;
+      timeout = lib.mkDefault 3;
     };
 
     # Kernel parameters for better security and performance

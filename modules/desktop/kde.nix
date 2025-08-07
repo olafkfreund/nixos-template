@@ -221,8 +221,7 @@ in
       };
     };
 
-    # KDE configuration management
-    programs.dconf.enable = true;
+    # KDE configuration management (dconf auto-enabled by KDE)
 
     # Session variables for KDE
     environment.sessionVariables = lib.mkMerge [
@@ -277,8 +276,7 @@ in
       ];
     };
 
-    # Audio configuration optimized for KDE
-    security.rtkit.enable = true;
+    # Audio configuration optimized for KDE (rtkit auto-enabled by PipeWire)
     services.pipewire = {
       enable = lib.mkDefault true;
       audio.enable = true;

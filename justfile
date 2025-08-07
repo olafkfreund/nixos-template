@@ -877,14 +877,106 @@ init-user host template:
     
     echo "User configuration created: hosts/{{host}}/home.nix"
     echo ""
-    echo "Next steps:"
-    echo "1. Edit hosts/{{host}}/home.nix to customize:"
-    echo "   - Username and email in git configuration"
-    echo "   - Desktop environment (import different profile)"
-    echo "   - Application selection"
-    echo "   - Personal preferences"
-    echo "2. Test configuration: just test {{host}}"
-    echo "3. Apply configuration: just switch {{host}}"
+
+# New Preset-Based Host Generation
+
+# Generate a new host using the preset system (modern approach)
+new-host host preset:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    
+    echo "🚀 Creating new host: {{host}} with {{preset}} preset"
+    
+    # Validate preset
+    case "{{preset}}" in
+        "workstation"|"laptop"|"server"|"gaming"|"vm-guest")
+            ;;
+        *)
+            echo "❌ Invalid preset: {{preset}}"
+            echo "Available presets:"
+            echo "  workstation - High-performance desktop for productivity"  
+            echo "  laptop      - Mobile computing with battery optimization"
+            echo "  server      - Headless server with security focus"
+            echo "  gaming      - Maximum performance gaming configuration"
+            echo "  vm-guest    - Optimized for virtual machine guests"
+            exit 1
+            ;;
+    esac
+    
+    # Create host directory
+    mkdir -p "hosts/{{host}}"
+    
+    # Generate configuration files from templates
+    cp templates/preset-host-config.nix "hosts/{{host}}/configuration.nix"
+    cp templates/preset-home-config.nix "hosts/{{host}}/home.nix"
+    
+    # Create hardware config if it doesn't exist
+    if [ ! -f "hosts/{{host}}/hardware-configuration.nix" ]; then
+        cp templates/preset-hardware-config.nix "hosts/{{host}}/hardware-configuration.nix"
+    fi
+    
+    # Replace placeholders in the files
+    sed -i "s/HOSTNAME/{{host}}/g" "hosts/{{host}}/configuration.nix"
+    sed -i "s/PRESET/{{preset}}/g" "hosts/{{host}}/configuration.nix"
+    sed -i "s/HOSTNAME/{{host}}/g" "hosts/{{host}}/home.nix"
+    sed -i "s/PRESET/{{preset}}/g" "hosts/{{host}}/home.nix"
+    sed -i "s/HOSTNAME/{{host}}/g" "hosts/{{host}}/hardware-configuration.nix"
+
+    echo "✅ Host {{host}} created successfully!"
+    echo ""
+    echo "📁 Generated files:"
+    echo "  • hosts/{{host}}/configuration.nix ({{preset}} preset)"
+    echo "  • hosts/{{host}}/home.nix (basic home config)"
+    echo "  • hosts/{{host}}/hardware-configuration.nix (placeholder)"
+    echo ""
+    echo "📋 Next steps:"
+    echo "  1. Replace hardware-configuration.nix with actual hardware config"
+    echo "  2. Add {{host}} to flake.nix nixosConfigurations"
+    echo "  3. Customize the configuration in customizations = {}"
+    echo ""
+    echo "🔧 Add to flake.nix:"
+    echo "    {{host}} = nixpkgs.lib.nixosSystem {"
+    echo "      system = \"x86_64-linux\";"
+    echo "      specialArgs = { inherit inputs outputs; };"
+    echo "      modules = [ ./hosts/{{host}}/configuration.nix ];"
+    echo "    };"
+
+# Show available presets with descriptions
+list-presets:
+    @echo "Available NixOS Presets:"
+    @echo ""
+    @echo "🖥️  workstation  - High-performance desktop for productivity and development"
+    @echo "                  • Full desktop environment (GNOME)"
+    @echo "                  • Development tools and IDEs"
+    @echo "                  • Performance optimizations"
+    @echo "                  • Gaming peripherals support"
+    @echo ""
+    @echo "💻 laptop       - Mobile computing with battery optimization"  
+    @echo "                  • Power management and TLP"
+    @echo "                  • WiFi and mobile connectivity"
+    @echo "                  • Suspend/resume optimization"
+    @echo "                  • VPN support for remote work"
+    @echo ""
+    @echo "🖧  server       - Headless server with security focus"
+    @echo "                  • No desktop environment"
+    @echo "                  • SSH and remote management"
+    @echo "                  • Container support (Podman)"
+    @echo "                  • Security hardening"
+    @echo ""
+    @echo "🎮 gaming       - Maximum performance gaming configuration"
+    @echo "                  • Steam, GameMode, MangoHUD"
+    @echo "                  • Performance kernel and optimizations"
+    @echo "                  • Gaming peripherals and RGB"
+    @echo "                  • Streaming tools (OBS)"
+    @echo ""
+    @echo "💾 vm-guest     - Optimized for virtual machine guests"
+    @echo "                  • VM guest tools and drivers"
+    @echo "                  • Lightweight desktop"
+    @echo "                  • Optimized for virtualized hardware"
+    @echo "                  • Fast boot and minimal services"
+    @echo ""
+    @echo "Usage: just new-host <hostname> <preset>"
+    @echo "Example: just new-host my-desktop workstation"
 
 # Copy user template to current directory for customization
 copy-user-template template:

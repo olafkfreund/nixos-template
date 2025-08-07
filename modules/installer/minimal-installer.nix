@@ -14,7 +14,7 @@
     volumeID = "NIXOS_MINIMAL";
 
     # Smaller ISO for minimal installer
-    squashfsCompression = "gzip -Xcompression-level 6";
+    squashfsCompression = lib.mkForce "gzip -Xcompression-level 6";
   };
 
   # Keep it minimal - no desktop environment

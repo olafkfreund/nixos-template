@@ -225,6 +225,7 @@
             }
           ];
         };
+
       };
 
       # Standalone home-manager configuration entrypoint

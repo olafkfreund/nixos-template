@@ -12,7 +12,7 @@ in
 
   config = lib.mkIf cfg.enable {
     # PipeWire configuration (modern replacement for PulseAudio)
-    security.rtkit.enable = true;
+    # Note: rtkit is auto-enabled by PipeWire
 
     services.pipewire = lib.mkIf cfg.pipewire {
       enable = true;

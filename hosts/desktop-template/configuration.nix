@@ -170,7 +170,7 @@
   };
 
   # Sound with PipeWire (professional audio support)
-  security.rtkit.enable = true;
+  # Note: rtkit auto-enabled by PipeWire
   services.pipewire = {
     enable = true;
     alsa.enable = true;

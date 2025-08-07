@@ -107,7 +107,7 @@
   };
 
   # Sound with PipeWire (better power management than PulseAudio)
-  security.rtkit.enable = true;
+  # Note: rtkit auto-enabled by PipeWire
   services.pipewire = {
     enable = true;
     alsa.enable = true;

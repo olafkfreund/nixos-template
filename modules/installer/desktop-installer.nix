@@ -29,8 +29,7 @@
     games.enable = lib.mkForce false;
   };
 
-  # Audio support
-  security.rtkit.enable = true;
+  # Audio support (rtkit auto-enabled by PipeWire)
   services.pipewire = {
     enable = true;
     alsa.enable = true;
