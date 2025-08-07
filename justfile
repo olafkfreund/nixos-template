@@ -302,6 +302,49 @@ check-secrets:
     @echo "🔐 Validating secrets configuration..."
     @cd secrets && nix-instantiate --eval --strict secrets.nix >/dev/null && echo "✓ secrets.nix is valid" || echo "✗ secrets.nix has errors"
 
+# WSL2 Commands
+
+# Build WSL2 distribution archive (alternative to ISO for Windows)
+build-wsl2-archive:
+    @echo "🐧 Building WSL2 distribution archive..."
+    nix build .#nixosConfigurations.wsl2-template.config.system.build.tarball
+    @echo "✅ WSL2 archive built: result/tarball/nixos-system-x86_64-linux.tar.xz"
+    @echo "📝 Import with: wsl --import NixOS-Template C:\\WSL\\NixOS result/tarball/nixos-system-x86_64-linux.tar.xz"
+
+# Test WSL2 configuration (build only, no installation)
+test-wsl2:
+    @echo "🧪 Testing WSL2 configuration..."
+    nix build .#nixosConfigurations.wsl2-template.config.system.build.toplevel
+    @echo "✅ WSL2 configuration builds successfully"
+
+# Build WSL2 home configuration
+build-wsl2-home:
+    @echo "🏠 Building WSL2 Home Manager configuration..."
+    nix build .#homeConfigurations."nixos@wsl2-template".activationPackage
+    @echo "✅ WSL2 Home Manager configuration built successfully"
+
+# Show WSL2 installation instructions
+wsl2-install-help:
+    @echo "📋 WSL2 Installation Instructions"
+    @echo "=================================="
+    @echo ""
+    @echo "1. Build the WSL2 archive:"
+    @echo "   just build-wsl2-archive"
+    @echo ""
+    @echo "2. Run the installation script (from Windows):"
+    @echo "   .\\scripts\\install-wsl2.sh"
+    @echo ""
+    @echo "3. Or manually import the archive:"
+    @echo "   wsl --import NixOS-Template C:\\WSL\\NixOS result/tarball/nixos-system-x86_64-linux.tar.xz"
+    @echo ""
+    @echo "4. Start NixOS WSL2:"
+    @echo "   wsl -d NixOS-Template"
+    @echo ""
+    @echo "5. Apply configuration (from inside WSL2):"
+    @echo "   sudo nixos-rebuild switch --flake /etc/nixos#wsl2-template"
+    @echo ""
+    @echo "📚 Full documentation: docs/WSL2-CONFIGURATION.md"
+
 # Virtual Machine Commands
 
 # Detect if running in VM and get recommendations

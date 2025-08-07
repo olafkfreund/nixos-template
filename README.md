@@ -19,6 +19,7 @@ A modular NixOS configuration template using flakes, featuring:
 - **NixOS 25.05/25.11 Compatible** - Latest NixOS features and deprecation fixes
 - **Container Support** - Fixed podman system-generators conflicts, full container ecosystem
 - **Modular Home Configuration** - Role-based Home Manager with common/host-specific separation
+- **WSL2 Support** - Full Windows Subsystem for Linux integration with development environment
 
 **[Complete Features Overview →](docs/FEATURES-OVERVIEW.md)**
 
@@ -36,6 +37,7 @@ A modular NixOS configuration template using flakes, featuring:
 1. [Virtual Machine Testing](#virtual-machine-testing)
 1. [Custom NixOS Installer ISOs](#custom-nixos-installer-isos-1)
 1. [Host Configurations](#host-configurations)
+1. [WSL2 Support](#wsl2-support)
 1. [Secrets Management](#secrets-management)
 1. [Development Shell](#development-shell)
 1. [Best Practices](#best-practices)
@@ -747,6 +749,252 @@ nano modules/installer/preconfigured-installer.nix
 - **Consulting**: Client-specific NixOS deployments
 
 See [ISO Creation Guide](docs/ISO-CREATION.md) for detailed instructions, customization options, and advanced usage patterns.
+
+## WSL2 Support
+
+This template provides comprehensive Windows Subsystem for Linux 2 (WSL2) support with full NixOS integration, enabling you to run a complete NixOS development environment directly on Windows with seamless Windows interoperability.
+
+### Quick WSL2 Setup
+
+```bash
+# 1. Clone the template on Windows (PowerShell as Administrator)
+git clone https://github.com/yourusername/nixos-template
+cd nixos-template
+
+# 2. Run the automated installation
+.\scripts\install-wsl2.ps1
+
+# 3. Start NixOS WSL2
+wsl -d NixOS-Template
+```
+
+### Manual WSL2 Installation
+
+```bash
+# Build WSL2 distribution tarball
+just build-wsl2-archive
+
+# Import into WSL (from Windows PowerShell as Administrator)
+wsl --import NixOS-Template C:\WSL\NixOS .\result\tarball\nixos-system-x86_64-linux.tar.xz
+
+# Start WSL2 instance
+wsl -d NixOS-Template
+
+# Initial system configuration
+sudo passwd nixos  # Set user password
+sudo nixos-rebuild switch --flake /etc/nixos#wsl2-template
+```
+
+### WSL2 Complete Feature Set
+
+**Windows Integration**
+- **Seamless File Access** - Windows drives mounted at `/mnt/c`, `/mnt/d` with proper permissions
+- **Clipboard Sharing** - Bidirectional clipboard integration between Windows and WSL2
+- **Application Launching** - Launch Windows apps from WSL2 command line (`code.exe`, `explorer.exe`)
+- **PATH Integration** - Windows executables available in WSL2 PATH
+- **Start Menu Integration** - Linux GUI applications appear in Windows Start Menu
+
+**Performance Optimizations**
+- **Memory Management** - Optimized swappiness and caching for WSL2 environment
+- **Network Stack** - BBR congestion control and optimized TCP settings
+- **Filesystem Performance** - tmpfs for `/tmp`, optimized mount options for Windows drives
+- **Service Optimization** - Disabled unnecessary services, faster boot times
+
+**Development Environment**
+- **Modern Shell** - Zsh with Oh-My-Zsh, Starship prompt, and WSL2-specific functions
+- **Development Tools** - Node.js, Python, Rust, Go, with WSL2 performance optimizations
+- **Container Support** - Podman configured for Windows integration
+- **Editor Integration** - Pre-configured for VS Code with WSL2 extension support
+
+**System Integration**
+- **Systemd Support** - Full systemd functionality with WSL2 optimizations
+- **SSH Server** - OpenSSH configured for remote development access
+- **Audio Support** - PulseAudio configured for WSL2 audio forwarding
+- **Graphics Support** - X11 forwarding and WSLg GUI application support
+
+### WSL2-Specific Commands
+
+```bash
+# Build and test WSL2 configurations
+just test-wsl2                    # Test system configuration
+just build-wsl2-archive           # Build WSL2 distribution tarball
+just build-wsl2-home             # Test Home Manager configuration
+just wsl2-install-help           # Show installation instructions
+
+# WSL2 system utilities (available in WSL2 shell)
+wsl-info                         # Comprehensive system information
+wsl-network-info                 # Network configuration details
+wsl-performance-tune             # Performance optimization script
+wsl-open .                       # Open directory in Windows Explorer
+wsl-edit file.txt               # Edit file in VS Code
+
+# Development environment helpers
+dev-start                        # Start development servers
+dev-stop                         # Stop development servers
+dev-env-setup                    # Setup development directories
+```
+
+### Windows Integration Examples
+
+**File System Integration**
+```bash
+# Navigate between Windows and WSL filesystems
+cd /mnt/c/Users/YourName/Documents    # Access Windows files
+wsl-open ~/Development                # Open WSL directory in Explorer
+cp /mnt/c/file.txt ~/project/         # Copy from Windows to WSL
+```
+
+**Application Integration**
+```bash
+# Launch Windows applications from WSL2
+explorer.exe .                        # Open current directory in Explorer
+code.exe project/                     # Open project in VS Code
+notepad.exe config.txt                # Edit file in Notepad
+pwsh.exe                              # Launch PowerShell
+
+# Development workflow
+git clone https://github.com/user/repo.git
+cd repo
+code.exe .                            # Open in VS Code with WSL extension
+npm run dev                           # Development server accessible from Windows
+```
+
+**Network and System Integration**
+```bash
+# Access development servers from Windows browser
+# http://localhost:3000 automatically works
+
+# System information and networking
+wsl-network-info                      # Show WSL2 IP configuration
+wsl-ports                            # List listening ports
+host-ip                              # Get Windows host IP address
+```
+
+### WSL2 Development Workflow
+
+**1. Initial Setup and Configuration**
+```bash
+# After installation, customize your environment
+nano ~/.config/git/config            # Configure Git (or use wsl-edit)
+dev-env-setup                        # Create development directories
+```
+
+**2. Optimal File Organization**
+```bash
+# For best performance, use WSL2 filesystem for development
+mkdir -p ~/Development/projects/{web,api,mobile}
+cd ~/Development/projects/web
+git clone https://github.com/user/project.git
+
+# Use Windows filesystem for large files or Windows-specific tools
+ln -s /mnt/c/Tools ~/Tools            # Link to Windows tools
+```
+
+**3. Development Server Workflow**
+```bash
+cd ~/Development/projects/web/myproject
+code.exe .                            # Opens in VS Code with WSL extension
+npm install                           # Install dependencies in WSL2
+npm run dev                           # Start development server
+
+# Server automatically accessible from Windows:
+# - http://localhost:3000 in Windows browser
+# - Full hot-reload and debugging support
+```
+
+**4. Container Development**
+```bash
+# Podman configured for Windows integration
+podman run -d -p 8080:80 --name webapp nginx
+# Access from Windows: http://localhost:8080
+
+# Docker Desktop integration (if installed)
+docker run -d -p 9000:80 --name api myapi:latest
+```
+
+### WSL2 Module Architecture
+
+The WSL2 implementation includes specialized modules:
+
+- **`modules/wsl/interop.nix`** - Windows application integration and clipboard sharing
+- **`modules/wsl/networking.nix`** - Network optimizations and firewall configuration
+- **`modules/wsl/optimization.nix`** - Performance tuning for memory, filesystem, and services
+- **`modules/wsl/systemd.nix`** - Systemd service optimizations for WSL2 environment
+
+### Advanced WSL2 Configuration
+
+**Custom Windows Integration**
+```nix
+# In your WSL2 host configuration
+modules.wsl = {
+  interop = {
+    enable = true;
+    windowsApps = true;      # Enable Windows app aliases
+    clipboard = true;         # Bidirectional clipboard
+    fileAssociations = true;  # Open files with Windows apps
+  };
+  
+  networking = {
+    enable = true;
+    firewallConfig = "minimal";  # or "disabled" for development
+    portForwarding = {
+      web = 3000;
+      api = 8080;
+    };
+  };
+  
+  optimization = {
+    enable = true;
+    memory.swappiness = 10;       # Lower swap usage
+    filesystem.tmpfsSize = "4G";  # Larger /tmp for builds
+    development.fastBuild = true; # Optimize for development
+  };
+};
+```
+
+**Performance Tuning**
+```bash
+# Available performance monitoring and tuning
+wsl-performance-tune                   # System performance analysis
+performance-monitor                    # Real-time performance monitoring
+system-info                           # Comprehensive system information
+
+# Windows-side WSL2 configuration (.wslconfig in Windows user directory)
+# [wsl2]
+# memory=8GB
+# processors=4
+# swap=2GB
+```
+
+### WSL2 Troubleshooting
+
+**Common Issues and Solutions**
+```bash
+# WSL2 instance not starting
+wsl --shutdown                         # Shutdown all WSL instances
+wsl -d NixOS-Template                  # Restart specific instance
+
+# Network connectivity issues
+wsl-network-info                       # Check network configuration
+sudo systemctl restart systemd-resolved
+
+# Performance issues
+wsl-performance-tune                   # Run performance diagnostics
+wsl --shutdown && wsl -d NixOS-Template  # Restart WSL2
+
+# Windows integration not working
+sudo systemctl restart wsl-network-setup  # Restart WSL services
+```
+
+**System Maintenance**
+```bash
+# Regular maintenance tasks
+sudo nix-collect-garbage -d            # Clean Nix store
+just clean                            # Remove build artifacts
+wsl --shutdown                         # Free memory (run from Windows)
+```
+
+**[Complete WSL2 Documentation →](docs/WSL2-CONFIGURATION.md)**
 
 ## Host Configurations
 

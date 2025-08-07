@@ -19,9 +19,13 @@
       url = "github:cachix/git-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixos-wsl = {
+      url = "github:nix-community/NixOS-WSL";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, agenix, treefmt-nix, git-hooks, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, agenix, treefmt-nix, git-hooks, nixos-wsl, ... }@inputs:
     let
       inherit (self) outputs;
       systems = [
@@ -222,6 +226,19 @@
           extraModules = [ templateConfig ];
         };
 
+        # WSL2 template configuration
+        wsl2-template = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = { inherit inputs outputs; };
+          modules = [
+            ./hosts/wsl2-template/configuration.nix
+            nixos-wsl.nixosModules.wsl
+            home-manager.nixosModules.home-manager
+            agenix.nixosModules.default
+            templateConfig
+          ];
+        };
+
         # Example VM configurations  
         qemu-vm = mkSystem { hostname = "qemu-vm"; };
         microvm = mkSystem { hostname = "microvm"; };
@@ -270,10 +287,11 @@
       # Available through 'home-manager --flake .#your-username@your-hostname'
       homeConfigurations = {
         # Example home configurations
-        "user@laptop-template" = mkHome { username = "user"; hostname = "laptop-template"; };
-        "user@desktop-template" = mkHome { username = "user"; hostname = "desktop-template"; };
-        "user@server-template" = mkHome { username = "user"; hostname = "server-template"; };
-        "vm-user@desktop-test" = mkHome { username = "vm-user"; hostname = "desktop-test"; };
+        "user@laptop-template" = mkHome { hostname = "laptop-template"; };
+        "user@desktop-template" = mkHome { hostname = "desktop-template"; };
+        "user@server-template" = mkHome { hostname = "server-template"; };
+        "vm-user@desktop-test" = mkHome { hostname = "desktop-test"; };
+        "nixos@wsl2-template" = mkHome { hostname = "wsl2-template"; };
       };
 
       # Checks for CI/CD and development
@@ -310,6 +328,33 @@
         shellcheck-check = nixpkgs.legacyPackages.${system}.runCommand "shellcheck-check" { } ''
           cd ${self}
           ${nixpkgs.legacyPackages.${system}.shellcheck}/bin/shellcheck scripts/*.sh
+          touch $out
+        '';
+
+        # WSL2 configuration validation (x86_64-linux only)
+        wsl2-config-check = if system == "x86_64-linux" then
+          nixpkgs.legacyPackages.${system}.runCommand "wsl2-config-check" { } ''
+            echo "Validating WSL2 configuration..."
+            # Check that WSL2 configuration builds without errors
+            ${nixpkgs.legacyPackages.${system}.nixVersions.latest}/bin/nix build ${self}#nixosConfigurations.wsl2-template.config.system.build.toplevel --no-link
+            echo "✅ WSL2 configuration builds successfully"
+            touch $out
+          ''
+        else nixpkgs.legacyPackages.${system}.runCommand "skip-wsl2-check" { } ''
+          echo "Skipping WSL2 check on ${system} (WSL2 only supports x86_64-linux)"
+          touch $out
+        '';
+
+        # WSL2 Home Manager validation (x86_64-linux only)  
+        wsl2-home-check = if system == "x86_64-linux" then
+          nixpkgs.legacyPackages.${system}.runCommand "wsl2-home-check" { } ''
+            echo "Validating WSL2 Home Manager configuration..."
+            ${nixpkgs.legacyPackages.${system}.nixVersions.latest}/bin/nix build ${self}#homeConfigurations."nixos@wsl2-template".activationPackage --no-link
+            echo "✅ WSL2 Home Manager configuration builds successfully"
+            touch $out
+          ''
+        else nixpkgs.legacyPackages.${system}.runCommand "skip-wsl2-home-check" { } ''
+          echo "Skipping WSL2 Home Manager check on ${system}"
           touch $out
         '';
       });
