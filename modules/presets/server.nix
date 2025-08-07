@@ -32,8 +32,14 @@ in
       };
     };
 
-    # Container support for services
-    modules.virtualization.podman.enable = lib.mkDefault true;
+    # Container support for services  
+    # Temporarily disable our custom podman module to test NixOS built-in
+    # modules.virtualization.podman.enable = lib.mkDefault true;
+    # Use NixOS built-in podman module instead
+    virtualisation.podman.enable = lib.mkDefault true;
+    virtualisation.podman.dockerCompat = lib.mkDefault true;
+    virtualisation.containers.enable = lib.mkDefault true;
+
     modules.virtualization.libvirt.enable = lib.mkDefault true;
 
     # Server-optimized services (opinionated preset configuration)

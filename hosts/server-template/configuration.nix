@@ -31,7 +31,10 @@
   # modules.security.agenix can be enabled per host as needed
 
   # Container support for services
-  modules.virtualization.podman.enable = true;
+  # Use NixOS built-in podman module instead of our custom one
+  virtualisation.podman.enable = true;
+  virtualisation.podman.dockerCompat = true;
+  virtualisation.containers.enable = true;
 
   # VM hosting capability
   modules.virtualization.libvirt.enable = true;
