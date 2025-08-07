@@ -25,7 +25,7 @@ modules.hardware.gpu = {
 
   # You must manually enable your GPU type:
   # nvidia.enable = true;  # For NVIDIA GPUs
-  # amd.enable = true;     # For AMD GPUs  
+  # amd.enable = true;     # For AMD GPUs
   # intel.enable = true;   # For Intel GPUs
 };
 ```
@@ -36,7 +36,7 @@ For AI/compute servers, edit `hosts/your-hostname/configuration.nix`:
 
 ```nix
 modules.hardware.gpu = {
-  # Optional: Enable detection service for logging GPU info  
+  # Optional: Enable detection service for logging GPU info
   autoDetect = true;
   profile = "ai-compute";  # or "server-compute"
 

@@ -476,10 +476,10 @@ modules.hardware.gpu = {
   # Optional: Enable detection service that logs found GPUs to /run/gpu-info
   autoDetect = true;
   profile = "desktop";  # desktop, gaming, ai-compute, server-compute
-  
+
   # You must manually enable your specific GPU:
   # nvidia.enable = true;  # For NVIDIA GPUs
-  # amd.enable = true;     # For AMD GPUs  
+  # amd.enable = true;     # For AMD GPUs
   # intel.enable = true;   # For Intel GPUs
 };
 ```
