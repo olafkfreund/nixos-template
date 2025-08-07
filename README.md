@@ -584,11 +584,11 @@ just build-all-isos
 
 ### Available ISO Types
 
-| Type | Size | Interface | Best For | Key Features |
-|------|------|-----------|----------|--------------|
-| **Minimal** | ~800MB | CLI Only | Servers, Experts | SSH access, essential tools, lightweight |
-| **Desktop** | ~2.5GB | GNOME Desktop | Newcomers, Graphics | Firefox, GParted, visual tools, auto-login |
-| **Preconfigured** | ~1.5GB | Interactive CLI | Quick Deploy, Templates | All templates, wizard, dev tools |
+| Type              | Size   | Interface       | Best For                | Key Features                               |
+| ----------------- | ------ | --------------- | ----------------------- | ------------------------------------------ |
+| **Minimal**       | ~800MB | CLI Only        | Servers, Experts        | SSH access, essential tools, lightweight   |
+| **Desktop**       | ~2.5GB | GNOME Desktop   | Newcomers, Graphics     | Firefox, GParted, visual tools, auto-login |
+| **Preconfigured** | ~1.5GB | Interactive CLI | Quick Deploy, Templates | All templates, wizard, dev tools           |
 
 ### Preconfigured Installer Features
 
