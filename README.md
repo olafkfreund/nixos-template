@@ -242,7 +242,8 @@ just update          # Update flake inputs
 just update-switch   # Update flake inputs and rebuild
 just check           # Check flake for errors
 just fmt             # Format Nix files
-just clean           # Clean old generations
+just clean           # Clean old generations and result symlinks
+just clean-results   # Remove result symlinks (from nix build commands)
 just shell           # Enter development shell
 just info            # Show system information
 
@@ -931,6 +932,13 @@ All configurations are updated for the latest NixOS:
 
    ```bash
    sudo nixos-generate-config --show-hardware-config > hardware-configuration.nix
+   ```
+
+1. **Annoying result symlinks**:
+
+   ```bash
+   just clean-results                   # Remove result symlinks from nix build
+   just clean                          # Clean everything including result symlinks
    ```
 
 1. **Module conflicts**: Check for conflicting options using `lib.mkForce`

@@ -239,11 +239,18 @@ shell:
 clean:
     sudo nix-collect-garbage
     nix-collect-garbage
+    @rm -f result result-*
 
 # Remove old system generations (keep last 3)
 clean-old:
     sudo nix-collect-garbage --delete-older-than 7d
     sudo nix-env --delete-generations old --profile /nix/var/nix/profiles/system
+
+# Remove result symlinks (the annoying files from nix build)
+clean-results:
+    @echo "🧹 Cleaning result symlinks..."
+    @rm -f result result-*
+    @echo "✅ Result symlinks removed"
 
 # List system generations
 list-generations:
