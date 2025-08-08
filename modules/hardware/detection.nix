@@ -622,8 +622,10 @@ in
         powertop
 
         # Hardware testing
-        memtest86plus
         stress-ng
+      ] ++ lib.optionals pkgs.stdenv.hostPlatform.isx86 [
+        # x86-only hardware testing tools
+        memtest86plus
       ];
     }
   ]);

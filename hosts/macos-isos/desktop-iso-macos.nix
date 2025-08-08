@@ -18,8 +18,7 @@
     makeEfiBootable = true;
     makeUsbBootable = true;
 
-    # Include firmware for better hardware support
-    includeSystemd = true;
+# Note: includeSystemd option was deprecated - systemd is included by default
 
     # Compression for smaller ISO size
     squashfsCompression = "zstd";
@@ -76,8 +75,7 @@
       };
     };
 
-    # Network configuration
-    NetworkManager.enable = true;
+    # Network configuration already set in networking section below
 
     # SSH for remote installation
     openssh = {
