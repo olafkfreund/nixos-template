@@ -73,9 +73,13 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixos-generators = {
+      url = "github:nix-community/nixos-generators";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, agenix, treefmt-nix, git-hooks, nixos-wsl, nix-darwin, sops-nix, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, agenix, treefmt-nix, git-hooks, nixos-wsl, nix-darwin, sops-nix, nixos-generators, ... }@inputs:
     let
       inherit (self) outputs;
       systems = [
@@ -196,8 +200,221 @@
       # Custom packages and modifications, exported as overlays
       overlays = import ./overlays { inherit inputs; };
 
-      # Custom packages; acessible through 'nix build', 'nix shell', etc
-      packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
+      # Custom packages and deployment images; accessible through 'nix build', 'nix shell', etc
+      packages = forAllSystems (system: 
+        let 
+          pkgs = nixpkgs.legacyPackages.${system};
+          
+          # Base configuration for all generated images
+          baseConfig = {
+            inherit system;
+            specialArgs = { inherit inputs outputs; };
+            modules = [
+              ./hosts/common.nix
+              {
+                # Optimize for deployment images
+                boot.loader.systemd-boot.enable = true;
+                boot.loader.efi.canTouchEfiVariables = true;
+                
+                # Enable advanced features by default
+                modules = {
+                  core.nixOptimization.enable = true;
+                  hardware.detection.enable = true;
+                  services.monitoring.enable = false; # Enable per-deployment as needed
+                };
+                
+                # Default user for images
+                users.users.nixos = {
+                  isNormalUser = true;
+                  extraGroups = [ "wheel" "networkmanager" ];
+                  initialPassword = "nixos";
+                };
+                
+                # Enable SSH by default
+                services.openssh = {
+                  enable = true;
+                  settings.PermitRootLogin = "no";
+                  settings.PasswordAuthentication = true; # For initial setup
+                };
+                
+                # Essential packages for deployment
+                environment.systemPackages = with pkgs; [
+                  git vim curl wget htop tree
+                ];
+              }
+            ];
+          };
+          
+          # Generate images for different deployment targets
+          deploymentImages = {
+            # Cloud deployment images
+            "aws-ami" = nixos-generators.nixosGenerate (baseConfig // {
+              format = "amazon";
+              modules = baseConfig.modules ++ [{
+                # AWS-specific optimizations
+                ec2.hvm = true;
+                boot.loader.grub.device = "/dev/xvda";
+                fileSystems."/" = {
+                  device = "/dev/xvda1";
+                  fsType = "ext4";
+                };
+              }];
+            });
+            
+            "azure-vhd" = nixos-generators.nixosGenerate (baseConfig // {
+              format = "azure";
+              modules = baseConfig.modules ++ [{
+                # Azure-specific configurations
+                virtualisation.azure.agent.enable = true;
+              }];
+            });
+            
+            "gce-image" = nixos-generators.nixosGenerate (baseConfig // {
+              format = "gce";
+              modules = baseConfig.modules ++ [{
+                # Google Cloud specific configurations
+                services.openssh.enable = true;
+                services.openssh.settings.PermitRootLogin = "no";
+              }];
+            });
+            
+            "do-image" = nixos-generators.nixosGenerate (baseConfig // {
+              format = "do";
+              modules = baseConfig.modules ++ [{
+                # Digital Ocean specific configurations
+                services.openssh.enable = true;
+              }];
+            });
+            
+            # Virtualization images
+            "vmware-image" = nixos-generators.nixosGenerate (baseConfig // {
+              format = "vmware";
+              modules = baseConfig.modules ++ [{
+                # VMware-specific optimizations
+                virtualisation.vmware.guest.enable = true;
+                services.xserver.videoDrivers = [ "vmware" ];
+              }];
+            });
+            
+            "virtualbox-ova" = nixos-generators.nixosGenerate (baseConfig // {
+              format = "virtualbox";
+              modules = baseConfig.modules ++ [{
+                # VirtualBox-specific optimizations  
+                virtualisation.virtualbox.guest.enable = true;
+                services.xserver.videoDrivers = [ "virtualbox" "modesetting" ];
+              }];
+            });
+            
+            "qemu-qcow2" = nixos-generators.nixosGenerate (baseConfig // {
+              format = "qcow";
+              modules = baseConfig.modules ++ [{
+                # QEMU/KVM optimizations
+                services.qemuGuest.enable = true;
+                services.spice-vdagentd.enable = true;
+              }];
+            });
+            
+            # Container images
+            "lxc-template" = nixos-generators.nixosGenerate (baseConfig // {
+              format = "lxc";
+              modules = baseConfig.modules ++ [{
+                # LXC container optimizations
+                boot.isContainer = true;
+                services.openssh.enable = true;
+              }];
+            });
+            
+            # Installation media
+            "live-iso" = nixos-generators.nixosGenerate (baseConfig // {
+              format = "iso";
+              modules = baseConfig.modules ++ [{
+                # Live ISO optimizations
+                isoImage.makeEfiBootable = true;
+                isoImage.makeUsbBootable = true;
+                isoImage.squashfsCompression = "gzip -Xcompression-level 1";
+                
+                # Include useful tools on live system
+                environment.systemPackages = with pkgs; [
+                  git vim curl wget htop tree
+                  gparted firefox chromium
+                  networkmanager-openvpn
+                  wpa_supplicant_gui
+                ];
+              }];
+            });
+            
+            # ARM/Raspberry Pi images
+            "rpi4-sd-image" = nixos-generators.nixosGenerate (baseConfig // {
+              system = "aarch64-linux";
+              format = "sd-aarch64";
+              modules = baseConfig.modules ++ [{
+                # Raspberry Pi 4 specific configurations
+                boot.kernelPackages = pkgs.linuxPackages_rpi4;
+                boot.loader.raspberryPi = {
+                  enable = true;
+                  version = 4;
+                };
+                boot.loader.grub.enable = false;
+                hardware.raspberry-pi."4".apply-overlays-dtmerge.enable = true;
+              }];
+            });
+            
+            # Development and testing images  
+            "development-vm" = nixos-generators.nixosGenerate (baseConfig // {
+              format = "qcow";
+              modules = baseConfig.modules ++ [{
+                # Development-focused configuration
+                modules.services.monitoring.enable = true;
+                
+                # Development tools
+                environment.systemPackages = with pkgs; [
+                  git vim neovim emacs
+                  nodejs python3 rustc cargo
+                  docker docker-compose
+                  kubectl terraform
+                  vscode-fhs
+                ];
+                
+                # Enable virtualization
+                virtualisation.docker.enable = true;
+                virtualisation.libvirtd.enable = true;
+                
+                users.users.nixos.extraGroups = [ "docker" "libvirtd" ];
+              }];
+            });
+            
+            # Server deployment image
+            "production-server" = nixos-generators.nixosGenerate (baseConfig // {
+              format = "qcow";
+              modules = baseConfig.modules ++ [{
+                # Production server configuration
+                modules.services.monitoring.enable = true;
+                
+                # Security hardening
+                security.apparmor.enable = true;
+                security.auditd.enable = true;
+                security.fail2ban.enable = true;
+                
+                # Server packages
+                environment.systemPackages = with pkgs; [
+                  htop iotop nethogs
+                  rsync borgbackup
+                  nginx postgresql
+                ];
+                
+                # Firewall configuration
+                networking.firewall = {
+                  enable = true;
+                  allowedTCPPorts = [ 22 80 443 ];
+                };
+              }];
+            });
+          };
+          
+        in 
+        # Merge custom packages with deployment images
+        (import ./pkgs pkgs) // deploymentImages
+      );
 
       # Formatter for your nix files, available through 'nix fmt'
       # Uses treefmt for multi-language formatting

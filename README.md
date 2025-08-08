@@ -20,7 +20,9 @@ A modular NixOS configuration template using flakes, featuring:
 - **Container Support** - Fixed podman system-generators conflicts, full container ecosystem
 - **Modular Home Configuration** - Role-based Home Manager with common/host-specific separation
 - **WSL2 Support** - Full Windows Subsystem for Linux integration with development environment
-- **🍎 macOS Support** - Native macOS management with nix-darwin + NixOS VMs for testing
+- **macOS Support** - Native macOS management with nix-darwin + NixOS VMs for testing
+- **Multi-Platform Deployment** - Generate images for AWS, Azure, GCE, VMware, VirtualBox, Raspberry Pi, and more
+- **Expert-Level Features** - Advanced hardware detection, monitoring, optimization, and secrets management
 
 **[Complete Features Overview →](docs/FEATURES-OVERVIEW.md)**
 
@@ -533,6 +535,48 @@ modules.hardware.gpu = {
 - **Intel**: VA-API acceleration, Arc/Xe compute, OneAPI
 
 See [GPU Configuration Guide](docs/GPU-CONFIGURATION.md) for detailed setup instructions.
+
+## Multi-Platform Deployment Images
+
+Generate deployment-ready images for multiple platforms using nixos-generators:
+
+### Quick Image Generation
+
+```bash
+# Cloud platforms
+nix build .#aws-ami          # Amazon EC2 AMI
+nix build .#azure-vhd        # Microsoft Azure VHD
+nix build .#gce-image        # Google Compute Engine
+nix build .#do-image         # Digital Ocean
+
+# Virtualization
+nix build .#vmware-image     # VMware VMDK
+nix build .#virtualbox-ova   # VirtualBox OVA
+nix build .#qemu-qcow2       # QEMU/KVM QCOW2
+
+# Specialized images
+nix build .#live-iso         # Bootable live ISO
+nix build .#rpi4-sd-image    # Raspberry Pi 4 SD card
+nix build .#development-vm   # Development environment
+nix build .#production-server # Production server with monitoring
+```
+
+### Available Deployment Targets
+
+- **Cloud Platforms**: AWS EC2, Azure, Google Cloud, Digital Ocean
+- **Virtualization**: VMware, VirtualBox, QEMU/KVM, Proxmox
+- **Containers**: LXC templates for lightweight deployment
+- **ARM/Embedded**: Raspberry Pi 4 optimized images
+- **Installation Media**: Live ISO with full desktop environment
+- **Specialized**: Development VMs, production servers with security hardening
+
+All images include:
+- Advanced hardware detection and optimization
+- SSH access (user: `nixos`, password: `nixos`)
+- Essential development and system tools
+- Firewall and basic security configuration
+
+**[Complete Deployment Guide →](docs/DEPLOYMENT-IMAGES.md)**
 
 ## Virtual Machine Testing
 
