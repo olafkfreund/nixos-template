@@ -210,9 +210,12 @@ EOF
   nix run nix-darwin -- switch --flake .#bootstrap
 
   log_success "nix-darwin bootstrap complete"
-  # Clean up bootstrap directory safely
-  if [[ -d "/tmp/nix-darwin-bootstrap" ]]; then
-    rm -rf /tmp/nix-darwin-bootstrap
+  
+  # Clean up bootstrap directory safely with explicit path validation
+  bootstrap_dir="/tmp/nix-darwin-bootstrap"
+  if [[ -d "$bootstrap_dir" && "$bootstrap_dir" == "/tmp/nix-darwin-bootstrap" ]]; then
+    log_info "Cleaning up bootstrap directory: $bootstrap_dir"
+    rm -rf "$bootstrap_dir"
   fi
 fi
 

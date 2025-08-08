@@ -156,16 +156,25 @@
           . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
         fi
         
-        # Direnv
+        # Direnv with validation
         if command -v direnv >/dev/null; then
-          eval "$(direnv hook zsh)"
+          direnv_hook="$(direnv hook zsh 2>/dev/null || echo '')"
+          if [[ -n "$direnv_hook" && "$direnv_hook" =~ ^[[:space:]]*direnv ]]; then
+            eval "$direnv_hook"
+          fi
         fi
         
-        # Add Homebrew to PATH (if using Homebrew)
+        # Add Homebrew to PATH (if using Homebrew) with validation
         if [ -f /opt/homebrew/bin/brew ]; then
-          eval "$(/opt/homebrew/bin/brew shellenv)"
+          brew_env="$(/opt/homebrew/bin/brew shellenv 2>/dev/null || echo '')"
+          if [[ -n "$brew_env" && "$brew_env" =~ export.*HOMEBREW ]]; then
+            eval "$brew_env"
+          fi
         elif [ -f /usr/local/bin/brew ]; then
-          eval "$(/usr/local/bin/brew shellenv)"
+          brew_env="$(/usr/local/bin/brew shellenv 2>/dev/null || echo '')"
+          if [[ -n "$brew_env" && "$brew_env" =~ export.*HOMEBREW ]]; then
+            eval "$brew_env"
+          fi
         fi
       '';
 

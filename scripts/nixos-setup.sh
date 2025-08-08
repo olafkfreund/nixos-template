@@ -167,21 +167,7 @@ prompt_input() {
   done
 }
 
-# Placeholder validation functions (can be overridden)
-validate_hostname() {
-  # Basic hostname validation
-  [[ $1 =~ ^[a-zA-Z0-9-]+$ ]] && [[ ${#1} -le 63 ]]
-}
-
-validate_username() {
-  # Basic username validation
-  [[ $1 =~ ^[a-z][a-z0-9_-]{0,31}$ ]]
-}
-
-validate_timezone() {
-  # Accept common timezone format
-  [[ $1 =~ ^[A-Za-z_/+-]+$ ]]
-}
+# Validation functions defined later in the script
 
 prompt_password() {
   local prompt="$1"

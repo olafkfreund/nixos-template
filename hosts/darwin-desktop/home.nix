@@ -140,11 +140,21 @@
         };
 
         initContent = ''
-          # Load direnv
-          eval "$(direnv hook zsh)"
+          # Load direnv with validation
+          if command -v direnv > /dev/null; then
+            direnv_hook="$(direnv hook zsh 2>/dev/null || echo '')"
+            if [[ -n "$direnv_hook" && "$direnv_hook" =~ ^[[:space:]]*direnv ]]; then
+              eval "$direnv_hook"
+            fi
+          fi
           
-          # Initialize zoxide
-          eval "$(zoxide init zsh)"
+          # Initialize zoxide with validation
+          if command -v zoxide > /dev/null; then
+            zoxide_hook="$(zoxide init zsh 2>/dev/null || echo '')"
+            if [[ -n "$zoxide_hook" && "$zoxide_hook" =~ ^[[:space:]]*export ]]; then
+              eval "$zoxide_hook"
+            fi
+          fi
           
           # FZF configuration
           export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'

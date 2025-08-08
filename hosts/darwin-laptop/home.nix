@@ -147,12 +147,20 @@
           
           # Load direnv (but with timeout for mobile)
           if command -v direnv > /dev/null; then
-            eval "$(timeout 5 direnv hook zsh)" 2>/dev/null || echo "direnv timeout (mobile optimization)"
+            direnv_hook="$(timeout 5 direnv hook zsh 2>/dev/null || echo '')"
+            if [[ -n "$direnv_hook" && "$direnv_hook" =~ ^[[:space:]]*direnv ]]; then
+              eval "$direnv_hook"
+            else
+              echo "direnv timeout (mobile optimization)"
+            fi
           fi
           
           # Quick zoxide initialization
           if command -v zoxide > /dev/null; then
-            eval "$(zoxide init zsh)"
+            zoxide_hook="$(zoxide init zsh 2>/dev/null || echo '')"
+            if [[ -n "$zoxide_hook" && "$zoxide_hook" =~ ^[[:space:]]*export ]]; then
+              eval "$zoxide_hook"
+            fi
           fi
           
           # Lightweight FZF setup

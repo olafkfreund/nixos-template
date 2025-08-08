@@ -194,12 +194,18 @@
           
               # Load direnv for project-specific environments
               if command -v direnv > /dev/null; then
-                eval "$(direnv hook zsh)"
+                direnv_hook="$(direnv hook zsh 2>/dev/null || echo '')"
+                if [[ -n "$direnv_hook" && "$direnv_hook" =~ ^[[:space:]]*direnv ]]; then
+                  eval "$direnv_hook"
+                fi
               fi
           
               # Initialize zoxide for smart cd
               if command -v zoxide > /dev/null; then
-                eval "$(zoxide init zsh)"
+                zoxide_hook="$(zoxide init zsh 2>/dev/null || echo '')"
+                if [[ -n "$zoxide_hook" && "$zoxide_hook" =~ ^[[:space:]]*export ]]; then
+                  eval "$zoxide_hook"
+                fi
               fi
           
               # Server-specific environment variables
