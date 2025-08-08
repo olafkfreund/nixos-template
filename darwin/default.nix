@@ -155,7 +155,7 @@
         if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
           . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
         fi
-        
+
         # Direnv with validation
         if command -v direnv >/dev/null; then
           direnv_hook="$(direnv hook zsh 2>/dev/null || echo '')"
@@ -163,7 +163,7 @@
             eval "$direnv_hook"
           fi
         fi
-        
+
         # Add Homebrew to PATH (if using Homebrew) with validation
         if [ -f /opt/homebrew/bin/brew ]; then
           brew_env="$(/opt/homebrew/bin/brew shellenv 2>/dev/null || echo '')"
@@ -268,6 +268,5 @@
   # Home Manager integration placeholder
   # This will be configured in flake.nix or host-specific configs
 }
-
 
 
