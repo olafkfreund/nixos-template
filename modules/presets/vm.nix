@@ -89,8 +89,8 @@ in
 
     # VM hardware configuration (preset configuration)
     hardware = {
-      # Basic OpenGL for VM (keep mkDefault - some VMs may not support)
-      opengl.enable = lib.mkDefault true;
+      # Basic graphics acceleration for VM (keep mkDefault - some VMs may not support)
+      graphics.enable = lib.mkDefault true;
 
       # Disable features not relevant for VMs
       bluetooth.enable = lib.mkForce false;

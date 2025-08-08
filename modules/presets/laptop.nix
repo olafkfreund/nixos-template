@@ -94,7 +94,7 @@ in
       cpu.amd.updateMicrocode = lib.mkDefault true;
 
       # Graphics acceleration
-      opengl.enable = lib.mkDefault true;
+      graphics.enable = lib.mkDefault true;
 
       # Bluetooth
       bluetooth = {

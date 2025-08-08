@@ -93,7 +93,6 @@ in
       kernelParams = [
         # Gaming performance optimizations
         "transparent_hugepage=always"
-        "vm.swappiness=1"
         "elevator=noop"
         # GPU optimizations
         "nvidia-drm.modeset=1"
@@ -102,6 +101,14 @@ in
         # Low latency
         "preempt=full"
       ];
+
+      # Gaming-optimized kernel parameters
+      kernel.sysctl = {
+        # Minimize swap usage for better gaming performance
+        "vm.swappiness" = 1;
+        # Increase maximum memory map areas for games
+        "vm.max_map_count" = 2147483642;
+      };
 
       # Gaming kernel for lower latency (opinionated choice for gaming)
       kernelPackages = pkgs.linuxPackages_zen;

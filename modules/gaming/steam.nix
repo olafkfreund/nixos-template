@@ -283,13 +283,8 @@ in
               echo '* soft nofile 1048576' >> /etc/security/limits.conf
               echo '* hard nofile 1048576' >> /etc/security/limits.conf
               
-              # Increase maximum memory map areas
-              echo 'vm.max_map_count = 2147483642' > /etc/sysctl.d/99-gaming.conf
-              sysctl -p /etc/sysctl.d/99-gaming.conf
-              
-              # Set swappiness for better gaming performance
-              echo 'vm.swappiness = 10' >> /etc/sysctl.d/99-gaming.conf
-              sysctl -w vm.swappiness=10
+              # Note: vm.max_map_count and vm.swappiness are now configured 
+              # declaratively in the gaming preset module
             '';
           };
         };
