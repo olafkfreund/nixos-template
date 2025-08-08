@@ -7,14 +7,14 @@ with lib;
 
 let
   cfg = config.modules.services.monitoring;
-  
+
   # Helper function to generate exporter configurations
   mkExporterConfig = name: exporterCfg: {
     enable = true;
     port = exporterCfg.port;
     listenAddress = exporterCfg.listenAddress or "127.0.0.1";
-    extraFlags = exporterCfg.extraFlags or [];
-  } // (removeAttrs exporterCfg ["port" "listenAddress" "extraFlags"]);
+    extraFlags = exporterCfg.extraFlags or [ ];
+  } // (removeAttrs exporterCfg [ "port" "listenAddress" "extraFlags" ]);
 
   # Default exporter configurations
   defaultExporters = {
@@ -23,7 +23,7 @@ let
       listenAddress = "0.0.0.0";
       enabledCollectors = [
         "systemd"
-        "processes" 
+        "processes"
         "interrupts"
         "buddyinfo"
         "meminfo_numa"
@@ -73,7 +73,7 @@ let
         "zfs"
       ];
     };
-    
+
     systemd = {
       port = 9558;
       listenAddress = "127.0.0.1";
@@ -146,7 +146,7 @@ let
       '';
     };
   };
-  
+
   # Generate alerting rules
   generateAlertRules = {
     groups = [
@@ -271,7 +271,7 @@ in
               type = types.str;
               description = "Remote write URL";
             };
-            
+
             basicAuth = mkOption {
               type = types.nullOr (types.submodule {
                 options = {
@@ -290,7 +290,7 @@ in
             };
           };
         });
-        default = [];
+        default = [ ];
         description = "Remote write configurations";
       };
     };
@@ -317,18 +317,18 @@ in
 
           extraFlags = mkOption {
             type = types.listOf types.str;
-            default = [];
+            default = [ ];
             description = "Additional command line flags";
           };
 
           extraConfig = mkOption {
             type = types.attrs;
-            default = {};
+            default = { };
             description = "Additional exporter-specific configuration";
           };
         };
       });
-      default = {};
+      default = { };
       description = "Prometheus exporters configuration";
     };
 
@@ -374,7 +374,7 @@ in
       checks = mkOption {
         type = types.listOf (types.enum [
           "disk-space"
-          "memory-usage" 
+          "memory-usage"
           "cpu-temperature"
           "service-status"
           "network-connectivity"
@@ -465,13 +465,15 @@ in
               targets = [ "${cfg.prometheus.listenAddress}:${toString cfg.prometheus.port}" ];
             }];
           }
-        ] ++ (mapAttrsToList (name: exporterCfg: {
-          job_name = "exporter-${name}";
-          static_configs = [{
-            targets = [ "${exporterCfg.listenAddress}:${toString exporterCfg.port}" ];
-          }];
-          scrape_interval = "30s";
-        }) (filterAttrs (_: exp: exp.enable) cfg.exporters));
+        ] ++ (mapAttrsToList
+          (name: exporterCfg: {
+            job_name = "exporter-${name}";
+            static_configs = [{
+              targets = [ "${exporterCfg.listenAddress}:${toString exporterCfg.port}" ];
+            }];
+            scrape_interval = "30s";
+          })
+          (filterAttrs (_: exp: exp.enable) cfg.exporters));
 
         # Alerting rules
         ruleFiles = mkIf cfg.prometheus.alerting.enable [
@@ -487,16 +489,18 @@ in
 
     # Exporters configuration
     {
-      services.prometheus.exporters = mkMerge (mapAttrsToList (name: exporterCfg:
-        mkIf exporterCfg.enable {
-          ${name} = mkExporterConfig name (defaultExporters.${name} or {} // exporterCfg.extraConfig // {
-            inherit (exporterCfg) port listenAddress;
-          });
-        }
-      ) cfg.exporters);
+      services.prometheus.exporters = mkMerge (mapAttrsToList
+        (name: exporterCfg:
+          mkIf exporterCfg.enable {
+            ${name} = mkExporterConfig name (defaultExporters.${name} or { } // exporterCfg.extraConfig // {
+              inherit (exporterCfg) port listenAddress;
+            });
+          }
+        )
+        cfg.exporters);
 
       # Open firewall ports for enabled exporters
-      networking.firewall.allowedTCPPorts = 
+      networking.firewall.allowedTCPPorts =
         map (exp: exp.port) (filter (exp: exp.enable) (attrValues cfg.exporters));
     }
 
@@ -603,73 +607,75 @@ in
           NoNewPrivileges = true;
         };
 
-        script = let
-          healthScript = pkgs.writeShellScript "system-health-check" ''
-            #!/bin/bash
-            set -euo pipefail
+        script =
+          let
+            healthScript = pkgs.writeShellScript "system-health-check" ''
+              #!/bin/bash
+              set -euo pipefail
             
-            log_metric() {
-              echo "$1" | systemd-cat -t system-health -p info
-            }
+              log_metric() {
+                echo "$1" | systemd-cat -t system-health -p info
+              }
             
-            log_alert() {
-              echo "ALERT: $1" | systemd-cat -t system-health -p warning
-            }
+              log_alert() {
+                echo "ALERT: $1" | systemd-cat -t system-health -p warning
+              }
             
-            ${optionalString (elem "disk-space" cfg.systemHealth.checks) ''
-            # Check disk space
-            while read -r filesystem blocks used available capacity mountpoint; do
-              if [[ "$capacity" =~ ^([0-9]+)% ]] && [ "''${BASH_REMATCH[1]}" -gt 85 ]; then
-                log_alert "Disk space low on $mountpoint: $capacity used"
+              ${optionalString (elem "disk-space" cfg.systemHealth.checks) ''
+              # Check disk space
+              while read -r filesystem blocks used available capacity mountpoint; do
+                if [[ "$capacity" =~ ^([0-9]+)% ]] && [ "''${BASH_REMATCH[1]}" -gt 85 ]; then
+                  log_alert "Disk space low on $mountpoint: $capacity used"
+                fi
+              done < <(df -h | tail -n +2 | grep -E '^/dev/')
+              ''}
+            
+              ${optionalString (elem "memory-usage" cfg.systemHealth.checks) ''
+              # Check memory usage
+              memory_percent=$(free | grep Mem | awk '{printf("%.0f", $3/$2 * 100.0)}')
+              if [ "$memory_percent" -gt 90 ]; then
+                log_alert "High memory usage: $memory_percent%"
               fi
-            done < <(df -h | tail -n +2 | grep -E '^/dev/')
-            ''}
+              log_metric "memory_usage_percent=$memory_percent"
+              ''}
             
-            ${optionalString (elem "memory-usage" cfg.systemHealth.checks) ''
-            # Check memory usage
-            memory_percent=$(free | grep Mem | awk '{printf("%.0f", $3/$2 * 100.0)}')
-            if [ "$memory_percent" -gt 90 ]; then
-              log_alert "High memory usage: $memory_percent%"
-            fi
-            log_metric "memory_usage_percent=$memory_percent"
-            ''}
-            
-            ${optionalString (elem "service-status" cfg.systemHealth.checks) ''
-            # Check critical service status
-            failed_services=$(systemctl list-units --failed --no-legend | wc -l)
-            if [ "$failed_services" -gt 0 ]; then
-              log_alert "$failed_services systemd services have failed"
-              systemctl list-units --failed --no-legend | while read -r unit _; do
-                log_alert "Failed service: $unit"
-              done
-            fi
-            log_metric "failed_services_count=$failed_services"
-            ''}
-            
-            ${optionalString (elem "cpu-temperature" cfg.systemHealth.checks) ''
-            # Check CPU temperature (if sensors available)
-            if command -v sensors >/dev/null; then
-              max_temp=$(sensors | grep -E 'Core|Package' | grep -oE '\+[0-9]+\.[0-9]+°C' | sed 's/+\([0-9]*\).*/\1/' | sort -n | tail -1)
-              if [ -n "$max_temp" ] && [ "$max_temp" -gt 80 ]; then
-                log_alert "High CPU temperature: $max_temp°C"
+              ${optionalString (elem "service-status" cfg.systemHealth.checks) ''
+              # Check critical service status
+              failed_services=$(systemctl list-units --failed --no-legend | wc -l)
+              if [ "$failed_services" -gt 0 ]; then
+                log_alert "$failed_services systemd services have failed"
+                systemctl list-units --failed --no-legend | while read -r unit _; do
+                  log_alert "Failed service: $unit"
+                done
               fi
-              log_metric "cpu_max_temp_celsius=$max_temp"
-            fi
-            ''}
+              log_metric "failed_services_count=$failed_services"
+              ''}
             
-            ${optionalString (elem "network-connectivity" cfg.systemHealth.checks) ''
-            # Check network connectivity
-            if ! ping -c 1 -W 5 8.8.8.8 >/dev/null 2>&1; then
-              log_alert "Network connectivity check failed"
-              log_metric "network_connectivity=0"
-            else
-              log_metric "network_connectivity=1"
-            fi
-            ''}
+              ${optionalString (elem "cpu-temperature" cfg.systemHealth.checks) ''
+              # Check CPU temperature (if sensors available)
+              if command -v sensors >/dev/null; then
+                max_temp=$(sensors | grep -E 'Core|Package' | grep -oE '\+[0-9]+\.[0-9]+°C' | sed 's/+\([0-9]*\).*/\1/' | sort -n | tail -1)
+                if [ -n "$max_temp" ] && [ "$max_temp" -gt 80 ]; then
+                  log_alert "High CPU temperature: $max_temp°C"
+                fi
+                log_metric "cpu_max_temp_celsius=$max_temp"
+              fi
+              ''}
             
-            log_metric "health_check_completed=1"
-          '';
-        in "${healthScript}";
+              ${optionalString (elem "network-connectivity" cfg.systemHealth.checks) ''
+              # Check network connectivity
+              if ! ping -c 1 -W 5 8.8.8.8 >/dev/null 2>&1; then
+                log_alert "Network connectivity check failed"
+                log_metric "network_connectivity=0"
+              else
+                log_metric "network_connectivity=1"
+              fi
+              ''}
+            
+              log_metric "health_check_completed=1"
+            '';
+          in
+          "${healthScript}";
 
         startAt = cfg.systemHealth.checkInterval;
       };
@@ -689,7 +695,7 @@ in
             http_listen_port = 3100;
             grpc_listen_port = 9096;
           };
-          
+
           ingester = {
             lifecycler = {
               address = "127.0.0.1";
@@ -705,7 +711,7 @@ in
             chunk_target_size = 999999;
             chunk_retain_period = "30s";
           };
-          
+
           schema_config = {
             configs = [{
               from = "2020-10-24";
@@ -718,7 +724,7 @@ in
               };
             }];
           };
-          
+
           storage_config = {
             boltdb_shipper = {
               active_index_directory = "/var/lib/loki/boltdb-shipper-active";
@@ -726,22 +732,22 @@ in
               cache_ttl = "24h";
               shared_store = "filesystem";
             };
-            
+
             filesystem = {
               directory = "/var/lib/loki/chunks";
             };
           };
-          
+
           limits_config = {
             reject_old_samples = true;
             reject_old_samples_max_age = "168h";
             retention_period = cfg.logAggregation.retention;
           };
-          
+
           chunk_store_config = {
             max_look_back_period = "0s";
           };
-          
+
           table_manager = {
             retention_deletes_enabled = true;
             retention_period = cfg.logAggregation.retention;
@@ -756,15 +762,15 @@ in
             http_listen_port = 3031;
             grpc_listen_port = 3032;
           };
-          
+
           positions = {
             filename = "/tmp/positions.yaml";
           };
-          
+
           clients = [{
             url = "http://localhost:3100/loki/api/v1/push";
           }];
-          
+
           scrape_configs = [{
             job_name = "journal";
             journal = {
@@ -792,19 +798,19 @@ in
         nethogs
         iftop
         nload
-        
+
         # System information
         neofetch
         lscpu
         lsblk
         lsusb
         lspci
-        
+
         # Performance testing
         stress-ng
         sysbench
         iperf3
-        
+
         # Network diagnostics
         mtr
         nmap
@@ -821,7 +827,7 @@ in
           port = mkDefault 9100;
           listenAddress = mkDefault "0.0.0.0";
         };
-        
+
         systemd = {
           enable = mkDefault true;
           port = mkDefault 9558;

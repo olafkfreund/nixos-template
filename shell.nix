@@ -1,4 +1,4 @@
-{pkgs, ...}:
+{ pkgs, ... }:
 with pkgs; {
   default = mkShell {
     name = "nixos-config";

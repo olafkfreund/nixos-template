@@ -237,11 +237,11 @@ in
         "d /tmp 1777 root root 1d"
         "d /var/tmp 1777 root root 7d"
         "d /run/user 0755 root root -"
-        
+
         # Nix-specific cleanup
         "d /nix/var/nix/gcroots/tmp 0755 root root -"
         "d /nix/var/nix/temproots 0755 root root -"
-        
+
         # Clean up old build logs
         "R! /nix/var/log/nix/drvs 30d"
       ];
@@ -272,13 +272,13 @@ in
       # Optimize for build workloads (use lower priority than system defaults)
       "kernel.pid_max" = mkOverride 1500 4194304;
       "vm.max_map_count" = mkOverride 1500 262144;
-      
+
       # Network optimization for downloads
       "net.core.rmem_max" = mkDefault 134217728;
       "net.core.wmem_max" = mkDefault 134217728;
       "net.ipv4.tcp_rmem" = mkDefault "4096 65536 134217728";
       "net.ipv4.tcp_wmem" = mkDefault "4096 65536 134217728";
-      
+
       # Build performance optimization
       "kernel.sched_autogroup_enabled" = mkDefault 0; # Better for build workloads
     };
@@ -289,10 +289,10 @@ in
       variables = {
         # Nix optimization
         NIX_REMOTE = "daemon";
-        
+
         # Compiler optimization
         MAKEFLAGS = "-j${toString config.nix.settings.max-jobs}";
-        
+
         # Rust optimization
         CARGO_BUILD_JOBS = toString config.nix.settings.max-jobs;
       };
@@ -300,17 +300,17 @@ in
       # Essential system packages for optimization
       systemPackages = with pkgs; [
         # Nix tools
-        nix-tree        # Explore Nix store dependencies
-        nix-diff        # Compare Nix derivations
-        nix-top         # Monitor Nix builds
-        
+        nix-tree # Explore Nix store dependencies
+        nix-diff # Compare Nix derivations
+        nix-top # Monitor Nix builds
+
         # System monitoring
         htop
         iotop
-        
+
         # Storage tools
-        ncdu            # Disk usage analyzer
-        compsize        # Compression ratio analyzer (Btrfs)
+        ncdu # Disk usage analyzer
+        compsize # Compression ratio analyzer (Btrfs)
       ];
     };
   };

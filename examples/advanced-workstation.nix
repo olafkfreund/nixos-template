@@ -7,10 +7,10 @@
   imports = [
     # Import hardware configuration
     ./hardware-configuration.nix
-    
+
     # Import common base configuration
     ../hosts/common.nix
-    
+
     # Import all advanced modules
     ../modules/hardware
     ../modules/services
@@ -25,7 +25,7 @@
     enable = true;
     autoOptimize = true;
     profile = null; # Auto-detect performance profile
-    
+
     reporting = {
       enable = true;
       logLevel = "debug";
@@ -41,7 +41,7 @@
   # Advanced Nix optimization
   modules.core.nixOptimization = {
     enable = true;
-    
+
     tmpfs = {
       enable = true;
       size = "8G"; # Large tmpfs for high-memory systems
@@ -86,7 +86,7 @@
       listenAddress = "0.0.0.0";
       retention = "30d";
       scrapeInterval = "15s";
-      
+
       alerting = {
         enable = true;
         customRules = ''
@@ -178,7 +178,7 @@
   # Template module example usage
   modules.template = {
     enable = true;
-    
+
     settings = {
       logLevel = "info";
       timeout = 30;
@@ -243,7 +243,7 @@
   security = {
     # Enable AppArmor for additional security
     apparmor.enable = true;
-    
+
     # Advanced audit configuration
     auditd.enable = true;
     audit = {
@@ -297,17 +297,17 @@
   # Advanced networking
   networking = {
     networkmanager.enable = true;
-    
+
     firewall = {
       enable = true;
       allowedTCPPorts = [
-        22    # SSH
-        3000  # Grafana
-        8080  # Web API
-        9090  # Prometheus
-        9100  # Node exporter
+        22 # SSH
+        3000 # Grafana
+        8080 # Web API
+        9090 # Prometheus
+        9100 # Node exporter
       ];
-      
+
       # Advanced firewall rules
       extraCommands = ''
         # Rate limiting for SSH
@@ -326,20 +326,20 @@
 
     # Advanced DNS configuration
     nameservers = [ "1.1.1.1" "8.8.8.8" "9.9.9.9" ];
-    
+
     # Network optimization
     kernel.sysctl = {
       # TCP optimization
       "net.ipv4.tcp_congestion_control" = "bbr";
       "net.core.default_qdisc" = "fq";
       "net.ipv4.tcp_fastopen" = 3;
-      
+
       # Network buffer optimization
       "net.core.rmem_max" = 134217728;
       "net.core.wmem_max" = 134217728;
       "net.ipv4.tcp_rmem" = "4096 65536 134217728";
       "net.ipv4.tcp_wmem" = "4096 65536 134217728";
-      
+
       # Connection tracking optimization
       "net.netfilter.nf_conntrack_max" = 1000000;
       "net.netfilter.nf_conntrack_tcp_timeout_established" = 600;
@@ -350,7 +350,7 @@
   boot = {
     # Latest kernel for best hardware support
     kernelPackages = pkgs.linuxPackages_latest;
-    
+
     # Kernel parameters for performance and security
     kernelParams = [
       # Security
@@ -358,11 +358,11 @@
       "init_on_alloc=1"
       "init_on_free=1"
       "page_alloc.shuffle=1"
-      
+
       # Performance
       "transparent_hugepage=madvise"
       "elevator=mq-deadline"
-      
+
       # Debugging (disable in production)
       "quiet"
       "loglevel=3"
@@ -390,19 +390,19 @@
     isNormalUser = true;
     description = "Developer User";
     extraGroups = [
-      "wheel"          # sudo access
+      "wheel" # sudo access
       "networkmanager" # network management
-      "docker"         # docker access (if enabled)
-      "libvirtd"       # virtualization (if enabled)
-      "audio"          # audio access
-      "video"          # video access
-      "input"          # input devices
-      "dialout"        # serial ports
-      "plugdev"        # removable devices
+      "docker" # docker access (if enabled)
+      "libvirtd" # virtualization (if enabled)
+      "audio" # audio access
+      "video" # video access
+      "input" # input devices
+      "dialout" # serial ports
+      "plugdev" # removable devices
     ];
-    
+
     shell = pkgs.zsh;
-    
+
     openssh.authorizedKeys.keys = [
       # Add your SSH public keys here
       # "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ..."
@@ -439,7 +439,7 @@
     nload
     bandwhich
     bottom
-    
+
     # Network tools
     nmap
     netcat
@@ -450,20 +450,20 @@
     traceroute
     whois
     dig
-    
+
     # Development tools
     git
     vim
     neovim
     tmux
     screen
-    
+
     # Archive tools
     p7zip
     unzip
     zip
     unrar
-    
+
     # File management
     tree
     fd
@@ -471,45 +471,45 @@
     fzf
     bat
     exa
-    
+
     # System information
     neofetch
     lscpu
     lshw
     inxi
     hwinfo
-    
+
     # Performance testing
     sysbench
     stress-ng
     iperf3
-    
+
     # Container and virtualization
     docker-compose
     podman-compose
     vagrant
-    
+
     # Security tools
     nmap
     wireshark
     tcpdump
-    
+
     # Text processing
     jq
     yq
     xmlstarlet
-    
+
     # Backup and sync
     rsync
     rclone
     borgbackup
-    
+
     # Build tools
     gnumake
     cmake
     gcc
     clang
-    
+
     # Package management helpers
     nix-tree
     nix-diff
@@ -542,13 +542,13 @@
 
     # Enable fish shell as alternative
     fish.enable = true;
-    
+
     # Enable Starship prompt
     starship.enable = true;
-    
+
     # Command-not-found with Nix integration
     command-not-found.enable = false; # Disable in favor of comma
-    
+
     # Enable mosh for mobile shell
     mosh.enable = true;
   };
@@ -572,16 +572,16 @@
     # Enable all firmware
     enableAllFirmware = true;
     enableRedistributableFirmware = true;
-    
+
     # Graphics
     graphics = {
       enable = true;
       enable32Bit = true; # For 32-bit applications
     };
-    
+
     # Audio
     pulseaudio.enable = false; # Disable in favor of PipeWire
-    
+
     # Bluetooth
     bluetooth = {
       enable = true;
@@ -593,7 +593,7 @@
         };
       };
     };
-    
+
     # Printing
     printers.ensureDefaultPrinter = "Default-Printer";
   };

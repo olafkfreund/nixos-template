@@ -571,6 +571,7 @@ nix build .#production-server # Production server with monitoring
 - **Specialized**: Development VMs, production servers with security hardening
 
 All images include:
+
 - Advanced hardware detection and optimization
 - SSH access (user: `nixos`, password: `nixos`)
 - Essential development and system tools

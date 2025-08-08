@@ -16,24 +16,24 @@
       "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
       "nixpkgs-unfree.cachix.org-1:hqvoInulhbV4nJ9yJOEr+4wxhDV4xq2d1DK7S6Nj6rs="
     ];
-    
+
     # Parallel building optimization
     max-jobs = "auto";
     cores = 0;
-    
+
     # Advanced build optimizations
     keep-outputs = true;
     keep-derivations = true;
     auto-optimise-store = true;
-    
+
     # Network and download optimization
     http-connections = 25;
     download-attempts = 3;
-    
+
     # Build isolation and security
     sandbox = true;
     restrict-eval = false;
-    
+
     # Experimental features for advanced functionality
     experimental-features = [
       "nix-command"
@@ -201,10 +201,10 @@
       overlays = import ./overlays { inherit inputs; };
 
       # Custom packages and deployment images; accessible through 'nix build', 'nix shell', etc
-      packages = forAllSystems (system: 
-        let 
+      packages = forAllSystems (system:
+        let
           pkgs = nixpkgs.legacyPackages.${system};
-          
+
           # Base configuration for all generated images
           baseConfig = {
             inherit system;
@@ -215,36 +215,41 @@
                 # Optimize for deployment images
                 boot.loader.systemd-boot.enable = true;
                 boot.loader.efi.canTouchEfiVariables = true;
-                
+
                 # Enable advanced features by default
                 modules = {
                   core.nixOptimization.enable = true;
                   hardware.detection.enable = true;
                   services.monitoring.enable = false; # Enable per-deployment as needed
                 };
-                
+
                 # Default user for images
                 users.users.nixos = {
                   isNormalUser = true;
                   extraGroups = [ "wheel" "networkmanager" ];
                   initialPassword = "nixos";
                 };
-                
+
                 # Enable SSH by default
                 services.openssh = {
                   enable = true;
                   settings.PermitRootLogin = "no";
                   settings.PasswordAuthentication = true; # For initial setup
                 };
-                
+
                 # Essential packages for deployment
                 environment.systemPackages = with pkgs; [
-                  git vim curl wget htop tree
+                  git
+                  vim
+                  curl
+                  wget
+                  htop
+                  tree
                 ];
               }
             ];
           };
-          
+
           # Generate images for different deployment targets
           deploymentImages = {
             # Cloud deployment images
@@ -260,7 +265,7 @@
                 };
               }];
             });
-            
+
             "azure-vhd" = nixos-generators.nixosGenerate (baseConfig // {
               format = "azure";
               modules = baseConfig.modules ++ [{
@@ -268,7 +273,7 @@
                 virtualisation.azure.agent.enable = true;
               }];
             });
-            
+
             "gce-image" = nixos-generators.nixosGenerate (baseConfig // {
               format = "gce";
               modules = baseConfig.modules ++ [{
@@ -277,7 +282,7 @@
                 services.openssh.settings.PermitRootLogin = "no";
               }];
             });
-            
+
             "do-image" = nixos-generators.nixosGenerate (baseConfig // {
               format = "do";
               modules = baseConfig.modules ++ [{
@@ -285,7 +290,7 @@
                 services.openssh.enable = true;
               }];
             });
-            
+
             # Virtualization images
             "vmware-image" = nixos-generators.nixosGenerate (baseConfig // {
               format = "vmware";
@@ -295,7 +300,7 @@
                 services.xserver.videoDrivers = [ "vmware" ];
               }];
             });
-            
+
             "virtualbox-ova" = nixos-generators.nixosGenerate (baseConfig // {
               format = "virtualbox";
               modules = baseConfig.modules ++ [{
@@ -304,7 +309,7 @@
                 services.xserver.videoDrivers = [ "virtualbox" "modesetting" ];
               }];
             });
-            
+
             "qemu-qcow2" = nixos-generators.nixosGenerate (baseConfig // {
               format = "qcow";
               modules = baseConfig.modules ++ [{
@@ -313,7 +318,7 @@
                 services.spice-vdagentd.enable = true;
               }];
             });
-            
+
             # Container images
             "lxc-template" = nixos-generators.nixosGenerate (baseConfig // {
               format = "lxc";
@@ -323,7 +328,7 @@
                 services.openssh.enable = true;
               }];
             });
-            
+
             # Installation media
             "live-iso" = nixos-generators.nixosGenerate (baseConfig // {
               format = "iso";
@@ -332,17 +337,24 @@
                 isoImage.makeEfiBootable = true;
                 isoImage.makeUsbBootable = true;
                 isoImage.squashfsCompression = "gzip -Xcompression-level 1";
-                
+
                 # Include useful tools on live system
                 environment.systemPackages = with pkgs; [
-                  git vim curl wget htop tree
-                  gparted firefox chromium
+                  git
+                  vim
+                  curl
+                  wget
+                  htop
+                  tree
+                  gparted
+                  firefox
+                  chromium
                   networkmanager-openvpn
                   wpa_supplicant_gui
                 ];
               }];
             });
-            
+
             # ARM/Raspberry Pi images
             "rpi4-sd-image" = nixos-generators.nixosGenerate (baseConfig // {
               system = "aarch64-linux";
@@ -358,50 +370,62 @@
                 hardware.raspberry-pi."4".apply-overlays-dtmerge.enable = true;
               }];
             });
-            
+
             # Development and testing images  
             "development-vm" = nixos-generators.nixosGenerate (baseConfig // {
               format = "qcow";
               modules = baseConfig.modules ++ [{
                 # Development-focused configuration
                 modules.services.monitoring.enable = true;
-                
+
                 # Development tools
                 environment.systemPackages = with pkgs; [
-                  git vim neovim emacs
-                  nodejs python3 rustc cargo
-                  docker docker-compose
-                  kubectl terraform
+                  git
+                  vim
+                  neovim
+                  emacs
+                  nodejs
+                  python3
+                  rustc
+                  cargo
+                  docker
+                  docker-compose
+                  kubectl
+                  terraform
                   vscode-fhs
                 ];
-                
+
                 # Enable virtualization
                 virtualisation.docker.enable = true;
                 virtualisation.libvirtd.enable = true;
-                
+
                 users.users.nixos.extraGroups = [ "docker" "libvirtd" ];
               }];
             });
-            
+
             # Server deployment image
             "production-server" = nixos-generators.nixosGenerate (baseConfig // {
               format = "qcow";
               modules = baseConfig.modules ++ [{
                 # Production server configuration
                 modules.services.monitoring.enable = true;
-                
+
                 # Security hardening
                 security.apparmor.enable = true;
                 security.auditd.enable = true;
                 security.fail2ban.enable = true;
-                
+
                 # Server packages
                 environment.systemPackages = with pkgs; [
-                  htop iotop nethogs
-                  rsync borgbackup
-                  nginx postgresql
+                  htop
+                  iotop
+                  nethogs
+                  rsync
+                  borgbackup
+                  nginx
+                  postgresql
                 ];
-                
+
                 # Firewall configuration
                 networking.firewall = {
                   enable = true;
@@ -410,8 +434,8 @@
               }];
             });
           };
-          
-        in 
+
+        in
         # Merge custom packages with deployment images
         (import ./pkgs pkgs) // deploymentImages
       );
@@ -855,9 +879,10 @@
         '';
 
         # Module dependency check
-        module-dependency-check = nixpkgs.legacyPackages.${system}.runCommand "module-dependency-check" { 
-          buildInputs = with nixpkgs.legacyPackages.${system}; [ nix jq ];
-        } ''
+        module-dependency-check = nixpkgs.legacyPackages.${system}.runCommand "module-dependency-check"
+          {
+            buildInputs = with nixpkgs.legacyPackages.${system}; [ nix jq ];
+          } ''
           echo "Checking module dependencies..."
           
           # Validate that all module imports resolve
@@ -871,9 +896,10 @@
         '';
 
         # Security validation
-        security-check = nixpkgs.legacyPackages.${system}.runCommand "security-validation" {
-          buildInputs = with nixpkgs.legacyPackages.${system}; [ gnugrep ];
-        } ''
+        security-check = nixpkgs.legacyPackages.${system}.runCommand "security-validation"
+          {
+            buildInputs = with nixpkgs.legacyPackages.${system}; [ gnugrep ];
+          } ''
           echo "Running security validation..."
           
           # Check for hardcoded passwords or secrets
