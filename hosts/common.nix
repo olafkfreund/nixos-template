@@ -12,6 +12,13 @@
     inputs.home-manager.nixosModules.home-manager
   ];
 
+  # Enable advanced NixOS features
+  modules = {
+    core.nixOptimization.enable = lib.mkDefault true;
+    hardware.detection.enable = lib.mkDefault true;
+    services.monitoring.enable = lib.mkDefault false; # Enable per-host as needed
+  };
+
   # Home Manager configuration
   home-manager = {
     useGlobalPkgs = true;

@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ./detection.nix
     ./gpu
   ];
 }

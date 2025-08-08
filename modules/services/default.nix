@@ -4,7 +4,7 @@
 { ... }:
 
 {
-  # imports = [
-  #   # Add service modules here
-  # ];
+  imports = [
+    ./monitoring.nix
+  ];
 }
