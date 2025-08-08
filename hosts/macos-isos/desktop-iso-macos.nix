@@ -107,7 +107,14 @@
       password = "nixos"; # Default password for installer
       shell = pkgs.zsh;
     };
-    users.root.password = "root";
+    # Override root password for macOS ISO installer convenience
+    users.root = {
+      # Use initialPassword to override the locked password from core/users.nix
+      initialPassword = lib.mkOverride 50 "root";
+      # Clear the locked password 
+      hashedPassword = lib.mkOverride 60 null;
+    };
+  };
   };
 
   # Security - relaxed for installer

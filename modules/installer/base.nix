@@ -33,13 +33,12 @@
   };
 
   # Set root password for installer (change this!)
-  # Clear other password options to avoid conflicts
+  # Override the default locked password from core/users.nix for installer environments
   users.users.root = {
-    initialPassword = "nixos";
-    password = lib.mkForce null;
-    hashedPassword = lib.mkForce null;
-    initialHashedPassword = lib.mkForce null;
-    hashedPasswordFile = lib.mkForce null;
+    # Use initialPassword for installer - this overrides hashedPassword with higher precedence
+    initialPassword = lib.mkOverride 50 "nixos";  # Lower number = higher priority than mkDefault (1000)
+    # Clear the locked password from core/users.nix
+    hashedPassword = lib.mkOverride 60 null;
   };
 
   # Essential packages for installation

@@ -14,11 +14,16 @@
       # Additional groups can be defined here
     };
 
-    # System users
-    users = {
+    # System users - use consistent users.users.* syntax to avoid conflicts
+    users.users = {
       root = {
-        # Disable root login by default
-        hashedPassword = "!";
+        # Disable root login by default - clear other password options to avoid conflicts
+        hashedPassword = lib.mkDefault "!";
+        # Explicitly clear conflicting options with mkForce
+        password = lib.mkForce null;
+        initialPassword = lib.mkForce null;
+        initialHashedPassword = lib.mkForce null;
+        hashedPasswordFile = lib.mkForce null;
       };
     };
   };
