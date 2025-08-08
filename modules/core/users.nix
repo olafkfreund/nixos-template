@@ -19,9 +19,10 @@
       root = {
         # Disable root login by default - clear other password options to avoid conflicts
         hashedPassword = lib.mkDefault "!";
-        # Explicitly clear conflicting options with mkForce
+        # Aggressively clear ALL conflicting options - use mkForce to override any defaults
         password = lib.mkForce null;
         initialPassword = lib.mkForce null;
+        # This is critical: empty string "" is different from null, force it to null
         initialHashedPassword = lib.mkForce null;
         hashedPasswordFile = lib.mkForce null;
       };
@@ -38,10 +39,10 @@
       shellInit = ''
         # Custom prompt
         export PS1="\[\e[32m\]\u@\h\[\e[m\]:\[\e[34m\]\w\[\e[m\]$ "
-        
+
         # Useful aliases
         alias ll="ls -alF"
-        alias la="ls -A"  
+        alias la="ls -A"
         alias l="ls -CF"
         alias grep="grep --color=auto"
         alias ..="cd .."

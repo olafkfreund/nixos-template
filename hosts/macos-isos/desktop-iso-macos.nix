@@ -111,8 +111,12 @@
     users.root = {
       # Use initialPassword to override the locked password from core/users.nix
       initialPassword = lib.mkOverride 50 "root";
-      # Clear the locked password 
+      # Aggressively clear ALL other password options to prevent conflicts
       hashedPassword = lib.mkOverride 60 null;
+      password = lib.mkOverride 60 null;
+      # Force initialHashedPassword to null to override any system defaults
+      initialHashedPassword = lib.mkOverride 60 null;
+      hashedPasswordFile = lib.mkOverride 60 null;
     };
   };
 };
@@ -171,24 +175,24 @@ p7zip
 (writeShellScriptBin "install-nixos-macos" ''
       #!/usr/bin/env bash
       set -euo pipefail
-      
+
       echo "🍎 NixOS Desktop Installer for macOS VMs"
       echo "======================================="
       echo ""
       echo "This installer is optimized for UTM/QEMU on macOS."
       echo ""
-      
+
       # Check if running in VM
       if [ -e /sys/class/dmi/id/product_name ]; then
         PRODUCT=$(cat /sys/class/dmi/id/product_name 2>/dev/null || echo "Unknown")
         echo "Detected system: $PRODUCT"
       fi
-      
+
       echo ""
       echo "Available templates at /etc/nixos-template:"
       ls -la /etc/nixos-template/hosts/ | grep -E "desktop|laptop" | head -5
       echo ""
-      
+
       echo "Quick installation steps:"
       echo "1. Partition disk: sudo fdisk /dev/vda"
       echo "2. Format partitions:"
@@ -209,16 +213,16 @@ p7zip
 (writeShellScriptBin "nixos-macos-auto-install" ''
       #!/usr/bin/env bash
       set -euo pipefail
-      
+
       echo "🚀 Automated NixOS Installation for macOS VMs"
       echo "============================================="
-      
+
       # Check if running as root
       if [ "$EUID" -ne 0 ]; then
         echo "Please run as root: sudo nixos-macos-auto-install"
         exit 1
       fi
-      
+
       # Detect disk
       if [ -b /dev/vda ]; then
         DISK="/dev/vda"
@@ -228,17 +232,17 @@ p7zip
         echo "No suitable disk found. Please partition manually."
         exit 1
       fi
-      
+
       echo "Installing to disk: $DISK"
       echo "WARNING: This will erase all data on $DISK!"
       echo -n "Continue? (yes/no): "
       read -r confirm
-      
+
       if [ "$confirm" != "yes" ]; then
         echo "Installation cancelled."
         exit 1
       fi
-      
+
       # Partition disk
       echo "Partitioning disk..."
       parted "$DISK" --script mklabel gpt
@@ -246,32 +250,32 @@ p7zip
       parted "$DISK" --script set 1 esp on
       parted "$DISK" --script mkpart primary linux-swap 512MiB 2GiB
       parted "$DISK" --script mkpart primary ext4 2GiB 100%
-      
+
       # Format partitions
       echo "Formatting partitions..."
       mkfs.fat -F 32 -n boot "''${DISK}1"
       mkswap -L swap "''${DISK}2"
       mkfs.ext4 -L nixos "''${DISK}3"
-      
+
       # Mount filesystems
       echo "Mounting filesystems..."
       mount /dev/disk/by-label/nixos /mnt
       mkdir -p /mnt/boot
       mount /dev/disk/by-label/boot /mnt/boot
       swapon /dev/disk/by-label/swap
-      
+
       # Generate hardware config
       echo "Generating hardware configuration..."
       nixos-generate-config --root /mnt
-      
+
       # Copy desktop template
       echo "Installing desktop template..."
       cp -r /etc/nixos-template/hosts/desktop-template/* /mnt/etc/nixos/
-      
+
       # Install NixOS
       echo "Installing NixOS..."
       nixos-install --no-root-passwd
-      
+
       echo ""
       echo "✅ Installation complete!"
       echo "Default user: nixos (password: nixos)"
@@ -283,25 +287,25 @@ p7zip
 # macOS VM optimization script
 (writeShellScriptBin "optimize-for-macos-vm" ''
       echo "🔧 Optimizing NixOS for macOS VM environment..."
-      
+
       # Enable VM-specific kernel modules
       modprobe virtio_net || true
       modprobe virtio_blk || true
       modprobe virtio_scsi || true
-      
+
       # Network optimization
       if command -v nmcli >/dev/null; then
         echo "Configuring NetworkManager for VM..."
         nmcli connection modify "Wired connection 1" connection.autoconnect yes 2>/dev/null || true
       fi
-      
+
       # Display optimization
       if [ -n "$DISPLAY" ]; then
         echo "Optimizing display settings for VM..."
         # Set optimal resolution for VM
         xrandr --output Virtual-1 --mode 1920x1080 2>/dev/null || true
       fi
-      
+
       echo "✅ VM optimization complete!"
     '')
 ];
@@ -317,47 +321,47 @@ mode = "0755";
 "nixos-macos-guide.md" = {
 text = ''
         # NixOS Installation Guide for macOS VMs
-        
+
         This ISO is optimized for UTM/QEMU on macOS systems.
-        
+
         ## Quick Start
-        
+
         1. **Automatic Installation** (Recommended):
            ```bash
            sudo nixos-macos-auto-install
            ```
-        
+
         2. **Manual Installation**:
            - Run `install-nixos-macos` for guided installation
            - Or follow standard NixOS installation process
-        
+
         ## VM Optimization
-        
+
         After installation, run:
         ```bash
         optimize-for-macos-vm
         ```
-        
+
         ## Available Templates
-        
+
         - Desktop: Full GNOME desktop environment
-        - Laptop: Laptop-optimized configuration  
+        - Laptop: Laptop-optimized configuration
         - Server: Headless server configuration
-        
+
         Templates are located at `/etc/nixos-template/hosts/`
-        
+
         ## Networking
-        
+
         - DHCP is enabled by default
         - NetworkManager is pre-configured
         - SSH access: `ssh nixos@<vm-ip>` (password: nixos)
-        
+
         ## First Boot
-        
+
         1. Change default passwords
         2. Update system: `sudo nixos-rebuild switch --upgrade`
         3. Configure user settings
-        
+
         For more information, visit: https://nixos.org/manual/nixos/stable/
       '';
 mode = "0644";

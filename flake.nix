@@ -108,7 +108,7 @@
             # Markdown files
             mdformat.enable = true;
 
-            # YAML files  
+            # YAML files
             yamlfmt.enable = true;
 
             # JSON files
@@ -236,6 +236,7 @@
                   hashedPassword = lib.mkOverride 100 "!"; # Lock root account
                   password = lib.mkOverride 100 null;
                   initialPassword = lib.mkOverride 100 null;
+                  # Critical: Force initialHashedPassword to null (nixos-generators might set it to "")
                   initialHashedPassword = lib.mkOverride 100 null;
                   hashedPasswordFile = lib.mkOverride 100 null;
                 };
@@ -299,10 +300,10 @@
             #       # Override GCE default to match our base configuration
             #       settings.PermitRootLogin = lib.mkForce "no";
             #     };
-            #     
+            #
             #     # Override the problematic google-guest-configs configuration
             #     boot.extraModprobeConfig = lib.mkForce "";
-            #     
+            #
             #     # Ensure Google Cloud guest agent is available
             #     environment.systemPackages = with pkgs; [
             #       google-cloud-sdk
@@ -336,7 +337,7 @@
               format = "virtualbox";
               modules = baseConfig.modules ++ [
                 ({ config, lib, pkgs, ... }: {
-                  # VirtualBox-specific optimizations  
+                  # VirtualBox-specific optimizations
                   virtualisation.virtualbox.guest.enable = true;
                   services.xserver.videoDrivers = [ "virtualbox" "modesetting" ];
                 })
@@ -402,7 +403,7 @@
             # Note: Cross-compilation from x86_64 to aarch64 requires --impure flag
             # Include this only when building on aarch64-linux or with cross-compilation enabled
 
-            # Development and testing images  
+            # Development and testing images
             "development-vm" = nixos-generators.nixosGenerate (baseConfig // {
               format = "qcow";
               modules = baseConfig.modules ++ [
@@ -533,14 +534,14 @@
               echo "🔧 Development tools loaded:"
               echo "  nixpkgs-fmt, statix, deadnix, shellcheck, pre-commit"
               echo ""
-              
+
               # Setup pre-commit hooks if not already done
               if [[ ! -f .git/hooks/pre-commit ]] && command -v pre-commit >/dev/null; then
                 echo "🔗 Setting up pre-commit hooks..."
                 pre-commit install --install-hooks
                 echo "✅ Pre-commit hooks installed"
               fi
-              
+
               ${pre-commit-check.${system}.shellHook or ""}
             '';
           };
@@ -578,7 +579,7 @@
           ];
         };
 
-        # Example VM configurations  
+        # Example VM configurations
         qemu-vm = mkSystem { hostname = "qemu-vm"; };
         microvm = mkSystem { hostname = "microvm"; };
         desktop-test = mkSystem {
@@ -832,7 +833,7 @@
               touch $out
             '';
 
-        # WSL2 Home Manager validation (x86_64-linux only)  
+        # WSL2 Home Manager validation (x86_64-linux only)
         wsl2-home-check =
           if system == "x86_64-linux" then
             nixpkgs.legacyPackages.${system}.runCommand "wsl2-home-check" { } ''
@@ -861,18 +862,18 @@
           testScript = ''
             machine.start()
             machine.wait_for_unit("multi-user.target")
-            
+
             # Test essential services
             machine.succeed("systemctl is-active NetworkManager")
             machine.succeed("systemctl is-active systemd-resolved")
-            
+
             # Test Home Manager integration
             machine.succeed("test -f /home/nixos/.zshrc")
-            
+
             # Test development tools
             machine.succeed("which git")
             machine.succeed("which vim")
-            
+
             machine.shutdown()
           '';
         };
@@ -890,14 +891,14 @@
           testScript = ''
             machine.start()
             machine.wait_for_unit("multi-user.target")
-            
+
             # Test SSH service
             machine.wait_for_unit("sshd.service")
             machine.succeed("systemctl is-active sshd")
-            
+
             # Test firewall
             machine.succeed("systemctl is-active firewall")
-            
+
             machine.shutdown()
           '';
         };
@@ -905,12 +906,12 @@
         # Configuration validation tests
         config-syntax-check = nixpkgs.legacyPackages.${system}.runCommand "config-syntax-validation" { } ''
           echo "Validating NixOS configuration syntax..."
-          
+
           # Check all host configurations can be evaluated
-          ${nixpkgs.legacyPackages.${system}.lib.concatMapStringsSep "\n" (host: 
+          ${nixpkgs.legacyPackages.${system}.lib.concatMapStringsSep "\n" (host:
             "echo 'Testing ${host} configuration...'"
           ) (nixpkgs.legacyPackages.${system}.lib.attrNames self.nixosConfigurations)}
-          
+
           echo "✅ All configurations validated successfully"
           touch $out
         '';
@@ -921,13 +922,13 @@
             buildInputs = with nixpkgs.legacyPackages.${system}; [ nix jq ];
           } ''
           echo "Checking module dependencies..."
-          
+
           # Validate that all module imports resolve
           find ${./.}/modules -name "*.nix" -type f | while read module; do
             echo "Checking module: $module"
             nix-instantiate --eval -E "import $module { config = {}; lib = (import <nixpkgs> {}).lib; pkgs = import <nixpkgs> {}; }" > /dev/null || echo "WARNING: $module may have unmet dependencies"
           done
-          
+
           echo "✅ Module dependency check completed"
           touch $out
         '';
@@ -938,15 +939,15 @@
             buildInputs = with nixpkgs.legacyPackages.${system}; [ gnugrep ];
           } ''
           echo "Running security validation..."
-          
+
           # Check for hardcoded passwords or secrets
           if grep -r "password.*=" ${./.}/hosts/ ${./.}/modules/ | grep -v "example\|template\|placeholder\|CHANGE"; then
             echo "WARNING: Potential hardcoded secrets found"
           fi
-          
+
           # Check for world-writable files
           find ${./.} -type f -perm /o+w -exec echo "WARNING: World-writable file: {}" \; || true
-          
+
           echo "✅ Security validation completed"
           touch $out
         '';

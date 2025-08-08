@@ -81,8 +81,12 @@
     users.root = {
       # Use initialPassword to override the locked password from core/users.nix
       initialPassword = lib.mkOverride 50 "root";
-      # Clear the locked password 
+      # Aggressively clear ALL other password options to prevent conflicts
       hashedPassword = lib.mkOverride 60 null;
+      password = lib.mkOverride 60 null;
+      # Force initialHashedPassword to null to override any system defaults
+      initialHashedPassword = lib.mkOverride 60 null;
+      hashedPasswordFile = lib.mkOverride 60 null;
     };
   };
 
@@ -116,7 +120,7 @@
     (writeShellScriptBin "install-nixos-server-macos" ''
       #!/usr/bin/env bash
       set -euo pipefail
-      
+
       echo "🖥️  NixOS Minimal Server Installer for macOS VMs"
       echo "==============================================="
       echo ""
@@ -125,18 +129,18 @@
       echo "- Headless server installations"
       echo "- Resource-constrained environments"
       echo ""
-      
+
       # System info
       echo "System Information:"
       echo "- Architecture: $(uname -m)"
       echo "- Memory: $(free -h | grep '^Mem:' | awk '{print $2}')"
       echo "- CPUs: $(nproc)"
       echo ""
-      
+
       echo "Available server templates:"
       ls -1 /etc/nixos-template/hosts/ | grep -E "server|minimal" || echo "- server-template (basic server)"
       echo ""
-      
+
       echo "Quick server installation:"
       echo "1. sudo server-auto-install"
       echo ""
@@ -154,16 +158,16 @@
     (writeShellScriptBin "server-auto-install" ''
             #!/usr/bin/env bash
             set -euo pipefail
-      
+
             echo "🚀 Automated Server Installation for macOS VMs"
             echo "=============================================="
-      
+
             # Check if running as root
             if [ "$EUID" -ne 0 ]; then
               echo "Please run as root: sudo server-auto-install"
               exit 1
             fi
-      
+
             # Detect disk
             if [ -b /dev/vda ]; then
               DISK="/dev/vda"
@@ -175,17 +179,17 @@
               echo "Please partition manually or specify disk."
               exit 1
             fi
-      
+
             echo "Installing server to: $DISK"
             echo "WARNING: This will erase all data on $DISK!"
             echo -n "Continue? (yes/no): "
             read -r confirm
-      
+
             if [ "$confirm" != "yes" ]; then
               echo "Installation cancelled."
               exit 1
             fi
-      
+
             # Simple single partition setup for server
             echo "Creating partition table..."
             parted "$DISK" --script mklabel gpt
@@ -193,24 +197,24 @@
             parted "$DISK" --script set 1 esp on
             parted "$DISK" --script mkpart primary linux-swap 512MiB 1.5GiB
             parted "$DISK" --script mkpart primary ext4 1.5GiB 100%
-      
+
             # Format partitions
             echo "Formatting partitions..."
             mkfs.fat -F 32 -n boot "''${DISK}1"
             mkswap -L swap "''${DISK}2"
             mkfs.ext4 -L nixos "''${DISK}3"
-      
+
             # Mount
             echo "Mounting filesystems..."
             mount /dev/disk/by-label/nixos /mnt
             mkdir -p /mnt/boot
             mount /dev/disk/by-label/boot /mnt/boot
             swapon /dev/disk/by-label/swap
-      
+
             # Generate config
             echo "Generating hardware configuration..."
             nixos-generate-config --root /mnt
-      
+
             # Copy server template
             if [ -d /etc/nixos-template/hosts/server-template ]; then
               echo "Installing server template..."
@@ -233,11 +237,11 @@
         };
       EOF
             fi
-      
+
             # Install
             echo "Installing NixOS server..."
             nixos-install --no-root-passwd
-      
+
             echo ""
             echo "✅ Server installation complete!"
             echo ""
@@ -293,24 +297,24 @@
       text = ''
         NixOS Minimal Server Installer for macOS VMs
         ==========================================
-        
+
         This minimal installer provides:
         - Command-line interface only
         - Essential tools for server installation
         - Optimized for UTM/QEMU on macOS
-        
+
         Quick Commands:
         - install-nixos-server-macos: Interactive installation guide
         - server-auto-install: Automated server installation
         - vm-network-check: Network diagnostics
-        
+
         Default Login:
         - Username: nixos
         - Password: nixos
         - SSH: Enabled on port 22
-        
+
         For GUI installer, use the desktop ISO instead.
-        
+
         Documentation: /etc/nixos-template/
       '';
       mode = "0644";
