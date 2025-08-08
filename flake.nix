@@ -166,7 +166,7 @@
               inherit hostname profile system;
               # Build information
               buildTime = self.lastModified or 0;
-              buildDate = builtins.formatTime "%Y-%m-%d %H:%M:%S UTC" (self.lastModified or 0);
+              buildDate = "build-${toString (self.lastModified or 0)}";
               flakeRev = self.rev or "dirty";
               flakeShortRev =
                 if (self.rev or null) != null
