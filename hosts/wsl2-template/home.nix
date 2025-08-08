@@ -83,7 +83,7 @@
     };
 
     # WSL2-specific shell initialization
-    initExtra = ''
+    initContent = ''
       # WSL2 environment setup
       export WSL2_SETUP=1
       

@@ -33,7 +33,7 @@ in
       packages = with pkgs; [
         # System fonts
         noto-fonts
-        noto-fonts-cjk
+        noto-fonts-cjk-sans
         noto-fonts-emoji
         liberation_ttf
 
@@ -49,7 +49,8 @@ in
 
         # Icon fonts
         font-awesome
-        (nerdfonts.override { fonts = [ "JetBrainsMono" "FiraCode" ]; })
+        nerd-fonts.jetbrains-mono
+        nerd-fonts.fira-code
       ];
 
       # Enable 32-bit font support

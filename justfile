@@ -1076,3 +1076,334 @@ validate-user template:
         echo "Template not found: {{template}}"; \
         just list-users; \
     fi
+
+# macOS Commands - NixOS VMs and ISOs for Mac users
+
+# Show available macOS configurations
+list-macos:
+    @echo "📱 NixOS Configurations for macOS Users:"
+    @echo ""
+    @echo "🖥️  VMs (UTM/QEMU on Mac):"
+    @echo "   • desktop-macos        - GNOME desktop VM (Apple Silicon)"
+    @echo "   • laptop-macos         - Laptop simulation VM (Apple Silicon)"
+    @echo "   • server-macos         - Headless server VM (Apple Silicon)"
+    @echo "   • *-macos-intel        - Intel Mac variants (x86_64)"
+    @echo ""
+    @echo "💿 ISOs (Bootable installers):"
+    @echo "   • installer-desktop-macos      - Desktop installer ISO"
+    @echo "   • installer-minimal-macos      - Minimal server ISO"
+    @echo "   • *-macos-aarch64              - Apple Silicon ISOs"
+    @echo ""
+    @echo "🏗️  Build Commands:"
+    @echo "   just build-macos-vm desktop    # Build desktop VM"
+    @echo "   just build-macos-iso minimal   # Build minimal ISO"
+    @echo "   just build-all-macos           # Build everything"
+    @echo ""
+    @echo "📚 See: just macos-help for detailed instructions"
+
+# Build macOS VM configurations
+build-macos-vm type="desktop" arch="aarch64":
+    #!/usr/bin/env bash
+    echo "🍎 Building NixOS {{type}} VM for macOS ({{arch}})"
+    
+    case "{{arch}}" in
+        aarch64|arm64)
+            arch_suffix=""
+            ;;
+        x86_64|intel)
+            arch_suffix="-intel"
+            ;;
+        *)
+            echo "❌ Invalid architecture: {{arch}}"
+            echo "Available: aarch64, arm64, x86_64, intel"
+            exit 1
+            ;;
+    esac
+    
+    case "{{type}}" in
+        desktop)
+            nix build ".#nixosConfigurations.desktop-macos${arch_suffix}.config.system.build.vm"
+            echo "✅ Desktop VM built for macOS!"
+            echo "📍 VM runner: result/bin/run-desktop-macos-vm"
+            ;;
+        laptop)
+            nix build ".#nixosConfigurations.laptop-macos${arch_suffix}.config.system.build.vm"
+            echo "✅ Laptop VM built for macOS!"
+            echo "📍 VM runner: result/bin/run-laptop-macos-vm"
+            ;;
+        server)
+            nix build ".#nixosConfigurations.server-macos${arch_suffix}.config.system.build.vm"
+            echo "✅ Server VM built for macOS!"
+            echo "📍 VM runner: result/bin/run-server-macos-vm"
+            ;;
+        *)
+            echo "❌ Invalid VM type: {{type}}"
+            echo "Available: desktop, laptop, server"
+            exit 1
+            ;;
+    esac
+    
+    echo ""
+    echo "🚀 To run the VM:"
+    echo "   ./result/bin/run-*-vm"
+    echo ""
+    echo "💡 For UTM import, create a new VM and use the generated QEMU command"
+    echo "💡 Login: nixos/nixos (or laptop-user/server-admin depending on type)"
+
+# Build macOS ISO configurations
+build-macos-iso type="minimal" arch="x86_64":
+    #!/usr/bin/env bash
+    echo "🍎 Building NixOS {{type}} installer ISO for macOS ({{arch}})"
+    
+    case "{{arch}}" in
+        x86_64|intel)
+            arch_suffix=""
+            ;;
+        aarch64|arm64)
+            arch_suffix="-aarch64"
+            ;;
+        *)
+            echo "❌ Invalid architecture: {{arch}}"
+            echo "Available: x86_64, intel, aarch64, arm64"
+            exit 1
+            ;;
+    esac
+    
+    case "{{type}}" in
+        minimal)
+            nix build ".#nixosConfigurations.installer-minimal-macos${arch_suffix}.config.system.build.isoImage"
+            echo "✅ Minimal installer ISO built for macOS!"
+            echo "📍 Location: result/iso/nixos-minimal-macos-installer.iso"
+            ;;
+        desktop)
+            nix build ".#nixosConfigurations.installer-desktop-macos${arch_suffix}.config.system.build.isoImage"
+            echo "✅ Desktop installer ISO built for macOS!"
+            echo "📍 Location: result/iso/nixos-desktop-macos-installer.iso"
+            ;;
+        *)
+            echo "❌ Invalid ISO type: {{type}}"
+            echo "Available: minimal, desktop"
+            exit 1
+            ;;
+    esac
+    
+    echo "💾 Size: $(du -h result/iso/*.iso | cut -f1)"
+    echo ""
+    echo "🚀 Usage:"
+    echo "   • Import into UTM as CD/DVD"
+    echo "   • Boot from ISO in QEMU VM"
+    echo "   • Create bootable USB: just create-bootable-usb <iso> <device>"
+
+# Test macOS configurations
+test-macos type="desktop" arch="aarch64":
+    #!/usr/bin/env bash
+    echo "🧪 Testing {{type}} macOS configuration ({{arch}})"
+    
+    case "{{arch}}" in
+        aarch64|arm64)
+            arch_suffix=""
+            ;;
+        x86_64|intel)
+            arch_suffix="-intel"
+            ;;
+        *)
+            echo "❌ Invalid architecture: {{arch}}"
+            exit 1
+            ;;
+    esac
+    
+    case "{{type}}" in
+        desktop)
+            nix build ".#nixosConfigurations.desktop-macos${arch_suffix}.config.system.build.toplevel" --no-link
+            ;;
+        laptop)
+            nix build ".#nixosConfigurations.laptop-macos${arch_suffix}.config.system.build.toplevel" --no-link
+            ;;
+        server)
+            nix build ".#nixosConfigurations.server-macos${arch_suffix}.config.system.build.toplevel" --no-link
+            ;;
+        *)
+            echo "❌ Invalid type: {{type}}"
+            exit 1
+            ;;
+    esac
+    
+    echo "✅ {{type}} configuration builds successfully for {{arch}}"
+
+# Build all macOS configurations
+build-all-macos:
+    @echo "🍎 Building all NixOS configurations for macOS..."
+    
+    @echo "📱 Building VMs for Apple Silicon..."
+    just build-macos-vm desktop aarch64
+    just build-macos-vm laptop aarch64
+    just build-macos-vm server aarch64
+    
+    @echo "📱 Building VMs for Intel Macs..."
+    just build-macos-vm desktop x86_64
+    just build-macos-vm laptop x86_64
+    just build-macos-vm server x86_64
+    
+    @echo "💿 Building ISOs..."
+    just build-macos-iso minimal x86_64
+    just build-macos-iso desktop x86_64
+    just build-macos-iso minimal aarch64
+    just build-macos-iso desktop aarch64
+    
+    @echo ""
+    @echo "✅ All macOS configurations built!"
+    @echo "📦 Check result/ directory for built artifacts"
+
+# Show macOS installation help
+macos-help:
+    @echo "🍎 NixOS on macOS - Complete Guide"
+    @echo "=================================="
+    @echo ""
+    @echo "🎯 Purpose:"
+    @echo "   Run and test NixOS configurations on Mac using UTM/QEMU"
+    @echo ""
+    @echo "📋 Available Configurations:"
+    @echo "   VM Types:  desktop, laptop, server"
+    @echo "   Archs:     aarch64 (Apple Silicon), x86_64 (Intel Mac)"
+    @echo "   ISOs:      minimal (CLI), desktop (GNOME)"
+    @echo ""
+    @echo "🚀 Quick Start:"
+    @echo "   1. just build-macos-vm desktop       # Build desktop VM"
+    @echo "   2. ./result/bin/run-desktop-macos-vm # Run the VM"
+    @echo "   3. Login: nixos/nixos                # Default credentials"
+    @echo ""
+    @echo "💿 ISO Installation:"
+    @echo "   1. just build-macos-iso desktop      # Build installer ISO"
+    @echo "   2. Import ISO into UTM as CD/DVD     # Create new VM in UTM"
+    @echo "   3. Boot from ISO and install         # Follow installation guide"
+    @echo ""
+    @echo "🖥️  UTM Setup (Recommended):"
+    @echo "   • Download UTM from Mac App Store or GitHub"
+    @echo "   • Create new VM with 'Virtualize' (Apple Silicon) or 'Emulate' (Intel)"
+    @echo "   • Architecture: ARM64 (M1/M2/M3) or x86_64 (Intel)"
+    @echo "   • RAM: 4GB+ for desktop, 2GB for server"
+    @echo "   • Storage: 20GB+ for full installation"
+    @echo ""
+    @echo "⚡ Performance Tips:"
+    @echo "   • Apple Silicon: Use aarch64 VMs for native speed"
+    @echo "   • Intel Mac: Use x86_64 VMs for best compatibility"
+    @echo "   • Enable hardware acceleration in UTM"
+    @echo "   • Use 'Virtualize' mode for better performance"
+    @echo ""
+    @echo "🔧 Advanced Usage:"
+    @echo "   • Import VM disk images into UTM"
+    @echo "   • Use serial console for headless server access"
+    @echo "   • Network bridging for server VMs"
+    @echo "   • Shared folders between macOS and NixOS"
+    @echo ""
+    @echo "📚 Documentation:"
+    @echo "   • Configuration files: hosts/macos-vms/"
+    @echo "   • ISO configurations: hosts/macos-isos/"
+    @echo "   • Template examples available for customization"
+    @echo ""
+    @echo "🆘 Troubleshooting:"
+    @echo "   • VM won't boot: Check architecture match (ARM64 vs x86_64)"
+    @echo "   • Slow performance: Enable hardware acceleration"
+    @echo "   • Network issues: Use bridged networking"
+    @echo "   • No display: Try VNC or serial console"
+
+# Test all macOS configurations
+test-all-macos:
+    @echo "🧪 Testing all macOS configurations..."
+    
+    @echo "Testing Apple Silicon (aarch64) VMs..."
+    just test-macos desktop aarch64
+    just test-macos laptop aarch64
+    just test-macos server aarch64
+    
+    @echo "Testing Intel Mac (x86_64) VMs..."
+    just test-macos desktop x86_64
+    just test-macos laptop x86_64
+    just test-macos server x86_64
+    
+    @echo "Testing ISOs..."
+    just test installer-minimal-macos
+    just test installer-desktop-macos
+    
+    @echo ""
+    @echo "✅ All macOS configurations test successfully!"
+
+# Create macOS installation script
+create-macos-installer:
+    @echo "📝 Creating macOS installation helper script..."
+    
+    cat > install-nixos-on-macos.sh << 'EOF'
+#!/bin/bash
+# NixOS on macOS Installation Helper
+set -euo pipefail
+
+echo "🍎 NixOS on macOS Installation Helper"
+echo "===================================="
+echo ""
+
+# Detect architecture
+if [[ $(uname -m) == "arm64" ]]; then
+    ARCH="aarch64"
+    echo "🔍 Detected: Apple Silicon (ARM64)"
+else
+    ARCH="x86_64"
+    echo "🔍 Detected: Intel Mac (x86_64)"
+fi
+
+echo ""
+echo "Available configurations:"
+echo "1. Desktop VM (GNOME desktop environment)"
+echo "2. Laptop VM (laptop-optimized with power management)"
+echo "3. Server VM (headless, development focused)"
+echo "4. Desktop ISO (bootable installer)"
+echo "5. Minimal ISO (CLI installer)"
+echo ""
+
+read -p "Choose configuration (1-5): " choice
+
+case $choice in
+    1)
+        echo "Building desktop VM for $ARCH..."
+        nix build ".#nixosConfigurations.desktop-macos-${ARCH}.config.system.build.vm"
+        echo "✅ Built! Run with: ./result/bin/run-desktop-macos-vm"
+        ;;
+    2)
+        echo "Building laptop VM for $ARCH..."
+        nix build ".#nixosConfigurations.laptop-macos-${ARCH}.config.system.build.vm"
+        echo "✅ Built! Run with: ./result/bin/run-laptop-macos-vm"
+        ;;
+    3)
+        echo "Building server VM for $ARCH..."
+        nix build ".#nixosConfigurations.server-macos-${ARCH}.config.system.build.vm"
+        echo "✅ Built! Run with: ./result/bin/run-server-macos-vm"
+        ;;
+    4)
+        echo "Building desktop ISO for $ARCH..."
+        nix build ".#nixosConfigurations.installer-desktop-macos-${ARCH}.config.system.build.isoImage"
+        echo "✅ Built! ISO at: result/iso/nixos-desktop-macos-installer.iso"
+        ;;
+    5)
+        echo "Building minimal ISO for $ARCH..."
+        nix build ".#nixosConfigurations.installer-minimal-macos-${ARCH}.config.system.build.isoImage"
+        echo "✅ Built! ISO at: result/iso/nixos-minimal-macos-installer.iso"
+        ;;
+    *)
+        echo "Invalid choice"
+        exit 1
+        ;;
+esac
+
+echo ""
+echo "🎉 Installation complete!"
+echo ""
+echo "Next steps:"
+echo "• For VMs: Run the generated script or import into UTM"
+echo "• For ISOs: Import into UTM as CD/DVD and boot"
+echo "• Default login: nixos/nixos"
+echo ""
+echo "📚 Full documentation: just macos-help"
+EOF
+    
+    chmod +x install-nixos-on-macos.sh
+    @echo "✅ Created install-nixos-on-macos.sh"
+    @echo "🚀 Run: ./install-nixos-on-macos.sh"

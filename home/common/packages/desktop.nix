@@ -44,9 +44,7 @@
 
   # Desktop-specific program configurations
   programs = {
-    # Modern file manager with better defaults
-    thunar = {
-      enable = lib.mkDefault false; # Enable for XFCE/lightweight setups
-    };
+    # Note: File managers like thunar are typically configured at system level
+    # Add user-level desktop programs here
   };
 }

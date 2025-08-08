@@ -56,9 +56,7 @@
       enable = lib.mkDefault true;
     };
 
-    # File tree viewer
-    tree = {
-      enable = lib.mkDefault true;
-    };
+    # Note: tree is just a command line utility, no program configuration needed
+    # It's installed via home.packages in this file
   };
 }

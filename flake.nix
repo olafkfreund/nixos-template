@@ -23,9 +23,13 @@
       url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-darwin = {
+      url = "github:LnL7/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, agenix, treefmt-nix, git-hooks, nixos-wsl, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, agenix, treefmt-nix, git-hooks, nixos-wsl, nix-darwin, ... }@inputs:
     let
       inherit (self) outputs;
       systems = [
@@ -114,6 +118,17 @@
           pkgs = nixpkgs.legacyPackages.${system};
           extraSpecialArgs = { inherit inputs outputs; };
           modules = [ ./hosts/${hostname}/home.nix ];
+        };
+
+      # Helper function for nix-darwin configurations
+      mkDarwin = { hostname, system ? "aarch64-darwin" }:
+        nix-darwin.lib.darwinSystem {
+          inherit system;
+          specialArgs = { inherit inputs outputs; };
+          modules = [
+            ./hosts/${hostname}/configuration.nix
+            home-manager.darwinModules.home-manager
+          ];
         };
 
       # Common template validation config
@@ -281,6 +296,124 @@
           ];
         };
 
+        # macOS VM configurations - optimized for UTM/QEMU on Mac
+        # Build with: nix build .#nixosConfigurations.desktop-macos.config.system.build.vm
+        desktop-macos = mkSystem {
+          hostname = "macos-vms/desktop-macos";
+          system = "aarch64-linux";  # Apple Silicon default, can override for x86_64
+          extraModules = [ templateConfig ];
+        };
+
+        laptop-macos = mkSystem {
+          hostname = "macos-vms/laptop-macos";
+          system = "aarch64-linux";
+          extraModules = [ templateConfig ];
+        };
+
+        server-macos = mkSystem {
+          hostname = "macos-vms/server-macos";
+          system = "aarch64-linux";
+          extraModules = [ templateConfig ];
+        };
+
+        # macOS VM configurations for Intel Macs (x86_64)
+        desktop-macos-intel = mkSystem {
+          hostname = "macos-vms/desktop-macos";
+          system = "x86_64-linux";
+          extraModules = [ templateConfig ];
+        };
+
+        laptop-macos-intel = mkSystem {
+          hostname = "macos-vms/laptop-macos"; 
+          system = "x86_64-linux";
+          extraModules = [ templateConfig ];
+        };
+
+        server-macos-intel = mkSystem {
+          hostname = "macos-vms/server-macos";
+          system = "x86_64-linux";
+          extraModules = [ templateConfig ];
+        };
+
+        # macOS installer ISO configurations
+        # Build with: nix build .#nixosConfigurations.installer-desktop-macos.config.system.build.isoImage
+        installer-desktop-macos = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";  # ISOs typically x86_64 for compatibility
+          specialArgs = { inherit inputs outputs; };
+          modules = [
+            ./hosts/macos-isos/desktop-iso-macos.nix
+            templateConfig
+          ];
+        };
+
+        installer-minimal-macos = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = { inherit inputs outputs; };
+          modules = [
+            ./hosts/macos-isos/minimal-iso-macos.nix
+            templateConfig
+          ];
+        };
+
+        # macOS installer ISOs for Apple Silicon (aarch64)
+        installer-desktop-macos-aarch64 = nixpkgs.lib.nixosSystem {
+          system = "aarch64-linux";
+          specialArgs = { inherit inputs outputs; };
+          modules = [
+            ./hosts/macos-isos/desktop-iso-macos.nix
+            templateConfig
+          ];
+        };
+
+        installer-minimal-macos-aarch64 = nixpkgs.lib.nixosSystem {
+          system = "aarch64-linux";
+          specialArgs = { inherit inputs outputs; };
+          modules = [
+            ./hosts/macos-isos/minimal-iso-macos.nix
+            templateConfig
+          ];
+        };
+
+      };
+
+      # nix-darwin configuration entrypoint
+      # Available through 'darwin-rebuild switch --flake .#your-hostname'
+      darwinConfigurations = {
+        # Desktop configuration for macOS (Apple Silicon)
+        darwin-desktop = mkDarwin {
+          hostname = "darwin-desktop";
+          system = "aarch64-darwin";
+        };
+
+        # Desktop configuration for macOS (Intel)
+        darwin-desktop-intel = mkDarwin {
+          hostname = "darwin-desktop";
+          system = "x86_64-darwin";
+        };
+
+        # Laptop configuration for macOS (Apple Silicon)
+        darwin-laptop = mkDarwin {
+          hostname = "darwin-laptop";
+          system = "aarch64-darwin";
+        };
+
+        # Laptop configuration for macOS (Intel)
+        darwin-laptop-intel = mkDarwin {
+          hostname = "darwin-laptop";
+          system = "x86_64-darwin";
+        };
+
+        # Server configuration for macOS (Apple Silicon)
+        darwin-server = mkDarwin {
+          hostname = "darwin-server";
+          system = "aarch64-darwin";
+        };
+
+        # Server configuration for macOS (Intel)
+        darwin-server-intel = mkDarwin {
+          hostname = "darwin-server";
+          system = "x86_64-darwin";
+        };
       };
 
       # Standalone home-manager configuration entrypoint
@@ -292,6 +425,34 @@
         "user@server-template" = mkHome { hostname = "server-template"; };
         "vm-user@desktop-test" = mkHome { hostname = "desktop-test"; };
         "nixos@wsl2-template" = mkHome { hostname = "wsl2-template"; };
+        
+        # macOS VM home configurations
+        "nixos@desktop-macos" = mkHome { 
+          hostname = "macos-vms/desktop-macos";
+          system = "aarch64-linux";
+        };
+        "laptop-user@laptop-macos" = mkHome {
+          hostname = "macos-vms/laptop-macos";
+          system = "aarch64-linux";
+        };
+        "server-admin@server-macos" = mkHome {
+          hostname = "macos-vms/server-macos"; 
+          system = "aarch64-linux";
+        };
+        
+        # Intel Mac variants
+        "nixos@desktop-macos-intel" = mkHome {
+          hostname = "macos-vms/desktop-macos";
+          system = "x86_64-linux";
+        };
+        "laptop-user@laptop-macos-intel" = mkHome {
+          hostname = "macos-vms/laptop-macos";
+          system = "x86_64-linux";
+        };
+        "server-admin@server-macos-intel" = mkHome {
+          hostname = "macos-vms/server-macos";
+          system = "x86_64-linux";
+        };
       };
 
       # Checks for CI/CD and development

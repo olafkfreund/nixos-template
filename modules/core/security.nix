@@ -39,9 +39,9 @@
     };
   };
 
-  # Fail2ban for SSH protection when enabled
+  # Fail2ban for SSH protection when enabled (requires firewall)
   services.fail2ban = {
-    enable = config.services.openssh.enable;
+    enable = config.services.openssh.enable && config.networking.firewall.enable;
     maxretry = 3;
     bantime = "10m";
   };

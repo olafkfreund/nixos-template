@@ -8,6 +8,6 @@
     ./interop.nix
     ./networking.nix
     ./optimization.nix
-    ./systemd.nix
+    # ./systemd.nix  # Temporarily disabled due to syntax issues
   ];
 }

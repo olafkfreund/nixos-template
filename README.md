@@ -20,6 +20,7 @@ A modular NixOS configuration template using flakes, featuring:
 - **Container Support** - Fixed podman system-generators conflicts, full container ecosystem
 - **Modular Home Configuration** - Role-based Home Manager with common/host-specific separation
 - **WSL2 Support** - Full Windows Subsystem for Linux integration with development environment
+- **🍎 macOS Support** - Native macOS management with nix-darwin + NixOS VMs for testing
 
 **[Complete Features Overview →](docs/FEATURES-OVERVIEW.md)**
 
@@ -38,6 +39,7 @@ A modular NixOS configuration template using flakes, featuring:
 1. [Custom NixOS Installer ISOs](#custom-nixos-installer-isos-1)
 1. [Host Configurations](#host-configurations)
 1. [WSL2 Support](#wsl2-support)
+1. [macOS Support](#macos-support)
 1. [Secrets Management](#secrets-management)
 1. [Development Shell](#development-shell)
 1. [Best Practices](#best-practices)
@@ -749,6 +751,77 @@ nano modules/installer/preconfigured-installer.nix
 - **Consulting**: Client-specific NixOS deployments
 
 See [ISO Creation Guide](docs/ISO-CREATION.md) for detailed instructions, customization options, and advanced usage patterns.
+
+## macOS Support
+
+This template provides comprehensive macOS support including both native macOS system management with nix-darwin and NixOS virtualization for testing. Mac users can choose between managing their Mac directly with Nix or testing NixOS configurations in virtual machines.
+
+### nix-darwin (Native macOS Management)
+
+**What is nix-darwin?**
+nix-darwin brings NixOS-style declarative configuration to macOS, allowing you to manage your entire Mac setup as code.
+
+**Quick nix-darwin Setup:**
+```bash
+# Clone the template
+git clone https://github.com/yourusername/nixos-template
+cd nixos-template
+
+# Interactive installation
+./scripts/install-nix-darwin.sh
+```
+
+**Available Configurations:**
+- **Desktop**: Full development environment with GUI applications
+- **Laptop**: Battery-optimized mobile configuration
+- **Server**: Headless development and CI/CD setup
+
+**Key Features:**
+- Declarative system configuration
+- Homebrew integration for GUI apps
+- Home Manager for user environments
+- System rollback capabilities
+- Cross-platform config sharing with NixOS
+
+### NixOS Virtualization on macOS
+
+**Test NixOS in Virtual Machines:**
+```bash
+# Interactive VM setup
+./scripts/try-nixos-macos.sh
+
+# Or direct commands
+just build-macos-vm desktop     # For Apple Silicon
+just build-macos-vm desktop x86_64  # For Intel Mac
+```
+
+**Architecture Support:**
+- **Apple Silicon (M1/M2/M3)**: Native aarch64-linux VMs
+- **Intel Macs**: x86_64-linux VMs with compatibility
+
+**Available VM Types:**
+- Desktop VM with GNOME desktop
+- Laptop VM with power management
+- Server VM for headless development
+
+### Management Commands
+
+```bash
+# nix-darwin management
+darwin-rebuild switch --flake ~/.config/nix-darwin
+darwin-info              # System information
+darwin-update           # Update system
+
+# NixOS VM management
+just build-macos-vm desktop
+just build-macos-iso minimal
+just macos-help         # Complete macOS guide
+```
+
+### Complete macOS Documentation
+
+- **[macOS & NixOS Guide](docs/MACOS-NIXOS-GUIDE.md)** - VM setup, UTM configuration, troubleshooting
+- **[nix-darwin Guide](docs/NIX-DARWIN-GUIDE.md)** - Native macOS management, customization, advanced usage
 
 ## WSL2 Support
 

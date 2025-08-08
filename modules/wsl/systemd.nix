@@ -144,19 +144,16 @@ in
           ForwardToConsole=no
         '';
       })
-    ];
 
-    # WSL2-specific service configurations
-    systemd.services = mkMerge [
-      # Essential WSL2 services
+      # WSL2-specific service configurations
       {
-        # WSL2 initialization service
-        "wsl-init" = {
-          description = "WSL2 Environment Initialization";
-          wants = [ "network.target" ];
-          after = [ "network.target" ];
-          wantedBy = [ "multi-user.target" ];
-
+        services = {
+          # WSL2 initialization service
+          "wsl-init" = {
+            description = "WSL2 Environment Initialization";
+            wants = [ "network.target" ];
+            after = [ "network.target" ];
+            wantedBy = [ "multi-user.target" ];
           serviceConfig = {
             Type = "oneshot";
             RemainAfterExit = true;
@@ -203,12 +200,9 @@ in
             echo "$(date): WSL2 cleanup completed" > /run/wsl/cleanup-status
           '';
         };
-      }
 
-      # User service optimizations
-      (mkIf cfg.userServices {
-        # User environment setup
-        "user-wsl-setup@" = {
+        # User service optimizations
+        "user-wsl-setup@" = mkIf cfg.userServices {
           description = "WSL2 User Environment Setup";
           after = [ "user-runtime-dir@%i.service" ];
 
@@ -235,11 +229,12 @@ in
             echo "$(date): User WSL2 setup completed for $USER" > "$HOME/.local/share/wsl/setup-status"
           '';
         };
-      })
-    ];
+      };
+    })
 
-    # User services for WSL2
-    systemd.user.services = mkIf cfg.userServices {
+    # User services for WSL2  
+    (mkIf cfg.userServices {
+      user.services = {
       # User WSL environment
       "wsl-user-env" = {
         description = "WSL2 User Environment";
@@ -286,15 +281,7 @@ in
           echo "$(date): Development services ready" > "$HOME/.local/share/wsl/dev-services-status"
         '';
       };
-    };
-
-    # WSL2 systemd monitoring and management tools
-    environment.systemPackages = with pkgs; [
-      # Systemd analysis tools
-      systemd-analyze
-
-      # Service management
-      systemctl-tui
+    })
     ];
 
     # WSL2 systemd management scripts
@@ -380,12 +367,17 @@ in
       mode = "0755";
     };
 
-    # Add systemd management scripts to PATH
-    environment.systemPackages = [
-      (pkgs.writeShellScriptBin "wsl-systemd-status" ''
+    # Add systemd management scripts and tools to PATH
+    environment.systemPackages = with pkgs; [
+      # Systemd analysis tools
+      systemd-analyze
+      systemctl-tui
+      
+      # WSL2-specific scripts
+      (writeShellScriptBin "wsl-systemd-status" ''
         exec /etc/wsl-scripts/systemd-status.sh "$@"
       '')
-      (pkgs.writeShellScriptBin "wsl-systemd-optimize" ''
+      (writeShellScriptBin "wsl-systemd-optimize" ''
         exec /etc/wsl-scripts/systemd-optimize.sh "$@"
       '')
     ];

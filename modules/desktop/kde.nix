@@ -191,7 +191,7 @@ in
     fonts.packages = with pkgs; [
       # KDE fonts
       noto-fonts
-      noto-fonts-cjk
+      noto-fonts-cjk-sans
       noto-fonts-emoji
       liberation_ttf
 

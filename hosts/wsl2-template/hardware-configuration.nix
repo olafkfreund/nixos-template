@@ -50,9 +50,8 @@
       enable32Bit = false; # Usually not needed in WSL2
     };
 
-    # Audio through PulseAudio
-    pulseaudio.enable = true;
-
+    # Audio through PulseAudio (moved to services)
+    # pulseaudio configuration moved to services.pulseaudio
     # No Bluetooth in WSL2
     bluetooth.enable = false;
   };

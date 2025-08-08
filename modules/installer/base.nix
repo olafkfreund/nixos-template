@@ -33,7 +33,14 @@
   };
 
   # Set root password for installer (change this!)
-  users.users.root.initialPassword = "nixos";
+  # Clear other password options to avoid conflicts
+  users.users.root = {
+    initialPassword = "nixos";
+    password = lib.mkForce null;
+    hashedPassword = lib.mkForce null;
+    initialHashedPassword = lib.mkForce null;
+    hashedPasswordFile = lib.mkForce null;
+  };
 
   # Essential packages for installation
   environment.systemPackages = with pkgs; [
