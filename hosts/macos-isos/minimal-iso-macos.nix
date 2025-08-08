@@ -16,7 +16,6 @@
     # Boot configuration
     makeEfiBootable = true;
     makeUsbBootable = true;
-    includeSystemd = true;
 
     # Aggressive compression for minimal size
     squashfsCompression = "zstd -Xcompression-level 19";
@@ -57,15 +56,13 @@
     };
 
     # Minimal getty on serial console
-    getty = {
-      serialConsoles = [ "ttyS0" ];
-    };
+    getty.autologinUser = lib.mkDefault "nixos";
   };
 
   # Basic networking
   networking = {
     hostName = "nixos-minimal-installer";
-    useDHCP = true;
+    useDHCP = lib.mkDefault true;
     firewall.enable = false;
   };
 
@@ -80,7 +77,7 @@
     # Override root password for macOS ISO installer convenience
     users.root = {
       # Use initialPassword to override the locked password from core/users.nix
-      initialPassword = lib.mkOverride 50 "root";
+      initialPassword = lib.mkOverride 40 "root"; # Higher priority than base installer
       # Aggressively clear ALL other password options to prevent conflicts
       hashedPassword = lib.mkOverride 60 null;
       password = lib.mkOverride 60 null;
