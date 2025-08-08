@@ -203,8 +203,12 @@ in
       xwayland.enable = true;
     };
 
-    # Hyprland configuration
-    environment.etc."hypr/hyprland.conf".text = ''
+    # Environment configuration
+    environment = {
+      # Configuration files
+      etc = {
+        # Hyprland configuration
+        "hypr/hyprland.conf".text = ''
       # Monitor configuration
       ${lib.concatMapStringsSep "\n" (monitor: "monitor=${monitor}") cfg.settings.monitors}
       
@@ -362,8 +366,11 @@ in
       ${lib.optionalString (cfg.theme.wallpaper != "") "exec-once = swaybg -i ${cfg.theme.wallpaper}"}
     '';
 
-    # Essential packages for Hyprland and Waybar
-    environment.systemPackages = with pkgs; [
+        # Waybar configuration file
+        "xdg/waybar/config".text = lib.mkIf cfg.waybar.enable (builtins.toJSON {
+
+      # Essential packages for Hyprland and Waybar
+      systemPackages = with pkgs; [
       # Waybar (if enabled)
     ] ++ lib.optionals cfg.waybar.enable [
       waybar
@@ -433,8 +440,7 @@ in
       zathura # Minimal PDF viewer
     ];
 
-    # Configuration files and environment
-    environment = {
+      # Configuration files
       # Waybar configuration file
       etc."xdg/waybar/config".text = lib.mkIf cfg.waybar.enable (builtins.toJSON {
         mainBar = {

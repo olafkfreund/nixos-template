@@ -53,61 +53,48 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    # Enable X11 and display manager
-    services.xserver = {
-      enable = true;
+    # Services configuration
+    services = {
+      # X11 and display manager
+      xserver = {
+        enable = true;
 
-      # Display manager
-      displayManager = {
-        sddm = {
-          enable = true;
-          wayland.enable = cfg.wayland.enable;
+        # Display manager
+        displayManager = {
+          sddm = {
+            enable = true;
+            wayland.enable = cfg.wayland.enable;
 
-          # SDDM theme configuration
-          theme = lib.mkIf cfg.theme.enable "breeze";
+            # SDDM theme configuration
+            theme = lib.mkIf cfg.theme.enable "breeze";
 
-          settings = lib.mkMerge [
-            {
-              Theme = {
-                Current = "breeze";
-                CursorTheme = "breeze_cursors";
-              };
-            }
-            (lib.mkIf (!cfg.performance.animations) {
-              Theme = {
-                EnableAvatars = "false";
-                DisableAnimations = "true";
-              };
-            })
-          ];
+            settings = lib.mkMerge [
+              {
+                Theme = {
+                  Current = "breeze";
+                  CursorTheme = "breeze_cursors";
+                };
+              }
+              (lib.mkIf (!cfg.performance.animations) {
+                Theme = {
+                  EnableAvatars = "false";
+                  DisableAnimations = "true";
+                };
+              })
+            ];
+          };
+
+          # Default session
+          defaultSession = lib.mkIf cfg.wayland.defaultSession "plasma";
         };
 
-        # Default session
-        defaultSession = lib.mkIf cfg.wayland.defaultSession "plasma";
+        # Desktop environment
+        desktopManager.plasma5.enable = cfg.version == "plasma5";
       };
 
-      # Desktop environment
-      desktopManager.plasma5.enable = cfg.version == "plasma5";
-    };
+      # Plasma 6 configuration (when available)
+      desktopManager.plasma6.enable = lib.mkIf (cfg.version == "plasma6") true;
 
-    # Plasma 6 configuration (when available)
-    services.desktopManager.plasma6.enable = lib.mkIf (cfg.version == "plasma6") true;
-
-    # Wayland support (dconf configuration managed below)
-
-    # KDE services and programs
-    programs = {
-      # KDE Connect for device integration
-      kdeconnect.enable = true;
-
-      # Partition manager
-      partition-manager.enable = true;
-
-      # File manager
-      thunar.enable = false; # Use Dolphin instead
-    };
-
-    services = {
       # KDE services
       accounts-daemon.enable = true;
       upower.enable = true;
@@ -122,70 +109,85 @@ in
       blueman.enable = false; # Use KDE Bluetooth instead
     };
 
+    # Programs configuration
+    programs = {
+      # KDE Connect for device integration
+      kdeconnect.enable = true;
+
+      # Partition manager
+      partition-manager.enable = true;
+
+      # File manager
+      thunar.enable = false; # Use Dolphin instead
+    };
+
     # Hardware support
     hardware = {
       bluetooth.enable = true;
       pulseaudio.enable = false; # Use PipeWire with KDE
     };
 
-    # Essential KDE applications
-    environment.systemPackages = with pkgs; [
-      # Core KDE applications (always installed)
-      dolphin # File manager
-      konsole # Terminal
-      kate # Text editor
-      spectacle # Screenshot tool
-      gwenview # Image viewer
-      okular # Document viewer
-      ark # Archive manager
+    # Environment configuration
+    environment = {
+      # Essential KDE applications
+      systemPackages = with pkgs; [
+        # Core KDE applications (always installed)
+        dolphin # File manager
+        konsole # Terminal
+        kate # Text editor
+        spectacle # Screenshot tool
+        gwenview # Image viewer
+        okular # Document viewer
+        ark # Archive manager
 
-      # System utilities
-      kdePackages.partitionmanager # Partition manager
-      kdePackages.kinfocenter # System information
-      kdePackages.systemsettings # System settings
+        # System utilities
+        kdePackages.partitionmanager # Partition manager
+        kdePackages.kinfocenter # System information
+        kdePackages.systemsettings # System settings
 
-      # KDE theming
-      kdePackages.breeze # Breeze theme
-      kdePackages.breeze-icons # Breeze icons
+        # KDE theming
+        kdePackages.breeze # Breeze theme
+        kdePackages.breeze-icons # Breeze icons
 
-    ] ++ lib.optionals (!cfg.applications.minimal) [
-      # Extended KDE applications
-      kdePackages.kmail # Email client
-      kdePackages.kontact # PIM suite
-      kdePackages.korganizer # Calendar
-      kdePackages.kaddressbook # Address book
-      kdePackages.knotes # Notes
-      kdePackages.kfind # File search
-      kdePackages.kcalc # Calculator
-      kdePackages.kcharselect # Character selector
+      ] ++ lib.optionals (!cfg.applications.minimal) [
+        # Extended KDE applications
+        kdePackages.kmail # Email client
+        kdePackages.kontact # PIM suite
+        kdePackages.korganizer # Calendar
+        kdePackages.kaddressbook # Address book
+        kdePackages.knotes # Notes
+        kdePackages.kfind # File search
+        kdePackages.kcalc # Calculator
+        kdePackages.kcharselect # Character selector
 
-    ] ++ lib.optionals cfg.applications.multimedia [
-      # Multimedia applications
-      kdePackages.kdenlive # Video editor
-      kdePackages.krita # Digital painting
-      kdePackages.elisa # Music player
-      kdePackages.kamoso # Camera app
-      kdePackages.dragon # Video player
+      ] ++ lib.optionals cfg.applications.multimedia [
+        # Multimedia applications
+        kdePackages.kdenlive # Video editor
+        kdePackages.krita # Digital painting
+        kdePackages.elisa # Music player
+        kdePackages.kamoso # Camera app
+        kdePackages.dragon # Video player
 
-    ] ++ lib.optionals cfg.applications.development [
-      # Development tools
-      kdePackages.kdevelop # IDE
-      kdePackages.kompare # Diff viewer
-      kdePackages.umbrello # UML modeler
+      ] ++ lib.optionals cfg.applications.development [
+        # Development tools
+        kdePackages.kdevelop # IDE
+        kdePackages.kompare # Diff viewer
+        kdePackages.umbrello # UML modeler
 
-    ] ++ lib.optionals cfg.applications.office [
-      # Office applications
-      libreoffice-qt # LibreOffice with Qt integration
-      kdePackages.kmail # Email integration
-    ];
+      ] ++ lib.optionals cfg.applications.office [
+        # Office applications
+        libreoffice-qt # LibreOffice with Qt integration
+        kdePackages.kmail # Email integration
+      ];
 
-    # Remove unwanted applications
-    environment.plasma5.excludePackages = lib.mkIf cfg.applications.minimal (with pkgs; [
-      kdePackages.elisa # Music player
-      kdePackages.khelpcenter # Help center
-      kdePackages.konsole # Keep terminal
-      # Add more packages to exclude for minimal install
-    ]);
+      # Remove unwanted applications
+      plasma5.excludePackages = lib.mkIf cfg.applications.minimal (with pkgs; [
+        kdePackages.elisa # Music player
+        kdePackages.khelpcenter # Help center
+        kdePackages.konsole # Keep terminal
+        # Add more packages to exclude for minimal install
+      ]);
+    };
 
     # Fonts for better KDE experience
     fonts.packages = with pkgs; [

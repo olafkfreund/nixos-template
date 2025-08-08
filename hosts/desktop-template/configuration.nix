@@ -16,47 +16,47 @@
   # System identification
   networking.hostName = "desktop-template";
 
-  # Hardware profile for desktop
-  modules.hardware.power-management = {
-    enable = true;
-    profile = "desktop";
-    cpuGovernor = "ondemand"; # Balance between performance and power
-    enableThermalManagement = true;
+  # Module configuration
+  modules = {
+    # Hardware profile for desktop
+    hardware.power-management = {
+      enable = true;
+      profile = "desktop";
+      cpuGovernor = "ondemand"; # Balance between performance and power
+      enableThermalManagement = true;
 
+      desktop = {
+        enablePerformanceMode = true;
+        disableUsbAutosuspend = true; # Better for gaming peripherals
+      };
+    };
+
+    # Full-featured desktop environment
     desktop = {
-      enablePerformanceMode = true;
-      disableUsbAutosuspend = true; # Better for gaming peripherals
+      audio.enable = true;
+
+      gnome = {
+        enable = true;
+        # Keep all applications for full desktop experience
+      };
     };
-  };
 
-  # Full-featured desktop environment
-  modules.desktop = {
-    audio.enable = true;
-
-    gnome = {
-      enable = true;
-      # Keep all applications for full desktop experience
+    # Gaming support
+    gaming = {
+      steam = {
+        enable = true;
+        performance.gamemode = true;
+        performance.mangohud = true;
+      };
     };
-  };
 
-  # Disable PulseAudio in favor of PipeWire (handled by modules.desktop.audio)
-  services.pulseaudio.enable = false;
-
-  # Gaming support
-  modules.gaming = {
-    steam = {
-      enable = true;
-      performance.gamemode = true;
-      performance.mangohud = true;
-    };
-  };
-
-  # Development tools
-  modules.development = {
-    git = {
-      enable = true;
-      userName = "Desktop User";
-      userEmail = "user@example.com";
+    # Development tools
+    development = {
+      git = {
+        enable = true;
+        userName = "Desktop User";
+        userEmail = "user@example.com";
+      };
     };
   };
 
@@ -83,6 +83,8 @@
 
   # Services optimized for desktop use
   services = {
+    # Disable PulseAudio in favor of PipeWire (handled by modules.desktop.audio)
+    pulseaudio.enable = false;
     # OpenSSH for remote access
     openssh = {
       enable = true;
@@ -182,10 +184,14 @@
     # Low-latency configuration for audio work
     extraConfig.pipewire."92-low-latency" = {
       context.properties = {
-        default.clock.rate = 48000;
-        default.clock.quantum = 32;
-        default.clock.min-quantum = 32;
-        default.clock.max-quantum = 32;
+        default = {
+          clock = {
+            rate = 48000;
+            quantum = 32;
+            min-quantum = 32;
+            max-quantum = 32;
+          };
+        };
       };
     };
   };
