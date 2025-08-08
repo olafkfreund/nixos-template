@@ -101,81 +101,84 @@ in
       powertop.enable = cfg.profile == "laptop";
     };
 
-    # Laptop-specific configurations
-    services.tlp = mkIf cfg.laptop.enableTlp {
-      enable = true;
-      settings = {
-        # CPU frequency scaling
-        CPU_SCALING_GOVERNOR_ON_AC =
-          if cfg.profile == "gaming" then "performance"
-          else "ondemand";
-        CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+    # Services configuration
+    services = {
+      # Laptop-specific configurations
+      tlp = mkIf cfg.laptop.enableTlp {
+        enable = true;
+        settings = {
+          # CPU frequency scaling
+          CPU_SCALING_GOVERNOR_ON_AC =
+            if cfg.profile == "gaming" then "performance"
+            else "ondemand";
+          CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
 
-        # CPU energy/performance policy
-        CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
-        CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
+          # CPU energy/performance policy
+          CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
+          CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
 
-        # CPU boost
-        CPU_BOOST_ON_AC = if cfg.profile == "gaming" then 1 else 1;
-        CPU_BOOST_ON_BAT = 0;
+          # CPU boost
+          CPU_BOOST_ON_AC = if cfg.profile == "gaming" then 1 else 1;
+          CPU_BOOST_ON_BAT = 0;
 
-        # CPU HWP (Hardware P-States)
-        CPU_HWP_DYN_BOOST_ON_AC = 1;
-        CPU_HWP_DYN_BOOST_ON_BAT = 0;
+          # CPU HWP (Hardware P-States)
+          CPU_HWP_DYN_BOOST_ON_AC = 1;
+          CPU_HWP_DYN_BOOST_ON_BAT = 0;
 
-        # Platform profile
-        PLATFORM_PROFILE_ON_AC = "performance";
-        PLATFORM_PROFILE_ON_BAT = "low-power";
+          # Platform profile
+          PLATFORM_PROFILE_ON_AC = "performance";
+          PLATFORM_PROFILE_ON_BAT = "low-power";
 
-        # Processor features
-        CPU_MIN_PERF_ON_AC = 0;
-        CPU_MAX_PERF_ON_AC = 100;
-        CPU_MIN_PERF_ON_BAT = 0;
-        CPU_MAX_PERF_ON_BAT = 50;
+          # Processor features
+          CPU_MIN_PERF_ON_AC = 0;
+          CPU_MAX_PERF_ON_AC = 100;
+          CPU_MIN_PERF_ON_BAT = 0;
+          CPU_MAX_PERF_ON_BAT = 50;
 
-        # Turbo boost switching
-        TURBO_BOOST_ON_AC = 1;
-        TURBO_BOOST_ON_BAT = 0;
+          # Turbo boost switching
+          TURBO_BOOST_ON_AC = 1;
+          TURBO_BOOST_ON_BAT = 0;
 
-        # Audio power saving
-        SOUND_POWER_SAVE_ON_AC = 0;
-        SOUND_POWER_SAVE_ON_BAT = 1;
+          # Audio power saving
+          SOUND_POWER_SAVE_ON_AC = 0;
+          SOUND_POWER_SAVE_ON_BAT = 1;
 
-        # WiFi power saving
-        WIFI_PWR_ON_AC = "off";
-        WIFI_PWR_ON_BAT = "on";
+          # WiFi power saving
+          WIFI_PWR_ON_AC = "off";
+          WIFI_PWR_ON_BAT = "on";
 
-        # Graphics power management
-        RADEON_DPM_PERF_LEVEL_ON_AC = "high";
-        RADEON_DPM_PERF_LEVEL_ON_BAT = "low";
+          # Graphics power management
+          RADEON_DPM_PERF_LEVEL_ON_AC = "high";
+          RADEON_DPM_PERF_LEVEL_ON_BAT = "low";
 
-        # PCIe power management
-        PCIE_ASPM_ON_AC = "default";
-        PCIE_ASPM_ON_BAT = "powersupersave";
+          # PCIe power management
+          PCIE_ASPM_ON_AC = "default";
+          PCIE_ASPM_ON_BAT = "powersupersave";
 
-        # USB autosuspend
-        USB_AUTOSUSPEND = 1;
-        USB_BLACKLIST_BTUSB = 1; # Prevent Bluetooth issues
+          # USB autosuspend
+          USB_AUTOSUSPEND = 1;
+          USB_BLACKLIST_BTUSB = 1; # Prevent Bluetooth issues
 
-        # Battery care
-        START_CHARGE_THRESH_BAT0 = 75;
-        STOP_CHARGE_THRESH_BAT0 = 80;
-        RESTORE_DEVICE_STATE_ON_STARTUP = 0;
+          # Battery care
+          START_CHARGE_THRESH_BAT0 = 75;
+          STOP_CHARGE_THRESH_BAT0 = 80;
+          RESTORE_DEVICE_STATE_ON_STARTUP = 0;
+        };
       };
-    };
 
-    # Battery optimization for laptops
-    services.upower = mkIf cfg.laptop.enableBatteryOptimization {
-      enable = true;
-      percentageLow = 15;
-      percentageCritical = 5;
-      percentageAction = 3;
-      criticalPowerAction = "Hibernate";
-    };
+      # Battery optimization for laptops
+      upower = mkIf cfg.laptop.enableBatteryOptimization {
+        enable = true;
+        percentageLow = 15;
+        percentageCritical = 5;
+        percentageAction = 3;
+        criticalPowerAction = "Hibernate";
+      };
 
-    # Thermal management
-    services.thermald = mkIf cfg.enableThermalManagement {
-      enable = mkDefault (cfg.profile == "laptop" || cfg.profile == "workstation");
+      # Thermal management
+      thermald = mkIf cfg.enableThermalManagement {
+        enable = mkDefault (cfg.profile == "laptop" || cfg.profile == "workstation");
+      };
     };
 
     # Desktop/Gaming optimizations

@@ -17,28 +17,31 @@ in
 
   config = lib.mkIf isLaptop {
 
-    # Hardware optimization for laptop
-    modules.hardware.power-management = lib.mkDefault {
-      enable = true;
-      profile = "laptop";
-      enableThermalManagement = true;
+    # Module configuration
+    modules = {
+      # Hardware optimization for laptop
+      hardware.power-management = lib.mkDefault {
+        enable = true;
+        profile = "laptop";
+        enableThermalManagement = true;
 
-      laptop = {
-        enableBatteryOptimization = true;
-        enableTlp = true;
-        suspendMethod = "suspend";
-        wakeOnLid = true;
+        laptop = {
+          enableBatteryOptimization = true;
+          enableTlp = true;
+          suspendMethod = "suspend";
+          wakeOnLid = true;
+        };
       };
-    };
 
-    # Desktop environment optimized for mobile
-    modules.desktop = lib.mkDefault {
-      audio.enable = true;
-      gnome.enable = true;
-    };
+      # Desktop environment optimized for mobile
+      desktop = lib.mkDefault {
+        audio.enable = true;
+        gnome.enable = true;
+      };
 
-    # Development environment (lighter than workstation)
-    modules.development.git.enable = lib.mkDefault true;
+      # Development environment (lighter than workstation)
+      development.git.enable = lib.mkDefault true;
+    };
 
     # Mobile-optimized services
     services = {

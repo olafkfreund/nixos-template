@@ -43,36 +43,6 @@ let
   validatePort = port: port > 1024 && port < 65536;
   validateServiceName = name: builtins.match "^[a-zA-Z0-9][a-zA-Z0-9_-]*$" name != null;
 
-  # Helper functions
-  mkService = name: cfg: {
-    inherit name;
-    systemd.services.${name} = {
-      description = "Template service: ${name}";
-      after = [ "network.target" ];
-      wantedBy = [ "multi-user.target" ];
-
-      serviceConfig = {
-        Type = "simple";
-        User = cfg.user or "nobody";
-        Group = cfg.group or "nobody";
-        Restart = "always";
-        RestartSec = 5;
-
-        # Security hardening
-        NoNewPrivileges = true;
-        PrivateTmp = true;
-        ProtectKernelTunables = true;
-        ProtectControlGroups = true;
-        ProtectKernelModules = true;
-        RestrictSUIDSGID = true;
-      };
-
-      script = ''
-        echo "Starting ${name} on port ${toString cfg.port}"
-        # Service implementation would go here
-      '';
-    };
-  };
 in
 
 {

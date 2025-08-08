@@ -348,9 +348,11 @@
               format = "iso";
               modules = baseConfig.modules ++ [({ config, lib, pkgs, ... }: {
                 # Live ISO optimizations
-                isoImage.makeEfiBootable = true;
-                isoImage.makeUsbBootable = true;
-                isoImage.squashfsCompression = "gzip -Xcompression-level 1";
+                isoImage = {
+                  makeEfiBootable = true;
+                  makeUsbBootable = true;
+                  squashfsCompression = "gzip -Xcompression-level 1";
+                };
 
                 # Include useful tools on live system
                 environment.systemPackages = with pkgs; [

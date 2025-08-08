@@ -20,37 +20,40 @@ in
 
   config = lib.mkIf isGaming {
 
-    # Maximum performance hardware configuration
-    modules.hardware.power-management = lib.mkDefault {
-      enable = true;
-      profile = "gaming";
-      cpuGovernor = "performance";
-      enableThermalManagement = true;
-
-      # Gaming uses desktop performance settings
-      desktop = {
-        enablePerformanceMode = true;
-        disableUsbAutosuspend = true;
-      };
-    };
-
-    # Gaming-optimized desktop
-    modules.desktop = lib.mkDefault {
-      audio.enable = true;
-      gnome.enable = true;
-    };
-
-    # Full gaming suite
-    modules.gaming = lib.mkDefault {
-      steam = {
+    # Module configuration
+    modules = {
+      # Maximum performance hardware configuration
+      hardware.power-management = lib.mkDefault {
         enable = true;
-        performance.gamemode = true;
-        performance.mangohud = true;
-      };
-    };
+        profile = "gaming";
+        cpuGovernor = "performance";
+        enableThermalManagement = true;
 
-    # Development tools for modding/streaming
-    modules.development.git.enable = lib.mkDefault true;
+        # Gaming uses desktop performance settings
+        desktop = {
+          enablePerformanceMode = true;
+          disableUsbAutosuspend = true;
+        };
+      };
+
+      # Gaming-optimized desktop
+      desktop = lib.mkDefault {
+        audio.enable = true;
+        gnome.enable = true;
+      };
+
+      # Full gaming suite
+      gaming = lib.mkDefault {
+        steam = {
+          enable = true;
+          performance.gamemode = true;
+          performance.mangohud = true;
+        };
+      };
+
+      # Development tools for modding/streaming
+      development.git.enable = lib.mkDefault true;
+    };
 
     # Gaming-specific services (opinionated preset configuration)
     services = {

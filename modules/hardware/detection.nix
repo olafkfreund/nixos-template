@@ -526,9 +526,15 @@ in
 
     # Virtualization-specific optimizations
     (mkIf (cfg.autoOptimize && hardwareProfile.virtualization.isVirtualMachine) {
-      # VM guest optimizations
-      services.qemuGuest.enable = mkDefault true;
-      services.spice-vdagentd.enable = mkDefault true;
+      # VM services optimization
+      services = {
+        # VM guest optimizations
+        qemuGuest.enable = mkDefault true;
+        spice-vdagentd.enable = mkDefault true;
+
+        # Disable unnecessary services in VMs
+        smartd.enable = false;
+      };
 
       # VM-specific kernel modules
       boot.kernelModules = [
@@ -539,9 +545,6 @@ in
         "virtio_scsi"
         "virtio_console"
       ];
-
-      # Disable unnecessary services in VMs
-      services.smartd.enable = false;
       powerManagement.enable = false;
 
       # VM-optimized scheduler

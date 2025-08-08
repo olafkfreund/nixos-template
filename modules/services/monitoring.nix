@@ -9,7 +9,7 @@ let
   cfg = config.modules.services.monitoring;
 
   # Helper function to generate exporter configurations
-  mkExporterConfig = name: exporterCfg: {
+  mkExporterConfig = exporterCfg: {
     enable = true;
     port = exporterCfg.port;
     listenAddress = exporterCfg.listenAddress or "127.0.0.1";
@@ -492,7 +492,7 @@ in
       services.prometheus.exporters = mkMerge (mapAttrsToList
         (name: exporterCfg:
           mkIf exporterCfg.enable {
-            ${name} = mkExporterConfig name (defaultExporters.${name} or { } // exporterCfg.extraConfig // {
+            ${name} = mkExporterConfig (defaultExporters.${name} or { } // exporterCfg.extraConfig // {
               inherit (exporterCfg) port listenAddress;
             });
           }

@@ -205,244 +205,238 @@ in
 
     # Environment configuration
     environment = {
+      # Essential packages for Hyprland
+      systemPackages = with pkgs; [
+        # Core Wayland utilities
+        wl-clipboard # Clipboard manager
+        wlr-randr # Display configuration
+        wlogout # Logout menu
+
+        # Application launcher and menus
+        wofi # Application launcher
+        rofi-wayland # Alternative launcher
+
+        # Terminal
+        alacritty # Default terminal
+        kitty # Alternative terminal
+
+        # File manager
+        thunar # File manager
+
+        # Screenshot and screen recording
+        grim # Screenshot tool
+        slurp # Screen area selection
+        swappy # Screenshot annotation
+        wf-recorder # Screen recorder
+
+        # Wallpaper
+        swaybg # Wallpaper setter
+        hyprpaper # Hyprland wallpaper daemon
+
+        # System utilities
+        brightnessctl # Brightness control
+        pamixer # Audio control
+        pavucontrol # Audio mixer GUI
+
+        # Theme and appearance
+        gtk3 # GTK3 for theme support
+        adwaita-icon-theme
+        gnome-themes-extra
+
+        # Fonts
+        jetbrains-mono
+        font-awesome
+
+        # Media
+        imv # Image viewer
+        mpv # Video player
+
+        # Archive support for file manager
+        file-roller # Archive manager
+
+        # Network management
+        networkmanagerapplet
+
+        # Clipboard manager
+        clipman # Clipboard history
+
+        # Color picker
+        hyprpicker # Color picker for Hyprland
+
+        # System information
+        fastfetch # System info
+
+        # PDF viewer
+        zathura # Minimal PDF viewer
+      ] ++ lib.optionals cfg.waybar.enable [
+        waybar
+      ] ++ lib.optionals cfg.dunst.enable [
+        dunst
+      ];
+
       # Configuration files
       etc = {
         # Hyprland configuration
         "hypr/hyprland.conf".text = ''
-      # Monitor configuration
-      ${lib.concatMapStringsSep "\n" (monitor: "monitor=${monitor}") cfg.settings.monitors}
-      
-      # Input configuration
-      input {
-          kb_layout = ${cfg.settings.input.kb_layout}
-          follow_mouse = ${toString cfg.settings.input.follow_mouse}
+          # Monitor configuration
+          ${lib.concatMapStringsSep "\n" (monitor: "monitor=${monitor}") cfg.settings.monitors}
           
-          touchpad {
-              natural_scroll = ${if cfg.settings.input.touchpad.natural_scroll then "yes" else "no"}
-              disable_while_typing = ${if cfg.settings.input.touchpad.disable_while_typing then "yes" else "no"}
-          }
-      }
-      
-      # General configuration
-      general {
-          gaps_in = ${toString cfg.settings.appearance.gaps_in}
-          gaps_out = ${toString cfg.settings.appearance.gaps_out}
-          border_size = ${toString cfg.settings.appearance.border_size}
-          
-          # Border colors (Catppuccin-inspired)
-          col.active_border = rgba(cba6f7ee) rgba(89b4faee) 45deg
-          col.inactive_border = rgba(585b70aa)
-          
-          resize_on_border = false
-          allow_tearing = false
-          layout = dwindle
-      }
-      
-      # Decoration
-      decoration {
-          rounding = ${toString cfg.settings.appearance.rounding}
-          
-          # Opacity
-          active_opacity = 1.0
-          inactive_opacity = 1.0
-          
-          # Shadow
-          drop_shadow = true
-          shadow_range = 4
-          shadow_render_power = 3
-          col.shadow = rgba(1a1a1aee)
-          
-          # Blur
-          blur {
-              enabled = true
-              size = 3
-              passes = 1
+          # Input configuration
+          input {
+              kb_layout = ${cfg.settings.input.kb_layout}
+              follow_mouse = ${toString cfg.settings.input.follow_mouse}
               
-              vibrancy = 0.1696
+              touchpad {
+                  natural_scroll = ${if cfg.settings.input.touchpad.natural_scroll then "yes" else "no"}
+                  disable_while_typing = ${if cfg.settings.input.touchpad.disable_while_typing then "yes" else "no"}
+              }
           }
-      }
-      
-      # Animations
-      animations {
-          enabled = ${if cfg.settings.animations.enable then "yes" else "no"}
           
-          bezier = myBezier, 0.05, 0.9, 0.1, 1.05
+          # General configuration
+          general {
+              gaps_in = ${toString cfg.settings.appearance.gaps_in}
+              gaps_out = ${toString cfg.settings.appearance.gaps_out}
+              border_size = ${toString cfg.settings.appearance.border_size}
+              
+              # Border colors (Catppuccin-inspired)
+              col.active_border = rgba(cba6f7ee) rgba(89b4faee) 45deg
+              col.inactive_border = rgba(585b70aa)
+              
+              resize_on_border = false
+              allow_tearing = false
+              layout = dwindle
+          }
           
-          animation = windows, 1, 7, myBezier
-          animation = windowsOut, 1, 7, default, popin 80%
-          animation = border, 1, 10, default
-          animation = borderangle, 1, 8, default
-          animation = fade, 1, 7, default
-          animation = workspaces, 1, 6, default
-      }
-      
-      # Layout configuration
-      dwindle {
-          pseudotile = yes
-          preserve_split = yes
-      }
-      
-      master {
-          new_is_master = true
-      }
-      
-      # Gestures
-      gestures {
-          workspace_swipe = false
-      }
-      
-      # Misc settings
-      misc { 
-          force_default_wallpaper = 0
-          disable_hyprland_logo = false
-      }
-      
-      # Key bindings
-      $mainMod = SUPER
-      
-      # Application bindings
-      bind = $mainMod, Q, exec, ${cfg.applications.terminal}
-      bind = $mainMod, C, killactive, 
-      bind = $mainMod, M, exit, 
-      bind = $mainMod, E, exec, ${cfg.applications.fileManager}
-      bind = $mainMod, V, togglefloating, 
-      bind = $mainMod, R, exec, ${cfg.applications.launcher}
-      bind = $mainMod, P, pseudo,
-      bind = $mainMod, J, togglesplit,
-      bind = $mainMod, B, exec, ${cfg.applications.browser}
-      
-      # Screenshot bindings
-      bind = , Print, exec, ${cfg.applications.screenshot} -g "$(slurp)" - | wl-copy
-      bind = $mainMod, Print, exec, ${cfg.applications.screenshot} - | wl-copy
-      
-      # Move focus with mainMod + arrow keys
-      bind = $mainMod, left, movefocus, l
-      bind = $mainMod, right, movefocus, r
-      bind = $mainMod, up, movefocus, u
-      bind = $mainMod, down, movefocus, d
-      
-      # Switch workspaces with mainMod + [0-9]
-      bind = $mainMod, 1, workspace, 1
-      bind = $mainMod, 2, workspace, 2
-      bind = $mainMod, 3, workspace, 3
-      bind = $mainMod, 4, workspace, 4
-      bind = $mainMod, 5, workspace, 5
-      bind = $mainMod, 6, workspace, 6
-      bind = $mainMod, 7, workspace, 7
-      bind = $mainMod, 8, workspace, 8
-      bind = $mainMod, 9, workspace, 9
-      bind = $mainMod, 0, workspace, 10
-      
-      # Move active window to a workspace with mainMod + SHIFT + [0-9]
-      bind = $mainMod SHIFT, 1, movetoworkspace, 1
-      bind = $mainMod SHIFT, 2, movetoworkspace, 2
-      bind = $mainMod SHIFT, 3, movetoworkspace, 3
-      bind = $mainMod SHIFT, 4, movetoworkspace, 4
-      bind = $mainMod SHIFT, 5, movetoworkspace, 5
-      bind = $mainMod SHIFT, 6, movetoworkspace, 6
-      bind = $mainMod SHIFT, 7, movetoworkspace, 7
-      bind = $mainMod SHIFT, 8, movetoworkspace, 8
-      bind = $mainMod SHIFT, 9, movetoworkspace, 9
-      bind = $mainMod SHIFT, 0, movetoworkspace, 10
-      
-      # Scroll through existing workspaces with mainMod + scroll
-      bind = $mainMod, mouse_down, workspace, e+1
-      bind = $mainMod, mouse_up, workspace, e-1
-      
-      # Move/resize windows with mainMod + LMB/RMB and dragging
-      bindm = $mainMod, mouse:272, movewindow
-      bindm = $mainMod, mouse:273, resizewindow
-      
-      # Volume and brightness controls
-      bind = , XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
-      bind = , XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
-      bind = , XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
-      bind = , XF86MonBrightnessUp, exec, brightnessctl set 10%+
-      bind = , XF86MonBrightnessDown, exec, brightnessctl set 10%-
-      
-      # Autostart applications
-      exec-once = waybar
-      exec-once = dunst
-      ${lib.optionalString (cfg.theme.wallpaper != "") "exec-once = swaybg -i ${cfg.theme.wallpaper}"}
-    '';
+          # Decoration
+          decoration {
+              rounding = ${toString cfg.settings.appearance.rounding}
+              
+              # Opacity
+              active_opacity = 1.0
+              inactive_opacity = 1.0
+              
+              # Shadow
+              drop_shadow = true
+              shadow_range = 4
+              shadow_render_power = 3
+              col.shadow = rgba(1a1a1aee)
+              
+              # Blur
+              blur {
+                  enabled = true
+                  size = 3
+                  passes = 1
+                  
+                  vibrancy = 0.1696
+              }
+          }
+          
+          # Animations
+          animations {
+              enabled = ${if cfg.settings.animations.enable then "yes" else "no"}
+              
+              bezier = myBezier, 0.05, 0.9, 0.1, 1.05
+              
+              animation = windows, 1, 7, myBezier
+              animation = windowsOut, 1, 7, default, popin 80%
+              animation = border, 1, 10, default
+              animation = borderangle, 1, 8, default
+              animation = fade, 1, 7, default
+              animation = workspaces, 1, 6, default
+          }
+          
+          # Layout configuration
+          dwindle {
+              pseudotile = yes
+              preserve_split = yes
+          }
+          
+          master {
+              new_is_master = true
+          }
+          
+          # Gestures
+          gestures {
+              workspace_swipe = false
+          }
+          
+          # Misc settings
+          misc { 
+              force_default_wallpaper = 0
+              disable_hyprland_logo = false
+          }
+          
+          # Key bindings
+          $mainMod = SUPER
+          
+          # Application bindings
+          bind = $mainMod, Q, exec, ${cfg.applications.terminal}
+          bind = $mainMod, C, killactive, 
+          bind = $mainMod, M, exit, 
+          bind = $mainMod, E, exec, ${cfg.applications.fileManager}
+          bind = $mainMod, V, togglefloating, 
+          bind = $mainMod, R, exec, ${cfg.applications.launcher}
+          bind = $mainMod, P, pseudo,
+          bind = $mainMod, J, togglesplit,
+          bind = $mainMod, B, exec, ${cfg.applications.browser}
+          
+          # Screenshot bindings
+          bind = , Print, exec, ${cfg.applications.screenshot} -g "$(slurp)" - | wl-copy
+          bind = $mainMod, Print, exec, ${cfg.applications.screenshot} - | wl-copy
+          
+          # Move focus with mainMod + arrow keys
+          bind = $mainMod, left, movefocus, l
+          bind = $mainMod, right, movefocus, r
+          bind = $mainMod, up, movefocus, u
+          bind = $mainMod, down, movefocus, d
+          
+          # Switch workspaces with mainMod + [0-9]
+          bind = $mainMod, 1, workspace, 1
+          bind = $mainMod, 2, workspace, 2
+          bind = $mainMod, 3, workspace, 3
+          bind = $mainMod, 4, workspace, 4
+          bind = $mainMod, 5, workspace, 5
+          bind = $mainMod, 6, workspace, 6
+          bind = $mainMod, 7, workspace, 7
+          bind = $mainMod, 8, workspace, 8
+          bind = $mainMod, 9, workspace, 9
+          bind = $mainMod, 0, workspace, 10
+          
+          # Move active window to a workspace with mainMod + SHIFT + [0-9]
+          bind = $mainMod SHIFT, 1, movetoworkspace, 1
+          bind = $mainMod SHIFT, 2, movetoworkspace, 2
+          bind = $mainMod SHIFT, 3, movetoworkspace, 3
+          bind = $mainMod SHIFT, 4, movetoworkspace, 4
+          bind = $mainMod SHIFT, 5, movetoworkspace, 5
+          bind = $mainMod SHIFT, 6, movetoworkspace, 6
+          bind = $mainMod SHIFT, 7, movetoworkspace, 7
+          bind = $mainMod SHIFT, 8, movetoworkspace, 8
+          bind = $mainMod SHIFT, 9, movetoworkspace, 9
+          bind = $mainMod SHIFT, 0, movetoworkspace, 10
+          
+          # Scroll through existing workspaces with mainMod + scroll
+          bind = $mainMod, mouse_down, workspace, e+1
+          bind = $mainMod, mouse_up, workspace, e-1
+          
+          # Move/resize windows with mainMod + LMB/RMB and dragging
+          bindm = $mainMod, mouse:272, movewindow
+          bindm = $mainMod, mouse:273, resizewindow
+          
+          # Volume and brightness controls
+          bind = , XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
+          bind = , XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+          bind = , XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+          bind = , XF86MonBrightnessUp, exec, brightnessctl set 10%+
+          bind = , XF86MonBrightnessDown, exec, brightnessctl set 10%-
+          
+          # Autostart applications
+          exec-once = waybar
+          exec-once = dunst
+          ${lib.optionalString (cfg.theme.wallpaper != "") "exec-once = swaybg -i ${cfg.theme.wallpaper}"}
+        '';
 
         # Waybar configuration file
         "xdg/waybar/config".text = lib.mkIf cfg.waybar.enable (builtins.toJSON {
-
-      # Essential packages for Hyprland and Waybar
-      systemPackages = with pkgs; [
-      # Waybar (if enabled)
-    ] ++ lib.optionals cfg.waybar.enable [
-      waybar
-    ] ++ lib.optionals cfg.dunst.enable [
-      dunst
-    ] ++ [
-      # Core Wayland utilities
-      wl-clipboard # Clipboard manager
-      wlr-randr # Display configuration
-      wlogout # Logout menu
-
-      # Application launcher and menus
-      wofi # Application launcher
-      rofi-wayland # Alternative launcher
-
-      # Terminal
-      alacritty # Default terminal
-      kitty # Alternative terminal
-
-      # File manager
-      thunar # File manager
-
-      # Screenshot and screen recording
-      grim # Screenshot tool
-      slurp # Screen area selection
-      swappy # Screenshot annotation
-      wf-recorder # Screen recorder
-
-      # Wallpaper
-      swaybg # Wallpaper setter
-      hyprpaper # Hyprland wallpaper daemon
-
-      # System utilities
-      brightnessctl # Brightness control
-      pamixer # Audio control
-      pavucontrol # Audio mixer GUI
-
-      # Theme and appearance
-      gtk3 # GTK3 for theme support
-      adwaita-icon-theme
-      gnome-themes-extra
-
-      # Fonts
-      jetbrains-mono
-      font-awesome
-
-      # Media
-      imv # Image viewer
-      mpv # Video player
-
-      # Archive support for file manager
-      file-roller # Archive manager
-
-      # Network management
-      networkmanagerapplet
-
-      # Clipboard manager
-      clipman # Clipboard history
-
-      # Color picker
-      hyprpicker # Color picker for Hyprland
-
-      # System information
-      fastfetch # System info
-
-      # PDF viewer
-      zathura # Minimal PDF viewer
-    ];
-
-      # Configuration files
-      # Waybar configuration file
-      etc."xdg/waybar/config".text = lib.mkIf cfg.waybar.enable (builtins.toJSON {
         mainBar = {
           layer = "top";
           position = cfg.waybar.position;
@@ -521,8 +515,8 @@ in
         };
       });
 
-      # Waybar style configuration  
-      etc."xdg/waybar/style.css".text = lib.mkIf cfg.waybar.enable ''
+        # Waybar style configuration  
+        "xdg/waybar/style.css".text = lib.mkIf cfg.waybar.enable ''
         * {
             border: none;
             border-radius: 0;
@@ -608,8 +602,8 @@ in
         }
       '';
 
-      # Dunst notification daemon configuration
-      etc."xdg/dunst/dunstrc".text = lib.mkIf cfg.dunst.enable ''
+        # Dunst notification daemon configuration
+        "xdg/dunst/dunstrc".text = lib.mkIf cfg.dunst.enable ''
         [global]
         monitor = 0
         follow = mouse
@@ -678,11 +672,39 @@ in
         frame_color = "#fb4934"
         timeout = ${toString cfg.dunst.settings.urgency_critical.timeout}
       '';
+      };
 
-      # (systemPackages merged above)
+      # Session variables
+      sessionVariables = {
+        # Wayland variables
+        XDG_CURRENT_DESKTOP = "Hyprland";
+        XDG_SESSION_DESKTOP = "Hyprland";
+        XDG_SESSION_TYPE = "wayland";
 
-      # XDG portal for better app integration
-      xdg.portal = {
+        # Qt/GTK theming
+        QT_QPA_PLATFORM = "wayland";
+        QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
+
+        # Cursor theme
+        XCURSOR_THEME = cfg.theme.cursor.theme;
+        XCURSOR_SIZE = toString cfg.theme.cursor.size;
+
+        # Firefox Wayland
+        MOZ_ENABLE_WAYLAND = "1";
+
+        # Java applications on Wayland
+        _JAVA_AWT_WM_NONREPARENTING = "1";
+
+        # SDL Wayland
+        SDL_VIDEODRIVER = "wayland";
+
+        # Clutter Wayland
+        CLUTTER_BACKEND = "wayland";
+      };
+    };
+
+    # XDG portal for better app integration
+    xdg.portal = {
         enable = true;
         extraPortals = with pkgs; [
           xdg-desktop-portal-hyprland
@@ -776,34 +798,6 @@ in
         };
       };
 
-      # Environment variables
-      sessionVariables = {
-        # Wayland variables
-        XDG_CURRENT_DESKTOP = "Hyprland";
-        XDG_SESSION_DESKTOP = "Hyprland";
-        XDG_SESSION_TYPE = "wayland";
-
-        # Qt/GTK theming
-        QT_QPA_PLATFORM = "wayland";
-        QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
-
-        # Cursor theme
-        XCURSOR_THEME = cfg.theme.cursor.theme;
-        XCURSOR_SIZE = toString cfg.theme.cursor.size;
-
-        # Firefox Wayland
-        MOZ_ENABLE_WAYLAND = "1";
-
-        # Java applications on Wayland
-        _JAVA_AWT_WM_NONREPARENTING = "1";
-
-        # SDL Wayland
-        SDL_VIDEODRIVER = "wayland";
-
-        # Clutter Wayland
-        CLUTTER_BACKEND = "wayland";
-      };
-    };
 
     # Assertions to prevent conflicts
     assertions = [

@@ -19,27 +19,30 @@ in
 
   config = lib.mkIf isWorkstation {
 
-    # Hardware optimization for desktop
-    modules.hardware.power-management = lib.mkDefault {
-      enable = true;
-      profile = "desktop";
-      cpuGovernor = "ondemand";
-      enableThermalManagement = true;
+    # Module configuration
+    modules = {
+      # Hardware optimization for desktop
+      hardware.power-management = lib.mkDefault {
+        enable = true;
+        profile = "desktop";
+        cpuGovernor = "ondemand";
+        enableThermalManagement = true;
 
-      desktop = {
-        enablePerformanceMode = true;
-        disableUsbAutosuspend = true;
+        desktop = {
+          enablePerformanceMode = true;
+          disableUsbAutosuspend = true;
+        };
       };
-    };
 
-    # Desktop environment (preset choice - use lib.mkDefault to allow override)
-    modules.desktop = lib.mkDefault {
-      audio.enable = true;
-      gnome.enable = true;
-    };
+      # Desktop environment (preset choice - use lib.mkDefault to allow override)
+      desktop = lib.mkDefault {
+        audio.enable = true;
+        gnome.enable = true;
+      };
 
-    # Development environment (preset choice - use lib.mkDefault to allow override) 
-    modules.development.git.enable = lib.mkDefault true;
+      # Development environment (preset choice - use lib.mkDefault to allow override) 
+      development.git.enable = lib.mkDefault true;
+    };
 
     # Essential services (opinionated preset configuration)
     services = {
