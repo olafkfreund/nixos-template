@@ -166,7 +166,7 @@
 
   # Server networking
   networking = {
-    usePredictableInterfaceNames = true;
+    usePredictableInterfaceNames = lib.mkDefault true;
     useDHCP = lib.mkDefault true;
 
     # Server firewall configuration

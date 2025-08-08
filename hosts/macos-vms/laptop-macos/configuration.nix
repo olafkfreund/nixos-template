@@ -139,7 +139,7 @@
 
   # Laptop-like networking
   networking = {
-    usePredictableInterfaceNames = true;
+    usePredictableInterfaceNames = lib.mkDefault true;
     useDHCP = lib.mkDefault false; # Use NetworkManager
 
     # NetworkManager configuration

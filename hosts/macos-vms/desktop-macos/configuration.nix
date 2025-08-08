@@ -119,7 +119,7 @@
   # Networking optimized for macOS VM
   networking = {
     # Use predictable interface names
-    usePredictableInterfaceNames = true;
+    usePredictableInterfaceNames = lib.mkDefault true;
 
     # DHCP for VM networking (can be overridden by NetworkManager)
     useDHCP = lib.mkDefault true;
