@@ -1,7 +1,9 @@
 name: Auto Format
 on:
-  push:
-    branches: [main, develop]
+  # Disabled auto-formatting to prevent unwanted commits
+  # Uncomment the lines below to re-enable:
+  # push:
+  #   branches: [main, develop]
   workflow_dispatch:
 permissions:
   contents: write
