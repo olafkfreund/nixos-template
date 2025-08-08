@@ -85,7 +85,7 @@ echo "  2. 💻 Laptop     - Mobile-optimized configuration for MacBooks"
 echo "  3. 🖧  Server     - Headless configuration for development servers"
 echo ""
 
-read -p "Choose a configuration (1-3): " config_choice
+read -r -p "Choose a configuration (1-3): " config_choice
 
 case $config_choice in
 1)
@@ -123,7 +123,7 @@ echo ""
 if command -v darwin-rebuild >/dev/null 2>&1; then
   log_warning "nix-darwin appears to be already installed."
   echo ""
-  read -p "Do you want to continue and potentially overwrite the existing installation? (y/N): " overwrite
+  read -r -p "Do you want to continue and potentially overwrite the existing installation? (y/N): " overwrite
   if [[ ! $overwrite =~ ^[Yy]$ ]]; then
     log_info "Installation cancelled."
     exit 0
@@ -261,11 +261,13 @@ if ! echo "$PATH" | grep -q "/run/current-system/sw/bin"; then
   for shell_profile in "$HOME/.zprofile" "$HOME/.bash_profile" "$HOME/.profile"; do
     if [[ -f $shell_profile ]] || [[ $shell_profile == "$HOME/.zprofile" ]]; then
       if ! grep -q "/run/current-system/sw/bin" "$shell_profile" 2>/dev/null; then
-        echo '' >>"$shell_profile"
-        echo '# nix-darwin' >>"$shell_profile"
-        echo 'if [ -e /run/current-system/sw/bin ]; then' >>"$shell_profile"
-        echo '  export PATH="/run/current-system/sw/bin:$PATH"' >>"$shell_profile"
-        echo 'fi' >>"$shell_profile"
+        {
+          echo ''
+          echo '# nix-darwin'
+          echo 'if [ -e /run/current-system/sw/bin ]; then'
+          echo "  export PATH=\"/run/current-system/sw/bin:\$PATH\""
+          echo 'fi'
+        } >>"$shell_profile"
         log_info "Updated $shell_profile"
       fi
     fi
@@ -329,9 +331,11 @@ if ! echo "$PATH" | grep -q "$HOME/.local/bin"; then
   for shell_profile in "$HOME/.zprofile" "$HOME/.bash_profile" "$HOME/.profile"; do
     if [[ -f $shell_profile ]] || [[ $shell_profile == "$HOME/.zprofile" ]]; then
       if ! grep -q "HOME/.local/bin" "$shell_profile" 2>/dev/null; then
-        echo '' >>"$shell_profile"
-        echo '# Local binaries' >>"$shell_profile"
-        echo 'export PATH="$HOME/.local/bin:$PATH"' >>"$shell_profile"
+        {
+          echo ''
+          echo '# Local binaries'
+          echo "export PATH=\"\$HOME/.local/bin:\$PATH\""
+        } >>"$shell_profile"
         break
       fi
     fi
@@ -371,7 +375,7 @@ echo ""
 
 # Offer to restart terminal
 echo ""
-read -p "Would you like to restart your terminal now to load the new configuration? (y/N): " restart_terminal
+read -r -p "Would you like to restart your terminal now to load the new configuration? (y/N): " restart_terminal
 
 if [[ $restart_terminal =~ ^[Yy]$ ]]; then
   log_info "Please restart your terminal or run: source ~/.zprofile"

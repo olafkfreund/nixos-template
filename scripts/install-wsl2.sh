@@ -276,8 +276,7 @@ setup_user_account() {
 create_desktop_shortcut() {
   log_info "Creating desktop shortcut..."
 
-  local desktop_path
-  desktop_path=$(powershell.exe -Command "[Environment]::GetFolderPath('Desktop')" | tr -d '\r')
+# Note: Using direct path construction instead of PowerShell query for reliability
 
   local shortcut_content="[Desktop Entry]
 Name=NixOS WSL
