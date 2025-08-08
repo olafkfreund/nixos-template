@@ -11,7 +11,7 @@
   # ISO-specific configuration for macOS users
   isoImage = {
     # ISO metadata
-    isoName = lib.mkForce "nixos-desktop-macos-installer";
+    isoName = lib.mkForce "nixos-desktop-macos-installer"; # Deprecated, keeping for compatibility
     volumeID = lib.mkForce "NIXOS_DESKTOP_MACOS";
 
     # Boot configuration optimized for macOS VMs
@@ -64,30 +64,30 @@
     xserver = {
       enable = true;
       videoDrivers = [ "modesetting" "virtio" "qxl" ];
+    };
 
-      displayManager.gdm = {
+    # Display manager
+    displayManager = {
+      gdm = {
         enable = true;
         autoSuspend = false;
       };
-
-      desktopManager.gnome = {
+      autoLogin = {
         enable = true;
+        user = lib.mkForce "nixos";
       };
     };
 
-    # Network configuration already set in networking section below
+    # Desktop manager
+    desktopManager.gnome = {
+      enable = true;
+    };
 
     # SSH for remote installation
     openssh = {
       enable = true;
       settings.PermitRootLogin = "yes";
       settings.PasswordAuthentication = true;
-    };
-
-    # Automatic login for installer convenience
-    displayManager.autoLogin = {
-      enable = true;
-      user = "nixos";
     };
   };
 
@@ -98,6 +98,9 @@
     useDHCP = lib.mkDefault true;
     firewall.enable = false; # Open for installer
   };
+
+  # Enable zsh for installer user
+  programs.zsh.enable = true;
 
   # Users for installer environment
   users = {
@@ -144,10 +147,10 @@
     nano
 
     # File managers
-    gnome.nautilus
+    nautilus
 
     # Terminal
-    gnome.gnome-terminal
+    gnome-terminal
 
     # Web browser for documentation
     firefox
@@ -163,7 +166,7 @@
     hdparm
 
     # Disk management
-    gnome.gnome-disks
+    gnome-disk-utility
     gparted
 
     # Archive tools
