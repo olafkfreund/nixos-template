@@ -50,7 +50,8 @@
   hardware = {
     graphics = {
       enable = true;
-      enable32Bit = true;
+      # Only enable 32-bit support on x86_64 systems
+      enable32Bit = pkgs.stdenv.system == "x86_64-linux";
     };
 
     # Include firmware for better compatibility
