@@ -21,12 +21,14 @@ This comprehensive guide covers running and testing NixOS configurations on macO
 This template provides comprehensive macOS support including:
 
 **NixOS Virtualization:**
+
 - **Test NixOS configurations** before deploying to real hardware
 - **Develop NixOS systems** using familiar macOS tools
 - **Create custom installers** optimized for different use cases
 - **Learn NixOS** in a safe, isolated environment
 
 **Native macOS Management:**
+
 - **nix-darwin** for declarative macOS system management
 - **Home Manager** integration for user environments
 - **Homebrew integration** for GUI applications
@@ -35,19 +37,23 @@ This template provides comprehensive macOS support including:
 ### Supported Configurations
 
 **Virtual Machines:**
+
 - **Desktop VM**: Full GNOME desktop environment with development tools
 - **Laptop VM**: Laptop-optimized with power management and mobile features
 - **Server VM**: Headless server configuration for development and testing
 
 **Architecture Support:**
+
 - **Apple Silicon** (M1/M2/M3): Native aarch64-linux VMs for optimal performance
 - **Intel Macs**: x86_64-linux VMs with excellent compatibility
 
 **ISO Installers:**
+
 - **Desktop ISO**: GNOME-based graphical installer
 - **Minimal ISO**: Lightweight command-line installer for servers
 
 **nix-darwin Configurations:**
+
 - **Desktop**: Full desktop environment with development tools
 - **Laptop**: Mobile-optimized for MacBooks
 - **Server**: Headless development server setup
@@ -57,11 +63,13 @@ This template provides comprehensive macOS support including:
 ### System Requirements
 
 **Hardware:**
+
 - **Apple Silicon**: 8GB+ RAM, 50GB+ free storage
-- **Intel Mac**: 8GB+ RAM, 50GB+ free storage  
+- **Intel Mac**: 8GB+ RAM, 50GB+ free storage
 - macOS 11.0 (Big Sur) or later
 
 **Software:**
+
 - **Nix package manager** (with flakes enabled)
 - **UTM** (recommended) or QEMU
 - **Command line tools** (Xcode Command Line Tools)
@@ -69,6 +77,7 @@ This template provides comprehensive macOS support including:
 ### Installing Prerequisites
 
 1. **Install Nix**:
+
    ```bash
    curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
    ```
@@ -149,16 +158,19 @@ nix-darwin brings the power of NixOS configuration management to macOS. Instead 
 ### Benefits of nix-darwin
 
 **Reproducible Systems:**
+
 - Version control your entire macOS configuration
 - Reproduce your setup on any Mac instantly
 - Share configurations across team members
 
 **Rollback Capability:**
+
 - Every change creates a new "generation"
 - Roll back to previous working configurations
 - Safe to experiment with system changes
 
 **Integration:**
+
 - Works alongside existing macOS applications
 - Integrates with Homebrew for GUI apps
 - Manages system preferences declaratively
@@ -166,17 +178,21 @@ nix-darwin brings the power of NixOS configuration management to macOS. Instead 
 ### nix-darwin Configurations
 
 #### Desktop Configuration
+
 **Target:** Primary development machines, iMacs, Mac Studios
 **Features:**
+
 - Full development environment (Node.js, Python, Go, Rust, Java)
 - GUI applications via Homebrew (VS Code, Docker, browsers)
 - Development databases (PostgreSQL, Redis, MongoDB)
 - Media tools and productivity applications
 - Comprehensive shell setup with Zsh and Starship
 
-#### Laptop Configuration  
+#### Laptop Configuration
+
 **Target:** MacBooks, mobile development
 **Features:**
+
 - Battery-optimized settings and power management
 - Lightweight development tools
 - Mobile-friendly applications
@@ -184,8 +200,10 @@ nix-darwin brings the power of NixOS configuration management to macOS. Instead 
 - Power-aware development environments
 
 #### Server Configuration
+
 **Target:** Headless development, CI/CD, Mac minis
 **Features:**
+
 - Server development stack
 - Container orchestration tools
 - Monitoring and logging
@@ -195,6 +213,7 @@ nix-darwin brings the power of NixOS configuration management to macOS. Instead 
 ### Installation
 
 **Quick Installation:**
+
 ```bash
 git clone https://github.com/yourusername/nixos-template
 cd nixos-template
@@ -202,6 +221,7 @@ cd nixos-template
 ```
 
 **Manual Installation:**
+
 ```bash
 # Clone template
 git clone https://github.com/yourusername/nixos-template ~/.config/nix-darwin
@@ -217,6 +237,7 @@ nix run nix-darwin -- switch --flake .#darwin-desktop-intel
 ### Usage
 
 **System Management:**
+
 ```bash
 # Apply configuration changes
 darwin-rebuild switch --flake ~/.config/nix-darwin
@@ -236,10 +257,12 @@ darwin-rebuild --rollback
 
 **Customization:**
 Edit configuration files in `~/.config/nix-darwin/hosts/darwin-*/`:
+
 - `configuration.nix` - System-level settings
 - `home.nix` - User environment and applications
 
 **Example Changes:**
+
 ```nix
 # Add a new package
 environment.systemPackages = with pkgs; [
@@ -258,6 +281,7 @@ homebrew.casks = [
 ```
 
 Then apply changes:
+
 ```bash
 darwin-rebuild switch --flake ~/.config/nix-darwin
 ```
@@ -265,6 +289,7 @@ darwin-rebuild switch --flake ~/.config/nix-darwin
 ### For More Information
 
 See the complete **[nix-darwin Guide](NIX-DARWIN-GUIDE.md)** for:
+
 - Detailed configuration options
 - Advanced customization
 - Troubleshooting
@@ -277,12 +302,14 @@ See the complete **[nix-darwin Guide](NIX-DARWIN-GUIDE.md)** for:
 **Purpose**: Full desktop environment for testing and development
 
 **Specifications**:
+
 - **RAM**: 4GB (recommended)
 - **Storage**: 20GB+
 - **Desktop**: GNOME with Wayland
 - **User**: nixos/nixos
 
 **Features**:
+
 - Complete GNOME desktop environment
 - Firefox, VS Code, development tools
 - Clipboard integration with macOS
@@ -290,11 +317,12 @@ See the complete **[nix-darwin Guide](NIX-DARWIN-GUIDE.md)** for:
 - Guest tools for seamless integration
 
 **Build Commands**:
+
 ```bash
 # Apple Silicon
 just build-macos-vm desktop aarch64
 
-# Intel Mac  
+# Intel Mac
 just build-macos-vm desktop x86_64
 
 # Or use architecture detection
@@ -306,11 +334,13 @@ just build-macos-vm desktop
 **Purpose**: Laptop-specific features testing and mobile computing simulation
 
 **Specifications**:
+
 - **RAM**: 3GB (laptop-like constraints)
 - **Storage**: 15GB+
 - **User**: laptop-user/nixos
 
 **Features**:
+
 - Power management simulation
 - NetworkManager for WiFi simulation
 - Bluetooth support (simulated)
@@ -319,6 +349,7 @@ just build-macos-vm desktop
 - Redshift for eye care
 
 **Unique Utilities**:
+
 - `laptop-vm-info`: System information
 - `laptop-vm-optimize`: Performance tuning
 - `battery`: Power status (simulated)
@@ -329,12 +360,14 @@ just build-macos-vm desktop
 **Purpose**: Headless server development and testing
 
 **Specifications**:
+
 - **RAM**: 2GB (server baseline)
 - **Storage**: 10GB+
 - **Interface**: Headless (SSH only)
 - **User**: server-admin/nixos
 
 **Features**:
+
 - SSH server enabled
 - Container support (Podman)
 - Development databases (PostgreSQL, Redis)
@@ -343,6 +376,7 @@ just build-macos-vm desktop
 - No desktop environment
 
 **Services**:
+
 - SSH (port 22)
 - HTTP (ports 80, 8080)
 - PostgreSQL (port 5432)
@@ -350,6 +384,7 @@ just build-macos-vm desktop
 - Prometheus (port 9090)
 
 **Management Commands**:
+
 - `server-status`: Service status overview
 - `server-logs [service]`: View service logs
 - `containers`: List running containers
@@ -361,6 +396,7 @@ just build-macos-vm desktop
 **Purpose**: Graphical NixOS installer with desktop environment
 
 **Features**:
+
 - Full GNOME desktop
 - Firefox for documentation access
 - GParted for disk partitioning
@@ -369,12 +405,14 @@ just build-macos-vm desktop
 - Development tools included
 
 **Usage**:
+
 1. Build the ISO: `just build-macos-iso desktop`
 2. Import into UTM as CD/DVD
 3. Create new VM with appropriate settings
 4. Boot from ISO and follow installer
 
 **Installation Scripts**:
+
 - `install-nixos-macos`: Interactive installation guide
 - `nixos-macos-auto-install`: Automated installation
 - `optimize-for-macos-vm`: VM optimizations
@@ -384,6 +422,7 @@ just build-macos-vm desktop
 **Purpose**: Lightweight server installer
 
 **Features**:
+
 - Command-line interface only
 - Essential system tools
 - SSH access enabled
@@ -391,12 +430,14 @@ just build-macos-vm desktop
 - Perfect for server installations
 
 **Usage**:
+
 1. Build the ISO: `just build-macos-iso minimal`
 2. Boot in UTM with minimal resources
 3. SSH access: `ssh nixos@<vm-ip>`
 4. Use installation scripts or manual process
 
 **Installation Scripts**:
+
 - `install-nixos-server-macos`: Server installation guide
 - `server-auto-install`: Automated server setup
 - `vm-network-check`: Network diagnostics
@@ -418,6 +459,7 @@ just build-macos-vm desktop
    - Choose architecture: ARM64 (M1/M2/M3) or x86_64 (Intel)
 
 4. **Configuration**:
+
    ```
    Architecture: ARM64 (Apple Silicon) or x86_64 (Intel)
    System:      QEMU 7.0+ ARM/x86 Virtual Machine
@@ -433,6 +475,7 @@ just build-macos-vm desktop
 ### Importing Pre-built VMs
 
 1. **Build VM with this template**:
+
    ```bash
    just build-macos-vm desktop
    ```
@@ -449,12 +492,14 @@ just build-macos-vm desktop
 ### UTM Performance Settings
 
 **Apple Silicon Optimization**:
+
 - Enable "Use Apple Virtualization"
 - Select ARM64 architecture
 - Enable hardware acceleration
 - Use VirtIO devices for better performance
 
 **Intel Mac Optimization**:
+
 - Use QEMU virtualization
 - Enable hardware acceleration if available
 - Allocate appropriate CPU cores
@@ -465,12 +510,14 @@ just build-macos-vm desktop
 ### Architecture-Specific Optimizations
 
 **Apple Silicon (M1/M2/M3)**:
+
 - Use native aarch64-linux VMs for best performance
 - Enable hardware virtualization in UTM
 - Allocate sufficient memory (4GB+ for desktop)
 - Use VirtIO drivers for network and storage
 
 **Intel Macs**:
+
 - Use x86_64-linux VMs for compatibility
 - Enable hardware acceleration when possible
 - Consider emulation overhead in resource allocation
@@ -479,18 +526,21 @@ just build-macos-vm desktop
 ### VM Resource Allocation
 
 **Desktop VM**:
+
 - **Memory**: 4GB+ (8GB for heavy development)
 - **CPUs**: 2-4 cores
 - **Storage**: 20GB+ (SSD recommended)
 - **Graphics**: VirtIO GPU with 128MB+ VRAM
 
 **Laptop VM**:
+
 - **Memory**: 3GB (simulate laptop constraints)
 - **CPUs**: 2 cores
 - **Storage**: 15GB+
 - **Graphics**: Basic VirtIO GPU
 
 **Server VM**:
+
 - **Memory**: 2GB (minimal for server workloads)
 - **CPUs**: 2 cores
 - **Storage**: 10GB+
@@ -499,12 +549,14 @@ just build-macos-vm desktop
 ### Host System Optimization
 
 **macOS Settings**:
+
 - Disable automatic graphics switching (Intel Macs)
 - Ensure adequate cooling for sustained workloads
 - Use external power when possible
 - Close unnecessary applications
 
 **Storage Optimization**:
+
 - Use SSD storage for VM images
 - Regular cleanup: `nix-collect-garbage -d`
 - Monitor disk usage during builds
@@ -514,17 +566,20 @@ just build-macos-vm desktop
 ### Apple Silicon (aarch64)
 
 **Advantages**:
+
 - Native ARM64 virtualization
 - Excellent performance
 - Hardware acceleration support
 - Lower power consumption
 
 **Considerations**:
+
 - Some x86_64-only software may not be available
 - Cross-compilation may be needed for some packages
 - Newer architecture with occasional compatibility issues
 
 **Recommended Usage**:
+
 - Primary development on Apple Silicon
 - Use aarch64-linux VMs
 - Cross-compile when needed
@@ -532,17 +587,20 @@ just build-macos-vm desktop
 ### Intel Macs (x86_64)
 
 **Advantages**:
+
 - Maximum software compatibility
 - Extensive package availability
 - Well-tested virtualization stack
 - Industry standard architecture
 
 **Considerations**:
+
 - Higher power consumption
 - Less efficient virtualization on newer Macs
 - Legacy architecture
 
 **Recommended Usage**:
+
 - Use for maximum compatibility
 - Good for production environment testing
 - Stable for development workflows
@@ -550,6 +608,7 @@ just build-macos-vm desktop
 ### Cross-Architecture Support
 
 This template supports both architectures with:
+
 - Automatic architecture detection
 - Architecture-specific optimizations
 - Cross-compilation capabilities
@@ -560,6 +619,7 @@ This template supports both architectures with:
 ### Typical Development Process
 
 1. **Start with VM Development**:
+
    ```bash
    # Build and test in VM first
    just build-macos-vm desktop
@@ -567,15 +627,17 @@ This template supports both architectures with:
    ```
 
 2. **Iterate on Configurations**:
+
    ```bash
    # Edit configurations
    vim hosts/macos-vms/desktop-macos.nix
-   
+
    # Rebuild and test
    just build-macos-vm desktop
    ```
 
 3. **Create Custom ISOs**:
+
    ```bash
    # Build installer with your configs
    just build-macos-iso desktop
@@ -589,16 +651,19 @@ This template supports both architectures with:
 ### Integration with macOS Development
 
 **File Sharing**:
+
 - Shared directories between macOS and NixOS VMs
 - Clipboard integration
 - Drag-and-drop file transfer (UTM)
 
 **Tool Integration**:
+
 - Use macOS editors with NixOS projects
 - SSH into VMs for command-line work
 - Port forwarding for web development
 
 **Version Control**:
+
 - Git repositories shared between host and VMs
 - Consistent development environments
 - Easy backup and synchronization
@@ -608,30 +673,35 @@ This template supports both architectures with:
 ### Common Issues
 
 **VM Won't Boot**:
+
 - Check architecture match (ARM64 vs x86_64)
 - Verify UEFI boot is enabled
 - Ensure adequate resources allocated
 - Check UTM console for error messages
 
 **Slow Performance**:
+
 - Enable hardware acceleration in UTM
 - Increase memory allocation
 - Use SSD storage for VM images
 - Close unnecessary macOS applications
 
 **Network Issues**:
+
 - Use bridged networking for better connectivity
 - Check firewall settings in NixOS
 - Verify DHCP configuration
 - Test with different network modes
 
 **Graphics Problems**:
+
 - Install VirtIO drivers
 - Enable hardware graphics acceleration
 - Check display scaling settings
 - Use VNC for headless access
 
 **Build Failures**:
+
 - Check internet connectivity
 - Ensure sufficient disk space (10GB+)
 - Clear Nix cache: `nix-collect-garbage -d`
@@ -640,11 +710,13 @@ This template supports both architectures with:
 ### Architecture-Specific Issues
 
 **Apple Silicon**:
+
 - Rosetta 2 required for some x86_64 binaries
 - Some packages may not support aarch64 yet
 - Hardware acceleration may need specific drivers
 
 **Intel Mac**:
+
 - Slower virtualization on newer macOS versions
 - Higher resource usage
 - May need compatibility flags for newer packages
@@ -673,11 +745,13 @@ nix show-config
 ### Getting Help
 
 **Template-Specific**:
+
 - Run `just macos-help` for comprehensive guidance
 - Check documentation in `docs/`
 - Review example configurations in `hosts/macos-vms/`
 
 **Community Resources**:
+
 - NixOS Discourse: https://discourse.nixos.org
 - Matrix Chat: #nixos:nixos.org
 - GitHub Issues: Template repository issues
@@ -688,17 +762,21 @@ nix show-config
 ### Custom VM Configurations
 
 **Creating Custom VMs**:
+
 1. Copy existing configuration:
+
    ```bash
    cp -r hosts/macos-vms/desktop-macos hosts/my-custom-vm
    ```
 
 2. Customize configuration:
+
    ```bash
    vim hosts/my-custom-vm/configuration.nix
    ```
 
 3. Add to flake.nix:
+
    ```nix
    my-custom-vm = mkSystem {
      hostname = "my-custom-vm";
@@ -715,6 +793,7 @@ nix show-config
 ### Cross-Compilation
 
 **Building for Different Architectures**:
+
 ```bash
 # Build aarch64 on Intel Mac
 nix build .#nixosConfigurations.desktop-macos.config.system.build.vm --system aarch64-linux
@@ -726,6 +805,7 @@ nix build .#nixosConfigurations.desktop-macos-intel.config.system.build.vm --sys
 ### Remote Development
 
 **SSH into VMs**:
+
 ```bash
 # Start VM with port forwarding
 ssh -p 2222 nixos@localhost
@@ -735,6 +815,7 @@ ssh nixos@192.168.64.xxx
 ```
 
 **VS Code Remote Development**:
+
 1. Install "Remote - SSH" extension
 2. Connect to VM via SSH
 3. Develop directly in VM environment
@@ -742,6 +823,7 @@ ssh nixos@192.168.64.xxx
 ### Container Development
 
 **Using Podman in VMs**:
+
 ```bash
 # In server VM
 podman run -d -p 8080:80 nginx
@@ -750,6 +832,7 @@ podman-compose up
 ```
 
 **Docker Alternative**:
+
 - Podman provides Docker-compatible interface
 - Rootless containers for security
 - Direct integration with development workflow
@@ -757,6 +840,7 @@ podman-compose up
 ### Shared Folder Configuration
 
 **UTM Shared Folders**:
+
 1. Enable in UTM VM settings
 2. Mount in NixOS:
    ```nix
@@ -770,6 +854,7 @@ podman-compose up
 ### Automation and CI/CD
 
 **Automated Testing**:
+
 ```bash
 # Test all macOS configurations
 just test-all-macos
@@ -779,6 +864,7 @@ just build-all-macos
 ```
 
 **Integration with CI/CD**:
+
 - Use GitHub Actions with macOS runners
 - Automated testing of configurations
 - Cross-platform compatibility verification
@@ -786,23 +872,27 @@ just build-all-macos
 ## Resources
 
 ### Documentation
+
 - **NixOS Manual**: https://nixos.org/manual/nixos/stable/
 - **Home Manager Manual**: https://nix-community.github.io/home-manager/
 - **UTM Documentation**: https://docs.getutm.app/
 - **QEMU Documentation**: https://www.qemu.org/docs/
 
 ### Community
+
 - **NixOS Discourse**: https://discourse.nixos.org/
 - **Matrix Chat**: #nixos:nixos.org
 - **Reddit**: r/NixOS
 - **Stack Overflow**: nixos tag
 
 ### Apple-Specific Resources
+
 - **Apple Virtualization Framework**: Technical documentation
 - **UTM Community**: GitHub discussions and issues
 - **macOS Development**: Apple Developer documentation
 
 ### Learning Resources
+
 - **Nix Pills**: https://nixos.org/guides/nix-pills/
 - **NixOS & Flakes Book**: https://nixos-and-flakes.thiscute.world/
 - **Zero to Nix**: https://zero-to-nix.com/

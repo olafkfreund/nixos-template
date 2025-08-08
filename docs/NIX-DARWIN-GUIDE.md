@@ -27,18 +27,21 @@ nix-darwin brings the power of NixOS to macOS, allowing you to:
 ### Key Features
 
 **System Management:**
+
 - macOS system preferences and defaults
 - Package management with Nix
 - Homebrew integration for GUI apps
 - Service management
 
 **Development Environment:**
+
 - Consistent development tools across machines
 - Project-specific environments with direnv
 - Shell configuration with Zsh/Fish
 - Editor and terminal setup
 
 **Security & Privacy:**
+
 - Declarative security settings
 - Touch ID integration
 - Certificate management
@@ -49,11 +52,13 @@ nix-darwin brings the power of NixOS to macOS, allowing you to:
 ### Prerequisites
 
 **System Requirements:**
+
 - macOS 11.0 (Big Sur) or later
 - Admin user account
 - Command Line Tools for Xcode
 
 **Install Nix:**
+
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
 ```
@@ -72,6 +77,7 @@ cd nixos-template
 ```
 
 The installer will:
+
 1. Detect your Mac's architecture (Apple Silicon/Intel)
 2. Let you choose a configuration (Desktop/Laptop/Server)
 3. Install nix-darwin with the selected configuration
@@ -82,16 +88,18 @@ The installer will:
 For more control over the installation process:
 
 1. **Clone the template:**
+
    ```bash
    git clone https://github.com/yourusername/nixos-template ~/.config/nix-darwin
    cd ~/.config/nix-darwin
    ```
 
 2. **Install nix-darwin:**
+
    ```bash
    # For Apple Silicon Macs
    nix run nix-darwin -- switch --flake .#darwin-desktop
-   
+
    # For Intel Macs
    nix run nix-darwin -- switch --flake .#darwin-desktop-intel
    ```
@@ -108,9 +116,11 @@ For more control over the installation process:
 ### Available Configurations
 
 #### Desktop Configuration
+
 **Purpose:** Full-featured desktop environment for development and daily use
 
 **Features:**
+
 - Complete development environment (Node.js, Python, Go, Rust)
 - GUI applications via Homebrew
 - Visual Studio Code and JetBrains tools
@@ -120,9 +130,11 @@ For more control over the installation process:
 **Best for:** Primary development machines, workstations, iMacs
 
 #### Laptop Configuration
+
 **Purpose:** Mobile-optimized for MacBook users
 
 **Features:**
+
 - Battery-optimized settings
 - Power management utilities
 - Lightweight development tools
@@ -132,9 +144,11 @@ For more control over the installation process:
 **Best for:** MacBooks, mobile development, travel setups
 
 #### Server Configuration
+
 **Purpose:** Headless development server setup
 
 **Features:**
+
 - Server development tools
 - Database servers (PostgreSQL, Redis, MongoDB)
 - Container orchestration
@@ -146,11 +160,13 @@ For more control over the installation process:
 ### Architecture Support
 
 **Apple Silicon (M1/M2/M3):**
+
 - `darwin-desktop` - Desktop configuration
 - `darwin-laptop` - Laptop configuration
 - `darwin-server` - Server configuration
 
 **Intel Macs:**
+
 - `darwin-desktop-intel` - Desktop configuration
 - `darwin-laptop-intel` - Laptop configuration
 - `darwin-server-intel` - Server configuration
@@ -160,6 +176,7 @@ For more control over the installation process:
 ### Basic Commands
 
 **System Management:**
+
 ```bash
 # Apply configuration changes
 darwin-rebuild switch --flake ~/.config/nix-darwin
@@ -175,6 +192,7 @@ nix flake update ~/.config/nix-darwin
 ```
 
 **System Information:**
+
 ```bash
 # Show system information
 darwin-info
@@ -184,6 +202,7 @@ darwin-rebuild --show-trace
 ```
 
 **Maintenance:**
+
 ```bash
 # Update system and flake
 darwin-update
@@ -198,12 +217,14 @@ nix store optimise
 ### Home Manager Integration
 
 Home Manager is integrated automatically and manages:
+
 - User-specific packages
 - Dotfiles and configuration files
 - Shell configuration
 - Development environments
 
 **Home Manager Commands:**
+
 ```bash
 # Switch Home Manager configuration
 home-manager switch --flake ~/.config/nix-darwin
@@ -223,20 +244,20 @@ Homebrew is managed declaratively through nix-darwin:
 # In configuration.nix
 homebrew = {
   enable = true;
-  
+
   # Command-line tools
   brews = [
     "ffmpeg"
     "youtube-dl"
   ];
-  
+
   # GUI applications
   casks = [
     "visual-studio-code"
     "docker"
     "firefox"
   ];
-  
+
   # Mac App Store apps
   masApps = {
     "Xcode" = 497799835;
@@ -259,13 +280,13 @@ system.defaults = {
     tilesize = 48;
     show-recents = false;
   };
-  
+
   # Finder settings
   finder = {
     AppleShowAllExtensions = true;
     ShowPathbar = true;
   };
-  
+
   # Global settings
   NSGlobalDomain = {
     AppleInterfaceStyle = "Dark";
@@ -278,6 +299,7 @@ system.defaults = {
 ### Adding Packages
 
 **System-wide packages** (in `configuration.nix`):
+
 ```nix
 environment.systemPackages = with pkgs; [
   git
@@ -288,6 +310,7 @@ environment.systemPackages = with pkgs; [
 ```
 
 **User packages** (in `home.nix`):
+
 ```nix
 home.packages = with pkgs; [
   vscode
@@ -304,12 +327,12 @@ Configure your shell in Home Manager:
 programs.zsh = {
   enable = true;
   enableCompletion = true;
-  
+
   shellAliases = {
     ll = "ls -la";
     grep = "grep --color=auto";
   };
-  
+
   oh-my-zsh = {
     enable = true;
     theme = "robbyrussell";
@@ -336,7 +359,7 @@ programs.git = {
   enable = true;
   userName = "Your Name";
   userEmail = "your.email@example.com";
-  
+
   extraConfig = {
     init.defaultBranch = "main";
     pull.rebase = true;
@@ -372,6 +395,7 @@ programs.git = {
 ### Updating Your System
 
 **Regular updates:**
+
 ```bash
 # Update everything
 darwin-update
@@ -384,6 +408,7 @@ darwin-rebuild switch --flake .
 ```
 
 **Selective updates:**
+
 ```bash
 # Update specific input
 nix flake lock --update-input nixpkgs
@@ -395,16 +420,19 @@ nix flake update && darwin-rebuild switch --flake .
 ### Managing Generations
 
 **List generations:**
+
 ```bash
 darwin-rebuild --list-generations
 ```
 
 **Switch to specific generation:**
+
 ```bash
 darwin-rebuild switch --switch-generation 42
 ```
 
 **Delete old generations:**
+
 ```bash
 # Delete generations older than 7 days
 sudo nix-collect-garbage --delete-older-than 7d
@@ -436,6 +464,7 @@ darwin-rebuild switch --flake .
 ### Common Issues
 
 **Build Failures:**
+
 ```bash
 # Check flake validity
 nix flake check
@@ -448,6 +477,7 @@ log show --last 10m --predicate 'process == "nix"'
 ```
 
 **Permission Issues:**
+
 ```bash
 # Fix Nix store permissions
 sudo chown -R root:nixbld /nix
@@ -459,6 +489,7 @@ sudo launchctl start org.nixos.nix-daemon
 ```
 
 **Path Issues:**
+
 ```bash
 # Check PATH
 echo $PATH
@@ -471,6 +502,7 @@ cat /run/current-system/activate
 ```
 
 **Homebrew Integration Issues:**
+
 ```bash
 # Reset Homebrew state
 brew cleanup
@@ -483,6 +515,7 @@ darwin-rebuild switch --flake . --option pure-eval false
 ### Performance Issues
 
 **Slow Builds:**
+
 ```bash
 # Use binary cache
 echo "substituters = https://cache.nixos.org/ https://nix-community.cachix.org" >> ~/.config/nix/nix.conf
@@ -493,6 +526,7 @@ echo "max-jobs = auto" >> ~/.config/nix/nix.conf
 ```
 
 **Large Nix Store:**
+
 ```bash
 # Check store size
 du -sh /nix/store
@@ -507,6 +541,7 @@ nix-collect-garbage -d
 ### Recovery
 
 **System Won't Boot:**
+
 ```bash
 # Boot from recovery partition
 # In Terminal:
@@ -517,6 +552,7 @@ darwin-rebuild --rollback
 ```
 
 **Complete Reset:**
+
 ```bash
 # Remove nix-darwin (destructive!)
 sudo rm -rf /nix
@@ -544,7 +580,7 @@ with lib;
   options = {
     custom.feature.enable = mkEnableOption "custom feature";
   };
-  
+
   config = mkIf config.custom.feature.enable {
     environment.systemPackages = [ pkgs.custom-package ];
   };
@@ -559,7 +595,7 @@ Configure multiple users:
 home-manager = {
   useGlobalPkgs = true;
   useUserPackages = true;
-  
+
   users = {
     alice = import ./home/alice.nix;
     bob = import ./home/bob.nix;
@@ -614,7 +650,7 @@ Integrate with agenix for secrets:
 let
   user1 = "ssh-ed25519 AAAAC3...";
   users = [ user1 ];
-  
+
   system1 = "ssh-ed25519 AAAAC3...";
   systems = [ system1 ];
 in
@@ -626,23 +662,27 @@ in
 ## Resources
 
 ### Documentation
+
 - **nix-darwin Manual:** https://daiderd.com/nix-darwin/manual/
 - **Home Manager Manual:** https://nix-community.github.io/home-manager/
 - **NixOS Manual:** https://nixos.org/manual/nixos/stable/
 - **Nix Reference:** https://nixos.org/manual/nix/stable/
 
 ### Community
+
 - **nix-darwin Issues:** https://github.com/LnL7/nix-darwin/issues
 - **NixOS Discourse:** https://discourse.nixos.org/
 - **Matrix Chat:** #nix-darwin:nixos.org
 - **Reddit:** r/NixOS
 
 ### Examples and Templates
+
 - **nix-darwin Examples:** https://github.com/LnL7/nix-darwin/tree/master/examples
 - **Community Dotfiles:** Search GitHub for "nix-darwin configuration"
 - **NixOS Wiki:** https://nixos.wiki/wiki/Darwin
 
 ### Learning Resources
+
 - **Nix Pills:** https://nixos.org/guides/nix-pills/
 - **NixOS & Flakes Book:** https://nixos-and-flakes.thiscute.world/
 - **Zero to Nix:** https://zero-to-nix.com/

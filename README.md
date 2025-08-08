@@ -762,6 +762,7 @@ This template provides comprehensive macOS support including both native macOS s
 nix-darwin brings NixOS-style declarative configuration to macOS, allowing you to manage your entire Mac setup as code.
 
 **Quick nix-darwin Setup:**
+
 ```bash
 # Clone the template
 git clone https://github.com/yourusername/nixos-template
@@ -772,11 +773,13 @@ cd nixos-template
 ```
 
 **Available Configurations:**
+
 - **Desktop**: Full development environment with GUI applications
 - **Laptop**: Battery-optimized mobile configuration
 - **Server**: Headless development and CI/CD setup
 
 **Key Features:**
+
 - Declarative system configuration
 - Homebrew integration for GUI apps
 - Home Manager for user environments
@@ -786,6 +789,7 @@ cd nixos-template
 ### NixOS Virtualization on macOS
 
 **Test NixOS in Virtual Machines:**
+
 ```bash
 # Interactive VM setup
 ./scripts/try-nixos-macos.sh
@@ -796,10 +800,12 @@ just build-macos-vm desktop x86_64  # For Intel Mac
 ```
 
 **Architecture Support:**
+
 - **Apple Silicon (M1/M2/M3)**: Native aarch64-linux VMs
 - **Intel Macs**: x86_64-linux VMs with compatibility
 
 **Available VM Types:**
+
 - Desktop VM with GNOME desktop
 - Laptop VM with power management
 - Server VM for headless development
