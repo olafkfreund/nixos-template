@@ -32,9 +32,9 @@
     tmux # Modern terminal multiplexer
 
     # Text processing
-    awk # Text processing
-    sed # Stream editor
-    grep # Text search
+    gawk # GNU awk text processing
+    gnused # GNU sed stream editor
+    gnugrep # GNU grep text search
 
     # Security tools
     fail2ban # Intrusion prevention
@@ -107,19 +107,19 @@
     vim = {
       enable = true;
 
-      settings = {
-        number = true;
-        relativenumber = true;
-        tabstop = 2;
-        shiftwidth = 2;
-        expandtab = true;
-        autoindent = true;
-        smartindent = true;
-        hlsearch = true;
-        incsearch = true;
-        ignorecase = true;
-        smartcase = true;
-      };
+      extraConfig = ''
+        set number
+        set relativenumber
+        set tabstop=2
+        set shiftwidth=2
+        set expandtab
+        set autoindent
+        set smartindent
+        set hlsearch
+        set incsearch
+        set ignorecase
+        set smartcase
+      '';
     };
 
     # Tmux for session management

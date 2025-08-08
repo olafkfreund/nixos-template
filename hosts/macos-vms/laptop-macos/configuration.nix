@@ -50,13 +50,13 @@
   services = {
     # Power management for laptop simulation
     upower.enable = true;
-    thermald.enable = false;  # Not needed in VM
-    
+    thermald.enable = false; # Not needed in VM
+
     # Laptop-specific services
-    auto-cpufreq.enable = false;  # Not applicable in VM
-    
+    auto-cpufreq.enable = false; # Not applicable in VM
+
     # Network management configured in networking section
-    
+
     # SSH for development
     openssh = {
       enable = true;
@@ -71,26 +71,26 @@
     xserver = {
       enable = true;
       videoDrivers = [ "modesetting" "virtio" ];
-      
+
       # Laptop input optimization  
       # Note: libinput configuration moved to services.libinput
     };
-    
+
     # Display manager (moved from xserver)
     displayManager.gdm = {
       enable = true;
-      autoSuspend = false;  # Disable in VM
+      autoSuspend = false; # Disable in VM
     };
 
     # Bluetooth simulation (not functional in VM but for testing)
     blueman.enable = true;
-    
+
     # Location services for laptop features
     geoclue2.enable = true;
-    
+
     # Time synchronization
     ntp.enable = true;
-    
+
     # Clipboard integration
     spice-vdagentd.enable = true;
 
@@ -99,7 +99,7 @@
       enable = true;
       touchpad = {
         tapping = true;
-        naturalScrolling = true;  # Mac-like scrolling
+        naturalScrolling = true; # Mac-like scrolling
         accelProfile = "adaptive";
       };
       mouse.accelProfile = "flat";
@@ -111,7 +111,7 @@
       alsa.enable = lib.mkDefault true;
       pulse.enable = lib.mkDefault true;
     };
-    
+
     # Disable PulseAudio if using PipeWire
     pulseaudio.enable = lib.mkDefault false;
   };
@@ -124,15 +124,15 @@
       # Only enable 32-bit support on x86_64 systems
       enable32Bit = pkgs.stdenv.hostPlatform.isx86_64;
     };
-    
+
     # Note: Audio configured through services.pulseaudio or pipewire
-    
+
     # Bluetooth (simulated)
     bluetooth = {
       enable = true;
-      powerOnBoot = false;  # Don't auto-enable in VM
+      powerOnBoot = false; # Don't auto-enable in VM
     };
-    
+
     # Firmware
     enableRedistributableFirmware = true;
   };
@@ -140,20 +140,20 @@
   # Laptop-like networking
   networking = {
     usePredictableInterfaceNames = true;
-    useDHCP = lib.mkDefault false;  # Use NetworkManager
-    
+    useDHCP = lib.mkDefault false; # Use NetworkManager
+
     # NetworkManager configuration
     networkmanager = {
       enable = true;
       wifi.powersave = false;
     };
-    
+
     # Firewall for laptop
     firewall = {
       enable = true;
       allowedTCPPorts = [ 22 80 443 8080 3000 5000 8000 ];
     };
-    
+
     nameservers = [ "8.8.8.8" "1.1.1.1" ];
   };
 
@@ -163,11 +163,11 @@
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
     };
-    
+
     # Laptop-appropriate kernel modules
     kernelModules = [ "virtio_net" "virtio_pci" "virtio_mmio" "virtio_blk" "virtio_scsi" "virtio_balloon" ];
     initrd.availableKernelModules = [ "virtio_net" "virtio_pci" "virtio_mmio" "virtio_blk" "virtio_scsi" ];
-    
+
     # Power management kernel parameters
     kernelParams = [
       "quiet"
@@ -184,18 +184,18 @@
     "/" = {
       device = "/dev/disk/by-label/nixos";
       fsType = "ext4";
-      options = [ "noatime" "compress=zstd" ];  # SSD-like optimizations
+      options = [ "noatime" "compress=zstd" ]; # SSD-like optimizations
     };
-    
+
     "/boot" = {
       device = "/dev/disk/by-label/boot";
       fsType = "vfat";
     };
   };
-  
+
   # Swap configuration (smaller for laptop simulation)
-  swapDevices = [ 
-    { device = "/dev/disk/by-label/swap"; } 
+  swapDevices = [
+    { device = "/dev/disk/by-label/swap"; }
   ];
 
   # User configuration
@@ -222,37 +222,37 @@
     # VM and power tools
     spice-vdagent
     upower
-    
+
     # Development tools
     git
     vim
     nano
     curl
     wget
-    
+
     # Laptop utilities
     powertop
     acpi
     lm_sensors
-    
+
     # Network tools
     networkmanager
     wirelesstools
-    
+
     # System monitoring
     htop
     iotop
     tree
     lsof
-    
+
     # GUI applications
     firefox
     gnome-tweaks
     gnome-power-manager
-    
+
     # Development environment
     vscode
-    
+
     # Laptop VM utilities
     (writeShellScriptBin "laptop-vm-info" ''
       echo "=== NixOS Laptop VM on macOS Information ==="
@@ -272,7 +272,7 @@
       echo "Shared directories:"
       mount | grep -E '(projects|downloads|shared|9p|virtio)'
     '')
-    
+
     (writeShellScriptBin "laptop-vm-optimize" ''
       echo "Optimizing laptop VM performance..."
       
@@ -294,7 +294,7 @@
   environment.variables = {
     EDITOR = "nano";
     BROWSER = "firefox";
-    
+
     # VM identification
     NIXOS_VM_HOST = "macOS";
     NIXOS_VM_TYPE = "UTM/QEMU-Laptop";

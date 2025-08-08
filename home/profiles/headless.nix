@@ -31,7 +31,7 @@
     # Don't create desktop-related directories
     userDirs = {
       enable = true;
-      createDirectories = false;
+      createDirectories = lib.mkForce false;
       desktop = null;
       pictures = null;
       videos = null;

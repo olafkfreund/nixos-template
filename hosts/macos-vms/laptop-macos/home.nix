@@ -20,11 +20,11 @@
   home.packages = with pkgs; [
     # VM guest tools
     spice-vdagent
-    
+
     # Laptop simulation tools
     acpi
     powertop
-    
+
     # Development tools for macOS VM testing
     git
     vim

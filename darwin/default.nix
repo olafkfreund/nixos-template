@@ -14,17 +14,17 @@
   # System identification
   networking.hostName = lib.mkDefault "nixos-darwin";
   networking.localHostName = lib.mkDefault "nixos-darwin";
-  
+
   # Enable Nix daemon
   services.nix-daemon.enable = true;
-  
+
   # Nix configuration
   nix = {
     # Enable flakes and new command
     settings = {
       experimental-features = [ "nix-command" "flakes" ];
       trusted-users = [ "@admin" ];
-      
+
       # Substituters and keys
       substituters = [
         "https://cache.nixos.org/"
@@ -34,15 +34,15 @@
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       ];
-      
+
       # Build settings
       max-jobs = "auto";
       cores = 0;
-      
+
       # Optimize store
       auto-optimise-store = true;
     };
-    
+
     # Garbage collection
     gc = {
       automatic = true;
@@ -74,13 +74,13 @@
       # allowBroken = false;
       # allowInsecure = false;
     };
-    
+
     # Apply overlays
     overlays = [
       # Custom overlays from the template
       outputs.overlays.modifications
       outputs.overlays.additions
-      
+
       # Add any additional overlays here
     ];
   };
@@ -92,31 +92,31 @@
     git
     curl
     wget
-    
+
     # Development tools
     just
     direnv
-    
+
     # System utilities
     htop
     tree
-    
+
     # Nix tools
     nixpkgs-fmt
     statix
     deadnix
-    
+
     # macOS-specific utilities
     (writeShellScriptBin "darwin-rebuild-switch" ''
       darwin-rebuild switch --flake ~/.config/nix-darwin#$(hostname -s)
     '')
-    
+
     (writeShellScriptBin "update-darwin" ''
       cd ~/.config/nix-darwin
       nix flake update
       darwin-rebuild switch --flake .#$(hostname -s)
     '')
-    
+
     (writeShellScriptBin "darwin-info" ''
       echo "=== nix-darwin System Information ==="
       echo "Hostname: $(hostname)"
@@ -148,7 +148,7 @@
       enable = true;
       enableCompletion = true;
       enableBashCompletion = true;
-      
+
       # Shell initialization
       shellInit = ''
         # Nix
@@ -168,7 +168,7 @@
           eval "$(/usr/local/bin/brew shellenv)"
         fi
       '';
-      
+
       # Interactive shell configuration
       interactiveShellInit = ''
         # Set up aliases
@@ -194,10 +194,10 @@
         echo "Run 'darwin-info' for system information"
       '';
     };
-    
+
     # Fish shell support (optional)
     fish.enable = true;
-    
+
     # Bash completion
     bash.enableCompletion = true;
   };
@@ -209,7 +209,7 @@
   system = {
     # Darwin system version
     stateVersion = 5;
-    
+
     # Activate system configuration
     activationScripts.preActivation.text = ''
       echo "Activating nix-darwin configuration..."
@@ -217,7 +217,7 @@
       echo "User: $(whoami)"
       echo "Architecture: $(uname -m)"
     '';
-    
+
     # Post-activation scripts
     activationScripts.postActivation.text = ''
       echo "nix-darwin activation complete!"
@@ -234,7 +234,7 @@
     packages = with pkgs; [
       # Programming fonts
       (nerdfonts.override { fonts = [ "FiraCode" "JetBrainsMono" "Hack" ]; })
-      
+
       # System fonts
       inter
       source-code-pro
@@ -247,7 +247,7 @@
   services = {
     # Automatic store optimization
     nix-daemon.enable = true;
-    
+
     # Lorri for direnv integration (optional)
     # lorri.enable = true;
   };
@@ -255,7 +255,7 @@
   # User configuration placeholder
   # This will be overridden in specific host configurations
   users.users = lib.mkDefault { };
-  
+
   # Home Manager integration placeholder
   # This will be configured in flake.nix or host-specific configs
 }

@@ -228,12 +228,12 @@ in
           description = "WSL2 Performance Initialization";
           after = [ "multi-user.target" ];
           wantedBy = [ "multi-user.target" ];
-          
+
           serviceConfig = {
             Type = "oneshot";
             RemainAfterExit = true;
           };
-          
+
           script = ''
             # Apply WSL2-specific performance optimizations
             echo "Applying WSL2 performance optimizations..."
@@ -289,7 +289,7 @@ in
     boot = {
       # Disable modules not needed in WSL2
       blacklistedKernelModules = [
-        "pcspkr"  # PC speaker
+        "pcspkr" # PC speaker
         "snd_pcsp" # PC speaker sound
       ];
     };
@@ -317,28 +317,29 @@ in
         htop
         iotop
         iftop
-        
+
         # Performance analysis
-        sysstat  # iostat, vmstat, etc.
+        sysstat # iostat, vmstat, etc.
         perf-tools
-        
+
         # WSL2-specific utilities
-        pciutils  # lspci
-        usbutils  # lsusb
-        
+        pciutils # lspci
+        usbutils # lsusb
+
         # Development performance tools
         time
-        hyperfine  # Benchmarking tool
-        
+        hyperfine # Benchmarking tool
+
         # WSL2 performance tuning script
         (pkgs.writeShellScriptBin "wsl-performance-tune" ''
           exec /etc/wsl-scripts/performance-tune.sh "$@"
         '')
       ];
+    };
 
-      # WSL2 performance tuning script
-      etc."wsl-scripts/performance-tune.sh" = {
-        text = ''
+    # WSL2 performance tuning script
+    environment.etc."wsl-scripts/performance-tune.sh" = {
+      text = ''
         #!/bin/bash
         # WSL2 Performance Tuning Script
         
@@ -375,49 +376,8 @@ in
         echo "3. Use WSL2 filesystem (/home) for development files"
         echo "4. Consider adjusting Windows WSL2 memory settings in .wslconfig"
         echo "5. Use 'wsl --shutdown' periodically to free up memory"
-<<<<<<< Updated upstream
       '';
       mode = "0755";
     };
-
-    # Add performance tuning script to PATH
-    environment.systemPackages = [
-      (pkgs.writeShellScriptBin "wsl-performance-tune" ''
-        exec /etc/wsl-scripts/performance-tune.sh "$@"
-      '')
-    ];
-
-    # Systemd service for initial performance tuning
-    systemd.services.wsl-performance-init = {
-      description = "WSL2 Performance Initialization";
-      after = [ "multi-user.target" ];
-      wantedBy = [ "multi-user.target" ];
-
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-      };
-
-      script = ''
-        # Apply WSL2-specific performance optimizations
-        echo "Applying WSL2 performance optimizations..."
-        
-        # Enable BBR congestion control if available
-        if [ -w /proc/sys/net/ipv4/tcp_congestion_control ]; then
-          echo bbr > /proc/sys/net/ipv4/tcp_congestion_control 2>/dev/null || echo "BBR not available"
-        fi
-        
-        # Optimize I/O scheduler for SSD (WSL2 typically uses SSD on host)
-        for dev in /sys/block/*/queue/scheduler; do
-          if [ -f "$dev" ]; then
-            echo mq-deadline > "$dev" 2>/dev/null || true
-          fi
-        done
-        
-        '';
-        mode = "0755";
-      };
-    };
-
   };
 }

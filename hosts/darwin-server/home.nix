@@ -8,7 +8,7 @@
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
-    
+
     users.admin = { config, pkgs, ... }: {
       # User information
       home.username = "admin";
@@ -20,49 +20,49 @@
         # Terminal multiplexers
         tmux
         screen
-        
+
         # System monitoring
         htop
         btop
         iotop
-        
+
         # Network tools
         nmap
         tcpdump
         wireshark
         netcat
-        
+
         # Development tools
         git
         gh
         vim
         neovim
-        
+
         # Languages for server development
         nodejs_20
         python311
         go
         rustc
-        
+
         # Database clients
         postgresql
         redis
         mongodb
         sqlite
-        
+
         # Container tools
         docker
         kubectl
-        
+
         # Cloud tools
         awscli2
         terraform
         ansible
-        
+
         # Text processing
         jq
         yq
-        
+
         # System utilities
         tree
         fd
@@ -71,7 +71,7 @@
         eza
         curl
         wget
-        
+
         # Security tools
         gnupg
         age
@@ -83,7 +83,7 @@
         enable = true;
         userName = lib.mkDefault "Server Admin";
         userEmail = lib.mkDefault "admin@example.com";
-        
+
         extraConfig = {
           init.defaultBranch = "main";
           pull.rebase = true;
@@ -116,14 +116,14 @@
         enableCompletion = true;
         autosuggestion.enable = true;
         syntaxHighlighting.enable = true;
-        
+
         shellAliases = {
           # Navigation
           ll = "eza -la --group-directories-first";
           ls = "eza --group-directories-first";
           la = "eza -a --group-directories-first";
           tree = "eza --tree";
-          
+
           # Git (server workflow)
           g = "git";
           gs = "git status -s";
@@ -135,14 +135,14 @@
           gb = "git branch";
           gd = "git diff";
           glog = "git log --oneline --graph --decorate --all";
-          
+
           # System monitoring
           top = "htop";
           mem = "free -h";
           disk = "df -h";
           ports = "lsof -i -P | grep LISTEN";
           processes = "ps aux | grep -v grep";
-          
+
           # Docker management
           dps = "docker ps --format 'table {{.Names}}\\t{{.Image}}\\t{{.Status}}\\t{{.Ports}}'";
           dimg = "docker images --format 'table {{.Repository}}\\t{{.Tag}}\\t{{.Size}}'";
@@ -150,42 +150,42 @@
           dexec = "docker exec -it";
           dprune = "docker system prune -af";
           dstop-all = "docker stop $(docker ps -q)";
-          
+
           # Service management
           services = "brew services list";
           start-pg = "brew services start postgresql";
           stop-pg = "brew services stop postgresql";
           start-redis = "brew services start redis";
           stop-redis = "brew services stop redis";
-          
+
           # Database connections
           pg = "psql -U postgres";
           redis = "redis-cli";
           mongo = "mongosh";
-          
+
           # Network and connectivity
           ip = "curl -s ifconfig.me && echo";
           ping-test = "ping -c 3 8.8.8.8";
           dns-flush = "sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder";
-          
+
           # Server utilities
           serve = "python3 -m http.server 8000";
           tunnel = "ngrok http 8000";
           cert-gen = "mkcert localhost 127.0.0.1 ::1";
-          
+
           # Log monitoring
           logs-sys = "log stream --level=info";
           logs-tail = "tail -f /usr/local/var/log/nginx/access.log";
-          
+
           # System shortcuts
           reload = "source ~/.zshrc";
           ..= "cd ..";
           ... = "cd ../..";
-          
+
           # Cleanup
           cleanup = "brew cleanup && docker system prune -f && nix-collect-garbage -d";
         };
-        
+
         initContent = ''
           # Server environment setup
           
@@ -286,10 +286,10 @@
           echo "🖥️  Welcome to nix-darwin Server Environment!"
           echo "⚡ Server utilities: server-resources, health-check, multi-tail"
         '';
-        
+
         oh-my-zsh = {
           enable = true;
-          theme = "bira";  # Clean theme with git info
+          theme = "bira"; # Clean theme with git info
           plugins = [
             "git"
             "docker"
@@ -326,52 +326,52 @@
             "$rust"
             "$character"
           ];
-          
+
           character = {
             success_symbol = "[🖥️ ➜](bold green)";
             error_symbol = "[🖥️ ➜](bold red)";
           };
-          
+
           directory = {
             style = "blue";
             truncation_length = 5;
             format = "[$path]($style) ";
           };
-          
+
           hostname = {
             ssh_only = false;
             format = "[@$hostname](bold red) ";
           };
-          
+
           username = {
             format = "[$user]($style)";
             style_user = "bold yellow";
             show_always = true;
           };
-          
+
           git_branch = {
             format = "[$branch]($style) ";
             style = "bright-black";
           };
-          
+
           git_status = {
             format = "([$all_status$ahead_behind]($style) )";
             style = "cyan";
           };
-          
+
           docker_context = {
             format = "[🐳 $context](bold blue) ";
           };
-          
+
           kubectl_context = {
             format = "[⎈ $context](bold purple) ";
           };
-          
+
           aws = {
             format = "[☁️ $profile]($style) ";
             style = "bold orange";
           };
-          
+
           cmd_duration = {
             format = "[⏱ $duration]($style) ";
             style = "yellow";
@@ -383,9 +383,9 @@
       # Tmux configuration for server sessions
       programs.tmux = {
         enable = true;
-        shortcut = "a";  # Use Ctrl-a instead of Ctrl-b
+        shortcut = "a"; # Use Ctrl-a instead of Ctrl-b
         keyMode = "vi";
-        
+
         extraConfig = ''
           # Server-optimized tmux configuration
           
@@ -450,7 +450,7 @@
       programs.neovim = {
         enable = true;
         defaultEditor = true;
-        
+
         extraConfig = ''
           " Server admin Neovim configuration
           
@@ -580,7 +580,7 @@
             sleep 5
           done
         '';
-        
+
         # Docker compose template
         "Projects/docker-compose.template.yml".text = ''
           version: '3.8'
@@ -621,7 +621,7 @@
 
       # Make scripts executable
       home.activation = {
-        makeScriptsExecutable = lib.hm.dag.entryAfter ["writeBoundary"] ''
+        makeScriptsExecutable = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           chmod +x "$HOME/.local/bin/server-monitor" 2>/dev/null || true
         '';
       };
@@ -645,30 +645,30 @@
         VISUAL = "vim";
         BROWSER = "open";
         TERMINAL = "alacritty";
-        
+
         # Development
         NODE_OPTIONS = "--max-old-space-size=4096";
         GOPATH = "$HOME/go";
-        
+
         # Database URLs (for development)
         DATABASE_URL = "postgres://admin:password@localhost:5432/myapp";
         REDIS_URL = "redis://localhost:6379";
         MONGODB_URL = "mongodb://localhost:27017";
-        
+
         # Docker
         DOCKER_BUILDKIT = "1";
         COMPOSE_DOCKER_CLI_BUILD = "1";
-        
+
         # Security
         GNUPGHOME = "$HOME/.gnupg";
-        
+
         # Homebrew
         HOMEBREW_NO_ANALYTICS = "1";
       };
 
       # Create server directory structure
       home.activation = {
-        createServerDirs = lib.hm.dag.entryAfter ["writeBoundary"] ''
+        createServerDirs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           mkdir -p "$HOME/Server/configs"
           mkdir -p "$HOME/Server/scripts"
           mkdir -p "$HOME/Server/backups"

@@ -13,14 +13,14 @@
     # ISO metadata
     isoName = lib.mkForce "nixos-desktop-macos-installer";
     volumeID = "NIXOS_DESKTOP_MACOS";
-    
+
     # Boot configuration optimized for macOS VMs
     makeEfiBootable = true;
     makeUsbBootable = true;
-    
+
     # Include firmware for better hardware support
     includeSystemd = true;
-    
+
     # Compression for smaller ISO size
     squashfsCompression = "zstd";
   };
@@ -35,15 +35,15 @@
       "quiet"
       "splash"
     ];
-    
+
     # Include virtio modules for UTM/QEMU
     kernelModules = [ "virtio_net" "virtio_pci" "virtio_mmio" "virtio_blk" "virtio_scsi" "virtio_balloon" ];
     initrd.availableKernelModules = [ "virtio_net" "virtio_pci" "virtio_mmio" "virtio_blk" "virtio_scsi" ];
-    
+
     # Support both BIOS and UEFI boot
     loader = {
       systemd-boot.enable = true;
-      efi.canTouchEfiVariables = false;  # For ISO compatibility
+      efi.canTouchEfiVariables = false; # For ISO compatibility
     };
   };
 
@@ -53,7 +53,7 @@
       enable = true;
       enable32Bit = true;
     };
-    
+
     # Include firmware for better compatibility
     enableRedistributableFirmware = true;
     enableAllFirmware = true;
@@ -65,12 +65,12 @@
     xserver = {
       enable = true;
       videoDrivers = [ "modesetting" "virtio" "qxl" ];
-      
+
       displayManager.gdm = {
         enable = true;
         autoSuspend = false;
       };
-      
+
       desktopManager.gnome = {
         enable = true;
       };
@@ -78,14 +78,14 @@
 
     # Network configuration
     NetworkManager.enable = true;
-    
+
     # SSH for remote installation
     openssh = {
       enable = true;
       settings.PermitRootLogin = "yes";
       settings.PasswordAuthentication = true;
     };
-    
+
     # Automatic login for installer convenience
     displayManager.autoLogin = {
       enable = true;
@@ -98,7 +98,7 @@
     hostName = "nixos-installer";
     networkmanager.enable = true;
     useDHCP = true;
-    firewall.enable = false;  # Open for installer
+    firewall.enable = false; # Open for installer
   };
 
   # Users for installer environment
@@ -106,7 +106,7 @@
     users.nixos = {
       isNormalUser = true;
       extraGroups = [ "wheel" "networkmanager" ];
-      password = "nixos";  # Default password for installer
+      password = "nixos"; # Default password for installer
       shell = pkgs.zsh;
     };
     users.root.password = "root";
@@ -125,43 +125,43 @@
     dosfstools
     e2fsprogs
     ntfs3g
-    
+
     # Network tools
     networkmanager
     curl
     wget
-    
+
     # Text editors
     vim
     nano
-    
+
     # File managers
     gnome.nautilus
-    
+
     # Terminal
     gnome.gnome-terminal
-    
+
     # Web browser for documentation
     firefox
-    
+
     # Development tools
     git
     just
-    
+
     # Hardware tools
     lshw
     pciutils
     usbutils
     hdparm
-    
+
     # Disk management
     gnome.gnome-disks
     gparted
-    
+
     # Archive tools
     unzip
     p7zip
-    
+
     # Template and installer tools
     (writeShellScriptBin "install-nixos-macos" ''
       #!/usr/bin/env bash
@@ -200,7 +200,7 @@
       echo ""
       echo "For automated installation, run: nixos-macos-auto-install"
     '')
-    
+
     (writeShellScriptBin "nixos-macos-auto-install" ''
       #!/usr/bin/env bash
       set -euo pipefail
@@ -274,7 +274,7 @@
       echo ""
       echo "Reboot to start your new NixOS system."
     '')
-    
+
     # macOS VM optimization script
     (writeShellScriptBin "optimize-for-macos-vm" ''
       echo "🔧 Optimizing NixOS for macOS VM environment..."
@@ -304,10 +304,10 @@
   # Include template files for reference
   environment.etc = {
     "nixos-template" = {
-      source = ../..;  # Root of template repository
+      source = ../..; # Root of template repository
       mode = "0755";
     };
-    
+
     # macOS-specific installation guide
     "nixos-macos-guide.md" = {
       text = ''

@@ -8,12 +8,12 @@
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
-    
+
     users.admin = { config, pkgs, ... }: {
       # User information
       home.username = "admin";
       home.homeDirectory = lib.mkDefault "/Users/admin";
-      home.stateVersion = "24.11";  # Match your Home Manager version
+      home.stateVersion = "24.11"; # Match your Home Manager version
 
       # User packages
       home.packages = with pkgs; [
@@ -21,42 +21,42 @@
         alacritty
         kitty
         wezterm
-        
+
         # Development tools
         vscode
         jetbrains.idea-community
         jetbrains.webstorm
-        
+
         # Version control
         git
         gh
         git-lfs
-        
+
         # Languages and runtimes
         nodejs_20
         python311
         rustc
         cargo
         go
-        
+
         # Database tools
         postgresql
         redis
-        
+
         # Cloud and DevOps
         docker
         kubectl
         terraform
         ansible
-        
+
         # Productivity
         obsidian
         notion
-        
+
         # Media tools
         ffmpeg
         imagemagick
-        
+
         # System utilities
         htop
         btop
@@ -74,7 +74,7 @@
         enable = true;
         userName = lib.mkDefault "Your Name";
         userEmail = lib.mkDefault "your.email@example.com";
-        
+
         extraConfig = {
           init.defaultBranch = "main";
           pull.rebase = true;
@@ -104,14 +104,14 @@
         enableCompletion = true;
         autosuggestion.enable = true;
         syntaxHighlighting.enable = true;
-        
+
         shellAliases = {
           # Navigation
           ll = "eza -la";
           ls = "eza";
           la = "eza -a";
           tree = "eza --tree";
-          
+
           # Git shortcuts
           g = "git";
           gs = "git status";
@@ -123,22 +123,22 @@
           gb = "git branch";
           gd = "git diff";
           glog = "git log --oneline --graph --decorate";
-          
+
           # Development shortcuts
           code = "code .";
           npm-update = "npm update && npm audit fix";
           py = "python3";
-          
+
           # System shortcuts
           reload = "source ~/.zshrc";
           ..= "cd ..";
           ... = "cd ../..";
-          
+
           # macOS specific
           showfiles = "defaults write com.apple.finder AppleShowAllFiles YES; killall Finder";
           hidefiles = "defaults write com.apple.finder AppleShowAllFiles NO; killall Finder";
         };
-        
+
         initContent = ''
           # Load direnv
           eval "$(direnv hook zsh)"
@@ -171,7 +171,7 @@
           echo "👋 Welcome to your nix-darwin desktop environment!"
           echo "🚀 Happy coding!"
         '';
-        
+
         oh-my-zsh = {
           enable = true;
           theme = "robbyrussell";
@@ -210,43 +210,43 @@
             "$docker_context"
             "$character"
           ];
-          
+
           character = {
             success_symbol = "[➜](bold green)";
             error_symbol = "[➜](bold red)";
           };
-          
+
           directory = {
             style = "blue";
             truncation_length = 4;
             truncation_symbol = "…/";
           };
-          
+
           git_branch = {
             format = "[$branch]($style)";
             style = "bright-black";
           };
-          
+
           git_status = {
             format = "([\\[$all_status$ahead_behind\\]]($style) )";
             style = "cyan";
           };
-          
+
           nodejs = {
             format = "[$symbol($version )]($style)";
             symbol = "⬢ ";
           };
-          
+
           python = {
             format = "[$symbol($version )]($style)";
             symbol = "🐍 ";
           };
-          
+
           rust = {
             format = "[$symbol($version )]($style)";
             symbol = "🦀 ";
           };
-          
+
           golang = {
             format = "[$symbol($version )]($style)";
             symbol = "🐹 ";
@@ -284,7 +284,7 @@
             opacity = 0.9;
             startup_mode = "Windowed";
           };
-          
+
           font = {
             normal = {
               family = "JetBrainsMono Nerd Font";
@@ -300,14 +300,14 @@
             };
             size = 14;
           };
-          
+
           colors = {
             primary = {
               background = "0x1d1f21";
               foreground = "0xc5c8c6";
             };
           };
-          
+
           key_bindings = [
             { key = "V"; mods = "Command"; action = "Paste"; }
             { key = "C"; mods = "Command"; action = "Copy"; }
@@ -331,7 +331,7 @@
           "workbench.colorTheme" = "Dark+ (default dark)";
           "terminal.integrated.fontFamily" = "JetBrainsMono Nerd Font";
         };
-        
+
         # Prettier configuration
         ".prettierrc".text = builtins.toJSON {
           semi = true;
@@ -340,7 +340,7 @@
           printWidth = 80;
           tabWidth = 2;
         };
-        
+
         # ESLint configuration
         ".eslintrc.json".text = builtins.toJSON {
           env = {
@@ -361,7 +361,7 @@
       # XDG directories
       xdg = {
         enable = true;
-        
+
         userDirs = {
           enable = true;
           createDirectories = true;
@@ -381,24 +381,24 @@
         EDITOR = "code --wait";
         BROWSER = "open";
         TERMINAL = "alacritty";
-        
+
         # Development paths
         GOPATH = "$HOME/go";
         CARGO_HOME = "$HOME/.cargo";
-        
+
         # Node.js settings
         NODE_OPTIONS = "--max-old-space-size=4096";
-        
+
         # Python settings
         PYTHONDONTWRITEBYTECODE = "1";
-        
+
         # Homebrew settings
         HOMEBREW_NO_ANALYTICS = "1";
       };
 
       # Create development directories
       home.activation = {
-        createDevelopmentDirs = lib.hm.dag.entryAfter ["writeBoundary"] ''
+        createDevelopmentDirs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           mkdir -p "$HOME/Development"
           mkdir -p "$HOME/Projects"
           mkdir -p "$HOME/.config"

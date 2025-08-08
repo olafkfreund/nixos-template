@@ -300,7 +300,7 @@
         # Build with: nix build .#nixosConfigurations.desktop-macos.config.system.build.vm
         desktop-macos = mkSystem {
           hostname = "macos-vms/desktop-macos";
-          system = "aarch64-linux";  # Apple Silicon default, can override for x86_64
+          system = "aarch64-linux"; # Apple Silicon default, can override for x86_64
           extraModules = [ templateConfig ];
         };
 
@@ -324,7 +324,7 @@
         };
 
         laptop-macos-intel = mkSystem {
-          hostname = "macos-vms/laptop-macos"; 
+          hostname = "macos-vms/laptop-macos";
           system = "x86_64-linux";
           extraModules = [ templateConfig ];
         };
@@ -338,7 +338,7 @@
         # macOS installer ISO configurations
         # Build with: nix build .#nixosConfigurations.installer-desktop-macos.config.system.build.isoImage
         installer-desktop-macos = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";  # ISOs typically x86_64 for compatibility
+          system = "x86_64-linux"; # ISOs typically x86_64 for compatibility
           specialArgs = { inherit inputs outputs; };
           modules = [
             ./hosts/macos-isos/desktop-iso-macos.nix
@@ -425,9 +425,9 @@
         "user@server-template" = mkHome { hostname = "server-template"; };
         "vm-user@desktop-test" = mkHome { hostname = "desktop-test"; };
         "nixos@wsl2-template" = mkHome { hostname = "wsl2-template"; };
-        
+
         # macOS VM home configurations
-        "nixos@desktop-macos" = mkHome { 
+        "nixos@desktop-macos" = mkHome {
           hostname = "macos-vms/desktop-macos";
           system = "aarch64-linux";
         };
@@ -436,10 +436,10 @@
           system = "aarch64-linux";
         };
         "server-admin@server-macos" = mkHome {
-          hostname = "macos-vms/server-macos"; 
+          hostname = "macos-vms/server-macos";
           system = "aarch64-linux";
         };
-        
+
         # Intel Mac variants
         "nixos@desktop-macos-intel" = mkHome {
           hostname = "macos-vms/desktop-macos";

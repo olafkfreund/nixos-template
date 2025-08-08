@@ -22,28 +22,28 @@
     go
     rustc
     cargo
-    
+
     # Development tools
     docker
     docker-compose
     kubernetes
     kubectl
     helm
-    
+
     # Databases and services
     postgresql_15
     redis
-    
+
     # Text editors and IDEs (CLI versions)
     vim
     neovim
     emacs
-    
+
     # Media and graphics tools
     imagemagick
     ffmpeg
     gimp
-    
+
     # System utilities
     htop
     btop
@@ -55,32 +55,32 @@
     eza
     zoxide
     fzf
-    
+
     # Archive and compression
     unzip
     p7zip
-    
+
     # Network tools
     curl
     wget
     httpie
     nmap
-    
+
     # Git and version control
     git
     gh
     git-lfs
     lazygit
-    
+
     # Cloud tools
     awscli2
     terraform
     ansible
-    
+
     # Desktop productivity (CLI tools)
     pandoc
     texlive.combined.scheme-medium
-    
+
     # Desktop-specific utilities
     (writeShellScriptBin "desktop-info" ''
       echo "🖥️  nix-darwin Desktop Information"
@@ -111,7 +111,7 @@
       df -h / | tail -1 | awk '{print "  Root: " $3 " used of " $2 " (" $5 " full)"}'
       echo "  Nix Store: $(du -sh /nix/store 2>/dev/null | cut -f1 || echo 'Unknown')"
     '')
-    
+
     (writeShellScriptBin "dev-setup" ''
       echo "🚀 Development Environment Setup"
       echo "==============================="
@@ -151,7 +151,7 @@
       
       echo "✅ Development setup complete!"
     '')
-    
+
     (writeShellScriptBin "project-init" ''
       echo "📁 Project Initialization"
       echo "========================"
@@ -217,31 +217,31 @@
       "sketch"
       "adobe-creative-cloud"
       "canva"
-      
+
       # Communication and collaboration
       "zoom"
       "microsoft-teams"
       "slack"
       "discord"
-      
+
       # Development tools
       "visual-studio-code"
       "jetbrains-toolbox"
       "github-desktop"
       "tower"
       "postman"
-      
+
       # Productivity
       "notion"
       "obsidian"
       "todoist"
       "calendly"
-      
+
       # Media
       "spotify"
       "vlc"
       "handbrake"
-      
+
       # Utilities
       "raycast"
       "rectangle"
@@ -266,19 +266,19 @@
   # Desktop-specific system settings
   system.defaults = {
     dock = {
-      tilesize = 64;  # Larger dock icons for desktop
+      tilesize = 64; # Larger dock icons for desktop
       show-recents = false;
-      static-only = false;  # Allow running apps in dock
+      static-only = false; # Allow running apps in dock
     };
 
     finder = {
-      AppleShowAllFiles = true;  # Show hidden files
+      AppleShowAllFiles = true; # Show hidden files
       ShowPathbar = true;
       ShowStatusBar = true;
     };
 
     NSGlobalDomain = {
-      AppleInterfaceStyle = "Dark";  # Dark mode
+      AppleInterfaceStyle = "Dark"; # Dark mode
       AppleShowScrollBars = "WhenScrolling";
     };
   };
@@ -290,8 +290,8 @@
   };
 
   # Time zone and locale
-  time.timeZone = lib.mkDefault "America/New_York";  # Adjust as needed
-  
+  time.timeZone = lib.mkDefault "America/New_York"; # Adjust as needed
+
   # User configuration
   users.users."${config.users.users.admin.name or "admin"}" = {
     description = "Desktop Administrator";
@@ -300,14 +300,14 @@
 
   # Enable fonts
   fonts.packages = with pkgs; [
-    (nerdfonts.override { 
-      fonts = [ 
-        "FiraCode" 
-        "JetBrainsMono" 
-        "Hack" 
+    (nerdfonts.override {
+      fonts = [
+        "FiraCode"
+        "JetBrainsMono"
+        "Hack"
         "SourceCodePro"
         "Inconsolata"
-      ]; 
+      ];
     })
     inter
     source-sans-pro

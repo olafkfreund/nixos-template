@@ -23,17 +23,17 @@
     rustc
     cargo
     java
-    
+
     # Databases
     postgresql_15
     redis
     mongodb
     sqlite
-    
+
     # Web servers and reverse proxies
     nginx
     caddy
-    
+
     # Container and orchestration tools
     docker
     docker-compose
@@ -41,22 +41,22 @@
     kubectl
     helm
     podman
-    
+
     # Cloud and infrastructure tools
     terraform
     ansible
     awscli2
     gcloud
     azure-cli
-    
+
     # Monitoring and observability
     prometheus
     grafana
-    
+
     # Development servers and tools
     ngrok
     mkcert
-    
+
     # System utilities for servers
     htop
     btop
@@ -68,7 +68,7 @@
     eza
     jq
     yq
-    
+
     # Network tools
     curl
     wget
@@ -77,32 +77,32 @@
     tcpdump
     wireshark
     netcat
-    
+
     # Archive and compression
     unzip
     p7zip
     tar
     gzip
-    
+
     # Text processing
     vim
     neovim
     emacs
-    
+
     # Version control
     git
     gh
     git-lfs
-    
+
     # Security tools
     gnupg
     age
     sops
-    
+
     # Process management
     tmux
     screen
-    
+
     # Server-specific utilities
     (writeShellScriptBin "server-status" ''
       echo "🖥️  Server Status Dashboard"
@@ -161,7 +161,7 @@
       echo "📊 Resource Usage:"
       echo "  CPU Temperature: $(sudo powermetrics --samplers smc_temp --sample-count 1 -n 1 2>/dev/null | grep "CPU die temperature" | cut -d: -f2 | xargs || echo "Not available")"
     '')
-    
+
     (writeShellScriptBin "server-logs" ''
       echo "📋 Server Logs"
       echo "=============="
@@ -193,7 +193,7 @@
           ;;
       esac
     '')
-    
+
     (writeShellScriptBin "dev-server" ''
       echo "🚀 Development Server Manager"
       echo "============================="
@@ -307,7 +307,7 @@
           ;;
       esac
     '')
-    
+
     (writeShellScriptBin "container-manager" ''
       echo "🐳 Container Manager"
       echo "==================="
@@ -372,12 +372,12 @@
       "redis-insight"
       "mongodb-compass"
       "postman"
-      "visual-studio-code"  # For remote editing
+      "visual-studio-code" # For remote editing
     ];
 
     # Essential server management from Mac App Store
     masApps = {
-      "Xcode" = 497799835;  # For development tools
+      "Xcode" = 497799835; # For development tools
     };
   };
 
@@ -389,19 +389,19 @@
       show-recents = false;
       static-only = true;
       mineffect = "scale";
-      tilesize = 32;  # Small dock
+      tilesize = 32; # Small dock
     };
 
     finder = {
       AppleShowAllFiles = true;
       ShowPathbar = true;
       ShowStatusBar = true;
-      CreateDesktop = false;  # No desktop icons
+      CreateDesktop = false; # No desktop icons
     };
 
     NSGlobalDomain = {
       AppleInterfaceStyle = "Dark";
-      AppleShowScrollBars = "Always";  # For server monitoring
+      AppleShowScrollBars = "Always"; # For server monitoring
     };
   };
 
@@ -422,23 +422,23 @@
 
   # Server-specific system activation
   system.activationScripts.serverSetup.text = ''
-    # Create server directories
-    mkdir -p /usr/local/var/log 2>/dev/null || true
-    mkdir -p /usr/local/var/run 2>/dev/null || true
+        # Create server directories
+        mkdir -p /usr/local/var/log 2>/dev/null || true
+        mkdir -p /usr/local/var/run 2>/dev/null || true
     
-    # Set up log rotation (basic)
-    mkdir -p ~/.local/bin 2>/dev/null || true
+        # Set up log rotation (basic)
+        mkdir -p ~/.local/bin 2>/dev/null || true
     
-    # Create server management shortcuts
-    cat > ~/.local/bin/server-quick-start << 'EOF'
-#!/bin/bash
-echo "🚀 Quick Server Start"
-dev-server start all
-echo "✅ Development server stack started"
-EOF
-    chmod +x ~/.local/bin/server-quick-start || true
+        # Create server management shortcuts
+        cat > ~/.local/bin/server-quick-start << 'EOF'
+    #!/bin/bash
+    echo "🚀 Quick Server Start"
+    dev-server start all
+    echo "✅ Development server stack started"
+    EOF
+        chmod +x ~/.local/bin/server-quick-start || true
     
-    echo "Server environment configured"
+        echo "Server environment configured"
   '';
 
   # Time zone for server (typically UTC)

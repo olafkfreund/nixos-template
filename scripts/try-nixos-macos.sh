@@ -88,7 +88,7 @@ echo "  6. 🚀 Quick Desktop   - Build and run desktop VM immediately"
 echo "  7. ℹ️  Help & Info     - Show detailed information"
 echo ""
 
-read -p "Choose an option (1-7): " choice
+read -r -p "Choose an option (1-7): " choice
 
 case $choice in
     1)
@@ -303,7 +303,14 @@ elif [[ $ACTION == "quick" ]]; then
         echo ""
         
         # Start the VM
-        ./result/bin/run-*-vm
+        # Find and execute the VM runner script
+        vm_runner=$(find ./result/bin/ -name "run-*-vm" -type f | head -1)
+        if [[ -n "$vm_runner" && -x "$vm_runner" ]]; then
+            "$vm_runner"
+        else
+            log_error "VM runner script not found in ./result/bin/"
+            echo "Try running manually: ./result/bin/run-desktop-macos-vm"
+        fi
     else
         log_error "Failed to build desktop VM"
         exit 1

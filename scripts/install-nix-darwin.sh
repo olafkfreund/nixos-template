@@ -210,7 +210,10 @@ EOF
     nix run nix-darwin -- switch --flake .#bootstrap
     
     log_success "nix-darwin bootstrap complete"
-    rm -rf /tmp/nix-darwin-bootstrap
+    # Clean up bootstrap directory safely
+    if [[ -d "/tmp/nix-darwin-bootstrap" ]]; then
+        rm -rf /tmp/nix-darwin-bootstrap
+    fi
 fi
 
 echo ""

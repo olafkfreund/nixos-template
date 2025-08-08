@@ -20,11 +20,11 @@
     nodejs_20
     python311
     git
-    
+
     # Lightweight editors
     vim
     neovim
-    
+
     # System utilities optimized for mobile use
     htop
     tree
@@ -32,15 +32,15 @@
     ripgrep
     bat
     eza
-    
+
     # Network tools for mobile connectivity
     curl
     wget
     nmap
-    
+
     # Archive tools
     unzip
-    
+
     # Battery and power management utilities
     (writeShellScriptBin "battery-status" ''
       echo "🔋 Battery Information"
@@ -65,7 +65,7 @@
       echo "🔌 Power Adapter:"
       system_profiler SPPowerDataType | grep -A 5 "Power Adapter" | sed 's/^/  /' || echo "  No adapter info available"
     '')
-    
+
     (writeShellScriptBin "laptop-optimize" ''
       echo "💻 Laptop Optimization"
       echo "======================"
@@ -103,7 +103,7 @@
       
       echo "✅ Laptop optimization complete!"
     '')
-    
+
     (writeShellScriptBin "wifi-manager" ''
       echo "📶 Wi-Fi Manager"
       echo "================"
@@ -135,7 +135,7 @@
           ;;
       esac
     '')
-    
+
     (writeShellScriptBin "laptop-info" ''
       echo "💻 Laptop System Information"
       echo "============================"
@@ -165,7 +165,7 @@
       echo "  CPU Temperature: $(sudo powermetrics --samplers smc_temp --sample-count 1 -n 1 | grep "CPU die temperature" | cut -d: -f2 | xargs || echo "Not available")"
       echo "  Thermal State: $(pmset -g therm | grep "CPU_Scheduler_Limit" | cut -d= -f2 || echo "Normal")"
     '')
-    
+
     (writeShellScriptBin "dev-mobile" ''
       echo "📱 Mobile Development Setup"
       echo "=========================="
@@ -210,25 +210,25 @@
       # Essential development
       "visual-studio-code"
       "github-desktop"
-      
+
       # Communication (mobile-friendly)
       "slack"
       "zoom"
       "telegram"
-      
+
       # Productivity
       "notion"
       "obsidian"
-      
+
       # System utilities for laptops
       "rectangle"
       "raycast"
       "the-unarchiver"
-      
+
       # Battery management
       "coconutbattery"
       "aldente"
-      
+
       # Network tools
       "wifi-explorer-lite"
     ];
@@ -237,15 +237,15 @@
     masApps = {
       "Xcode" = 497799835;
       "TestFlight" = 899247664;
-      "Amphetamine" = 937984704;  # Keep Mac awake
-      "Magnet" = 441258766;      # Window management
+      "Amphetamine" = 937984704; # Keep Mac awake
+      "Magnet" = 441258766; # Window management
     };
   };
 
   # Laptop-optimized system settings
   system.defaults = {
     dock = {
-      tilesize = 48;  # Smaller dock for screen space
+      tilesize = 48; # Smaller dock for screen space
       autohide = true;
       autohide-delay = 0.1;
       show-recents = false;
@@ -255,33 +255,33 @@
     finder = {
       AppleShowAllExtensions = true;
       ShowPathbar = true;
-      ShowStatusBar = false;  # Save screen space
-      CreateDesktop = false;  # Clean desktop for focus
+      ShowStatusBar = false; # Save screen space
+      CreateDesktop = false; # Clean desktop for focus
     };
 
     NSGlobalDomain = {
-      AppleInterfaceStyle = "Dark";  # Better for battery life
+      AppleInterfaceStyle = "Dark"; # Better for battery life
       AppleShowScrollBars = "WhenScrolling";
-      
+
       # Faster key repeat for productivity
       KeyRepeat = 2;
       InitialKeyRepeat = 15;
-      
+
       # Energy-saving settings
       NSWindowResizeTime = 0.001;
     };
 
     # Trackpad optimization for laptop use
     trackpad = {
-      Clicking = true;  # Tap to click
-      TrackpadThreeFingerDrag = true;  # Three-finger drag
+      Clicking = true; # Tap to click
+      TrackpadThreeFingerDrag = true; # Three-finger drag
     };
 
     # Energy-saving screen capture
     screencapture = {
       location = "~/Pictures/Screenshots";
       type = "png";
-      disable-shadow = true;  # Smaller file sizes
+      disable-shadow = true; # Smaller file sizes
     };
   };
 
@@ -308,8 +308,8 @@
   '';
 
   # Time zone (often changes for mobile users)
-  time.timeZone = lib.mkDefault "UTC";  # Will auto-detect based on location
-  location.enable = true;  # Enable location services for automatic timezone
+  time.timeZone = lib.mkDefault "UTC"; # Will auto-detect based on location
+  location.enable = true; # Enable location services for automatic timezone
 
   # Network settings optimized for mobile connectivity
   networking = {
@@ -324,12 +324,12 @@
 
   # Fonts optimized for laptop screens
   fonts.packages = with pkgs; [
-    (nerdfonts.override { 
-      fonts = [ 
-        "JetBrainsMono"  # Excellent for laptop screens
+    (nerdfonts.override {
+      fonts = [
+        "JetBrainsMono" # Excellent for laptop screens
         "FiraCode"
         "Hack"
-      ]; 
+      ];
     })
     inter
     source-sans-pro

@@ -8,7 +8,7 @@
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
-    
+
     users.admin = { config, pkgs, ... }: {
       # User information
       home.username = "admin";
@@ -18,18 +18,18 @@
       # Laptop-optimized packages (minimal for battery life)
       home.packages = with pkgs; [
         # Essential terminal tools
-        alacritty  # Lightweight terminal
-        
+        alacritty # Lightweight terminal
+
         # Lightweight development tools
         vim
         neovim
         git
         gh
-        
+
         # Essential languages (minimal)
         nodejs_20
         python311
-        
+
         # Lightweight system utilities
         htop
         tree
@@ -38,11 +38,11 @@
         bat
         eza
         fzf
-        
+
         # Network tools for mobile use
         curl
         wget
-        
+
         # Archive tools
         unzip
       ];
@@ -52,13 +52,13 @@
         enable = true;
         userName = lib.mkDefault "Your Name";
         userEmail = lib.mkDefault "your.email@example.com";
-        
+
         extraConfig = {
           init.defaultBranch = "main";
           pull.rebase = true;
           push.autoSetupRemote = true;
           core = {
-            editor = "vim";  # Lightweight editor
+            editor = "vim"; # Lightweight editor
             autocrlf = "input";
             # Optimize for mobile/limited bandwidth
             compression = 9;
@@ -66,10 +66,10 @@
           };
           # Battery-friendly settings
           gc = {
-            auto = 256;  # Less frequent garbage collection
+            auto = 256; # Less frequent garbage collection
           };
           pack = {
-            threads = 2;  # Limit CPU usage
+            threads = 2; # Limit CPU usage
           };
         };
       };
@@ -80,14 +80,14 @@
         enableCompletion = true;
         autosuggestion.enable = true;
         syntaxHighlighting.enable = true;
-        
+
         shellAliases = {
           # Battery-aware navigation
           ll = "eza -la --icons";
           ls = "eza --icons";
           la = "eza -a --icons";
           tree = "eza --tree --icons";
-          
+
           # Quick git (mobile-friendly)
           g = "git";
           gs = "git status -s";
@@ -98,32 +98,32 @@
           gco = "git checkout";
           gb = "git branch";
           gd = "git diff";
-          
+
           # Mobile development
           code = "code .";
-          vim = "nvim";  # Use neovim
-          
+          vim = "nvim"; # Use neovim
+
           # System shortcuts
           reload = "source ~/.zshrc";
           .. = "cd ..";
           ... = "cd ../..";
-          
+
           # Battery and system
           battery = "pmset -g batt";
           temp = "sudo powermetrics --samplers smc_temp --sample-count 1 -n 1";
-          
+
           # Network (mobile-friendly)
           ip = "curl -s ifconfig.me && echo";
           wifi = "networksetup -getairportpower en0";
-          
+
           # Cleanup shortcuts
           cleanup = "sudo purge && nix-collect-garbage -d";
-          
+
           # macOS laptop specific
           sleep = "pmset sleepnow";
-          caffeinate = "caffeinate -d";  # Prevent display sleep
+          caffeinate = "caffeinate -d"; # Prevent display sleep
         };
-        
+
         initContent = ''
           # Mobile-optimized environment
           
@@ -171,14 +171,14 @@
           echo "💻 Welcome to your mobile nix-darwin environment!"
           echo "$BATTERY_STATUS $(pmset -g batt | grep -E "([0-9]+%)" | awk '{print $3}' | tr -d ';' 2>/dev/null || echo 'Power status unknown')"
         '';
-        
+
         oh-my-zsh = {
           enable = true;
-          theme = "clean";  # Lightweight theme
+          theme = "clean"; # Lightweight theme
           plugins = [
             "git"
             "macos"
-            "battery"  # Show battery status
+            "battery" # Show battery status
           ];
         };
       };
@@ -196,29 +196,29 @@
             "$battery"
             "$character"
           ];
-          
+
           # Simplified prompt for mobile
           character = {
             success_symbol = "[➜](bold green)";
             error_symbol = "[➜](bold red)";
           };
-          
+
           directory = {
             style = "blue";
-            truncation_length = 3;  # Shorter paths for mobile
+            truncation_length = 3; # Shorter paths for mobile
             truncation_symbol = "../";
           };
-          
+
           git_branch = {
             format = "[$branch]($style) ";
             style = "bright-black";
           };
-          
+
           git_status = {
             format = "([$all_status$ahead_behind]($style) )";
             style = "cyan";
           };
-          
+
           # Show battery status in prompt
           battery = {
             full_symbol = "🔋";
@@ -235,17 +235,17 @@
               }
             ];
           };
-          
+
           nodejs = {
             format = "[$symbol($version )]($style)";
             symbol = "⬢ ";
-            detect_files = ["package.json"];
+            detect_files = [ "package.json" ];
           };
-          
+
           python = {
             format = "[$symbol($version )]($style)";
             symbol = "🐍 ";
-            detect_files = ["requirements.txt" "pyproject.toml"];
+            detect_files = [ "requirements.txt" "pyproject.toml" ];
           };
         };
       };
@@ -289,34 +289,34 @@
         settings = {
           window = {
             decorations = "full";
-            opacity = 0.95;  # Slightly more opaque for battery life
+            opacity = 0.95; # Slightly more opaque for battery life
             startup_mode = "Windowed";
             dimensions = {
               columns = 120;
               lines = 30;
             };
           };
-          
+
           font = {
             normal = {
               family = "JetBrainsMono Nerd Font";
               style = "Regular";
             };
-            size = 13;  # Smaller for laptop screens
+            size = 13; # Smaller for laptop screens
           };
-          
+
           colors = {
             primary = {
               background = "0x1d1f21";
               foreground = "0xc5c8c6";
             };
           };
-          
+
           # Battery-friendly settings
           scrolling = {
-            history = 5000;  # Smaller history
+            history = 5000; # Smaller history
           };
-          
+
           key_bindings = [
             { key = "V"; mods = "Command"; action = "Paste"; }
             { key = "C"; mods = "Command"; action = "Copy"; }
@@ -328,7 +328,7 @@
       programs.neovim = {
         enable = true;
         defaultEditor = true;
-        
+
         extraConfig = ''
           " Mobile-optimized Neovim configuration
           
@@ -400,14 +400,14 @@
           "workbench.colorTheme" = "Dark+ (default dark)";
           "terminal.integrated.fontFamily" = "JetBrainsMono Nerd Font";
           "terminal.integrated.fontSize" = 12;
-          
+
           # Battery-friendly settings
           "editor.renderWhitespace" = "none";
           "editor.minimap.enabled" = false;
           "workbench.reduceMotion" = "on";
           "extensions.autoUpdate" = false;
         };
-        
+
         # Git configuration for mobile workflows
         ".gitconfig-mobile".text = ''
           [core]
@@ -451,26 +451,26 @@
         EDITOR = "vim";
         BROWSER = "open";
         TERMINAL = "alacritty";
-        
+
         # Development settings optimized for mobile
-        NODE_OPTIONS = "--max-old-space-size=2048";  # Conservative memory usage
+        NODE_OPTIONS = "--max-old-space-size=2048"; # Conservative memory usage
         PYTHONDONTWRITEBYTECODE = "1";
-        
+
         # Git settings for mobile
         GIT_EDITOR = "vim";
-        
+
         # Mobile-friendly paths
         GOPATH = "$HOME/go";
         CARGO_HOME = "$HOME/.cargo";
-        
+
         # Homebrew mobile settings
         HOMEBREW_NO_ANALYTICS = "1";
-        HOMEBREW_NO_AUTO_UPDATE = "1";  # Save bandwidth
+        HOMEBREW_NO_AUTO_UPDATE = "1"; # Save bandwidth
       };
 
       # Create mobile-optimized development structure
       home.activation = {
-        createMobileDirs = lib.hm.dag.entryAfter ["writeBoundary"] ''
+        createMobileDirs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           mkdir -p "$HOME/Projects/Mobile"
           mkdir -p "$HOME/Projects/Quick"
           mkdir -p "$HOME/.config"

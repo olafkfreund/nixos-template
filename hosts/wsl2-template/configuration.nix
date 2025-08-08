@@ -142,7 +142,7 @@
       enable = true;
       enable32Bit = lib.mkDefault true;
     };
-    
+
     # PulseAudio support (configured in services.pulseaudio)
     # pulseaudio.enable moved to services section
     # No Bluetooth in WSL

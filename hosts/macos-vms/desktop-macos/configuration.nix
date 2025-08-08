@@ -64,17 +64,17 @@
     # Desktop services
     xserver = {
       enable = true;
-      
+
       # Optimize for VM display
       videoDrivers = [ "modesetting" "virtio" ];
-      
+
       # Input optimization moved to services.libinput
     };
-    
+
     # Display manager (moved from xserver)
     displayManager.gdm = {
       enable = true;
-      autoSuspend = false;  # Don't suspend in VM
+      autoSuspend = false; # Don't suspend in VM
     };
 
     # Clipboard integration with macOS host
@@ -86,7 +86,7 @@
       mouse.accelProfile = "flat";
       touchpad.accelProfile = "adaptive";
     };
-    
+
     # Time synchronization with host
     ntp.enable = true;
 
@@ -96,7 +96,7 @@
       alsa.enable = lib.mkDefault true;
       pulse.enable = lib.mkDefault true;
     };
-    
+
     # Disable PulseAudio if using PipeWire
     pulseaudio.enable = lib.mkDefault false;
   };
@@ -109,9 +109,9 @@
       # Only enable 32-bit support on x86_64 systems
       enable32Bit = pkgs.stdenv.hostPlatform.isx86_64;
     };
-    
+
     # Note: Audio configured through services.pulseaudio or pipewire
-    
+
     # USB support for guest additions
     enableRedistributableFirmware = true;
   };
@@ -120,16 +120,16 @@
   networking = {
     # Use predictable interface names
     usePredictableInterfaceNames = true;
-    
+
     # DHCP for VM networking (can be overridden by NetworkManager)
     useDHCP = lib.mkDefault true;
-    
+
     # Firewall configuration for VM
     firewall = {
       enable = true;
-      allowedTCPPorts = [ 22 80 443 8080 3000 ];  # Common development ports
+      allowedTCPPorts = [ 22 80 443 8080 3000 ]; # Common development ports
     };
-    
+
     # DNS configuration
     nameservers = [ "8.8.8.8" "1.1.1.1" ];
   };
@@ -141,11 +141,11 @@
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
     };
-    
+
     # Kernel modules for VM
     kernelModules = [ "virtio_net" "virtio_pci" "virtio_mmio" "virtio_blk" "virtio_scsi" ];
     initrd.availableKernelModules = [ "virtio_net" "virtio_pci" "virtio_mmio" "virtio_blk" "virtio_scsi" ];
-    
+
     # Optimize boot for VM
     kernelParams = [
       "quiet"
@@ -161,16 +161,16 @@
       device = "/dev/disk/by-label/nixos";
       fsType = "ext4";
     };
-    
+
     "/boot" = {
       device = "/dev/disk/by-label/boot";
       fsType = "vfat";
     };
   };
-  
+
   # Swap configuration
-  swapDevices = [ 
-    { device = "/dev/disk/by-label/swap"; } 
+  swapDevices = [
+    { device = "/dev/disk/by-label/swap"; }
   ];
 
   # User configuration for VM testing
@@ -181,14 +181,14 @@
         isNormalUser = true;
         description = "NixOS VM User";
         extraGroups = [ "wheel" "networkmanager" "audio" "video" ];
-        initialPassword = "nixos";  # Change after first login
+        initialPassword = "nixos"; # Change after first login
       };
     };
   };
 
   # Security configuration
   security = {
-    sudo.wheelNeedsPassword = false;  # Convenient for VM testing
+    sudo.wheelNeedsPassword = false; # Convenient for VM testing
     polkit.enable = true;
   };
 
@@ -196,30 +196,30 @@
   environment.systemPackages = with pkgs; [
     # VM guest tools and utilities
     spice-vdagent
-    
+
     # Development tools
     git
     vim
     nano
     curl
     wget
-    
+
     # System utilities
     htop
     tree
     lsof
-    
+
     # Network tools
     netcat
     nmap
-    
+
     # GUI applications for testing
     firefox
     gnome-tweaks
-    
+
     # Development environment
     vscode
-    
+
     # Utilities for macOS integration
     (writeShellScriptBin "vm-info" ''
       echo "=== NixOS VM on macOS Information ==="
@@ -242,7 +242,7 @@
   environment.variables = {
     EDITOR = "nano";
     BROWSER = "firefox";
-    
+
     # VM identification
     NIXOS_VM_HOST = "macOS";
     NIXOS_VM_TYPE = "UTM/QEMU";

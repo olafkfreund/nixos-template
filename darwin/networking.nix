@@ -7,20 +7,20 @@
   # Network configuration
   networking = {
     # Computer name settings
-    computerName = lib.mkDefault "nix-darwin";  # Computer name shown in System Preferences
-    hostName = lib.mkDefault "nixos-darwin";    # Local hostname
-    localHostName = lib.mkDefault "nixos-darwin";  # Bonjour/local network name
+    computerName = lib.mkDefault "nix-darwin"; # Computer name shown in System Preferences
+    hostName = lib.mkDefault "nixos-darwin"; # Local hostname
+    localHostName = lib.mkDefault "nixos-darwin"; # Bonjour/local network name
 
     # DNS configuration
     dns = [
       # Cloudflare DNS (fast and privacy-focused)
       "1.1.1.1"
       "1.0.0.1"
-      
+
       # Quad9 DNS (security-focused, alternative)
       # "9.9.9.9"
       # "149.112.112.112"
-      
+
       # Google DNS (fallback)
       "8.8.8.8"
       "8.8.4.4"
@@ -37,14 +37,14 @@
   # Firewall settings
   # Note: macOS firewall is typically managed through System Preferences
   # These settings complement the built-in firewall
-  
+
   # Hosts file additions
   networking.knownNetworkServices = [
     "Wi-Fi"
     "Bluetooth PAN"
     "Thunderbolt Bridge"
-    "Ethernet"  # If available
-    "USB 10/100/1000 LAN"  # If using USB-to-Ethernet adapter
+    "Ethernet" # If available
+    "USB 10/100/1000 LAN" # If using USB-to-Ethernet adapter
   ];
 
   # System-level network tools and utilities
@@ -56,24 +56,24 @@
     iperf3
     curl
     wget
-    
+
     # DNS tools
     dnsutils
     drill
-    
+
     # Network monitoring
     iftop
     nethogs
     bandwhich
-    
+
     # VPN and security tools
     wireguard-tools
     openvpn
-    
+
     # Web development tools
     httpie
     jq
-    
+
     # Network utilities
     (writeShellScriptBin "network-info" ''
       echo "🌐 Network Information"
@@ -103,7 +103,7 @@
       echo "🔧 Network Quality:"
       networkQuality -s || echo "  Network quality test not available"
     '')
-    
+
     (writeShellScriptBin "wifi-info" ''
       echo "📡 Wi-Fi Network Information"
       echo "============================"
@@ -123,7 +123,7 @@
       echo "⚡ Wi-Fi Power Status:"
       networksetup -getairportpower en0 | sed 's/^/  /'
     '')
-    
+
     (writeShellScriptBin "network-speed-test" ''
       echo "🚀 Network Speed Test"
       echo "===================="
@@ -142,14 +142,14 @@
         dd if=/dev/zero bs=1M count=1 2>/dev/null | curl -X POST --data-binary @- -s -w "  Speed: %{speed_upload} bytes/sec\n  Time: %{time_total}s\n" httpbin.org/post > /dev/null
       fi
     '')
-    
+
     (writeShellScriptBin "dns-flush" ''
       echo "🔄 Flushing DNS cache..."
       sudo dscacheutil -flushcache
       sudo killall -HUP mDNSResponder
       echo "✅ DNS cache flushed!"
     '')
-    
+
     (writeShellScriptBin "network-locations" ''
       echo "📍 Network Locations"
       echo "===================="
@@ -179,12 +179,12 @@
   environment.variables = {
     # Set default DNS for development
     # DEVELOPMENT_DNS = "1.1.1.1";
-    
+
     # Network debugging
     # NETWORK_DEBUG = "1";
-    
+
     # Curl configuration
-    CURL_CA_BUNDLE = "/etc/ssl/cert.pem";  # macOS certificate bundle
+    CURL_CA_BUNDLE = "/etc/ssl/cert.pem"; # macOS certificate bundle
   };
 
   # LaunchDaemon for network monitoring (optional)

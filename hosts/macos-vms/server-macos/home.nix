@@ -20,7 +20,7 @@
   home.packages = with pkgs; [
     # VM guest tools
     spice-vdagent
-    
+
     # Server tools for macOS VM testing
     git
     vim

@@ -12,12 +12,12 @@
   isoImage = {
     isoName = lib.mkForce "nixos-minimal-macos-installer";
     volumeID = "NIXOS_MIN_MACOS";
-    
+
     # Boot configuration
     makeEfiBootable = true;
     makeUsbBootable = true;
     includeSystemd = true;
-    
+
     # Aggressive compression for minimal size
     squashfsCompression = "zstd -Xcompression-level 19";
   };
@@ -26,14 +26,14 @@
   boot = {
     kernelParams = [
       "console=ttyS0,115200"
-      "console=tty1" 
+      "console=tty1"
       "systemd.unified_cgroup_hierarchy=1"
     ];
-    
+
     # VM-essential modules only
     kernelModules = [ "virtio_net" "virtio_blk" "virtio_scsi" ];
     initrd.availableKernelModules = [ "virtio_net" "virtio_blk" "virtio_scsi" ];
-    
+
     loader = {
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = false;
@@ -55,7 +55,7 @@
         PasswordAuthentication = true;
       };
     };
-    
+
     # Minimal getty on serial console
     getty = {
       serialConsoles = [ "ttyS0" ];
@@ -75,7 +75,7 @@
       isNormalUser = true;
       extraGroups = [ "wheel" ];
       password = "nixos";
-      shell = pkgs.bash;  # Use bash instead of zsh for minimal
+      shell = pkgs.bash; # Use bash instead of zsh for minimal
     };
     users.root.password = "root";
   };
@@ -89,23 +89,23 @@
     parted
     dosfstools
     e2fsprogs
-    
+
     # Network tools
     curl
     wget
     openssh
-    
+
     # Text editors
     vim
     nano
-    
+
     # Hardware detection
     lshw
     pciutils
-    
+
     # Development essentials
     git
-    
+
     # Minimal installer tools
     (writeShellScriptBin "install-nixos-server-macos" ''
       #!/usr/bin/env bash
@@ -144,113 +144,113 @@
       echo ""
       echo "SSH access: ssh nixos@<vm-ip> (password: nixos)"
     '')
-    
-    (writeShellScriptBin "server-auto-install" ''
-      #!/usr/bin/env bash
-      set -euo pipefail
-      
-      echo "🚀 Automated Server Installation for macOS VMs"
-      echo "=============================================="
-      
-      # Check if running as root
-      if [ "$EUID" -ne 0 ]; then
-        echo "Please run as root: sudo server-auto-install"
-        exit 1
-      fi
-      
-      # Detect disk
-      if [ -b /dev/vda ]; then
-        DISK="/dev/vda"
-      elif [ -b /dev/sda ]; then
-        DISK="/dev/sda"
-      else
-        echo "No suitable disk found. Available disks:"
-        lsblk -d -o NAME,SIZE,MODEL
-        echo "Please partition manually or specify disk."
-        exit 1
-      fi
-      
-      echo "Installing server to: $DISK"
-      echo "WARNING: This will erase all data on $DISK!"
-      echo -n "Continue? (yes/no): "
-      read -r confirm
-      
-      if [ "$confirm" != "yes" ]; then
-        echo "Installation cancelled."
-        exit 1
-      fi
-      
-      # Simple single partition setup for server
-      echo "Creating partition table..."
-      parted "$DISK" --script mklabel gpt
-      parted "$DISK" --script mkpart ESP fat32 1MiB 512MiB
-      parted "$DISK" --script set 1 esp on
-      parted "$DISK" --script mkpart primary linux-swap 512MiB 1.5GiB
-      parted "$DISK" --script mkpart primary ext4 1.5GiB 100%
-      
-      # Format partitions
-      echo "Formatting partitions..."
-      mkfs.fat -F 32 -n boot "''${DISK}1"
-      mkswap -L swap "''${DISK}2"
-      mkfs.ext4 -L nixos "''${DISK}3"
-      
-      # Mount
-      echo "Mounting filesystems..."
-      mount /dev/disk/by-label/nixos /mnt
-      mkdir -p /mnt/boot
-      mount /dev/disk/by-label/boot /mnt/boot
-      swapon /dev/disk/by-label/swap
-      
-      # Generate config
-      echo "Generating hardware configuration..."
-      nixos-generate-config --root /mnt
-      
-      # Copy server template
-      if [ -d /etc/nixos-template/hosts/server-template ]; then
-        echo "Installing server template..."
-        cp -r /etc/nixos-template/hosts/server-template/* /mnt/etc/nixos/
-      elif [ -d /etc/nixos-template/hosts/macos-vms/server-macos.nix ]; then
-        echo "Installing macOS-optimized server template..."
-        cp /etc/nixos-template/hosts/macos-vms/server-macos.nix /mnt/etc/nixos/configuration.nix
-      else
-        echo "Using generated configuration..."
-        # Add basic server settings to generated config
-        cat >> /mnt/etc/nixos/configuration.nix << 'EOF'
 
-  # Basic server configuration
-  services.openssh.enable = true;
-  networking.firewall.allowedTCPPorts = [ 22 80 443 ];
-  users.users.server = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" ];
-    initialPassword = "server";
-  };
-EOF
-      fi
+    (writeShellScriptBin "server-auto-install" ''
+            #!/usr/bin/env bash
+            set -euo pipefail
       
-      # Install
-      echo "Installing NixOS server..."
-      nixos-install --no-root-passwd
+            echo "🚀 Automated Server Installation for macOS VMs"
+            echo "=============================================="
       
-      echo ""
-      echo "✅ Server installation complete!"
-      echo ""
-      echo "Default users:"
-      echo "- nixos (password: nixos)"
-      echo "- server (password: server) - if using template"
-      echo ""
-      echo "SSH access after reboot:"
-      echo "ssh nixos@<server-ip>"
-      echo ""
-      echo "Next steps after reboot:"
-      echo "1. Change default passwords"
-      echo "2. Configure SSH keys"
-      echo "3. Update system: sudo nixos-rebuild switch --upgrade"
-      echo "4. Configure services as needed"
-      echo ""
-      echo "Reboot to start your NixOS server."
+            # Check if running as root
+            if [ "$EUID" -ne 0 ]; then
+              echo "Please run as root: sudo server-auto-install"
+              exit 1
+            fi
+      
+            # Detect disk
+            if [ -b /dev/vda ]; then
+              DISK="/dev/vda"
+            elif [ -b /dev/sda ]; then
+              DISK="/dev/sda"
+            else
+              echo "No suitable disk found. Available disks:"
+              lsblk -d -o NAME,SIZE,MODEL
+              echo "Please partition manually or specify disk."
+              exit 1
+            fi
+      
+            echo "Installing server to: $DISK"
+            echo "WARNING: This will erase all data on $DISK!"
+            echo -n "Continue? (yes/no): "
+            read -r confirm
+      
+            if [ "$confirm" != "yes" ]; then
+              echo "Installation cancelled."
+              exit 1
+            fi
+      
+            # Simple single partition setup for server
+            echo "Creating partition table..."
+            parted "$DISK" --script mklabel gpt
+            parted "$DISK" --script mkpart ESP fat32 1MiB 512MiB
+            parted "$DISK" --script set 1 esp on
+            parted "$DISK" --script mkpart primary linux-swap 512MiB 1.5GiB
+            parted "$DISK" --script mkpart primary ext4 1.5GiB 100%
+      
+            # Format partitions
+            echo "Formatting partitions..."
+            mkfs.fat -F 32 -n boot "''${DISK}1"
+            mkswap -L swap "''${DISK}2"
+            mkfs.ext4 -L nixos "''${DISK}3"
+      
+            # Mount
+            echo "Mounting filesystems..."
+            mount /dev/disk/by-label/nixos /mnt
+            mkdir -p /mnt/boot
+            mount /dev/disk/by-label/boot /mnt/boot
+            swapon /dev/disk/by-label/swap
+      
+            # Generate config
+            echo "Generating hardware configuration..."
+            nixos-generate-config --root /mnt
+      
+            # Copy server template
+            if [ -d /etc/nixos-template/hosts/server-template ]; then
+              echo "Installing server template..."
+              cp -r /etc/nixos-template/hosts/server-template/* /mnt/etc/nixos/
+            elif [ -d /etc/nixos-template/hosts/macos-vms/server-macos.nix ]; then
+              echo "Installing macOS-optimized server template..."
+              cp /etc/nixos-template/hosts/macos-vms/server-macos.nix /mnt/etc/nixos/configuration.nix
+            else
+              echo "Using generated configuration..."
+              # Add basic server settings to generated config
+              cat >> /mnt/etc/nixos/configuration.nix << 'EOF'
+
+        # Basic server configuration
+        services.openssh.enable = true;
+        networking.firewall.allowedTCPPorts = [ 22 80 443 ];
+        users.users.server = {
+          isNormalUser = true;
+          extraGroups = [ "wheel" ];
+          initialPassword = "server";
+        };
+      EOF
+            fi
+      
+            # Install
+            echo "Installing NixOS server..."
+            nixos-install --no-root-passwd
+      
+            echo ""
+            echo "✅ Server installation complete!"
+            echo ""
+            echo "Default users:"
+            echo "- nixos (password: nixos)"
+            echo "- server (password: server) - if using template"
+            echo ""
+            echo "SSH access after reboot:"
+            echo "ssh nixos@<server-ip>"
+            echo ""
+            echo "Next steps after reboot:"
+            echo "1. Change default passwords"
+            echo "2. Configure SSH keys"
+            echo "3. Update system: sudo nixos-rebuild switch --upgrade"
+            echo "4. Configure services as needed"
+            echo ""
+            echo "Reboot to start your NixOS server."
     '')
-    
+
     # VM network diagnostic tool
     (writeShellScriptBin "vm-network-check" ''
       echo "🌐 VM Network Diagnostics for macOS"
@@ -282,7 +282,7 @@ EOF
       source = ../..;
       mode = "0755";
     };
-    
+
     "server-install-guide.txt" = {
       text = ''
         NixOS Minimal Server Installer for macOS VMs

@@ -25,7 +25,7 @@
     hardware = {
       gpu = {
         profile = "server-compute";
-        autoDetect = false;  # No GPU needed for headless server
+        autoDetect = false; # No GPU needed for headless server
       };
     };
 
@@ -50,7 +50,7 @@
       settings = {
         PermitRootLogin = "no";
         PasswordAuthentication = true;
-        X11Forwarding = false;  # No X11 for headless server
+        X11Forwarding = false; # No X11 for headless server
         ClientAliveInterval = 60;
         ClientAliveCountMax = 3;
       };
@@ -64,7 +64,7 @@
       recommendedOptimisation = true;
       recommendedProxySettings = true;
       recommendedTlsSettings = true;
-      
+
       # Default server block
       virtualHosts."localhost" = {
         listen = [
@@ -81,14 +81,11 @@
     # Database services
     postgresql = {
       enable = true;
-      ensureDatabases = [ "development" "testing" ];
+      ensureDatabases = [ "developer" "development" "testing" ];
       ensureUsers = [
         {
           name = "developer";
-          ensurePermissions = {
-            "DATABASE development" = "ALL PRIVILEGES";
-            "DATABASE testing" = "ALL PRIVILEGES";
-          };
+          ensureDBOwnership = true;
         }
       ];
     };
@@ -103,7 +100,7 @@
 
     # Container registry
     dockerRegistry = {
-      enable = false;  # Enable if needed for container development
+      enable = false; # Enable if needed for container development
     };
 
     # Monitoring
@@ -111,7 +108,7 @@
       enable = true;
       port = 9090;
       listenAddress = "0.0.0.0";
-      
+
       scrapeConfigs = [
         {
           job_name = "nixos-server";
@@ -137,31 +134,32 @@
     # Time synchronization
     ntp.enable = true;
 
-    # Container runtime
+    # Disable unneeded services for headless
+    xserver.enable = false;
+    displayManager.gdm.enable = false;
+  };
+
+  # Container runtime
+  virtualisation = {
     podman = {
       enable = true;
       dockerCompat = true;
       defaultNetwork.settings.dns_enabled = true;
     };
-    
-    # Disable unneeded services for headless
-    xserver.enable = false;
-    displayManager.gdm.enable = false;
   };
 
   # Server hardware configuration
   hardware = {
     # Minimal graphics
     graphics = {
-      enable = false;  # Headless server
+      enable = false; # Headless server
     };
-    
+
     # No audio
-    pulseaudio.enable = false;
-    
+
     # No Bluetooth
     bluetooth.enable = false;
-    
+
     # Firmware
     enableRedistributableFirmware = true;
   };
@@ -170,30 +168,30 @@
   networking = {
     usePredictableInterfaceNames = true;
     useDHCP = lib.mkDefault true;
-    
+
     # Server firewall configuration
     firewall = {
       enable = true;
-      allowedTCPPorts = [ 
-        22    # SSH
-        80    # HTTP
-        443   # HTTPS
-        8080  # Alternative HTTP
-        3000  # Development server
-        5000  # Flask/development
-        8000  # Python development
-        9090  # Prometheus
-        9100  # Node exporter
-        5432  # PostgreSQL
-        6379  # Redis
+      allowedTCPPorts = [
+        22 # SSH
+        80 # HTTP
+        443 # HTTPS
+        8080 # Alternative HTTP
+        3000 # Development server
+        5000 # Flask/development
+        8000 # Python development
+        9090 # Prometheus
+        9100 # Node exporter
+        5432 # PostgreSQL
+        6379 # Redis
       ];
-      
+
       # Additional ports for container services
       allowedTCPPortRanges = [
-        { from = 8000; to = 8999; }  # Development services
+        { from = 8000; to = 8999; } # Development services
       ];
     };
-    
+
     nameservers = [ "8.8.8.8" "1.1.1.1" ];
   };
 
@@ -203,11 +201,11 @@
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
     };
-    
+
     # Server kernel modules
     kernelModules = [ "virtio_net" "virtio_pci" "virtio_mmio" "virtio_blk" "virtio_scsi" "virtio_console" ];
     initrd.availableKernelModules = [ "virtio_net" "virtio_pci" "virtio_mmio" "virtio_blk" "virtio_scsi" ];
-    
+
     # Server boot parameters
     kernelParams = [
       "console=ttyS0,115200"
@@ -221,18 +219,18 @@
     "/" = {
       device = "/dev/disk/by-label/nixos";
       fsType = "ext4";
-      options = [ "noatime" ];  # Server optimization
+      options = [ "noatime" ]; # Server optimization
     };
-    
+
     "/boot" = {
       device = "/dev/disk/by-label/boot";
       fsType = "vfat";
     };
   };
-  
+
   # Swap configuration
-  swapDevices = [ 
-    { device = "/dev/disk/by-label/swap"; } 
+  swapDevices = [
+    { device = "/dev/disk/by-label/swap"; }
   ];
 
   # Server users
@@ -254,7 +252,7 @@
   # Security configuration
   security = {
     sudo = {
-      wheelNeedsPassword = false;  # For VM testing convenience
+      wheelNeedsPassword = false; # For VM testing convenience
     };
     polkit.enable = true;
   };
@@ -268,39 +266,39 @@
     iftop
     lsof
     tree
-    
+
     # Network tools
     curl
     wget
     netcat
     nmap
     tcpdump
-    
+
     # Development tools
     git
     vim
     nano
     tmux
-    
+
     # Container tools
     podman
     podman-compose
     skopeo
     buildah
-    
+
     # Database tools
     postgresql
     redis
-    
+
     # Monitoring tools
     prometheus
-    
+
     # System utilities
     rsync
     unzip
     jq
     yq
-    
+
     # Server utilities
     (writeShellScriptBin "server-status" ''
       echo "=== NixOS Server VM on macOS Status ==="
@@ -323,7 +321,7 @@
       echo "Containers:"
       podman ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" 2>/dev/null || echo "  No containers running"
     '')
-    
+
     (writeShellScriptBin "server-logs" ''
       case "$1" in
         nginx)
@@ -350,11 +348,11 @@
   # Environment variables
   environment.variables = {
     EDITOR = "vim";
-    
+
     # Server identification
     NIXOS_VM_HOST = "macOS";
     NIXOS_VM_TYPE = "UTM/QEMU-Server";
-    
+
     # Development environment
     PGHOST = "localhost";
     PGUSER = "developer";
@@ -390,11 +388,11 @@
         containers = "podman ps -a";
         services = "systemctl list-units --type=service --state=running";
         ports = "netstat -tlnp";
-        
+
         # Development shortcuts
         code = "cd /mnt/code";
         data = "cd /mnt/data";
-        
+
         # Service management
         nginx-reload = "sudo systemctl reload nginx";
         pg-status = "sudo systemctl status postgresql";
@@ -404,7 +402,7 @@
       # Tmux configuration for server management
       programs.tmux = {
         enable = true;
-        
+
         extraConfig = ''
           # Server monitoring layout
           bind-key M new-session -d -s monitoring \; \
