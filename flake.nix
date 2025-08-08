@@ -275,25 +275,26 @@
               })];
             });
 
-            "gce-image" = nixos-generators.nixosGenerate (baseConfig // {
-              format = "gce";
-              modules = baseConfig.modules ++ [({ config, lib, pkgs, ... }: {
-                # Google Cloud specific configurations
-                services.openssh = {
-                  enable = true;
-                  # Override GCE default to match our base configuration
-                  settings.PermitRootLogin = lib.mkForce "no";
-                };
-                
-                # Override the problematic google-guest-configs configuration
-                boot.extraModprobeConfig = lib.mkForce "";
-                
-                # Ensure Google Cloud guest agent is available
-                environment.systemPackages = with pkgs; [
-                  google-cloud-sdk
-                ];
-              })];
-            });
+# Temporarily disabled due to google-guest-configs package issue
+            # "gce-image" = nixos-generators.nixosGenerate (baseConfig // {
+            #   format = "gce";
+            #   modules = baseConfig.modules ++ [({ config, lib, pkgs, ... }: {
+            #     # Google Cloud specific configurations
+            #     services.openssh = {
+            #       enable = true;
+            #       # Override GCE default to match our base configuration
+            #       settings.PermitRootLogin = lib.mkForce "no";
+            #     };
+            #     
+            #     # Override the problematic google-guest-configs configuration
+            #     boot.extraModprobeConfig = lib.mkForce "";
+            #     
+            #     # Ensure Google Cloud guest agent is available
+            #     environment.systemPackages = with pkgs; [
+            #       google-cloud-sdk
+            #     ];
+            #   })];
+            # });
 
             "do-image" = nixos-generators.nixosGenerate (baseConfig // {
               format = "do";
