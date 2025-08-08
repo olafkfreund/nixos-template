@@ -319,11 +319,11 @@ sudo nix-collect-garbage -d
 ## Getting Started
 
 1. **Choose your deployment target**
-2. **Build the appropriate image**: `nix build .#image-name`
-3. **Deploy following platform instructions**
-4. **SSH into system**: `ssh nixos@your-ip`
-5. **Change default password**: `passwd`
-6. **Customize configuration** and rebuild
+1. **Build the appropriate image**: `nix build .#image-name`
+1. **Deploy following platform instructions**
+1. **SSH into system**: `ssh nixos@your-ip`
+1. **Change default password**: `passwd`
+1. **Customize configuration** and rebuild
 
 ## Additional Resources
 

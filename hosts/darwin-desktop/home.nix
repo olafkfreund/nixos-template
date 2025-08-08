@@ -13,7 +13,7 @@
       # User information
       home.username = "admin";
       home.homeDirectory = lib.mkDefault "/Users/admin";
-      home.stateVersion = "24.11"; # Match your Home Manager version
+      home.stateVersion = "25.05"; # Match your Home Manager version
 
       # User packages
       home.packages = with pkgs; [

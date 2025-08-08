@@ -433,367 +433,370 @@ in
       zathura # Minimal PDF viewer
     ];
 
-    # Waybar configuration file
-    environment.etc."xdg/waybar/config".text = lib.mkIf cfg.waybar.enable (builtins.toJSON {
-      mainBar = {
-        layer = "top";
-        position = cfg.waybar.position;
-        height = 35;
-        spacing = 4;
+    # Configuration files and environment
+    environment = {
+      # Waybar configuration file
+      etc."xdg/waybar/config".text = lib.mkIf cfg.waybar.enable (builtins.toJSON {
+        mainBar = {
+          layer = "top";
+          position = cfg.waybar.position;
+          height = 35;
+          spacing = 4;
 
-        modules-left = [ "hyprland/workspaces" "hyprland/window" ];
-        modules-center = [ "clock" ];
-        modules-right = [
-          "pulseaudio"
-          "network"
-          "battery"
-          "tray"
+          modules-left = [ "hyprland/workspaces" "hyprland/window" ];
+          modules-center = [ "clock" ];
+          modules-right = [
+            "pulseaudio"
+            "network"
+            "battery"
+            "tray"
+          ];
+
+          # Module configurations
+          "hyprland/workspaces" = lib.mkIf cfg.waybar.modules.workspaces {
+            disable-scroll = true;
+            all-outputs = true;
+          };
+
+          "hyprland/window" = lib.mkIf cfg.waybar.modules.window {
+            format = "{title}";
+            max-length = 50;
+          };
+
+          clock = lib.mkIf cfg.waybar.modules.clock {
+            timezone = "UTC";
+            tooltip-format = "<big>{:%Y %B}</big>\\n<tt><small>{calendar}</small></tt>";
+            format-alt = "{:%Y-%m-%d}";
+          };
+
+          battery = lib.mkIf cfg.waybar.modules.battery {
+            states = {
+              warning = 30;
+              critical = 15;
+            };
+            format = "{capacity}% {icon}";
+            format-charging = "{capacity}% ";
+            format-plugged = "{capacity}% ";
+            format-alt = "{time} {icon}";
+            format-icons = [ "" "" "" "" "" ];
+          };
+
+          network = lib.mkIf cfg.waybar.modules.network {
+            format-wifi = "{essid} ({signalStrength}%) ";
+            format-ethernet = "{ipaddr}/{cidr} ";
+            tooltip-format = "{ifname} via {gwaddr} ";
+            format-linked = "{ifname} (No IP) ";
+            format-disconnected = "Disconnected ⚠";
+            format-alt = "{ifname}: {ipaddr}/{cidr}";
+          };
+
+          pulseaudio = lib.mkIf cfg.waybar.modules.pulseaudio {
+            format = "{volume}% {icon} {format_source}";
+            format-bluetooth = "{volume}% {icon} {format_source}";
+            format-bluetooth-muted = " {icon} {format_source}";
+            format-muted = " {format_source}";
+            format-source = "{volume}% ";
+            format-source-muted = "";
+            format-icons = {
+              headphone = "";
+              hands-free = "";
+              headset = "";
+              phone = "";
+              portable = "";
+              car = "";
+              default = [ "" "" "" ];
+            };
+            on-click = "pavucontrol";
+          };
+
+          tray = lib.mkIf cfg.waybar.modules.tray {
+            spacing = 10;
+          };
+        };
+      });
+
+      # Waybar style configuration  
+      etc."xdg/waybar/style.css".text = lib.mkIf cfg.waybar.enable ''
+        * {
+            border: none;
+            border-radius: 0;
+            font-family: "JetBrains Mono", "Font Awesome 6 Free";
+            font-size: 13px;
+            min-height: 0;
+        }
+      
+        window#waybar {
+            background-color: transparent;
+            color: #ffffff;
+            transition-property: background-color;
+            transition-duration: .5s;
+        }
+      
+        window#waybar.hidden {
+            opacity: 0.2;
+        }
+      
+        #workspaces {
+            margin: 0 4px;
+        }
+      
+        #workspaces button {
+            padding: 0 5px;
+            background-color: transparent;
+            color: #ffffff;
+            border-bottom: 3px solid transparent;
+        }
+      
+        #workspaces button:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+      
+        #workspaces button.active {
+            background-color: #64727D;
+            border-bottom: 3px solid #ffffff;
+        }
+      
+        #clock,
+        #battery,
+        #cpu,
+        #memory,
+        #disk,
+        #temperature,
+        #backlight,
+        #network,
+        #pulseaudio,
+        #wireplumber,
+        #custom-media,
+        #tray,
+        #mode,
+        #idle_inhibitor,
+        #scratchpad,
+        #mpd {
+            padding: 0 10px;
+            color: #ffffff;
+        }
+      
+        #window {
+            margin: 0 4px;
+        }
+      
+        #battery.charging, #battery.plugged {
+            color: #26A65B;
+        }
+      
+        @keyframes blink {
+            to {
+                background-color: #ffffff;
+                color: #000000;
+            }
+        }
+      
+        #battery.critical:not(.charging) {
+            background-color: #f53c3c;
+            color: #ffffff;
+            animation-name: blink;
+            animation-duration: 0.5s;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+            animation-direction: alternate;
+        }
+      '';
+
+      # Dunst notification daemon configuration
+      etc."xdg/dunst/dunstrc".text = lib.mkIf cfg.dunst.enable ''
+        [global]
+        monitor = 0
+        follow = mouse
+        geometry = "300x5-30+20"
+        indicate_hidden = yes
+        shrink = no
+        transparency = 20
+        notification_height = 0
+        separator_height = 2
+        padding = 8
+        horizontal_padding = 8
+        frame_width = 3
+        frame_color = "#aaaaaa"
+        separator_color = frame
+        sort = yes
+        idle_threshold = 120
+        font = JetBrains Mono 10
+        line_height = 0
+        markup = full
+        format = "<b>%s</b>\n%b"
+        alignment = left
+        vertical_alignment = center
+        show_age_threshold = 60
+        word_wrap = yes
+        ellipsize = middle
+        ignore_newline = no
+        stack_duplicates = true
+        hide_duplicate_count = false
+        show_indicators = yes
+        icon_position = left
+        min_icon_size = 0
+        max_icon_size = 32
+        sticky_history = yes
+        history_length = 20
+        browser = ${cfg.applications.browser}
+        always_run_script = true
+        title = Dunst
+        class = Dunst
+        startup_notification = false
+        verbosity = mesg
+        corner_radius = 8
+        ignore_dbusclose = false
+        force_xinerama = false
+        mouse_left_click = close_current
+        mouse_middle_click = do_action, close_current
+        mouse_right_click = close_all
+      
+        [experimental]
+        per_monitor_dpi = false
+      
+        [urgency_low]
+        background = "#282828"
+        foreground = "#928374"
+        timeout = ${toString cfg.dunst.settings.urgency_low.timeout}
+        frame_color = "#32302f"
+      
+        [urgency_normal]
+        background = "#458588"
+        foreground = "#ebdbb2"
+        timeout = ${toString cfg.dunst.settings.urgency_normal.timeout}
+        frame_color = "#689d6a"
+      
+        [urgency_critical]
+        background = "#cc241d"
+        foreground = "#ebdbb2"
+        frame_color = "#fb4934"
+        timeout = ${toString cfg.dunst.settings.urgency_critical.timeout}
+      '';
+
+      # (systemPackages merged above)
+
+      # XDG portal for better app integration
+      xdg.portal = {
+        enable = true;
+        extraPortals = with pkgs; [
+          xdg-desktop-portal-hyprland
+          xdg-desktop-portal-gtk
         ];
 
-        # Module configurations
-        "hyprland/workspaces" = lib.mkIf cfg.waybar.modules.workspaces {
-          disable-scroll = true;
-          all-outputs = true;
-        };
-
-        "hyprland/window" = lib.mkIf cfg.waybar.modules.window {
-          format = "{title}";
-          max-length = 50;
-        };
-
-        clock = lib.mkIf cfg.waybar.modules.clock {
-          timezone = "UTC";
-          tooltip-format = "<big>{:%Y %B}</big>\\n<tt><small>{calendar}</small></tt>";
-          format-alt = "{:%Y-%m-%d}";
-        };
-
-        battery = lib.mkIf cfg.waybar.modules.battery {
-          states = {
-            warning = 30;
-            critical = 15;
+        config = {
+          common = {
+            default = [ "hyprland" "gtk" ];
           };
-          format = "{capacity}% {icon}";
-          format-charging = "{capacity}% ";
-          format-plugged = "{capacity}% ";
-          format-alt = "{time} {icon}";
-          format-icons = [ "" "" "" "" "" ];
-        };
-
-        network = lib.mkIf cfg.waybar.modules.network {
-          format-wifi = "{essid} ({signalStrength}%) ";
-          format-ethernet = "{ipaddr}/{cidr} ";
-          tooltip-format = "{ifname} via {gwaddr} ";
-          format-linked = "{ifname} (No IP) ";
-          format-disconnected = "Disconnected ⚠";
-          format-alt = "{ifname}: {ipaddr}/{cidr}";
-        };
-
-        pulseaudio = lib.mkIf cfg.waybar.modules.pulseaudio {
-          format = "{volume}% {icon} {format_source}";
-          format-bluetooth = "{volume}% {icon} {format_source}";
-          format-bluetooth-muted = " {icon} {format_source}";
-          format-muted = " {format_source}";
-          format-source = "{volume}% ";
-          format-source-muted = "";
-          format-icons = {
-            headphone = "";
-            hands-free = "";
-            headset = "";
-            phone = "";
-            portable = "";
-            car = "";
-            default = [ "" "" "" ];
+          hyprland = {
+            default = [ "hyprland" "gtk" ];
           };
-          on-click = "pavucontrol";
-        };
-
-        tray = lib.mkIf cfg.waybar.modules.tray {
-          spacing = 10;
         };
       };
-    });
 
-    # Waybar style configuration  
-    environment.etc."xdg/waybar/style.css".text = lib.mkIf cfg.waybar.enable ''
-      * {
-          border: none;
-          border-radius: 0;
-          font-family: "JetBrains Mono", "Font Awesome 6 Free";
-          font-size: 13px;
-          min-height: 0;
-      }
-      
-      window#waybar {
-          background-color: transparent;
-          color: #ffffff;
-          transition-property: background-color;
-          transition-duration: .5s;
-      }
-      
-      window#waybar.hidden {
-          opacity: 0.2;
-      }
-      
-      #workspaces {
-          margin: 0 4px;
-      }
-      
-      #workspaces button {
-          padding: 0 5px;
-          background-color: transparent;
-          color: #ffffff;
-          border-bottom: 3px solid transparent;
-      }
-      
-      #workspaces button:hover {
-          background: rgba(0, 0, 0, 0.2);
-      }
-      
-      #workspaces button.active {
-          background-color: #64727D;
-          border-bottom: 3px solid #ffffff;
-      }
-      
-      #clock,
-      #battery,
-      #cpu,
-      #memory,
-      #disk,
-      #temperature,
-      #backlight,
-      #network,
-      #pulseaudio,
-      #wireplumber,
-      #custom-media,
-      #tray,
-      #mode,
-      #idle_inhibitor,
-      #scratchpad,
-      #mpd {
-          padding: 0 10px;
-          color: #ffffff;
-      }
-      
-      #window {
-          margin: 0 4px;
-      }
-      
-      #battery.charging, #battery.plugged {
-          color: #26A65B;
-      }
-      
-      @keyframes blink {
-          to {
-              background-color: #ffffff;
-              color: #000000;
-          }
-      }
-      
-      #battery.critical:not(.charging) {
-          background-color: #f53c3c;
-          color: #ffffff;
-          animation-name: blink;
-          animation-duration: 0.5s;
-          animation-timing-function: linear;
-          animation-iteration-count: infinite;
-          animation-direction: alternate;
-      }
-    '';
-
-    # Dunst notification daemon configuration
-    environment.etc."xdg/dunst/dunstrc".text = lib.mkIf cfg.dunst.enable ''
-      [global]
-      monitor = 0
-      follow = mouse
-      geometry = "300x5-30+20"
-      indicate_hidden = yes
-      shrink = no
-      transparency = 20
-      notification_height = 0
-      separator_height = 2
-      padding = 8
-      horizontal_padding = 8
-      frame_width = 3
-      frame_color = "#aaaaaa"
-      separator_color = frame
-      sort = yes
-      idle_threshold = 120
-      font = JetBrains Mono 10
-      line_height = 0
-      markup = full
-      format = "<b>%s</b>\n%b"
-      alignment = left
-      vertical_alignment = center
-      show_age_threshold = 60
-      word_wrap = yes
-      ellipsize = middle
-      ignore_newline = no
-      stack_duplicates = true
-      hide_duplicate_count = false
-      show_indicators = yes
-      icon_position = left
-      min_icon_size = 0
-      max_icon_size = 32
-      sticky_history = yes
-      history_length = 20
-      browser = ${cfg.applications.browser}
-      always_run_script = true
-      title = Dunst
-      class = Dunst
-      startup_notification = false
-      verbosity = mesg
-      corner_radius = 8
-      ignore_dbusclose = false
-      force_xinerama = false
-      mouse_left_click = close_current
-      mouse_middle_click = do_action, close_current
-      mouse_right_click = close_all
-      
-      [experimental]
-      per_monitor_dpi = false
-      
-      [urgency_low]
-      background = "#282828"
-      foreground = "#928374"
-      timeout = ${toString cfg.dunst.settings.urgency_low.timeout}
-      frame_color = "#32302f"
-      
-      [urgency_normal]
-      background = "#458588"
-      foreground = "#ebdbb2"
-      timeout = ${toString cfg.dunst.settings.urgency_normal.timeout}
-      frame_color = "#689d6a"
-      
-      [urgency_critical]
-      background = "#cc241d"
-      foreground = "#ebdbb2"
-      frame_color = "#fb4934"
-      timeout = ${toString cfg.dunst.settings.urgency_critical.timeout}
-    '';
-
-    # (systemPackages merged above)
-
-    # XDG portal for better app integration
-    xdg.portal = {
-      enable = true;
-      extraPortals = with pkgs; [
-        xdg-desktop-portal-hyprland
-        xdg-desktop-portal-gtk
-      ];
-
-      config = {
-        common = {
-          default = [ "hyprland" "gtk" ];
-        };
-        hyprland = {
-          default = [ "hyprland" "gtk" ];
-        };
-      };
-    };
-
-    # Security and authentication
-    security = {
-      polkit.enable = true;
-      pam.services.swaylock = { };
-    };
-
-    programs = {
-      # Thunar file manager
-      thunar = {
-        enable = true;
-        plugins = with pkgs.xfce; [
-          thunar-archive-plugin
-          thunar-volman
-        ];
+      # Security and authentication
+      security = {
+        polkit.enable = true;
+        pam.services.swaylock = { };
       };
 
-      # dconf for GTK application settings
-      dconf.enable = true;
-    };
+      programs = {
+        # Thunar file manager
+        thunar = {
+          enable = true;
+          plugins = with pkgs.xfce; [
+            thunar-archive-plugin
+            thunar-volman
+          ];
+        };
 
-    # Services for desktop functionality
-    services = {
-      # Desktop services
-      gvfs.enable = true; # Virtual filesystems
-      udisks2.enable = true; # Disk management
-      upower.enable = true; # Power management
-      accounts-daemon.enable = true; # Account management
-      gnome.gnome-keyring.enable = true; # Keyring for secrets
+        # dconf for GTK application settings
+        dconf.enable = true;
+      };
 
-      # Audio
-      pipewire = {
-        enable = true;
-        audio.enable = true;
-        pulse.enable = true;
-        jack.enable = false;
+      # Services for desktop functionality
+      services = {
+        # Desktop services
+        gvfs.enable = true; # Virtual filesystems
+        udisks2.enable = true; # Disk management
+        upower.enable = true; # Power management
+        accounts-daemon.enable = true; # Account management
+        gnome.gnome-keyring.enable = true; # Keyring for secrets
 
-        # Low latency configuration
-        extraConfig.pipewire = {
-          "92-low-latency" = {
-            "context.properties" = {
-              "default.clock.rate" = 48000;
-              "default.clock.quantum" = 1024;
+        # Audio
+        pipewire = {
+          enable = true;
+          audio.enable = true;
+          pulse.enable = true;
+          jack.enable = false;
+
+          # Low latency configuration
+          extraConfig.pipewire = {
+            "92-low-latency" = {
+              "context.properties" = {
+                "default.clock.rate" = 48000;
+                "default.clock.quantum" = 1024;
+              };
+            };
+          };
+        };
+
+        # Display manager (minimal)
+        greetd = {
+          enable = true;
+          settings = {
+            default_session = {
+              command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland";
+              user = "greeter";
             };
           };
         };
       };
 
-      # Display manager (minimal)
-      greetd = {
-        enable = true;
-        settings = {
-          default_session = {
-            command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland";
-            user = "greeter";
+      # Fonts configuration
+      fonts = {
+        packages = with pkgs; [
+          jetbrains-mono
+          font-awesome
+          noto-fonts
+          noto-fonts-cjk-sans
+          noto-fonts-emoji
+        ];
+
+        fontconfig = {
+          enable = true;
+          defaultFonts = {
+            monospace = [ "JetBrains Mono" ];
           };
         };
       };
-    };
 
-    # Fonts configuration
-    fonts = {
-      packages = with pkgs; [
-        jetbrains-mono
-        font-awesome
-        noto-fonts
-        noto-fonts-cjk-sans
-        noto-fonts-emoji
-      ];
+      # Environment variables
+      sessionVariables = {
+        # Wayland variables
+        XDG_CURRENT_DESKTOP = "Hyprland";
+        XDG_SESSION_DESKTOP = "Hyprland";
+        XDG_SESSION_TYPE = "wayland";
 
-      fontconfig = {
-        enable = true;
-        defaultFonts = {
-          monospace = [ "JetBrains Mono" ];
-        };
+        # Qt/GTK theming
+        QT_QPA_PLATFORM = "wayland";
+        QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
+
+        # Cursor theme
+        XCURSOR_THEME = cfg.theme.cursor.theme;
+        XCURSOR_SIZE = toString cfg.theme.cursor.size;
+
+        # Firefox Wayland
+        MOZ_ENABLE_WAYLAND = "1";
+
+        # Java applications on Wayland
+        _JAVA_AWT_WM_NONREPARENTING = "1";
+
+        # SDL Wayland
+        SDL_VIDEODRIVER = "wayland";
+
+        # Clutter Wayland
+        CLUTTER_BACKEND = "wayland";
       };
-    };
-
-    # Environment variables
-    environment.sessionVariables = {
-      # Wayland variables
-      XDG_CURRENT_DESKTOP = "Hyprland";
-      XDG_SESSION_DESKTOP = "Hyprland";
-      XDG_SESSION_TYPE = "wayland";
-
-      # Qt/GTK theming
-      QT_QPA_PLATFORM = "wayland";
-      QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
-
-      # Cursor theme
-      XCURSOR_THEME = cfg.theme.cursor.theme;
-      XCURSOR_SIZE = toString cfg.theme.cursor.size;
-
-      # Firefox Wayland
-      MOZ_ENABLE_WAYLAND = "1";
-
-      # Java applications on Wayland
-      _JAVA_AWT_WM_NONREPARENTING = "1";
-
-      # SDL Wayland
-      SDL_VIDEODRIVER = "wayland";
-
-      # Clutter Wayland
-      CLUTTER_BACKEND = "wayland";
     };
 
     # Assertions to prevent conflicts

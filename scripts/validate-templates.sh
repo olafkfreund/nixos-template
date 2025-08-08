@@ -224,20 +224,20 @@ validate_scripts() {
       local script_name
       script_name=$(basename "$script")
       case "$script_name" in
-        "detect-hardware.sh")
-          if "$script" help >/dev/null 2>&1; then
-            print_success "$script_name help command works"
-          else
-            print_warning "$script_name help command failed"
-          fi
-          ;;
-        "detect-vm.sh")
-          if "$script" --help >/dev/null 2>&1; then
-            print_success "$script_name help command works"
-          else
-            print_warning "$script_name help command failed"
-          fi
-          ;;
+      "detect-hardware.sh")
+        if "$script" help >/dev/null 2>&1; then
+          print_success "$script_name help command works"
+        else
+          print_warning "$script_name help command failed"
+        fi
+        ;;
+      "detect-vm.sh")
+        if "$script" --help >/dev/null 2>&1; then
+          print_success "$script_name help command works"
+        else
+          print_warning "$script_name help command failed"
+        fi
+        ;;
       esac
 
     done < <(find "$scripts_dir" -name "*.sh" -type f -print0)
@@ -428,24 +428,24 @@ show_help() {
 
 main() {
   case "${VALIDATION_LEVEL}" in
-    "help" | "-h" | "--help")
-      show_help
-      exit 0
-      ;;
-    "minimal")
-      validate_flake && validate_nix_syntax && validate_template_structure
-      ;;
-    "standard")
-      run_full_validation
-      ;;
-    "full" | "vm")
-      run_full_validation
-      ;;
-    *)
-      print_error "Unknown validation level: $VALIDATION_LEVEL"
-      show_help
-      exit 1
-      ;;
+  "help" | "-h" | "--help")
+    show_help
+    exit 0
+    ;;
+  "minimal")
+    validate_flake && validate_nix_syntax && validate_template_structure
+    ;;
+  "standard")
+    run_full_validation
+    ;;
+  "full" | "vm")
+    run_full_validation
+    ;;
+  *)
+    print_error "Unknown validation level: $VALIDATION_LEVEL"
+    show_help
+    exit 1
+    ;;
   esac
 }
 

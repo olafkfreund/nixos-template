@@ -5,14 +5,14 @@ This guide covers installing and configuring NixOS on Windows Subsystem for Linu
 ## Table of Contents
 
 1. [Overview](#overview)
-2. [Prerequisites](#prerequisites)
-3. [Installation](#installation)
-4. [Configuration](#configuration)
-5. [Windows Integration](#windows-integration)
-6. [Development Environment](#development-environment)
-7. [Performance Optimization](#performance-optimization)
-8. [Troubleshooting](#troubleshooting)
-9. [Advanced Usage](#advanced-usage)
+1. [Prerequisites](#prerequisites)
+1. [Installation](#installation)
+1. [Configuration](#configuration)
+1. [Windows Integration](#windows-integration)
+1. [Development Environment](#development-environment)
+1. [Performance Optimization](#performance-optimization)
+1. [Troubleshooting](#troubleshooting)
+1. [Advanced Usage](#advanced-usage)
 
 ## Overview
 
@@ -73,13 +73,13 @@ The template includes dedicated WSL2 modules:
    dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
    ```
 
-2. **Set WSL 2 as default**:
+1. **Set WSL 2 as default**:
 
    ```powershell
    wsl --set-default-version 2
    ```
 
-3. **Install Windows Terminal** (recommended):
+1. **Install Windows Terminal** (recommended):
    - From Microsoft Store or GitHub releases
 
 ## Installation
@@ -93,14 +93,14 @@ The template includes dedicated WSL2 modules:
    cd nixos-template
    ```
 
-2. **Run the installation script**:
+1. **Run the installation script**:
 
    ```powershell
    # Run PowerShell as Administrator
    .\scripts\install-wsl2.sh
    ```
 
-3. **Follow the prompts**:
+1. **Follow the prompts**:
    - Choose username and password
    - Wait for installation to complete (10-30 minutes)
 
@@ -112,13 +112,14 @@ The template includes dedicated WSL2 modules:
    wget https://github.com/nix-community/NixOS-WSL/releases/latest/download/nixos-wsl-installer.tar.gz
    ```
 
-2. **Import the distribution**:
+1. **Import the distribution**:
 
    ```powershell
    wsl --import NixOS-Template C:\WSL\NixOS-Template nixos-wsl-installer.tar.gz --version 2
    ```
 
-3. **Copy template configuration**:
+1. **Copy template configuration**:
+
    ```bash
    wsl -d NixOS-Template
    # Inside WSL:
@@ -263,13 +264,14 @@ programs.zsh.shellAliases = {
    sudo nano /etc/nixos/configuration.nix
    ```
 
-2. **Edit user configuration**:
+1. **Edit user configuration**:
 
    ```bash
    nano ~/.config/home-manager/home.nix
    ```
 
-3. **Apply changes**:
+1. **Apply changes**:
+
    ```bash
    sudo nixos-rebuild switch
    home-manager switch
@@ -370,7 +372,7 @@ The template includes custom utilities for WSL2 integration:
    cd project
    ```
 
-2. **Use integrated development tools**:
+1. **Use integrated development tools**:
 
    ```bash
    # Open project in VS Code
@@ -382,7 +384,7 @@ The template includes custom utilities for WSL2 integration:
    # Access from Windows browser: http://localhost:3000
    ```
 
-3. **Container development**:
+1. **Container development**:
 
    ```bash
    # Docker works with Windows Docker Desktop
@@ -452,9 +454,9 @@ performance-monitor
 ### Best Practices
 
 1. **File Location**: Keep development files on WSL filesystem (`/home`)
-2. **Memory Management**: Use `wsl --shutdown` periodically to free memory
-3. **Network**: Use `wsl-network-diagnostics` to troubleshoot connectivity
-4. **Storage**: Regular cleanup with `nix-collect-garbage`
+1. **Memory Management**: Use `wsl --shutdown` periodically to free memory
+1. **Network**: Use `wsl-network-diagnostics` to troubleshoot connectivity
+1. **Storage**: Regular cleanup with `nix-collect-garbage`
 
 ## Troubleshooting
 
@@ -469,14 +471,15 @@ performance-monitor
    wsl --list --verbose
    ```
 
-2. **Restart WSL service**:
+1. **Restart WSL service**:
 
    ```powershell
    # As Administrator
    Restart-Service LxssManager
    ```
 
-3. **Reset WSL2**:
+1. **Reset WSL2**:
+
    ```powershell
    wsl --shutdown
    wsl --unregister NixOS-Template
@@ -491,14 +494,15 @@ performance-monitor
    wsl-network-diagnostics
    ```
 
-2. **Reset network settings**:
+1. **Reset network settings**:
 
    ```bash
    sudo systemctl restart systemd-networkd
    sudo systemctl restart systemd-resolved
    ```
 
-3. **Windows network reset**:
+1. **Windows network reset**:
+
    ```powershell
    # As Administrator
    netsh winsock reset
@@ -514,13 +518,14 @@ performance-monitor
    htop
    ```
 
-2. **Optimize WSL2 settings**:
+1. **Optimize WSL2 settings**:
 
    ```bash
    wsl-performance-tune
    ```
 
-3. **Free up memory**:
+1. **Free up memory**:
+
    ```powershell
    wsl --shutdown
    # Wait 8 seconds, then restart
@@ -530,13 +535,15 @@ performance-monitor
 #### GUI Applications
 
 1. **Install VcXsrv or similar X server on Windows**
-2. **Set DISPLAY variable**:
+
+1. **Set DISPLAY variable**:
 
    ```bash
    export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0.0
    ```
 
-3. **Test GUI application**:
+1. **Test GUI application**:
+
    ```bash
    # Install a simple GUI app
    nix-shell -p xeyes --run xeyes
@@ -552,13 +559,14 @@ performance-monitor
    sudo nixos-rebuild dry-run
    ```
 
-2. **Rollback to previous generation**:
+1. **Rollback to previous generation**:
 
    ```bash
    sudo nixos-rebuild switch --rollback
    ```
 
-3. **Clean Nix store**:
+1. **Clean Nix store**:
+
    ```bash
    sudo nix-collect-garbage -d
    ```
@@ -571,7 +579,8 @@ performance-monitor
    home-manager build
    ```
 
-2. **Reset Home Manager**:
+1. **Reset Home Manager**:
+
    ```bash
    rm -rf ~/.local/state/home-manager/gcroots
    home-manager switch
@@ -586,14 +595,15 @@ performance-monitor
    sudo journalctl -f  # Follow logs in real-time
    ```
 
-2. **WSL logs**:
+1. **WSL logs**:
 
    ```powershell
    # In PowerShell
    Get-EventLog -LogName Application -Source "Microsoft-Windows-Subsystem-Linux"
    ```
 
-3. **Template-specific diagnostics**:
+1. **Template-specific diagnostics**:
+
    ```bash
    wsl-systemd-status
    wsl-systemd-optimize
@@ -642,19 +652,20 @@ wsl -d NixOS-Dev
 #### Visual Studio Code
 
 1. **Install WSL extension**
-2. **Open project in WSL**:
+
+1. **Open project in WSL**:
 
    ```bash
    code .
    ```
 
-3. **Configure VS Code settings** for WSL development
+1. **Configure VS Code settings** for WSL development
 
 #### JetBrains IDEs
 
 1. **Use JetBrains Gateway** for remote development
-2. **Configure SSH connection** to WSL2
-3. **Set up project interpreter** pointing to WSL2
+1. **Configure SSH connection** to WSL2
+1. **Set up project interpreter** pointing to WSL2
 
 ### Backup and Migration
 
@@ -745,9 +756,9 @@ networking = {
 To improve WSL2 support in this template:
 
 1. Fork the repository
-2. Make improvements to WSL2 modules or configuration
-3. Test thoroughly in WSL2 environment
-4. Submit a pull request with detailed description
+1. Make improvements to WSL2 modules or configuration
+1. Test thoroughly in WSL2 environment
+1. Submit a pull request with detailed description
 
 Common areas for contribution:
 

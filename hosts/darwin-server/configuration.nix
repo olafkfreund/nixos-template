@@ -1,7 +1,7 @@
 # nix-darwin Server Configuration
 # Headless server configuration for macOS development machines
 
-{ config, pkgs, lib, inputs, outputs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   imports = [

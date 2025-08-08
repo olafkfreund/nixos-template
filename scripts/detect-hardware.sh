@@ -50,29 +50,29 @@ detect_chassis() {
     chassis_id=$(cat /sys/class/dmi/id/chassis_type 2>/dev/null || echo "")
 
     case "$chassis_id" in
-      8 | 9 | 10 | 14) # Portable, Laptop, Notebook, Sub Notebook
-        chassis_type="laptop"
-        laptop_score=$((laptop_score + 30))
-        confidence=$CONFIDENCE_HIGH
-        ;;
-      3 | 4 | 6 | 7) # Desktop, Low Profile Desktop, Mini Tower, Tower
-        chassis_type="desktop"
-        desktop_score=$((desktop_score + 30))
-        confidence=$CONFIDENCE_HIGH
-        ;;
-      17 | 23) # Main Server Chassis, Rack Mount Chassis
-        chassis_type="server"
-        server_score=$((server_score + 30))
-        confidence=$CONFIDENCE_HIGH
-        ;;
-      13) # All in One
-        chassis_type="desktop"
-        desktop_score=$((desktop_score + 25))
-        confidence=$CONFIDENCE_MEDIUM
-        ;;
-      *)
-        confidence=$CONFIDENCE_LOW
-        ;;
+    8 | 9 | 10 | 14) # Portable, Laptop, Notebook, Sub Notebook
+      chassis_type="laptop"
+      laptop_score=$((laptop_score + 30))
+      confidence=$CONFIDENCE_HIGH
+      ;;
+    3 | 4 | 6 | 7) # Desktop, Low Profile Desktop, Mini Tower, Tower
+      chassis_type="desktop"
+      desktop_score=$((desktop_score + 30))
+      confidence=$CONFIDENCE_HIGH
+      ;;
+    17 | 23) # Main Server Chassis, Rack Mount Chassis
+      chassis_type="server"
+      server_score=$((server_score + 30))
+      confidence=$CONFIDENCE_HIGH
+      ;;
+    13) # All in One
+      chassis_type="desktop"
+      desktop_score=$((desktop_score + 25))
+      confidence=$CONFIDENCE_MEDIUM
+      ;;
+    *)
+      confidence=$CONFIDENCE_LOW
+      ;;
     esac
   fi
 
@@ -432,34 +432,34 @@ detect_hardware_type() {
   # Provide recommendations
   print_info "Recommended configuration:"
   case "$hardware_type" in
-    laptop)
-      echo "  - Power profile: laptop"
-      echo "  - Battery optimization: enabled"
-      echo "  - TLP power management: enabled"
-      echo "  - Desktop environment: GNOME (with power management)"
-      echo "  - WiFi power saving: enabled"
-      ;;
-    desktop)
-      echo "  - Power profile: desktop"
-      echo "  - Performance mode: enabled"
-      echo "  - USB autosuspend: disabled (better for peripherals)"
-      echo "  - Desktop environment: GNOME or KDE"
-      echo "  - Gaming optimizations: optional"
-      ;;
-    workstation)
-      echo "  - Power profile: workstation"
-      echo "  - Performance mode: enabled"
-      echo "  - Multi-monitor support: enabled"
-      echo "  - Professional applications: enabled"
-      echo "  - Development tools: full suite"
-      ;;
-    server)
-      echo "  - Power profile: server"
-      echo "  - Headless operation: enabled"
-      echo "  - SSH server: enabled with hardening"
-      echo "  - Monitoring: Prometheus + Grafana"
-      echo "  - Security: Fail2Ban, AppArmor"
-      ;;
+  laptop)
+    echo "  - Power profile: laptop"
+    echo "  - Battery optimization: enabled"
+    echo "  - TLP power management: enabled"
+    echo "  - Desktop environment: GNOME (with power management)"
+    echo "  - WiFi power saving: enabled"
+    ;;
+  desktop)
+    echo "  - Power profile: desktop"
+    echo "  - Performance mode: enabled"
+    echo "  - USB autosuspend: disabled (better for peripherals)"
+    echo "  - Desktop environment: GNOME or KDE"
+    echo "  - Gaming optimizations: optional"
+    ;;
+  workstation)
+    echo "  - Power profile: workstation"
+    echo "  - Performance mode: enabled"
+    echo "  - Multi-monitor support: enabled"
+    echo "  - Professional applications: enabled"
+    echo "  - Development tools: full suite"
+    ;;
+  server)
+    echo "  - Power profile: server"
+    echo "  - Headless operation: enabled"
+    echo "  - SSH server: enabled with hardening"
+    echo "  - Monitoring: Prometheus + Grafana"
+    echo "  - Security: Fail2Ban, AppArmor"
+    ;;
   esac
 
   echo
@@ -477,37 +477,37 @@ detect_hardware_type() {
 # Command line interface
 main() {
   case "${1:-detect}" in
-    "detect" | "")
-      detect_hardware_type
-      ;;
-    "type")
-      # Just output the hardware type
-      local result
-      result=$(detect_hardware_type 2>/dev/null | grep "HARDWARE_TYPE=" | cut -d= -f2)
-      echo "${result:-desktop}"
-      ;;
-    "profile")
-      # Output suitable power management profile
-      local result
-      result=$(detect_hardware_type 2>/dev/null | grep "HARDWARE_TYPE=" | cut -d= -f2)
-      echo "${result:-desktop}"
-      ;;
-    "help" | "-h" | "--help")
-      echo "Hardware Detection Script"
-      echo ""
-      echo "Usage: $0 [COMMAND]"
-      echo ""
-      echo "Commands:"
-      echo "  detect    Full hardware detection with recommendations (default)"
-      echo "  type      Output detected hardware type only"
-      echo "  profile   Output suitable power management profile"
-      echo "  help      Show this help message"
-      ;;
-    *)
-      print_error "Unknown command: $1"
-      echo "Use '$0 help' for usage information."
-      exit 1
-      ;;
+  "detect" | "")
+    detect_hardware_type
+    ;;
+  "type")
+    # Just output the hardware type
+    local result
+    result=$(detect_hardware_type 2>/dev/null | grep "HARDWARE_TYPE=" | cut -d= -f2)
+    echo "${result:-desktop}"
+    ;;
+  "profile")
+    # Output suitable power management profile
+    local result
+    result=$(detect_hardware_type 2>/dev/null | grep "HARDWARE_TYPE=" | cut -d= -f2)
+    echo "${result:-desktop}"
+    ;;
+  "help" | "-h" | "--help")
+    echo "Hardware Detection Script"
+    echo ""
+    echo "Usage: $0 [COMMAND]"
+    echo ""
+    echo "Commands:"
+    echo "  detect    Full hardware detection with recommendations (default)"
+    echo "  type      Output detected hardware type only"
+    echo "  profile   Output suitable power management profile"
+    echo "  help      Show this help message"
+    ;;
+  *)
+    print_error "Unknown command: $1"
+    echo "Use '$0 help' for usage information."
+    exit 1
+    ;;
   esac
 }
 

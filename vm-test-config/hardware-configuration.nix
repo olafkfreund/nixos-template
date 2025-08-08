@@ -10,10 +10,12 @@
   ];
 
   # Example hardware configuration - REPLACE WITH YOUR ACTUAL CONFIG
-  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usb_storage" "sd_mod" ];
-  boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-intel" ]; # or "kvm-amd" for AMD
-  boot.extraModulePackages = [ ];
+  boot = {
+    initrd.availableKernelModules = [ "xhci_pci" "ahci" "usb_storage" "sd_mod" ];
+    initrd.kernelModules = [ ];
+    kernelModules = [ "kvm-intel" ]; # or "kvm-amd" for AMD
+    extraModulePackages = [ ];
+  };
 
   # Filesystem configuration - EXAMPLE ONLY
   fileSystems."/" =

@@ -39,7 +39,7 @@ echo "=========================="
 echo ""
 
 # Check if we're on macOS
-if [[ "$OSTYPE" != "darwin"* ]]; then
+if [[ $OSTYPE != "darwin"* ]]; then
   log_error "This script is designed for macOS only."
   exit 1
 fi
@@ -88,22 +88,22 @@ echo ""
 read -p "Choose a configuration (1-3): " config_choice
 
 case $config_choice in
-  1)
-    CONFIG_TYPE="desktop"
-    CONFIG_DESC="Desktop"
-    ;;
-  2)
-    CONFIG_TYPE="laptop"
-    CONFIG_DESC="Laptop"
-    ;;
-  3)
-    CONFIG_TYPE="server"
-    CONFIG_DESC="Server"
-    ;;
-  *)
-    log_error "Invalid choice: $config_choice"
-    exit 1
-    ;;
+1)
+  CONFIG_TYPE="desktop"
+  CONFIG_DESC="Desktop"
+  ;;
+2)
+  CONFIG_TYPE="laptop"
+  CONFIG_DESC="Laptop"
+  ;;
+3)
+  CONFIG_TYPE="server"
+  CONFIG_DESC="Server"
+  ;;
+*)
+  log_error "Invalid choice: $config_choice"
+  exit 1
+  ;;
 esac
 
 # Determine configuration name based on architecture
@@ -133,7 +133,7 @@ fi
 
 # Clone or update the template repository
 TEMPLATE_DIR="$HOME/.config/nix-darwin"
-if [[ -d "$TEMPLATE_DIR" ]]; then
+if [[ -d $TEMPLATE_DIR ]]; then
   log_step "Updating existing template repository..."
   cd "$TEMPLATE_DIR"
   git pull origin main || log_warning "Failed to update repository"
@@ -256,7 +256,7 @@ if ! echo "$PATH" | grep -q "/run/current-system/sw/bin"; then
 
   # Add to shell profiles
   for shell_profile in "$HOME/.zprofile" "$HOME/.bash_profile" "$HOME/.profile"; do
-    if [[ -f "$shell_profile" ]] || [[ "$shell_profile" == "$HOME/.zprofile" ]]; then
+    if [[ -f $shell_profile ]] || [[ $shell_profile == "$HOME/.zprofile" ]]; then
       if ! grep -q "/run/current-system/sw/bin" "$shell_profile" 2>/dev/null; then
         echo '' >>"$shell_profile"
         echo '# nix-darwin' >>"$shell_profile"
@@ -324,7 +324,7 @@ chmod +x "$HOME/.local/bin/darwin-update" "$HOME/.local/bin/darwin-info"
 # Add to PATH if not already there
 if ! echo "$PATH" | grep -q "$HOME/.local/bin"; then
   for shell_profile in "$HOME/.zprofile" "$HOME/.bash_profile" "$HOME/.profile"; do
-    if [[ -f "$shell_profile" ]] || [[ "$shell_profile" == "$HOME/.zprofile" ]]; then
+    if [[ -f $shell_profile ]] || [[ $shell_profile == "$HOME/.zprofile" ]]; then
       if ! grep -q "HOME/.local/bin" "$shell_profile" 2>/dev/null; then
         echo '' >>"$shell_profile"
         echo '# Local binaries' >>"$shell_profile"

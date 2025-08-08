@@ -19,122 +19,121 @@
     stateVersion = "25.05";
   };
 
-  # Let Home Manager manage itself
-  programs.home-manager.enable = true;
-
-  # Enhanced Git configuration for development
-  programs.git = {
-    enable = true;
-    userName = "Developer Name";
-    userEmail = "developer@example.com";
-
-    extraConfig = {
-      init.defaultBranch = "main";
-      pull.rebase = true;
-      push.autoSetupRemote = true;
-      core.editor = "code";
-      merge.tool = "code";
-      diff.tool = "code";
-
-      # Better diff and merge
-      diff.algorithm = "patience";
-      merge.conflictstyle = "diff3";
-
-      # Signing commits (uncomment and configure)
-      # commit.gpgsign = true;
-      # user.signingkey = "YOUR_GPG_KEY_ID";
-    };
-
-    aliases = {
-      st = "status";
-      co = "checkout";
-      br = "branch";
-      ci = "commit";
-      lg = "log --oneline --graph --decorate --all";
-      unstage = "reset HEAD --";
-      last = "log -1 HEAD";
-      visual = "!gitk";
-    };
-  };
-
-  # Advanced shell configuration for development
-  programs.bash = {
-    enable = true;
-
-    shellAliases = {
-      # Enhanced listing
-      ll = "eza -l --git";
-      la = "eza -la --git";
-      tree = "eza --tree --git-ignore";
-
-      # Navigation
-      ".." = "cd ..";
-      "..." = "cd ../..";
-      "...." = "cd ../../..";
-
-      # NixOS development
-      rebuild = "sudo nixos-rebuild switch --flake .";
-      rebuild-test = "sudo nixos-rebuild test --flake .";
-      update = "nix flake update";
-      develop = "nix develop";
-
-      # Development shortcuts
-      code = "code .";
-      serve = "python3 -m http.server 8000";
-      ports = "ss -tuln";
-
-      # Docker shortcuts (if docker is enabled)
-      dps = "docker ps";
-      di = "docker images";
-      dex = "docker exec -it";
-
-      # Git shortcuts
-      g = "git";
-      gs = "git status";
-      ga = "git add";
-      gc = "git commit";
-      gp = "git push";
-      gl = "git log --oneline -10";
-    };
-
-    bashrcExtra = ''
-      # Development-focused prompt with git info
-      parse_git_branch() {
-        git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
-      }
-      export PS1="\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\[\033[01;31m\]\$(parse_git_branch)\[\033[00m\]\$ "
-      
-      # History settings optimized for development
-      export HISTSIZE=50000
-      export HISTFILESIZE=100000
-      export HISTCONTROL=ignoredups:erasedups
-      shopt -s histappend
-      
-      # Development environment variables
-      export EDITOR="code"
-      export VISUAL="code"
-      
-      # Node.js settings
-      export NODE_OPTIONS="--max-old-space-size=8192"
-      
-      # Python settings
-      export PYTHONDONTWRITEBYTECODE=1
-      
-      # Go settings
-      export GOPATH="$HOME/go"
-      export PATH="$PATH:$GOPATH/bin"
-      
-      # Rust settings
-      export PATH="$PATH:$HOME/.cargo/bin"
-    '';
-
-    historyControl = [ "ignoredups" "erasedups" ];
-    historySize = 50000;
-    historyFileSize = 100000;
-  };
-
-  # Development-focused programs
+  # Programs configuration
   programs = {
+    # Let Home Manager manage itself
+    home-manager.enable = true;
+
+    # Enhanced Git configuration for development
+    git = {
+      enable = true;
+      userName = "Developer Name";
+      userEmail = "developer@example.com";
+
+      extraConfig = {
+        init.defaultBranch = "main";
+        pull.rebase = true;
+        push.autoSetupRemote = true;
+        core.editor = "code";
+        merge.tool = "code";
+        diff.tool = "code";
+
+        # Better diff and merge
+        diff.algorithm = "patience";
+        merge.conflictstyle = "diff3";
+
+        # Signing commits (uncomment and configure)
+        # commit.gpgsign = true;
+        # user.signingkey = "YOUR_GPG_KEY_ID";
+      };
+
+      aliases = {
+        st = "status";
+        co = "checkout";
+        br = "branch";
+        ci = "commit";
+        lg = "log --oneline --graph --decorate --all";
+        unstage = "reset HEAD --";
+        last = "log -1 HEAD";
+        visual = "!gitk";
+      };
+    };
+
+    # Advanced shell configuration for development
+    bash = {
+      enable = true;
+
+      shellAliases = {
+        # Enhanced listing
+        ll = "eza -l --git";
+        la = "eza -la --git";
+        tree = "eza --tree --git-ignore";
+
+        # Navigation
+        ".." = "cd ..";
+        "..." = "cd ../..";
+        "...." = "cd ../../..";
+
+        # NixOS development
+        rebuild = "sudo nixos-rebuild switch --flake .";
+        rebuild-test = "sudo nixos-rebuild test --flake .";
+        update = "nix flake update";
+        develop = "nix develop";
+
+        # Development shortcuts
+        code = "code .";
+        serve = "python3 -m http.server 8000";
+        ports = "ss -tuln";
+
+        # Docker shortcuts (if docker is enabled)
+        dps = "docker ps";
+        di = "docker images";
+        dex = "docker exec -it";
+
+        # Git shortcuts
+        g = "git";
+        gs = "git status";
+        ga = "git add";
+        gc = "git commit";
+        gp = "git push";
+        gl = "git log --oneline -10";
+      };
+
+      bashrcExtra = ''
+        # Development-focused prompt with git info
+        parse_git_branch() {
+          git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+        }
+        export PS1="\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\[\033[01;31m\]\$(parse_git_branch)\[\033[00m\]\$ "
+        
+        # History settings optimized for development
+        export HISTSIZE=50000
+        export HISTFILESIZE=100000
+        export HISTCONTROL=ignoredups:erasedups
+        shopt -s histappend
+        
+        # Development environment variables
+        export EDITOR="code"
+        export VISUAL="code"
+        
+        # Node.js settings
+        export NODE_OPTIONS="--max-old-space-size=8192"
+        
+        # Python settings
+        export PYTHONDONTWRITEBYTECODE=1
+        
+        # Go settings
+        export GOPATH="$HOME/go"
+        export PATH="$PATH:$GOPATH/bin"
+        
+        # Rust settings
+        export PATH="$PATH:$HOME/.cargo/bin"
+      '';
+
+      historyControl = [ "ignoredups" "erasedups" ];
+      historySize = 50000;
+      historyFileSize = 100000;
+    };
     # Enhanced command line tools
     eza = {
       enable = true;

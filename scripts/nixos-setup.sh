@@ -170,17 +170,17 @@ prompt_input() {
 # Placeholder validation functions (can be overridden)
 validate_hostname() {
   # Basic hostname validation
-  [[ "$1" =~ ^[a-zA-Z0-9-]+$ ]] && [[ ${#1} -le 63 ]]
+  [[ $1 =~ ^[a-zA-Z0-9-]+$ ]] && [[ ${#1} -le 63 ]]
 }
 
 validate_username() {
   # Basic username validation
-  [[ "$1" =~ ^[a-z][a-z0-9_-]{0,31}$ ]]
+  [[ $1 =~ ^[a-z][a-z0-9_-]{0,31}$ ]]
 }
 
 validate_timezone() {
   # Accept common timezone format
-  [[ "$1" =~ ^[A-Za-z_/+-]+$ ]]
+  [[ $1 =~ ^[A-Za-z_/+-]+$ ]]
 }
 
 prompt_password() {
@@ -260,15 +260,15 @@ prompt_yes_no() {
     fi
 
     case "$choice" in
-      y | yes)
-        echo "yes"
-        return 0
-        ;;
-      n | no)
-        echo "no"
-        return 0
-        ;;
-      *) print_error "Please answer yes (y) or no (n)" ;;
+    y | yes)
+      echo "yes"
+      return 0
+      ;;
+    n | no)
+      echo "no"
+      return 0
+      ;;
+    *) print_error "Please answer yes (y) or no (n)" ;;
     esac
   done
 }
@@ -412,9 +412,9 @@ detect_hardware() {
   local cpu_arch
   cpu_arch=$(uname -m)
   case "$cpu_arch" in
-    x86_64) print_success "Architecture: x86_64 (64-bit)" ;;
-    aarch64) print_success "Architecture: ARM64" ;;
-    *) print_warning "Unsupported architecture: $cpu_arch" ;;
+  x86_64) print_success "Architecture: x86_64 (64-bit)" ;;
+  aarch64) print_success "Architecture: ARM64" ;;
+  *) print_warning "Unsupported architecture: $cpu_arch" ;;
   esac
 
   # Detect available memory
@@ -570,13 +570,13 @@ generate_configuration() {
   # Determine base template
   local base_template="example-desktop"
   case "$VM_TYPE" in
-    qemu | kvm) base_template="qemu-vm" ;;
-    virtualbox) base_template="virtualbox-vm" ;;
-    *)
-      if [ "$DESKTOP_ENVIRONMENT" = "None (Server)" ]; then
-        base_template="example-server"
-      fi
-      ;;
+  qemu | kvm) base_template="qemu-vm" ;;
+  virtualbox) base_template="virtualbox-vm" ;;
+  *)
+    if [ "$DESKTOP_ENVIRONMENT" = "None (Server)" ]; then
+      base_template="example-server"
+    fi
+    ;;
   esac
 
   print_progress "Using base template: $base_template"
@@ -800,12 +800,12 @@ generate_home_config() {
   # Map user template to actual template file
   local template_file
   case "$USER_TEMPLATE" in
-    "Basic user") template_file="user.nix" ;;
-    "Developer") template_file="developer.nix" ;;
-    "Gamer") template_file="gamer.nix" ;;
-    "Minimal") template_file="minimal.nix" ;;
-    "Server admin") template_file="server.nix" ;;
-    *) template_file="user.nix" ;;
+  "Basic user") template_file="user.nix" ;;
+  "Developer") template_file="developer.nix" ;;
+  "Gamer") template_file="gamer.nix" ;;
+  "Minimal") template_file="minimal.nix" ;;
+  "Server admin") template_file="server.nix" ;;
+  *) template_file="user.nix" ;;
   esac
 
   if [ -f "$TEMPLATE_ROOT/home/users/$template_file" ]; then
@@ -1011,28 +1011,28 @@ deploy_system() {
   deploy_choice=$(prompt_choice "Choose deployment method:" "Switch (activate immediately)" "Boot (activate on next boot)" "Cancel")
 
   case "$deploy_choice" in
-    "Switch (activate immediately)")
-      print_progress "Switching to new configuration"
-      if sudo nixos-rebuild switch --flake "$TEMPLATE_ROOT#$HOSTNAME"; then
-        print_success "System successfully switched to new configuration"
-      else
-        print_error "Failed to switch to new configuration"
-        return 1
-      fi
-      ;;
-    "Boot (activate on next boot)")
-      print_progress "Setting up configuration for next boot"
-      if sudo nixos-rebuild boot --flake "$TEMPLATE_ROOT#$HOSTNAME"; then
-        print_success "Configuration will be active on next boot"
-      else
-        print_error "Failed to set boot configuration"
-        return 1
-      fi
-      ;;
-    "Cancel")
-      print_info "Deployment cancelled"
+  "Switch (activate immediately)")
+    print_progress "Switching to new configuration"
+    if sudo nixos-rebuild switch --flake "$TEMPLATE_ROOT#$HOSTNAME"; then
+      print_success "System successfully switched to new configuration"
+    else
+      print_error "Failed to switch to new configuration"
       return 1
-      ;;
+    fi
+    ;;
+  "Boot (activate on next boot)")
+    print_progress "Setting up configuration for next boot"
+    if sudo nixos-rebuild boot --flake "$TEMPLATE_ROOT#$HOSTNAME"; then
+      print_success "Configuration will be active on next boot"
+    else
+      print_error "Failed to set boot configuration"
+      return 1
+    fi
+    ;;
+  "Cancel")
+    print_info "Deployment cancelled"
+    return 1
+    ;;
   esac
 
   return 0

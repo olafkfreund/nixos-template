@@ -16,23 +16,26 @@ in
 
   config = lib.mkIf isVmGuest {
 
-    # VM-optimized hardware settings
-    modules.hardware.power-management = lib.mkDefault {
-      enable = true;
-      profile = "vm";
-      # VMs don't need aggressive power management
-      cpuGovernor = "ondemand";
-      enableThermalManagement = false;
-    };
+    # VM-specific module configuration
+    modules = {
+      # VM-optimized hardware settings
+      hardware.power-management = lib.mkDefault {
+        enable = true;
+        profile = "vm";
+        # VMs don't need aggressive power management
+        cpuGovernor = "ondemand";
+        enableThermalManagement = false;
+      };
 
-    # Lightweight desktop for VMs
-    modules.desktop = lib.mkDefault {
-      audio.enable = true;
-      gnome.enable = true;
-    };
+      # Lightweight desktop for VMs
+      desktop = lib.mkDefault {
+        audio.enable = true;
+        gnome.enable = true;
+      };
 
-    # VM guest optimizations
-    modules.virtualization.vm-guest.enable = lib.mkDefault true;
+      # VM guest optimizations
+      virtualization.vm-guest.enable = lib.mkDefault true;
+    };
 
     # VM-optimized services (preset configuration)
     services = {

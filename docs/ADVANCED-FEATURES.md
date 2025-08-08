@@ -334,13 +334,13 @@ The system automatically detects and applies performance profiles:
 
 ### Resource Constrained
 
-- **Criteria**: <4GB RAM or slow storage
+- **Criteria**: \<4GB RAM or slow storage
 - **Optimizations**: Conservative settings, reduced services
 - **Use Cases**: VMs, embedded systems, older hardware
 
 ### Minimal
 
-- **Criteria**: <2GB RAM
+- **Criteria**: \<2GB RAM
 - **Optimizations**: Aggressive memory management, minimal services
 - **Use Cases**: Containers, IoT devices
 
@@ -426,36 +426,36 @@ modules = {
 ### From Basic Template
 
 1. Update your flake inputs to include sops-nix
-2. Import new modules in your configuration
-3. Enable desired features gradually
-4. Test in VM before deploying to production
+1. Import new modules in your configuration
+1. Enable desired features gradually
+1. Test in VM before deploying to production
 
 ### From Existing NixOS
 
 1. Backup current configuration
-2. Import template modules
-3. Migrate existing settings to new module structure
-4. Test thoroughly in development environment
-5. Deploy with rollback capability
+1. Import template modules
+1. Migrate existing settings to new module structure
+1. Test thoroughly in development environment
+1. Deploy with rollback capability
 
 ## Contributing
 
 When adding new features:
 
 1. Follow the module template pattern
-2. Include comprehensive validation
-3. Add appropriate tests
-4. Document configuration options
-5. Update this documentation
+1. Include comprehensive validation
+1. Add appropriate tests
+1. Document configuration options
+1. Update this documentation
 
 ## Support
 
 For issues and questions:
 
 1. Check the troubleshooting section
-2. Review module documentation
-3. Test in isolated VM environment
-4. Create detailed issue reports with system information
+1. Review module documentation
+1. Test in isolated VM environment
+1. Create detailed issue reports with system information
 
 ---
 

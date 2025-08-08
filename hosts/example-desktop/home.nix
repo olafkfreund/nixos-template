@@ -25,47 +25,47 @@
     stateVersion = "25.05";
   };
 
-  # Let Home Manager manage itself
-  programs.home-manager.enable = true;
-
-  # Git configuration
-  programs.git = {
-    enable = true;
-    userName = "Your Name";
-    userEmail = "your.email@example.com";
-
-    extraConfig = {
-      init.defaultBranch = "main";
-      pull.rebase = true;
-      push.autoSetupRemote = true;
-    };
-  };
-
-  # Shell configuration
-  programs.bash = {
-    enable = true;
-
-    shellAliases = {
-      ll = "ls -alF";
-      la = "ls -A";
-      l = "ls -CF";
-      ".." = "cd ..";
-      "..." = "cd ../..";
-
-      # NixOS specific aliases
-      rebuild = "sudo nixos-rebuild switch --flake ~/nixos-config";
-      rebuild-test = "sudo nixos-rebuild test --flake ~/nixos-config";
-      update = "nix flake update ~/nixos-config";
-    };
-
-    bashrcExtra = ''
-      # Custom prompt
-      export PS1="\[\e[32m\]\u@\h\[\e[m\]:\[\e[34m\]\w\[\e[m\]\$ "
-    '';
-  };
-
-  # Terminal applications
+  # Programs configuration
   programs = {
+    # Let Home Manager manage itself
+    home-manager.enable = true;
+
+    # Git configuration
+    git = {
+      enable = true;
+      userName = "Your Name";
+      userEmail = "your.email@example.com";
+
+      extraConfig = {
+        init.defaultBranch = "main";
+        pull.rebase = true;
+        push.autoSetupRemote = true;
+      };
+    };
+
+    # Shell configuration
+    bash = {
+      enable = true;
+
+      shellAliases = {
+        ll = "ls -alF";
+        la = "ls -A";
+        l = "ls -CF";
+        ".." = "cd ..";
+        "..." = "cd ../..";
+
+        # NixOS specific aliases
+        rebuild = "sudo nixos-rebuild switch --flake ~/nixos-config";
+        rebuild-test = "sudo nixos-rebuild test --flake ~/nixos-config";
+        update = "nix flake update ~/nixos-config";
+      };
+
+      bashrcExtra = ''
+        # Custom prompt
+        export PS1="\[\e[32m\]\u@\h\[\e[m\]:\[\e[34m\]\w\[\e[m\]\$ "
+      '';
+    };
+
     # Better ls
     eza = {
       enable = true;

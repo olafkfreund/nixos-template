@@ -67,35 +67,35 @@ UPDATE=""
 
 while [[ $# -gt 0 ]]; do
   case $1 in
-    -h | --help)
-      usage
-      exit 0
-      ;;
-    -H | --host)
-      HOSTNAME="$2"
-      shift 2
-      ;;
-    -v | --verbose)
-      VERBOSE="--verbose"
-      shift
-      ;;
-    --no-check)
-      NO_CHECK="1"
-      shift
-      ;;
-    --update)
-      UPDATE="1"
-      shift
-      ;;
-    switch | test | boot | build | dry-run)
-      COMMAND="$1"
-      shift
-      ;;
-    *)
-      error "Unknown option: $1"
-      usage
-      exit 1
-      ;;
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  -H | --host)
+    HOSTNAME="$2"
+    shift 2
+    ;;
+  -v | --verbose)
+    VERBOSE="--verbose"
+    shift
+    ;;
+  --no-check)
+    NO_CHECK="1"
+    shift
+    ;;
+  --update)
+    UPDATE="1"
+    shift
+    ;;
+  switch | test | boot | build | dry-run)
+    COMMAND="$1"
+    shift
+    ;;
+  *)
+    error "Unknown option: $1"
+    usage
+    exit 1
+    ;;
   esac
 done
 
@@ -127,21 +127,21 @@ log "Building configuration for host: $HOSTNAME"
 log "Command: $COMMAND"
 
 case $COMMAND in
-  switch)
-    sudo nixos-rebuild switch --flake ".#$HOSTNAME" $VERBOSE
-    ;;
-  test)
-    sudo nixos-rebuild test --flake ".#$HOSTNAME" $VERBOSE
-    ;;
-  boot)
-    sudo nixos-rebuild boot --flake ".#$HOSTNAME" $VERBOSE
-    ;;
-  build)
-    sudo nixos-rebuild build --flake ".#$HOSTNAME" $VERBOSE
-    ;;
-  dry-run)
-    nixos-rebuild dry-run --flake ".#$HOSTNAME" $VERBOSE
-    ;;
+switch)
+  sudo nixos-rebuild switch --flake ".#$HOSTNAME" $VERBOSE
+  ;;
+test)
+  sudo nixos-rebuild test --flake ".#$HOSTNAME" $VERBOSE
+  ;;
+boot)
+  sudo nixos-rebuild boot --flake ".#$HOSTNAME" $VERBOSE
+  ;;
+build)
+  sudo nixos-rebuild build --flake ".#$HOSTNAME" $VERBOSE
+  ;;
+dry-run)
+  nixos-rebuild dry-run --flake ".#$HOSTNAME" $VERBOSE
+  ;;
 esac
 
 success "Configuration $COMMAND completed successfully!"

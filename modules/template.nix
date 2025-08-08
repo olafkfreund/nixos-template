@@ -235,7 +235,7 @@ in
       users = {
         users.${cfg.user} = {
           description = "Template service user";
-          group = cfg.group;
+          inherit (cfg) group;
           isSystemUser = true;
           home = "/var/lib/${cfg.user}";
           createHome = true;

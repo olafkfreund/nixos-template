@@ -5,13 +5,13 @@ This comprehensive guide covers using nix-darwin for native macOS system managem
 ## Table of Contents
 
 1. [Overview](#overview)
-2. [Installation](#installation)
-3. [Configurations](#configurations)
-4. [Usage](#usage)
-5. [Customization](#customization)
-6. [Management](#management)
-7. [Troubleshooting](#troubleshooting)
-8. [Advanced Usage](#advanced-usage)
+1. [Installation](#installation)
+1. [Configurations](#configurations)
+1. [Usage](#usage)
+1. [Customization](#customization)
+1. [Management](#management)
+1. [Troubleshooting](#troubleshooting)
+1. [Advanced Usage](#advanced-usage)
 
 ## Overview
 
@@ -79,9 +79,9 @@ cd nixos-template
 The installer will:
 
 1. Detect your Mac's architecture (Apple Silicon/Intel)
-2. Let you choose a configuration (Desktop/Laptop/Server)
-3. Install nix-darwin with the selected configuration
-4. Set up shell integration and management tools
+1. Let you choose a configuration (Desktop/Laptop/Server)
+1. Install nix-darwin with the selected configuration
+1. Set up shell integration and management tools
 
 ### Manual Installation
 
@@ -94,7 +94,7 @@ For more control over the installation process:
    cd ~/.config/nix-darwin
    ```
 
-2. **Install nix-darwin:**
+1. **Install nix-darwin:**
 
    ```bash
    # For Apple Silicon Macs
@@ -104,7 +104,8 @@ For more control over the installation process:
    nix run nix-darwin -- switch --flake .#darwin-desktop-intel
    ```
 
-3. **Set up shell integration:**
+1. **Set up shell integration:**
+
    ```bash
    echo 'if [ -e /run/current-system/sw/bin ]; then' >> ~/.zprofile
    echo '  export PATH="/run/current-system/sw/bin:$PATH"' >> ~/.zprofile

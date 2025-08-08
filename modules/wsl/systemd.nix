@@ -230,11 +230,11 @@ in
             '';
           };
         };
-      })
+      }
 
       # User services for WSL2  
       (mkIf cfg.userServices {
-        user.services = {
+        systemd.user.services = {
           # User WSL environment
           "wsl-user-env" = {
             description = "WSL2 User Environment";
@@ -281,10 +281,11 @@ in
               echo "$(date): Development services ready" > "$HOME/.local/share/wsl/dev-services-status"
             '';
           };
-        })
-        ];
+        };
+      })
 
-        # WSL2 systemd management scripts
+      # WSL2 systemd management scripts  
+      {
         environment.etc."wsl-scripts/systemd-status.sh" = {
           text = ''
             #!/bin/bash
@@ -385,5 +386,7 @@ in
         # Enable systemd in WSL2 (this is typically handled by NixOS-WSL)
         boot.initrd.systemd.enable = true;
         systemd.enableEmergencyMode = false; # Disable emergency mode in WSL2
-      };
       }
+    ];
+  };
+}

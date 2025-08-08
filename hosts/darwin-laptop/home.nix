@@ -13,7 +13,7 @@
       # User information
       home.username = "admin";
       home.homeDirectory = lib.mkDefault "/Users/admin";
-      home.stateVersion = "24.11";
+      home.stateVersion = "25.05";
 
       # Laptop-optimized packages (minimal for battery life)
       home.packages = with pkgs; [

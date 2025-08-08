@@ -5,16 +5,16 @@ This comprehensive guide covers running and testing NixOS configurations on macO
 ## Table of Contents
 
 1. [Overview](#overview)
-2. [Prerequisites](#prerequisites)
-3. [Quick Start](#quick-start)
-4. [Virtual Machine Configurations](#virtual-machine-configurations)
-5. [ISO Installers](#iso-installers)
-6. [UTM Setup Guide](#utm-setup-guide)
-7. [Performance Optimization](#performance-optimization)
-8. [Architecture Considerations](#architecture-considerations)
-9. [Development Workflow](#development-workflow)
-10. [Troubleshooting](#troubleshooting)
-11. [Advanced Usage](#advanced-usage)
+1. [Prerequisites](#prerequisites)
+1. [Quick Start](#quick-start)
+1. [Virtual Machine Configurations](#virtual-machine-configurations)
+1. [ISO Installers](#iso-installers)
+1. [UTM Setup Guide](#utm-setup-guide)
+1. [Performance Optimization](#performance-optimization)
+1. [Architecture Considerations](#architecture-considerations)
+1. [Development Workflow](#development-workflow)
+1. [Troubleshooting](#troubleshooting)
+1. [Advanced Usage](#advanced-usage)
 
 ## Overview
 
@@ -82,11 +82,12 @@ This template provides comprehensive macOS support including:
    curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
    ```
 
-2. **Install UTM** (recommended):
+1. **Install UTM** (recommended):
    - From Mac App Store: Search "UTM"
    - From GitHub: Download from https://github.com/utmapp/UTM/releases
 
-3. **Enable Nix Flakes** (if not enabled):
+1. **Enable Nix Flakes** (if not enabled):
+
    ```bash
    echo 'experimental-features = nix-command flakes' >> ~/.config/nix/nix.conf
    ```
@@ -407,9 +408,9 @@ just build-macos-vm desktop
 **Usage**:
 
 1. Build the ISO: `just build-macos-iso desktop`
-2. Import into UTM as CD/DVD
-3. Create new VM with appropriate settings
-4. Boot from ISO and follow installer
+1. Import into UTM as CD/DVD
+1. Create new VM with appropriate settings
+1. Boot from ISO and follow installer
 
 **Installation Scripts**:
 
@@ -432,9 +433,9 @@ just build-macos-vm desktop
 **Usage**:
 
 1. Build the ISO: `just build-macos-iso minimal`
-2. Boot in UTM with minimal resources
-3. SSH access: `ssh nixos@<vm-ip>`
-4. Use installation scripts or manual process
+1. Boot in UTM with minimal resources
+1. SSH access: `ssh nixos@<vm-ip>`
+1. Use installation scripts or manual process
 
 **Installation Scripts**:
 
@@ -450,15 +451,15 @@ just build-macos-vm desktop
    - Mac App Store (easiest)
    - GitHub releases (latest features)
 
-2. **Create New VM**:
+1. **Create New VM**:
    - Click "Create a New Virtual Machine"
    - Choose "Virtualize" (Apple Silicon) or "Emulate" (Intel/compatibility)
 
-3. **Operating System**:
+1. **Operating System**:
    - Select "Linux"
    - Choose architecture: ARM64 (M1/M2/M3) or x86_64 (Intel)
 
-4. **Configuration**:
+1. **Configuration**:
 
    ```
    Architecture: ARM64 (Apple Silicon) or x86_64 (Intel)
@@ -467,7 +468,7 @@ just build-macos-vm desktop
    Storage:     20 GB+ (varies by use case)
    ```
 
-5. **Boot Configuration**:
+1. **Boot Configuration**:
    - Enable UEFI Boot
    - Add CD/DVD drive for ISOs
    - Network: Shared Network (NAT)
@@ -480,11 +481,11 @@ just build-macos-vm desktop
    just build-macos-vm desktop
    ```
 
-2. **Extract QEMU command**:
+1. **Extract QEMU command**:
    - The built VM includes a run script
    - Copy QEMU parameters for UTM
 
-3. **Create UTM VM**:
+1. **Create UTM VM**:
    - Use "Custom" configuration
    - Apply extracted parameters
    - Import disk image
@@ -626,7 +627,7 @@ This template supports both architectures with:
    ./result/bin/run-desktop-macos-vm
    ```
 
-2. **Iterate on Configurations**:
+1. **Iterate on Configurations**:
 
    ```bash
    # Edit configurations
@@ -636,14 +637,14 @@ This template supports both architectures with:
    just build-macos-vm desktop
    ```
 
-3. **Create Custom ISOs**:
+1. **Create Custom ISOs**:
 
    ```bash
    # Build installer with your configs
    just build-macos-iso desktop
    ```
 
-4. **Deploy to Real Hardware**:
+1. **Deploy to Real Hardware**:
    - Use ISOs to install on physical machines
    - Apply tested configurations
    - Minimal migration needed
@@ -769,13 +770,13 @@ nix show-config
    cp -r hosts/macos-vms/desktop-macos hosts/my-custom-vm
    ```
 
-2. Customize configuration:
+1. Customize configuration:
 
    ```bash
    vim hosts/my-custom-vm/configuration.nix
    ```
 
-3. Add to flake.nix:
+1. Add to flake.nix:
 
    ```nix
    my-custom-vm = mkSystem {
@@ -785,7 +786,8 @@ nix show-config
    };
    ```
 
-4. Build and test:
+1. Build and test:
+
    ```bash
    nix build .#nixosConfigurations.my-custom-vm.config.system.build.vm
    ```
@@ -817,8 +819,8 @@ ssh nixos@192.168.64.xxx
 **VS Code Remote Development**:
 
 1. Install "Remote - SSH" extension
-2. Connect to VM via SSH
-3. Develop directly in VM environment
+1. Connect to VM via SSH
+1. Develop directly in VM environment
 
 ### Container Development
 
@@ -842,7 +844,7 @@ podman-compose up
 **UTM Shared Folders**:
 
 1. Enable in UTM VM settings
-2. Mount in NixOS:
+1. Mount in NixOS:
    ```nix
    fileSystems."/mnt/shared" = {
      device = "share";

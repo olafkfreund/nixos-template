@@ -1221,11 +1221,11 @@ The development environment provides:
 ### Development Workflow
 
 1. **Setup**: `nix develop` to enter the environment
-2. **Code**: Edit configurations with full LSP support
-3. **Format**: `just fmt` runs treefmt on all code
-4. **Commit**: Pre-commit hooks ensure code quality
-5. **Deploy**: `nh os switch .` for enhanced rebuilds
-6. **Test**: `just test` validates without switching
+1. **Code**: Edit configurations with full LSP support
+1. **Format**: `just fmt` runs treefmt on all code
+1. **Commit**: Pre-commit hooks ensure code quality
+1. **Deploy**: `nh os switch .` for enhanced rebuilds
+1. **Test**: `just test` validates without switching
 
 ## Best Practices
 
