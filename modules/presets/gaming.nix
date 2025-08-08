@@ -108,7 +108,7 @@ in
       # Gaming-optimized kernel parameters
       kernel.sysctl = {
         # Minimize swap usage for better gaming performance
-        "vm.swappiness" = 1;
+        "vm.swappiness" = lib.mkForce 1;
         # Increase maximum memory map areas for games
         "vm.max_map_count" = 2147483642;
       };
