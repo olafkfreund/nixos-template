@@ -79,7 +79,7 @@ in
   # Module metadata
   meta = {
     maintainers = with lib.maintainers; [ ]; # Add maintainers here
-    doc = ./template.md; # Documentation file
+    # doc = ./template.md; # Documentation file - commented to avoid missing file error
   };
   
   options.modules.template = {

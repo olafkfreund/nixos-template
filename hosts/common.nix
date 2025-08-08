@@ -4,6 +4,8 @@
   imports = [
     # Core modules
     ../modules/core
+    ../modules/hardware
+    ../modules/services
 
     # Core system packages (essential tools for all hosts)
     ../modules/packages/core-system.nix

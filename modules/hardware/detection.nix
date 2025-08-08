@@ -13,13 +13,13 @@ let
     let
       # Check for common virtualization indicators
       hasQemuDmi = builtins.pathExists "/sys/class/dmi/id/product_name" &&
-        lib.hasInfix "QEMU" (builtins.readFile "/sys/class/dmi/id/product_name" or "");
+        lib.hasInfix "QEMU" ((builtins.readFile "/sys/class/dmi/id/product_name") or "");
       hasVMwareeDmi = builtins.pathExists "/sys/class/dmi/id/sys_vendor" &&
-        lib.hasInfix "VMware" (builtins.readFile "/sys/class/dmi/id/sys_vendor" or "");
+        lib.hasInfix "VMware" ((builtins.readFile "/sys/class/dmi/id/sys_vendor") or "");
       hasVirtualBoxDmi = builtins.pathExists "/sys/class/dmi/id/product_name" &&
-        lib.hasInfix "VirtualBox" (builtins.readFile "/sys/class/dmi/id/product_name" or "");
+        lib.hasInfix "VirtualBox" ((builtins.readFile "/sys/class/dmi/id/product_name") or "");
       hasHyperVDmi = builtins.pathExists "/sys/class/dmi/id/sys_vendor" &&
-        lib.hasInfix "Microsoft Corporation" (builtins.readFile "/sys/class/dmi/id/sys_vendor" or "");
+        lib.hasInfix "Microsoft Corporation" ((builtins.readFile "/sys/class/dmi/id/sys_vendor") or "");
       hasWSLInterop = builtins.pathExists "/proc/sys/fs/binfmt_misc/WSLInterop";
       hasDockerEnv = builtins.pathExists "/.dockerenv";
       hasContainerEnv = builtins.getEnv "container" != "";
@@ -46,7 +46,7 @@ let
       # CPU vendor detection
       isIntel = lib.hasInfix "GenuineIntel" cpuinfo;
       isAMD = lib.hasInfix "AuthenticAMD" cpuinfo;
-      isARM = lib.hasInfix "ARM" cpuinfo || builtins.currentSystem == "aarch64-linux";
+      isARM = lib.hasInfix "ARM" cpuinfo || pkgs.stdenv.hostPlatform.isAarch64;
       
       # CPU features detection
       hasAVX = lib.hasInfix " avx " cpuinfo;
@@ -69,7 +69,7 @@ let
                       (lib.splitString "\n" cpuinfo);
           firstModelLine = if modelLines != [] then builtins.head modelLines else "";
           modelMatch = builtins.match "model name[[:space:]]*:[[:space:]]*(.*)" firstModelLine;
-        in if modelMatch != null then builtins.head modelMatch else "Unknown";
+        in if modelMatch != null then builtins.head modelMatch else "Unknown CPU";
     in {
       vendor = if isIntel then "intel" 
                else if isAMD then "amd" 
@@ -112,14 +112,14 @@ let
       # Detect if we're on SSD or HDD
       hasNVMe = builtins.pathExists "/sys/block" && 
                 builtins.any (dev: lib.hasPrefix "nvme" dev) 
-                (builtins.attrNames (builtins.readDir "/sys/block" or {}));
+                (builtins.attrNames ((builtins.readDir "/sys/block") or {}));
       
       hasSSD = builtins.pathExists "/sys/block" &&
                builtins.any (dev: 
                  let rotationalFile = "/sys/block/${dev}/queue/rotational";
                  in builtins.pathExists rotationalFile &&
                     builtins.readFile rotationalFile == "0\n"
-               ) (builtins.attrNames (builtins.readDir "/sys/block" or {}));
+               ) (builtins.attrNames ((builtins.readDir "/sys/block") or {}));
     in {
       hasNVMe = hasNVMe;
       hasSSD = hasSSD || hasNVMe; # NVMe is always SSD
@@ -134,10 +134,10 @@ let
       hasNvidiaDevice = builtins.pathExists "/proc/driver/nvidia";
       hasAMDDevice = builtins.pathExists "/sys/class/drm" &&
                      builtins.any (dev: lib.hasInfix "amd" dev)
-                     (builtins.attrNames (builtins.readDir "/sys/class/drm" or {}));
+                     (builtins.attrNames ((builtins.readDir "/sys/class/drm") or {}));
       hasIntelDevice = builtins.pathExists "/sys/class/drm" &&
                        builtins.any (dev: lib.hasInfix "intel" dev)
-                       (builtins.attrNames (builtins.readDir "/sys/class/drm" or {}));
+                       (builtins.attrNames ((builtins.readDir "/sys/class/drm") or {}));
     in {
       hasNvidia = hasNvidiaDevice;
       hasAMD = hasAMDDevice;
@@ -242,36 +242,176 @@ in
 
       # Hardware detection service for runtime reporting
       systemd.services.hardware-detection = mkIf cfg.reporting.enable {
-        description = "Hardware Detection and Reporting";
+        description = "Hardware Detection and Reporting Service";
         wantedBy = [ "multi-user.target" ];
         after = [ "basic.target" ];
         
         serviceConfig = {
           Type = "oneshot";
           RemainAfterExit = true;
-          ExecStart = pkgs.writeShellScript "hardware-detection" ''
-            echo "=== Hardware Detection Report ===" | systemd-cat -t hardware-detection -p info
-            echo "CPU: ${hardwareProfile.cpu.vendor} ${hardwareProfile.cpu.model} (${toString hardwareProfile.cpu.cores} cores)" | systemd-cat -t hardware-detection -p info
-            echo "Memory: ${toString hardwareProfile.memory.totalGB}GB (${hardwareProfile.memory.class})" | systemd-cat -t hardware-detection -p info
-            echo "Storage: ${hardwareProfile.storage.primaryType}" | systemd-cat -t hardware-detection -p info
-            echo "Virtualization: ${hardwareProfile.virtualization.virtualization}" | systemd-cat -t hardware-detection -p info
-            echo "Performance Profile: ${cfg.profile or performanceProfile}" | systemd-cat -t hardware-detection -p info
-            
-            ${optionalString (cfg.reporting.logLevel == "debug") ''
-            echo "=== Debug Information ===" | systemd-cat -t hardware-detection -p debug
-            echo "CPU Features: AVX=${toString hardwareProfile.cpu.features.hasAVX} AVX2=${toString hardwareProfile.cpu.features.hasAVX2} AES=${toString hardwareProfile.cpu.features.hasAES}" | systemd-cat -t hardware-detection -p debug
-            echo "GPU: NVIDIA=${toString hardwareProfile.gpu.hasNvidia} AMD=${toString hardwareProfile.gpu.hasAMD} Intel=${toString hardwareProfile.gpu.hasIntel}" | systemd-cat -t hardware-detection -p debug
-            echo "Storage: NVMe=${toString hardwareProfile.storage.hasNVMe} SSD=${toString hardwareProfile.storage.hasSSD}" | systemd-cat -t hardware-detection -p debug
-            ''}
-          '';
+          ExecStart = let 
+            # Build safe hardware detection script
+            detectionScript = pkgs.writeShellScript "hardware-detection" ''
+              set -euo pipefail
+              
+              # Safe logging function
+              log_info() {
+                echo "$1" | ${pkgs.systemd}/bin/systemd-cat -t hardware-detection -p info
+              }
+              
+              log_debug() {
+                echo "$1" | ${pkgs.systemd}/bin/systemd-cat -t hardware-detection -p debug
+              }
+              
+              # Header
+              log_info "=== NixOS Hardware Detection Report ==="
+              
+              # CPU Information
+              if [[ -r /proc/cpuinfo ]]; then
+                CPU_VENDOR=$(grep -m1 "vendor_id" /proc/cpuinfo | cut -d: -f2 | xargs || echo "unknown")
+                CPU_MODEL=$(grep -m1 "model name" /proc/cpuinfo | cut -d: -f2 | xargs || echo "Unknown CPU")
+                CPU_CORES=$(nproc || echo "1")
+                log_info "CPU: $CPU_VENDOR $CPU_MODEL ($CPU_CORES cores)"
+              else
+                log_info "CPU: Information unavailable"
+              fi
+              
+              # Memory Information
+              if [[ -r /proc/meminfo ]]; then
+                MEMORY_KB=$(grep "MemTotal" /proc/meminfo | awk '{print $2}' || echo "0")
+                MEMORY_GB=$(( MEMORY_KB / 1024 / 1024 ))
+                if (( MEMORY_GB >= 32 )); then
+                  MEMORY_CLASS="high"
+                elif (( MEMORY_GB >= 8 )); then
+                  MEMORY_CLASS="medium"
+                elif (( MEMORY_GB >= 4 )); then
+                  MEMORY_CLASS="low"
+                else
+                  MEMORY_CLASS="minimal"
+                fi
+                log_info "Memory: ''${MEMORY_GB}GB ($MEMORY_CLASS)"
+              else
+                log_info "Memory: Information unavailable"
+              fi
+              
+              # Storage Information
+              if [[ -d /sys/block ]]; then
+                if ls /sys/block/nvme* >/dev/null 2>&1; then
+                  STORAGE_TYPE="nvme"
+                elif ls /sys/block/sd* >/dev/null 2>&1; then
+                  # Check if any SSD
+                  STORAGE_TYPE="hdd"
+                  for dev in /sys/block/sd*; do
+                    if [[ -r "$dev/queue/rotational" ]] && [[ $(cat "$dev/queue/rotational" 2>/dev/null) == "0" ]]; then
+                      STORAGE_TYPE="ssd"
+                      break
+                    fi
+                  done
+                else
+                  STORAGE_TYPE="unknown"
+                fi
+                log_info "Storage: $STORAGE_TYPE"
+              else
+                log_info "Storage: Information unavailable"
+              fi
+              
+              # Virtualization Detection
+              VIRT_TYPE="bare-metal"
+              if [[ -r /sys/class/dmi/id/product_name ]]; then
+                PRODUCT_NAME=$(cat /sys/class/dmi/id/product_name 2>/dev/null || echo "")
+                case "$PRODUCT_NAME" in
+                  *QEMU*) VIRT_TYPE="qemu" ;;
+                  *VirtualBox*) VIRT_TYPE="virtualbox" ;;
+                  *VMware*) VIRT_TYPE="vmware" ;;
+                esac
+              fi
+              
+              if [[ -r /proc/sys/fs/binfmt_misc/WSLInterop ]]; then
+                VIRT_TYPE="wsl"
+              elif [[ -f /.dockerenv ]] || [[ -n "''${container:-}" ]]; then
+                VIRT_TYPE="container"
+              fi
+              
+              log_info "Virtualization: $VIRT_TYPE"
+              
+              # Performance Profile (determined by script)
+              if [[ "$MEMORY_CLASS" == "high" && "$CPU_CORES" -ge 8 && "$STORAGE_TYPE" == "nvme" ]]; then
+                PROFILE="high-performance"
+              elif [[ "$MEMORY_CLASS" == "medium" && "$CPU_CORES" -ge 4 && ("$STORAGE_TYPE" == "ssd" || "$STORAGE_TYPE" == "nvme") ]]; then
+                PROFILE="balanced"
+              elif [[ "$MEMORY_CLASS" == "low" ]]; then
+                PROFILE="resource-constrained"
+              else
+                PROFILE="minimal"
+              fi
+              
+              log_info "Performance Profile: $PROFILE"
+              
+              ${optionalString (cfg.reporting.logLevel == "debug") ''
+              # Debug Information
+              log_debug "=== Debug Information ==="
+              
+              # CPU Features
+              if [[ -r /proc/cpuinfo ]]; then
+                CPU_FLAGS=$(grep -m1 "^flags" /proc/cpuinfo | cut -d: -f2 || echo "")
+                AVX=$(echo "$CPU_FLAGS" | grep -o "avx" | head -1 || echo "false")
+                AVX2=$(echo "$CPU_FLAGS" | grep -o "avx2" | head -1 || echo "false")
+                AES=$(echo "$CPU_FLAGS" | grep -o "aes" | head -1 || echo "false")
+                log_debug "CPU Features: AVX=$([[ -n $AVX ]] && echo true || echo false) AVX2=$([[ -n $AVX2 ]] && echo true || echo false) AES=$([[ -n $AES ]] && echo true || echo false)"
+              fi
+              
+              # GPU Detection
+              GPU_NVIDIA="false"
+              GPU_AMD="false"
+              GPU_INTEL="false"
+              
+              if [[ -d /proc/driver/nvidia ]]; then
+                GPU_NVIDIA="true"
+              fi
+              
+              if [[ -d /sys/class/drm ]]; then
+                if ls /sys/class/drm/*amd* >/dev/null 2>&1; then
+                  GPU_AMD="true"
+                fi
+                if ls /sys/class/drm/*intel* >/dev/null 2>&1; then
+                  GPU_INTEL="true"
+                fi
+              fi
+              
+              log_debug "GPU: NVIDIA=$GPU_NVIDIA AMD=$GPU_AMD Intel=$GPU_INTEL"
+              
+              # Storage Details
+              if [[ -d /sys/block ]]; then
+                HAS_NVME="false"
+                HAS_SSD="false"
+                
+                if ls /sys/block/nvme* >/dev/null 2>&1; then
+                  HAS_NVME="true"
+                  HAS_SSD="true"
+                elif ls /sys/block/sd* >/dev/null 2>&1; then
+                  for dev in /sys/block/sd*; do
+                    if [[ -r "$dev/queue/rotational" ]] && [[ $(cat "$dev/queue/rotational" 2>/dev/null) == "0" ]]; then
+                      HAS_SSD="true"
+                      break
+                    fi
+                  done
+                fi
+                
+                log_debug "Storage: NVMe=$HAS_NVME SSD=$HAS_SSD"
+              fi
+              ''}
+              
+              log_info "=== Hardware Detection Complete ==="
+            '';
+          in toString detectionScript;
         };
       };
 
       # Environment variables for other services
       environment.variables = {
-        NIXOS_HARDWARE_PROFILE = cfg.profile or performanceProfile;
-        NIXOS_CPU_VENDOR = hardwareProfile.cpu.vendor;
-        NIXOS_VIRTUALIZATION = hardwareProfile.virtualization.virtualization;
+        NIXOS_HARDWARE_PROFILE = toString (cfg.profile or performanceProfile);
+        NIXOS_CPU_VENDOR = toString hardwareProfile.cpu.vendor;
+        NIXOS_VIRTUALIZATION = toString hardwareProfile.virtualization.virtualization;
       };
     }
 
@@ -326,24 +466,24 @@ in
     (mkIf (cfg.autoOptimize && hardwareProfile.memory.class == "minimal") {
       # Aggressive memory optimization for low-memory systems
       boot.kernel.sysctl = {
-        "vm.swappiness" = 10;
-        "vm.vfs_cache_pressure" = 50;
-        "vm.dirty_background_ratio" = 5;
-        "vm.dirty_ratio" = 10;
+        "vm.swappiness" = mkDefault 10;
+        "vm.vfs_cache_pressure" = mkDefault 50;
+        "vm.dirty_background_ratio" = mkDefault 5;
+        "vm.dirty_ratio" = mkDefault 10;
       };
 
       # Disable memory-intensive features
-      services.gnome.tracker.enable = false;
-      services.gnome.tracker-miners.enable = false;
+      services.gnome.tinysparql.enable = false;    # Renamed from tracker
+      services.gnome.localsearch.enable = false;   # Renamed from tracker-miners
     })
 
     (mkIf (cfg.autoOptimize && hardwareProfile.memory.class == "high") {
       # High-memory optimizations
       boot.kernel.sysctl = {
-        "vm.swappiness" = 1;
-        "vm.vfs_cache_pressure" = 200;
-        "vm.dirty_background_ratio" = 10;
-        "vm.dirty_ratio" = 20;
+        "vm.swappiness" = mkDefault 1;
+        "vm.vfs_cache_pressure" = mkDefault 200;
+        "vm.dirty_background_ratio" = mkDefault 10;
+        "vm.dirty_ratio" = mkDefault 20;
       };
 
       # Enable transparent hugepages
@@ -389,8 +529,14 @@ in
     })
 
     (mkIf (cfg.autoOptimize && hardwareProfile.virtualization.isWSL) {
-      # WSL-specific optimizations (reference existing WSL module)
-      modules.wsl.optimization.enable = mkDefault true;
+      # WSL-specific optimizations
+      # Note: Enable WSL-specific optimizations if WSL module is available
+      # modules.wsl.optimization.enable = mkDefault true;
+      
+      # Basic WSL optimizations
+      boot.kernelParams = [ "systemd.unified_cgroup_hierarchy=0" ];
+      powerManagement.enable = false;
+      services.resolved.enable = false; # WSL handles DNS
     })
 
     # Performance profile-based optimizations
@@ -400,10 +546,10 @@ in
       
       # Kernel optimizations for performance
       boot.kernel.sysctl = {
-        "kernel.sched_migration_cost_ns" = 5000000;
-        "kernel.sched_autogroup_enabled" = 0;
-        "net.core.busy_poll" = 50;
-        "net.core.busy_read" = 50;
+        "kernel.sched_migration_cost_ns" = mkDefault 5000000;
+        "kernel.sched_autogroup_enabled" = mkDefault 0;
+        "net.core.busy_poll" = mkDefault 50;
+        "net.core.busy_read" = mkDefault 50;
       };
 
       # High-performance I/O settings
@@ -419,8 +565,8 @@ in
       
       # Conservative kernel settings
       boot.kernel.sysctl = {
-        "vm.laptop_mode" = 5;
-        "kernel.timer_migration" = 1;
+        "vm.laptop_mode" = mkDefault 5;
+        "kernel.timer_migration" = mkDefault 1;
       };
 
       # Disable resource-intensive features

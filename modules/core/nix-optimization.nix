@@ -198,11 +198,11 @@ in
         # Enhanced Nix daemon configuration
         nix-daemon = {
           serviceConfig = {
-            LimitNOFILE = 65536;
+            LimitNOFILE = mkDefault 65536;
             # CPU and memory limits for build isolation
-            CPUQuota = "95%";
-            MemoryHigh = "80%";
-            MemoryMax = "90%";
+            CPUQuota = mkDefault "95%";
+            MemoryHigh = mkDefault "80%";
+            MemoryMax = mkDefault "90%";
           };
         };
 
@@ -247,17 +247,9 @@ in
       ];
     };
 
-    # Advanced filesystem optimization
-    fileSystems = {
-      # Optimize Nix store mount if on separate filesystem
-      "/nix" = mkIf (config.fileSystems ? "/nix") {
-        options = [ 
-          "noatime"           # Reduce disk I/O
-          "compress=zstd:1"   # Compression (if using Btrfs)
-          "space_cache=v2"    # Better space management (Btrfs)
-        ];
-      };
-    };
+    # Note: Filesystem optimization should be done in host-specific configurations
+    # to avoid circular dependencies. Example for host configuration:
+    # fileSystems."/nix".options = [ "noatime" "compress=zstd:1" "space_cache=v2" ];
 
     # Memory and process optimization
     security.pam.loginLimits = [
@@ -277,18 +269,18 @@ in
 
     # Kernel optimization for Nix builds
     boot.kernel.sysctl = {
-      # Optimize for build workloads
-      "kernel.pid_max" = 4194304;
-      "vm.max_map_count" = 262144;
+      # Optimize for build workloads (use lower priority than system defaults)
+      "kernel.pid_max" = mkOverride 1500 4194304;
+      "vm.max_map_count" = mkOverride 1500 262144;
       
       # Network optimization for downloads
-      "net.core.rmem_max" = 134217728;
-      "net.core.wmem_max" = 134217728;
-      "net.ipv4.tcp_rmem" = "4096 65536 134217728";
-      "net.ipv4.tcp_wmem" = "4096 65536 134217728";
+      "net.core.rmem_max" = mkDefault 134217728;
+      "net.core.wmem_max" = mkDefault 134217728;
+      "net.ipv4.tcp_rmem" = mkDefault "4096 65536 134217728";
+      "net.ipv4.tcp_wmem" = mkDefault "4096 65536 134217728";
       
       # Build performance optimization
-      "kernel.sched_autogroup_enabled" = 0; # Better for build workloads
+      "kernel.sched_autogroup_enabled" = mkDefault 0; # Better for build workloads
     };
 
     # Environment optimization
