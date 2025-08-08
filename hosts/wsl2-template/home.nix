@@ -1,7 +1,7 @@
 # Home Manager configuration for WSL2
 # Optimized for Windows Subsystem for Linux development environment
 
-{ config, lib, pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   imports = [

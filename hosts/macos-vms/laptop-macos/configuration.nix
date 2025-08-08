@@ -1,7 +1,7 @@
 # NixOS Laptop VM Configuration for macOS (UTM/QEMU)
 # Optimized for MacBook testing with laptop-specific features
 
-{ config, lib, pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   imports = [
@@ -310,7 +310,7 @@
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
-    users.laptop-user = { pkgs, ... }: {
+    users.laptop-user = { ... }: {
       imports = [
         ../../../home/roles/developer.nix
         ../../../home/profiles/gnome.nix

@@ -1,7 +1,7 @@
 # Network Configuration for macOS
 # Manages network settings, DNS, and connectivity
 
-{ config, pkgs, lib, ... }:
+{ pkgs, lib, ... }:
 
 {
   # Network configuration

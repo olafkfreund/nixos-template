@@ -1,7 +1,7 @@
 # WSL2 Hardware Configuration
 # This is a minimal hardware configuration for WSL2 environment
 
-{ config, lib, pkgs, modulesPath, ... }:
+{ lib, modulesPath, ... }:
 
 {
   imports = [

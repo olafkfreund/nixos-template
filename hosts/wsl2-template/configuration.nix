@@ -1,7 +1,7 @@
 # NixOS on WSL2 Configuration Template
 # Optimized for Windows Subsystem for Linux development environment
 
-{ config, lib, pkgs, inputs, outputs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   imports = [

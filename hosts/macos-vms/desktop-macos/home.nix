@@ -1,7 +1,7 @@
 # Home Manager configuration for macOS Desktop VM
 # VM user environment
 
-{ config, pkgs, lib, inputs, outputs, ... }:
+{ pkgs, ... }:
 
 {
   # This is a VM configuration, so we just import common home configuration

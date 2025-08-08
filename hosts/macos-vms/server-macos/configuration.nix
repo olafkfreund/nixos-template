@@ -1,7 +1,7 @@
 # NixOS Server VM Configuration for macOS (UTM/QEMU)
 # Headless server configuration optimized for development and testing
 
-{ config, lib, pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   imports = [
@@ -363,7 +363,7 @@
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
-    users.server-admin = { pkgs, ... }: {
+    users.server-admin = { ... }: {
       imports = [
         ../../../home/roles/server-admin.nix
         ../../../home/profiles/headless.nix

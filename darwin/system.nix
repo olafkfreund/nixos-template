@@ -1,7 +1,7 @@
 # macOS System Configuration
 # System-level settings and preferences for nix-darwin
 
-{ config, pkgs, lib, ... }:
+{ lib, ... }:
 
 {
   # System preferences

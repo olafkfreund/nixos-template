@@ -189,7 +189,7 @@
             sops-nix.nixosModules.sops # Standardize on sops-nix
 
             # Add flake metadata module
-            ({ config, lib, pkgs, flakeMeta, ... }: {
+            ({ pkgs, flakeMeta, ... }: {
               # Make flake metadata available system-wide
               environment.etc."nixos/flake-metadata.json".text = builtins.toJSON flakeMeta;
 
@@ -281,7 +281,7 @@
             specialArgs = { inherit inputs outputs; };
             modules = [
               ./hosts/common.nix
-              ({ config, lib, pkgs, ... }: {
+              ({ lib, pkgs, ... }: {
                 # Optimize for deployment images
                 boot.loader.systemd-boot.enable = true;
                 boot.loader.efi.canTouchEfiVariables = true;
@@ -337,7 +337,7 @@
             "aws-ami" = nixos-generators.nixosGenerate (baseConfig // {
               format = "amazon";
               modules = baseConfig.modules ++ [
-                ({ config, lib, pkgs, ... }: {
+                ({ ... }: {
                   # AWS-specific optimizations
                   ec2.hvm = true;
                   boot.loader.grub.device = "/dev/xvda";
@@ -352,7 +352,7 @@
             "azure-vhd" = nixos-generators.nixosGenerate (baseConfig // {
               format = "azure";
               modules = baseConfig.modules ++ [
-                ({ config, lib, pkgs, ... }: {
+                ({ pkgs, ... }: {
                   # Azure-specific configurations
                   # Note: Azure agent configuration handled by nixos-generators
                   environment.systemPackages = with pkgs; [ waagent ];
@@ -384,7 +384,7 @@
             "do-image" = nixos-generators.nixosGenerate (baseConfig // {
               format = "do";
               modules = baseConfig.modules ++ [
-                ({ config, lib, pkgs, ... }: {
+                ({ ... }: {
                   # Digital Ocean specific configurations
                   services.openssh.enable = true;
                 })
@@ -395,7 +395,7 @@
             "vmware-image" = nixos-generators.nixosGenerate (baseConfig // {
               format = "vmware";
               modules = baseConfig.modules ++ [
-                ({ config, lib, pkgs, ... }: {
+                ({ ... }: {
                   # VMware-specific optimizations
                   virtualisation.vmware.guest.enable = true;
                   services.xserver.videoDrivers = [ "vmware" ];
@@ -406,7 +406,7 @@
             "virtualbox-ova" = nixos-generators.nixosGenerate (baseConfig // {
               format = "virtualbox";
               modules = baseConfig.modules ++ [
-                ({ config, lib, pkgs, ... }: {
+                ({ ... }: {
                   # VirtualBox-specific optimizations
                   virtualisation.virtualbox.guest.enable = true;
                   services.xserver.videoDrivers = [ "virtualbox" "modesetting" ];
@@ -417,7 +417,7 @@
             "qemu-qcow2" = nixos-generators.nixosGenerate (baseConfig // {
               format = "qcow";
               modules = baseConfig.modules ++ [
-                ({ config, lib, pkgs, ... }: {
+                ({ ... }: {
                   # QEMU/KVM optimizations
                   services.qemuGuest.enable = true;
                   services.spice-vdagentd.enable = true;
@@ -429,7 +429,7 @@
             "lxc-template" = nixos-generators.nixosGenerate (baseConfig // {
               format = "lxc";
               modules = baseConfig.modules ++ [
-                ({ config, lib, pkgs, ... }: {
+                ({ lib, ... }: {
                   # LXC container optimizations
                   boot.isContainer = true;
                   services.openssh.enable = true;
@@ -443,7 +443,7 @@
             "live-iso" = nixos-generators.nixosGenerate (baseConfig // {
               format = "iso";
               modules = baseConfig.modules ++ [
-                ({ config, lib, pkgs, ... }: {
+                ({ pkgs, ... }: {
                   # Live ISO optimizations
                   isoImage = {
                     makeEfiBootable = true;
@@ -477,7 +477,7 @@
             "development-vm" = nixos-generators.nixosGenerate (baseConfig // {
               format = "qcow";
               modules = baseConfig.modules ++ [
-                ({ config, lib, pkgs, ... }: {
+                ({ pkgs, ... }: {
                   # Development-focused configuration
                   # Note: monitoring disabled to avoid module conflicts
                   # modules.services.monitoring.enable = lib.mkForce true;
@@ -512,7 +512,7 @@
             "production-server" = nixos-generators.nixosGenerate (baseConfig // {
               format = "qcow";
               modules = baseConfig.modules ++ [
-                ({ config, lib, pkgs, ... }: {
+                ({ pkgs, ... }: {
                   # Production server configuration
                   # Note: monitoring disabled to avoid module conflicts
                   # modules.services.monitoring.enable = lib.mkForce true;

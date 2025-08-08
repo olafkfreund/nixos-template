@@ -12,7 +12,7 @@
   isoImage = {
     # ISO metadata
     isoName = lib.mkForce "nixos-desktop-macos-installer";
-    volumeID = "NIXOS_DESKTOP_MACOS";
+    volumeID = lib.mkForce "NIXOS_DESKTOP_MACOS";
 
     # Boot configuration optimized for macOS VMs
     makeEfiBootable = true;

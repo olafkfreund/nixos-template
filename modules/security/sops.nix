@@ -140,7 +140,7 @@ in
 
       # Configure secrets
       secrets = mapAttrs
-        (name: secretCfg: {
+        (_name: secretCfg: {
           sopsFile = mkIf (secretCfg.sopsFile != null) secretCfg.sopsFile;
           key = mkIf (secretCfg.key != null) secretCfg.key;
           path = mkIf (secretCfg.path != null) secretCfg.path;
@@ -154,7 +154,7 @@ in
 
       # Configure templates
       templates = mapAttrs
-        (name: templateCfg: {
+        (_name: templateCfg: {
           content = templateCfg.content;
           owner = templateCfg.owner;
           group = templateCfg.group;

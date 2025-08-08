@@ -1,7 +1,7 @@
 # nix-darwin Configuration
 # Main entry point for macOS system configuration
 
-{ config, pkgs, lib, inputs, outputs, ... }:
+{ config, pkgs, lib, outputs, ... }:
 
 {
   imports = [

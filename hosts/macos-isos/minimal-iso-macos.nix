@@ -11,7 +11,7 @@
   # ISO-specific configuration
   isoImage = {
     isoName = lib.mkForce "nixos-minimal-macos-installer";
-    volumeID = "NIXOS_MIN_MACOS";
+    volumeID = lib.mkForce "NIXOS_MIN_MACOS";
 
     # Boot configuration
     makeEfiBootable = true;

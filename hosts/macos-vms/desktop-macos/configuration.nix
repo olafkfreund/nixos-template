@@ -1,7 +1,7 @@
 # NixOS Desktop VM Configuration for macOS (UTM/QEMU)
 # Optimized for Apple Silicon (aarch64) and Intel Macs (x86_64)
 
-{ config, lib, pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   imports = [
@@ -252,7 +252,7 @@
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
-    users.nixos = { pkgs, ... }: {
+    users.nixos = { ... }: {
       # Import role-based configuration
       imports = [
         ../../../home/roles/developer.nix

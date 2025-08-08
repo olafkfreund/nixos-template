@@ -1,7 +1,7 @@
 # nix-darwin Desktop Configuration
 # Full-featured desktop configuration for macOS users
 
-{ config, pkgs, lib, inputs, outputs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   imports = [

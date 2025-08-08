@@ -1,7 +1,7 @@
 # Security Configuration for macOS
 # Manages security settings, certificates, and privacy controls
 
-{ config, pkgs, lib, ... }:
+{ pkgs, ... }:
 
 {
   # PAM (Pluggable Authentication Modules) configuration

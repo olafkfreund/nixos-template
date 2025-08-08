@@ -313,7 +313,7 @@
         # Rate limiting for SSH
         iptables -A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW -m recent --set --name ssh --rsource
         iptables -A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW -m recent --update --seconds 60 --hitcount 4 --rttl --name ssh --rsource -j DROP
-        
+
         # Block common attack patterns
         iptables -A INPUT -p tcp --tcp-flags ALL NONE -j DROP
         iptables -A INPUT -p tcp --tcp-flags ALL ALL -j DROP
@@ -410,7 +410,7 @@
   };
 
   # Home Manager configuration for the developer user
-  home-manager.users.developer = { pkgs, ... }: {
+  home-manager.users.developer = { ... }: {
     imports = [
       ../home/roles/developer.nix
       ../home/profiles/desktop.nix
@@ -650,7 +650,7 @@
   #   };
   # };
 
-  # Enable libvirtd for KVM (optional)  
+  # Enable libvirtd for KVM (optional)
   # virtualisation.libvirtd = {
   #   enable = true;
   #   qemu = {

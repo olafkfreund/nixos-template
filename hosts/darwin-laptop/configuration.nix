@@ -1,7 +1,7 @@
 # nix-darwin Laptop Configuration
 # Mobile-optimized configuration for MacBook users
 
-{ config, pkgs, lib, inputs, outputs, ... }:
+{ pkgs, lib, ... }:
 
 {
   imports = [

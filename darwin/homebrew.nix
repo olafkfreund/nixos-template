@@ -1,7 +1,7 @@
 # Homebrew Configuration for nix-darwin
 # Manages Homebrew packages, casks, and Mac App Store apps
 
-{ config, pkgs, lib, ... }:
+{ pkgs, ... }:
 
 {
   # Enable Homebrew integration with nix-darwin
