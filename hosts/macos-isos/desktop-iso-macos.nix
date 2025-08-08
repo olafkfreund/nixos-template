@@ -95,7 +95,7 @@
   networking = {
     hostName = "nixos-installer";
     networkmanager.enable = true;
-    useDHCP = true;
+    useDHCP = lib.mkDefault true;
     firewall.enable = false; # Open for installer
   };
 
@@ -119,60 +119,59 @@
       hashedPasswordFile = lib.mkOverride 60 null;
     };
   };
-};
 
-# Security - relaxed for installer
-security = {
-sudo.wheelNeedsPassword = false;
-};
+  # Security - relaxed for installer
+  security = {
+    sudo.wheelNeedsPassword = false;
+  };
 
-# Environment packages for installer
-environment.systemPackages = with pkgs; [
-# System utilities
-parted
-gptfdisk
-dosfstools
-e2fsprogs
-ntfs3g
+  # Environment packages for installer
+  environment.systemPackages = with pkgs; [
+    # System utilities
+    parted
+    gptfdisk
+    dosfstools
+    e2fsprogs
+    ntfs3g
 
-# Network tools
-networkmanager
-curl
-wget
+    # Network tools
+    networkmanager
+    curl
+    wget
 
-# Text editors
-vim
-nano
+    # Text editors
+    vim
+    nano
 
-# File managers
-gnome.nautilus
+    # File managers
+    gnome.nautilus
 
-# Terminal
-gnome.gnome-terminal
+    # Terminal
+    gnome.gnome-terminal
 
-# Web browser for documentation
-firefox
+    # Web browser for documentation
+    firefox
 
-# Development tools
-git
-just
+    # Development tools
+    git
+    just
 
-# Hardware tools
-lshw
-pciutils
-usbutils
-hdparm
+    # Hardware tools
+    lshw
+    pciutils
+    usbutils
+    hdparm
 
-# Disk management
-gnome.gnome-disks
-gparted
+    # Disk management
+    gnome.gnome-disks
+    gparted
 
-# Archive tools
-unzip
-p7zip
+    # Archive tools
+    unzip
+    p7zip
 
-# Template and installer tools
-(writeShellScriptBin "install-nixos-macos" ''
+    # Template and installer tools
+    (writeShellScriptBin "install-nixos-macos" ''
       #!/usr/bin/env bash
       set -euo pipefail
 
@@ -210,7 +209,7 @@ p7zip
       echo "For automated installation, run: nixos-macos-auto-install"
     '')
 
-(writeShellScriptBin "nixos-macos-auto-install" ''
+    (writeShellScriptBin "nixos-macos-auto-install" ''
       #!/usr/bin/env bash
       set -euo pipefail
 
@@ -284,8 +283,8 @@ p7zip
       echo "Reboot to start your new NixOS system."
     '')
 
-# macOS VM optimization script
-(writeShellScriptBin "optimize-for-macos-vm" ''
+    # macOS VM optimization script
+    (writeShellScriptBin "optimize-for-macos-vm" ''
       echo "🔧 Optimizing NixOS for macOS VM environment..."
 
       # Enable VM-specific kernel modules
@@ -308,18 +307,18 @@ p7zip
 
       echo "✅ VM optimization complete!"
     '')
-];
+  ];
 
-# Include template files for reference
-environment.etc = {
-"nixos-template" = {
-source = ../..; # Root of template repository
-mode = "0755";
-};
+  # Include template files for reference
+  environment.etc = {
+    "nixos-template" = {
+      source = ../..; # Root of template repository
+      mode = "0755";
+    };
 
-# macOS-specific installation guide
-"nixos-macos-guide.md" = {
-text = ''
+    # macOS-specific installation guide
+    "nixos-macos-guide.md" = {
+      text = ''
         # NixOS Installation Guide for macOS VMs
 
         This ISO is optimized for UTM/QEMU on macOS systems.
@@ -364,18 +363,18 @@ text = ''
 
         For more information, visit: https://nixos.org/manual/nixos/stable/
       '';
-mode = "0644";
-};
-};
+      mode = "0644";
+    };
+  };
 
-# Enable flakes for template usage
-nix = {
-settings = {
-experimental-features = [ "nix-command" "flakes" ];
-trusted-users = [ "root" "nixos" ];
-};
-};
+  # Enable flakes for template usage
+  nix = {
+    settings = {
+      experimental-features = [ "nix-command" "flakes" ];
+      trusted-users = [ "root" "nixos" ];
+    };
+  };
 
-# System state version
-system.stateVersion = "25.05";
+  # System state version
+  system.stateVersion = "25.05";
 }
