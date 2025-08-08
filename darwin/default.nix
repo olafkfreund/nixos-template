@@ -158,7 +158,7 @@
 
         # Direnv with validation
         if command -v direnv >/dev/null; then
-          direnv_hook="$(direnv hook zsh 2>/dev/null || echo '')"
+          direnv_hook="$(direnv hook zsh 2>/dev/null || echo "")"
           if [[ -n "$direnv_hook" && "$direnv_hook" =~ ^[[:space:]]*direnv ]]; then
             eval "$direnv_hook"
           fi
@@ -166,12 +166,12 @@
 
         # Add Homebrew to PATH (if using Homebrew) with validation
         if [ -f /opt/homebrew/bin/brew ]; then
-          brew_env="$(/opt/homebrew/bin/brew shellenv 2>/dev/null || echo '')"
+          brew_env="$(/opt/homebrew/bin/brew shellenv 2>/dev/null || echo "")"
           if [[ -n "$brew_env" && "$brew_env" =~ export.*HOMEBREW ]]; then
             eval "$brew_env"
           fi
         elif [ -f /usr/local/bin/brew ]; then
-          brew_env="$(/usr/local/bin/brew shellenv 2>/dev/null || echo '')"
+          brew_env="$(/usr/local/bin/brew shellenv 2>/dev/null || echo "")"
           if [[ -n "$brew_env" && "$brew_env" =~ export.*HOMEBREW ]]; then
             eval "$brew_env"
           fi
@@ -180,27 +180,27 @@
 
       # Interactive shell configuration
       interactiveShellInit = ''
-        # Set up aliases
-        alias darwin-rebuild="darwin-rebuild --flake ~/.config/nix-darwin"
-        alias nix-rebuild="darwin-rebuild switch --flake ~/.config/nix-darwin#$(hostname -s)"
-      alias nix-update="cd ~/.config/nix-darwin && nix flake update && darwin-rebuild switch --flake .#$(hostname -s)"
+          # Set up aliases
+          alias darwin-rebuild="darwin-rebuild --flake ~/.config/nix-darwin"
+          alias nix-rebuild="darwin-rebuild switch --flake ~/.config/nix-darwin#$(hostname -s)"
+        alias nix-update="cd ~/.config/nix-darwin && nix flake update && darwin-rebuild switch --flake .#$(hostname -s)"
 
-      # Development aliases
-      alias ll="ls -la"
-      alias la="ls -la"
-      alias ..="cd .."
-      alias ...="cd ../.."
+        # Development aliases
+        alias ll="ls -la"
+        alias la="ls -la"
+        alias ..="cd .."
+        alias ...="cd ../.."
 
-      # Nix aliases
-      alias nix-search="nix search nixpkgs"
-      alias nix-shell="nix-shell --run zsh"
-      alias nix-info="nix-shell -p nix-info --run nix-info"
+        # Nix aliases
+        alias nix-search="nix search nixpkgs"
+        alias nix-shell="nix-shell --run zsh"
+        alias nix-info="nix-shell -p nix-info --run nix-info"
 
-      # System aliases
-      alias macos-info="darwin-info"
+        # System aliases
+        alias macos-info="darwin-info"
 
-      echo "🍎 Welcome to nix-darwin!"
-      echo "Run 'darwin-info' for system information"
+        echo "🍎 Welcome to nix-darwin!"
+        echo "Run 'darwin-info' for system information"
       '';
     };
 
@@ -225,7 +225,7 @@
       echo "Hostname: $(hostname)"
       echo "User: $(whoami)"
       echo "Architecture: $(uname -m)"
-      '';
+    '';
 
     # Post-activation scripts
     activationScripts.postActivation.text = ''
@@ -235,7 +235,7 @@
       echo "  • Run 'darwin-info' for system information"
       echo "  • Configure Home Manager if not already done"
       echo "  • Rebuild with: darwin-rebuild switch --flake ~/.config/nix-darwin"
-      '';
+    '';
   };
 
   # Fonts
@@ -254,8 +254,7 @@
 
   # Services
   services = {
-    # Automatic store optimization
-    nix-daemon.enable = true;
+    # Automatic store optimization enabled via services.nix-daemon.enable above
 
     # Lorri for direnv integration (optional)
     # lorri.enable = true;
