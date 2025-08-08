@@ -151,14 +151,84 @@
       );
 
       # Helper function to reduce duplication in nixosSystem configurations
-      mkSystem = { hostname, system ? "x86_64-linux", extraModules ? [ ] }:
+      mkSystem =
+        { hostname
+        , system ? "x86_64-linux"
+        , profile ? "workstation"
+        , extraModules ? [ ]
+        }:
         nixpkgs.lib.nixosSystem {
           inherit system;
-          specialArgs = { inherit inputs outputs; };
+          specialArgs = {
+            inherit inputs outputs;
+            # Add comprehensive flake metadata
+            flakeMeta = {
+              inherit hostname profile system;
+              # Build information
+              buildTime = self.lastModified or 0;
+              buildDate = builtins.formatTime "%Y-%m-%d %H:%M:%S UTC" (self.lastModified or 0);
+              flakeRev = self.rev or "dirty";
+              flakeShortRev =
+                if (self.rev or null) != null
+                then builtins.substring 0 7 self.rev
+                else "unknown";
+              # Nixpkgs information
+              nixpkgsRev = inputs.nixpkgs.rev or "unknown";
+              nixpkgsShortRev =
+                if (inputs.nixpkgs.rev or null) != null
+                then builtins.substring 0 7 inputs.nixpkgs.rev
+                else "unknown";
+              # System identification
+              configPath = toString ./.;
+              hostPath = toString (./. + "/hosts/${hostname}");
+            };
+          };
           modules = [
             ./hosts/${hostname}/configuration.nix
             home-manager.nixosModules.home-manager
-            agenix.nixosModules.default
+            sops-nix.nixosModules.sops # Standardize on sops-nix
+
+            # Add flake metadata module
+            ({ config, lib, pkgs, flakeMeta, ... }: {
+              # Make flake metadata available system-wide
+              environment.etc."nixos/flake-metadata.json".text = builtins.toJSON flakeMeta;
+
+              # Add metadata to system info
+              environment.variables = {
+                NIXOS_FLAKE_REV = flakeMeta.flakeShortRev;
+                NIXOS_BUILD_DATE = flakeMeta.buildDate;
+                NIXOS_HOSTNAME = flakeMeta.hostname;
+                NIXOS_PROFILE = flakeMeta.profile;
+              };
+
+              # Create system info command
+              environment.systemPackages = with pkgs; [
+                (writeShellScriptBin "nixos-info" ''
+                  echo "🏗️  NixOS System Information"
+                  echo "=========================="
+                  echo "Hostname: ${flakeMeta.hostname}"
+                  echo "Profile: ${flakeMeta.profile}"
+                  echo "System: ${flakeMeta.system}"
+                  echo "Build Date: ${flakeMeta.buildDate}"
+                  echo "Flake Revision: ${flakeMeta.flakeShortRev}"
+                  echo "Nixpkgs Revision: ${flakeMeta.nixpkgsShortRev}"
+                  echo "Config Path: ${flakeMeta.configPath}"
+                  echo ""
+                  echo "📊 System Stats:"
+                  echo "Uptime: $(uptime -p)"
+                  echo "Kernel: $(uname -r)"
+                  echo "NixOS Version: $(nixos-version)"
+                  echo ""
+                  echo "🔧 Quick Commands:"
+                  echo "• nixos-rebuild switch --flake ${flakeMeta.configPath}#${flakeMeta.hostname}"
+                  echo "• nix flake update ${flakeMeta.configPath}"
+                  echo "• systemctl status"
+                '')
+              ];
+
+              # Add to system description
+              system.nixos.tags = [ flakeMeta.profile flakeMeta.flakeShortRev ];
+            })
           ] ++ extraModules;
         };
 
@@ -851,7 +921,7 @@
         # VM Integration Tests
         vm-test-desktop = nixpkgs.legacyPackages.${system}.testers.runNixOSTest {
           name = "nixos-template-desktop-test";
-          nodes.machine = { config, pkgs, ... }: {
+          nodes.machine = { ... }: {
             imports = [ ./hosts/desktop-template/configuration.nix ];
             virtualisation = {
               memorySize = 2048;
@@ -880,7 +950,7 @@
 
         vm-test-server = nixpkgs.legacyPackages.${system}.testers.runNixOSTest {
           name = "nixos-template-server-test";
-          nodes.machine = { config, pkgs, ... }: {
+          nodes.machine = { ... }: {
             imports = [ ./hosts/server-template/configuration.nix ];
             virtualisation = {
               memorySize = 1024;

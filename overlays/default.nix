@@ -1,5 +1,5 @@
 # Package overlays for custom packages and modifications
-{ ... }:
+{ inputs }:
 {
   # Default overlay - modify packages or add custom ones
   default = _final: _prev: {

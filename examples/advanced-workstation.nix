@@ -1,7 +1,7 @@
 # Advanced Workstation Configuration Example
 # Demonstrates all the new expert-level features implemented
 
-{ config, lib, pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   imports = [
