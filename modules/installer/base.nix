@@ -36,7 +36,7 @@
   # Override the default locked password from core/users.nix for installer environments
   users.users.root = {
     # Use initialPassword for installer - this overrides hashedPassword with higher precedence
-    initialPassword = lib.mkOverride 50 "nixos";  # Lower number = higher priority than mkDefault (1000)
+    initialPassword = lib.mkOverride 50 "nixos"; # Lower number = higher priority than mkDefault (1000)
     # Clear the locked password from core/users.nix
     hashedPassword = lib.mkOverride 60 null;
   };

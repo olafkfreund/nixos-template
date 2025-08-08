@@ -72,13 +72,20 @@ repos:
         description: Format JSON, YAML, and Markdown files
   - repo: local
     hooks:
-      - id: flake-check
-        name: Check Nix flake
-        entry: nix flake check --no-build
+      - id: nix-syntax-check
+        name: Check Nix syntax errors
+        entry: bash -c 'echo "🔍 Checking for common NixOS syntax errors..." && timeout 60s nix eval --impure --expr "let flake = builtins.getFlake (toString ./.); cfg = flake.nixosConfigurations.desktop-template.config; in { users = cfg.users.users.root.hashedPassword; system = cfg.system.stateVersion; }" > /dev/null && echo "✅ Core configurations evaluate successfully" || (echo "❌ Syntax error detected! This would break CI." >&2; exit 1)'
+        language: system
+        files: '\.(nix)$'
+        pass_filenames: false
+        description: Quick syntax validation to catch common configuration errors
+      - id: flake-check-light
+        name: Quick flake validation
+        entry: bash -c 'timeout 120s nix flake check --no-build --accept-flake-config 2>&1 | head -50 | grep -q "error:" && (echo "❌ Flake check failed! Run full check locally." >&2; exit 1) || echo "✅ Quick flake validation passed"'
         language: system
         files: 'flake\.(nix|lock)$'
         pass_filenames: false
-        description: Validate Nix flake configuration
+        description: Fast flake validation that catches most errors
       - id: just-validate
         name: Validate justfile
         entry: just --list

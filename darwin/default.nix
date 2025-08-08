@@ -269,3 +269,4 @@
   # This will be configured in flake.nix or host-specific configs
 }
 
+

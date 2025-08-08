@@ -14,8 +14,8 @@
       # Additional groups can be defined here
     };
 
-    # System users - use consistent users.users.* syntax to avoid conflicts
-    users.users = {
+    # System users - correct nesting inside users block
+    users = {
       root = {
         # Disable root login by default - clear other password options to avoid conflicts
         hashedPassword = lib.mkDefault "!";

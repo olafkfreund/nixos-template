@@ -233,7 +233,7 @@
                 # Ensure root user password conflicts are resolved in deployment images
                 users.users.root = {
                   # Override any default initialHashedPassword that might be set by nixos-generators
-                  hashedPassword = lib.mkOverride 100 "!";  # Lock root account
+                  hashedPassword = lib.mkOverride 100 "!"; # Lock root account
                   password = lib.mkOverride 100 null;
                   initialPassword = lib.mkOverride 100 null;
                   initialHashedPassword = lib.mkOverride 100 null;
