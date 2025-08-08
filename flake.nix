@@ -255,27 +255,31 @@
             # Cloud deployment images
             "aws-ami" = nixos-generators.nixosGenerate (baseConfig // {
               format = "amazon";
-              modules = baseConfig.modules ++ [({ config, lib, pkgs, ... }: {
-                # AWS-specific optimizations
-                ec2.hvm = true;
-                boot.loader.grub.device = "/dev/xvda";
-                fileSystems."/" = {
-                  device = "/dev/xvda1";
-                  fsType = "ext4";
-                };
-              })];
+              modules = baseConfig.modules ++ [
+                ({ config, lib, pkgs, ... }: {
+                  # AWS-specific optimizations
+                  ec2.hvm = true;
+                  boot.loader.grub.device = "/dev/xvda";
+                  fileSystems."/" = {
+                    device = "/dev/xvda1";
+                    fsType = "ext4";
+                  };
+                })
+              ];
             });
 
             "azure-vhd" = nixos-generators.nixosGenerate (baseConfig // {
               format = "azure";
-              modules = baseConfig.modules ++ [({ config, lib, pkgs, ... }: {
-                # Azure-specific configurations
-                # Note: Azure agent configuration handled by nixos-generators
-                environment.systemPackages = with pkgs; [ waagent ];
-              })];
+              modules = baseConfig.modules ++ [
+                ({ config, lib, pkgs, ... }: {
+                  # Azure-specific configurations
+                  # Note: Azure agent configuration handled by nixos-generators
+                  environment.systemPackages = with pkgs; [ waagent ];
+                })
+              ];
             });
 
-# Temporarily disabled due to google-guest-configs package issue
+            # Temporarily disabled due to google-guest-configs package issue
             # "gce-image" = nixos-generators.nixosGenerate (baseConfig // {
             #   format = "gce";
             #   modules = baseConfig.modules ++ [({ config, lib, pkgs, ... }: {
@@ -298,78 +302,90 @@
 
             "do-image" = nixos-generators.nixosGenerate (baseConfig // {
               format = "do";
-              modules = baseConfig.modules ++ [({ config, lib, pkgs, ... }: {
-                # Digital Ocean specific configurations
-                services.openssh.enable = true;
-              })];
+              modules = baseConfig.modules ++ [
+                ({ config, lib, pkgs, ... }: {
+                  # Digital Ocean specific configurations
+                  services.openssh.enable = true;
+                })
+              ];
             });
 
             # Virtualization images
             "vmware-image" = nixos-generators.nixosGenerate (baseConfig // {
               format = "vmware";
-              modules = baseConfig.modules ++ [({ config, lib, pkgs, ... }: {
-                # VMware-specific optimizations
-                virtualisation.vmware.guest.enable = true;
-                services.xserver.videoDrivers = [ "vmware" ];
-              })];
+              modules = baseConfig.modules ++ [
+                ({ config, lib, pkgs, ... }: {
+                  # VMware-specific optimizations
+                  virtualisation.vmware.guest.enable = true;
+                  services.xserver.videoDrivers = [ "vmware" ];
+                })
+              ];
             });
 
             "virtualbox-ova" = nixos-generators.nixosGenerate (baseConfig // {
               format = "virtualbox";
-              modules = baseConfig.modules ++ [({ config, lib, pkgs, ... }: {
-                # VirtualBox-specific optimizations  
-                virtualisation.virtualbox.guest.enable = true;
-                services.xserver.videoDrivers = [ "virtualbox" "modesetting" ];
-              })];
+              modules = baseConfig.modules ++ [
+                ({ config, lib, pkgs, ... }: {
+                  # VirtualBox-specific optimizations  
+                  virtualisation.virtualbox.guest.enable = true;
+                  services.xserver.videoDrivers = [ "virtualbox" "modesetting" ];
+                })
+              ];
             });
 
             "qemu-qcow2" = nixos-generators.nixosGenerate (baseConfig // {
               format = "qcow";
-              modules = baseConfig.modules ++ [({ config, lib, pkgs, ... }: {
-                # QEMU/KVM optimizations
-                services.qemuGuest.enable = true;
-                services.spice-vdagentd.enable = true;
-              })];
+              modules = baseConfig.modules ++ [
+                ({ config, lib, pkgs, ... }: {
+                  # QEMU/KVM optimizations
+                  services.qemuGuest.enable = true;
+                  services.spice-vdagentd.enable = true;
+                })
+              ];
             });
 
             # Container images
             "lxc-template" = nixos-generators.nixosGenerate (baseConfig // {
               format = "lxc";
-              modules = baseConfig.modules ++ [({ config, lib, pkgs, ... }: {
-                # LXC container optimizations
-                boot.isContainer = true;
-                services.openssh.enable = true;
-                # Disable audit for containers (container-config.nix default)
-                security.audit.enable = lib.mkForce false;
-              })];
+              modules = baseConfig.modules ++ [
+                ({ config, lib, pkgs, ... }: {
+                  # LXC container optimizations
+                  boot.isContainer = true;
+                  services.openssh.enable = true;
+                  # Disable audit for containers (container-config.nix default)
+                  security.audit.enable = lib.mkForce false;
+                })
+              ];
             });
 
             # Installation media
             "live-iso" = nixos-generators.nixosGenerate (baseConfig // {
               format = "iso";
-              modules = baseConfig.modules ++ [({ config, lib, pkgs, ... }: {
-                # Live ISO optimizations
-                isoImage = {
-                  makeEfiBootable = true;
-                  makeUsbBootable = true;
-                  squashfsCompression = "gzip -Xcompression-level 1";
-                };
+              modules = baseConfig.modules ++ [
+                ({ config, lib, pkgs, ... }: {
+                  # Live ISO optimizations
+                  isoImage = {
+                    makeEfiBootable = true;
+                    makeUsbBootable = true;
+                    squashfsCompression = "gzip -Xcompression-level 1";
+                  };
 
-                # Include useful tools on live system
-                environment.systemPackages = with pkgs; [
-                  git
-                  vim
-                  curl
-                  wget
-                  htop
-                  tree
-                  gparted
-                  firefox
-                  chromium
-                  networkmanager-openvpn
-                  wpa_supplicant_gui
-                ];
-              })];
+                  # Include useful tools on live system
+                  environment.systemPackages = with pkgs; [
+                    git
+                    vim
+                    curl
+                    wget
+                    htop
+                    tree
+                    gparted
+                    firefox
+                    chromium
+                    networkmanager-openvpn
+                    wpa_supplicant_gui
+                  ];
+                })
+              ];
             });
 
             # ARM/Raspberry Pi images (requires aarch64-linux system for native build)
@@ -379,66 +395,70 @@
             # Development and testing images  
             "development-vm" = nixos-generators.nixosGenerate (baseConfig // {
               format = "qcow";
-              modules = baseConfig.modules ++ [({ config, lib, pkgs, ... }: {
-                # Development-focused configuration
-                # Note: monitoring disabled to avoid module conflicts
-                # modules.services.monitoring.enable = lib.mkForce true;
+              modules = baseConfig.modules ++ [
+                ({ config, lib, pkgs, ... }: {
+                  # Development-focused configuration
+                  # Note: monitoring disabled to avoid module conflicts
+                  # modules.services.monitoring.enable = lib.mkForce true;
 
-                # Development tools
-                environment.systemPackages = with pkgs; [
-                  git
-                  vim
-                  neovim
-                  emacs
-                  nodejs
-                  python3
-                  rustc
-                  cargo
-                  docker
-                  docker-compose
-                  kubectl
-                  terraform
-                  vscode-fhs
-                ];
+                  # Development tools
+                  environment.systemPackages = with pkgs; [
+                    git
+                    vim
+                    neovim
+                    emacs
+                    nodejs
+                    python3
+                    rustc
+                    cargo
+                    docker
+                    docker-compose
+                    kubectl
+                    terraform
+                    vscode-fhs
+                  ];
 
-                # Enable virtualization
-                virtualisation.docker.enable = true;
-                virtualisation.libvirtd.enable = true;
+                  # Enable virtualization
+                  virtualisation.docker.enable = true;
+                  virtualisation.libvirtd.enable = true;
 
-                users.users.nixos.extraGroups = [ "docker" "libvirtd" ];
-              })];
+                  users.users.nixos.extraGroups = [ "docker" "libvirtd" ];
+                })
+              ];
             });
 
             # Server deployment image
             "production-server" = nixos-generators.nixosGenerate (baseConfig // {
               format = "qcow";
-              modules = baseConfig.modules ++ [({ config, lib, pkgs, ... }: {
-                # Production server configuration
-                # Note: monitoring disabled to avoid module conflicts
-                # modules.services.monitoring.enable = lib.mkForce true;
+              modules = baseConfig.modules ++ [
+                ({ config, lib, pkgs, ... }: {
+                  # Production server configuration
+                  # Note: monitoring disabled to avoid module conflicts
+                  # modules.services.monitoring.enable = lib.mkForce true;
 
-                # Security hardening
-                security.apparmor.enable = true;
-                security.auditd.enable = true;
-                services.fail2ban.enable = true;
+                  # Security hardening
+                  security.apparmor.enable = true;
+                  security.auditd.enable = true;
+                  services.fail2ban.enable = true;
 
-                # Server packages
-                environment.systemPackages = with pkgs; [
-                  htop
-                  iotop
-                  nethogs
-                  rsync
-                  borgbackup
-                  nginx
-                  postgresql
-                ];
+                  # Server packages
+                  environment.systemPackages = with pkgs; [
+                    htop
+                    iotop
+                    nethogs
+                    rsync
+                    borgbackup
+                    nginx
+                    postgresql
+                  ];
 
-                # Firewall configuration
-                networking.firewall = {
-                  enable = true;
-                  allowedTCPPorts = [ 22 80 443 ];
-                };
-              })];
+                  # Firewall configuration
+                  networking.firewall = {
+                    enable = true;
+                    allowedTCPPorts = [ 22 80 443 ];
+                  };
+                })
+              ];
             });
           };
 

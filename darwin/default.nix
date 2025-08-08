@@ -183,24 +183,24 @@
         # Set up aliases
         alias darwin-rebuild="darwin-rebuild --flake ~/.config/nix-darwin"
         alias nix-rebuild="darwin-rebuild switch --flake ~/.config/nix-darwin#$(hostname -s)"
-        alias nix-update="cd ~/.config/nix-darwin && nix flake update && darwin-rebuild switch --flake .#$(hostname -s)"
-        
-        # Development aliases
-        alias ll="ls -la"
-        alias la="ls -la"
-        alias ..="cd .."
-        alias ...="cd ../.."
-        
-        # Nix aliases
-        alias nix-search="nix search nixpkgs"
-        alias nix-shell="nix-shell --run zsh"
-        alias nix-info="nix-shell -p nix-info --run nix-info"
-        
-        # System aliases
-        alias macos-info="darwin-info"
-        
-        echo "🍎 Welcome to nix-darwin!"
-        echo "Run 'darwin-info' for system information"
+      alias nix-update="cd ~/.config/nix-darwin && nix flake update && darwin-rebuild switch --flake .#$(hostname -s)"
+
+      # Development aliases
+      alias ll="ls -la"
+      alias la="ls -la"
+      alias ..="cd .."
+      alias ...="cd ../.."
+
+      # Nix aliases
+      alias nix-search="nix search nixpkgs"
+      alias nix-shell="nix-shell --run zsh"
+      alias nix-info="nix-shell -p nix-info --run nix-info"
+
+      # System aliases
+      alias macos-info="darwin-info"
+
+      echo "🍎 Welcome to nix-darwin!"
+      echo "Run 'darwin-info' for system information"
       '';
     };
 
@@ -225,7 +225,7 @@
       echo "Hostname: $(hostname)"
       echo "User: $(whoami)"
       echo "Architecture: $(uname -m)"
-    '';
+      '';
 
     # Post-activation scripts
     activationScripts.postActivation.text = ''
@@ -235,7 +235,7 @@
       echo "  • Run 'darwin-info' for system information"
       echo "  • Configure Home Manager if not already done"
       echo "  • Rebuild with: darwin-rebuild switch --flake ~/.config/nix-darwin"
-    '';
+      '';
   };
 
   # Fonts
@@ -268,3 +268,4 @@
   # Home Manager integration placeholder
   # This will be configured in flake.nix or host-specific configs
 }
+

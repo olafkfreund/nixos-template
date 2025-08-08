@@ -18,7 +18,7 @@
     makeEfiBootable = true;
     makeUsbBootable = true;
 
-# Note: includeSystemd option was deprecated - systemd is included by default
+    # Note: includeSystemd option was deprecated - systemd is included by default
 
     # Compression for smaller ISO size
     squashfsCompression = "zstd";
