@@ -25,7 +25,7 @@ hardware.autoOptimization.enable = true;
 That's it! Your system will automatically:
 
 ✅ Detect hardware capabilities
-✅ Optimize memory management (ZRAM, swap)  
+✅ Optimize memory management (ZRAM, swap)
 ✅ Configure CPU governor and kernel selection
 ✅ Install appropriate GPU drivers
 ✅ Apply storage-specific optimizations
@@ -53,23 +53,23 @@ All template configurations can benefit from auto-optimization:
 # hosts/desktop-template/configuration.nix
 {
   imports = [ /* standard imports */ ];
-  
+
   # Enable zero-configuration optimization
   hardware.autoOptimization.enable = true;
-  
+
   # Rest of your configuration...
 }
 ```
 
 **Result**: Automatically optimized for high-performance desktop use with appropriate GPU drivers and performance settings.
 
-### Laptop Templates  
+### Laptop Templates
 
 ```nix
-# hosts/laptop-template/configuration.nix  
+# hosts/laptop-template/configuration.nix
 {
   imports = [ /* standard imports */ ];
-  
+
   # Enable with laptop-aware optimizations
   hardware.autoOptimization = {
     enable = true;
@@ -86,8 +86,8 @@ All template configurations can benefit from auto-optimization:
 # hosts/server-template/configuration.nix
 {
   imports = [ /* standard imports */ ];
-  
-  # Server optimization with performance focus  
+
+  # Server optimization with performance focus
   hardware.autoOptimization = {
     enable = true;
     detection = {
@@ -106,6 +106,7 @@ All template configurations can benefit from auto-optimization:
 **Detected**: 32GB RAM, 16 CPU cores, NVIDIA RTX GPU, NVMe SSD
 
 **Automatic Optimization**:
+
 - ZRAM: 10% (low overhead for high memory)
 - CPU: Performance governor, latest kernel
 - GPU: NVIDIA drivers, hardware acceleration, VAAPI
@@ -117,8 +118,9 @@ All template configurations can benefit from auto-optimization:
 **Detected**: 16GB RAM, 8 CPU cores, Intel GPU, SSD, Battery
 
 **Automatic Optimization**:
+
 - ZRAM: 25% (balanced for medium memory)
-- CPU: Powersave governor, standard kernel  
+- CPU: Powersave governor, standard kernel
 - GPU: Intel drivers, hardware acceleration
 - Storage: SSD optimizations
 - Power: TLP, thermal management, battery thresholds
@@ -129,6 +131,7 @@ All template configurations can benefit from auto-optimization:
 **Detected**: 8GB RAM, 4 CPU cores, No GPU, HDD
 
 **Automatic Optimization**:
+
 - ZRAM: 50% (compensate for lower memory)
 - CPU: Ondemand governor, hardened kernel
 - GPU: No graphics acceleration
@@ -165,7 +168,7 @@ hardware.autoOptimization = {
     enableMemoryOptimization = true;   # ZRAM, swappiness optimization
     enableCpuOptimization = true;      # Governor, kernel, build settings
     enableGpuOptimization = false;     # Skip GPU detection/drivers
-    enableStorageOptimization = true;  # I/O scheduler optimization  
+    enableStorageOptimization = true;  # I/O scheduler optimization
     enablePlatformOptimization = true; # Laptop vs desktop differences
   };
 };
@@ -195,7 +198,7 @@ modules = {
     enable = true;
     cpuGovernor = "ondemand";  # This overrides auto-detection
   };
-  
+
   # Auto-optimization (supplements manual settings)
   hardware.autoOptimization = {
     enable = true;
@@ -212,11 +215,11 @@ modules = {
 ```nix
 modules = {
   gaming.steam.enable = true;
-  
+
   hardware.autoOptimization.enable = true;
   # Result: Automatically detects gaming hardware and optimizes for:
   # - Maximum CPU performance
-  # - GPU hardware acceleration  
+  # - GPU hardware acceleration
   # - Low-latency memory management
   # - Fast SSD game loading
 };
@@ -227,11 +230,13 @@ modules = {
 ### Hardware Not Detected
 
 1. **Check detection results**:
+
    ```bash
    hardware-detection-info
    ```
 
 2. **Override incorrect detection**:
+
    ```nix
    hardware.autoOptimization.override.hasNvidiaGPU = true;
    ```
@@ -262,6 +267,7 @@ hardware.autoOptimization.override = {
 ## Migration from Manual Configuration
 
 ### Before (Manual Configuration)
+
 ```nix
 # Manual hardware configuration
 zramSwap.enable = true;
@@ -275,6 +281,7 @@ nix.settings.cores = 8;
 ```
 
 ### After (Zero Configuration)
+
 ```nix
 # Automatic hardware optimization
 hardware.autoOptimization.enable = true;
@@ -284,7 +291,7 @@ hardware.autoOptimization.enable = true;
 ## Benefits Summary
 
 ✅ **Zero Configuration** - Works out of the box with optimal settings
-✅ **Hardware Agnostic** - Same configuration works on different hardware  
+✅ **Hardware Agnostic** - Same configuration works on different hardware
 ✅ **Performance Optimized** - Automatically tuned for your specific hardware
 ✅ **Power Efficient** - Laptop systems get battery-optimized configurations
 ✅ **Build Performance** - Nix builds optimized for your CPU and memory

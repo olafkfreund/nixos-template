@@ -17,7 +17,7 @@ nixosConfigurations = {
     hostname = "my-desktop";
   };
 
-  # Development machine  
+  # Development machine
   dev-laptop = flakeUtils.mkDevelopment {
     hostname = "dev-laptop";
     system = "x86_64-linux";
@@ -100,7 +100,7 @@ dev-laptop = flakeUtils.mkDevelopment {
   extraModules = [
     # Laptop-specific power management
     ./modules/hardware/laptop.nix
-    
+
     # Custom development tools
     ({ config, pkgs, ... }: {
       environment.systemPackages = with pkgs; [
@@ -156,7 +156,7 @@ You can create your own templates by following the same pattern:
 # In your flake.nix
 let
   flakeUtils = import ./lib/flake-utils.nix { inherit inputs outputs nixpkgs self home-manager sops-nix; };
-  
+
   # Custom template
   mkMediaServer = { hostname, system ? "x86_64-linux", extraModules ? [] }:
     flakeUtils.mkServer {

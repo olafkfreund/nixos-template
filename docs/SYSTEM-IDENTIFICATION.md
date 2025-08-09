@@ -5,6 +5,7 @@ The NixOS template includes a standardized system identification module that pro
 ## Overview
 
 Instead of manually setting `networking.hostName` and other system identifiers, use the `systemId` module for:
+
 - **Consistent naming patterns** across different system types
 - **Automatic profile detection** based on hostname
 - **System metadata management** with flake integration
@@ -28,12 +29,12 @@ systemId = {
 
 The system identification module automatically detects system types and applies appropriate hostname prefixes:
 
-| System Type | Hostname Pattern | Example |
-|-------------|------------------|---------|
-| Physical | `baseName` | `workstation-01` |
-| VM | `nixos-vm-baseName` | `nixos-vm-development` |
-| WSL | `nixos-wsl-baseName` | `nixos-wsl-development` |
-| Darwin | `nix-darwin-baseName` | `nix-darwin-desktop` |
+| System Type | Hostname Pattern      | Example                 |
+| ----------- | --------------------- | ----------------------- |
+| Physical    | `baseName`            | `workstation-01`        |
+| VM          | `nixos-vm-baseName`   | `nixos-vm-development`  |
+| WSL         | `nixos-wsl-baseName`  | `nixos-wsl-development` |
+| Darwin      | `nix-darwin-baseName` | `nix-darwin-desktop`    |
 
 ### Disable System Type Prefixes
 
@@ -46,14 +47,14 @@ systemId = {
 
 ## Profile Types
 
-| Profile | Use Case | Auto-detected from hostname |
-|---------|----------|----------------------------|
-| `workstation` | Desktop development/productivity | `*desktop*`, `*workstation*` |
-| `server` | Headless server systems | `*server*` |
-| `laptop` | Mobile systems with power management | `*laptop*` |
-| `gaming` | Gaming-optimized systems | `*gaming*` |
-| `development` | Development environments | `*dev*`, `*development*` |
-| `minimal` | Minimal installations | - |
+| Profile       | Use Case                             | Auto-detected from hostname  |
+| ------------- | ------------------------------------ | ---------------------------- |
+| `workstation` | Desktop development/productivity     | `*desktop*`, `*workstation*` |
+| `server`      | Headless server systems              | `*server*`                   |
+| `laptop`      | Mobile systems with power management | `*laptop*`                   |
+| `gaming`      | Gaming-optimized systems             | `*gaming*`                   |
+| `development` | Development environments             | `*dev*`, `*development*`     |
+| `minimal`     | Minimal installations                | -                            |
 
 ## Environment Classification
 
@@ -89,21 +90,25 @@ Tags provide flexible system classification:
 ### Common Tag Categories
 
 **Hardware Tags:**
+
 - `gpu-enabled`, `gpu-nvidia`, `gpu-amd`, `gpu-intel`
 - `high-memory`, `ssd-storage`, `nvme-storage`
 - `wifi-enabled`, `ethernet-only`
 
 **Purpose Tags:**
+
 - `build-server`, `database`, `web-frontend`, `api-backend`
 - `monitoring`, `logging`, `backup`
 - `development`, `testing`, `ci-cd`
 
 **Network Tags:**
+
 - `dmz`, `internal`, `management`
 - `public-facing`, `load-balanced`
 - `vpn-access`, `ssh-access`
 
 **Compliance Tags:**
+
 - `pci-compliant`, `hipaa`, `gdpr`
 - `encrypted-storage`, `audit-logging`
 
@@ -194,12 +199,14 @@ systemId = {
 ## Migration from Manual Configuration
 
 ### Old Pattern
+
 ```nix
 networking.hostName = "my-server";
 system.stateVersion = "25.05";
 ```
 
 ### New Pattern
+
 ```nix
 systemId = {
   baseName = "my-server";
@@ -213,6 +220,7 @@ systemId = {
 ## Advanced Examples
 
 ### Production Web Server
+
 ```nix
 systemId = {
   baseName = "web-01";
@@ -231,6 +239,7 @@ systemId = {
 ```
 
 ### Gaming Desktop
+
 ```nix
 systemId = {
   baseName = "gaming-rig";
@@ -249,6 +258,7 @@ systemId = {
 ```
 
 ### Development Laptop
+
 ```nix
 systemId = {
   baseName = "dev-laptop";
@@ -266,6 +276,7 @@ systemId = {
 ```
 
 ### CI/CD Build Server
+
 ```nix
 systemId = {
   baseName = "build-server-01";
@@ -288,11 +299,13 @@ systemId = {
 The system identification module includes validation:
 
 ### Assertions
+
 - `baseName` cannot be empty
 - `baseName` cannot contain spaces
 - `baseName` must be ≤63 characters (hostname limit)
 
 ### Warnings
+
 - Using default `baseName` values
 - Profile mismatches (e.g., workstation profile on VM)
 - Disabled flake integration when metadata is available

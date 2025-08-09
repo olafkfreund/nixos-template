@@ -15,7 +15,7 @@ let
   # Determine optimal settings based on detected hardware
   # Use the enhanced hardware detection structure
   memoryClass = hwDetection.memory.class;
-  
+
   storageClass = hwDetection.storage.primaryType;
 
   cpuClass =
@@ -30,14 +30,14 @@ in
       description = ''
         Enable comprehensive system performance optimizations automatically tuned
         based on detected hardware characteristics. This module optimizes:
-        
+
         - Kernel memory management and I/O scheduling
         - CPU frequency scaling and power management
         - Network stack performance and throughput
         - Storage I/O schedulers and filesystem tuning
         - Build system parallelization and caching
         - Systemd service startup optimization
-        
+
         Performance settings are automatically scaled based on detected memory,
         CPU cores, storage type (NVMe/SSD/HDD), and system profile.
       '';
@@ -48,13 +48,13 @@ in
       default = "desktop";
       description = ''
         Performance optimization profile that adjusts system tuning parameters:
-        
+
         - `desktop`: Balanced performance for interactive desktop usage with good responsiveness
-        - `server`: Optimized for throughput, multi-user workloads, and server applications  
+        - `server`: Optimized for throughput, multi-user workloads, and server applications
         - `laptop`: Power-efficient settings prioritizing battery life over peak performance
         - `gaming`: Maximum performance for gaming with reduced latency and disabled mitigations
         - `minimal`: Conservative optimizations with minimal system impact
-        
+
         Each profile automatically configures CPU governors, kernel parameters, and
         I/O schedulers appropriate for the intended workload.
       '';
@@ -68,7 +68,7 @@ in
         - More aggressive CPU scheduler tuning
         - Reduced I/O delay for modern hardware
         - More aggressive memory management settings
-        
+
         WARNING: These optimizations prioritize performance over stability and may
         cause issues on some systems. Recommended only for gaming or high-performance
         workloads where maximum performance is critical.
@@ -82,7 +82,7 @@ in
         - Optimized network buffer sizes for high-bandwidth connections
         - TCP window scaling and fast open for reduced connection overhead
         - Optimized network queue disciplines (fq qdisc)
-        
+
         Significantly improves network performance for file transfers, streaming,
         and server workloads. May increase memory usage for network buffers.
       '';
@@ -95,7 +95,7 @@ in
         - CPU-specific optimizations (Intel P-State, AMD P-State)
         - Storage-specific tuning (NVMe latency, SSD TRIM, HDD elevator)
         - Memory management tuning based on available RAM
-        
+
         Automatically detects hardware and applies optimal settings. Safe for all systems.
       '';
     };
@@ -107,7 +107,7 @@ in
         - Build artifact caching and deduplication (auto-optimise-store)
         - Optimized substituter connections and cache settings
         - Memory management for large builds with appropriate timeouts
-        
+
         Significantly reduces Nix build times and storage usage. Safe for all systems.
       '';
     };

@@ -13,10 +13,10 @@ in
   options.modules.security.hardening = {
     enable = mkEnableOption "system security hardening" // {
       description = ''
-        Enable comprehensive system security hardening based on CIS benchmarks 
-        and security best practices. This module applies kernel hardening, network 
+        Enable comprehensive system security hardening based on CIS benchmarks
+        and security best practices. This module applies kernel hardening, network
         security, service restrictions, and security auditing.
-        
+
         When enabled, provides defense-in-depth security through:
         - Kernel memory protection and attack mitigation
         - Network stack hardening and firewall rules
@@ -31,13 +31,13 @@ in
       default = "workstation";
       description = ''
         Security hardening profile that determines the aggressiveness of security measures:
-        
+
         - `desktop`: Balanced security for desktop systems with user experience focus
         - `server`: Aggressive hardening for headless servers and production systems
-        - `workstation`: Comprehensive hardening for development and power-user systems  
+        - `workstation`: Comprehensive hardening for development and power-user systems
         - `minimal`: Basic security hardening with minimal system impact
-        
-        Each profile automatically adjusts kernel parameters, service restrictions, 
+
+        Each profile automatically adjusts kernel parameters, service restrictions,
         and network policies appropriate for the system's intended use case.
       '';
       example = "server";
@@ -47,11 +47,11 @@ in
       description = ''
         Enable network-level security hardening including:
         - TCP/IP stack hardening against attacks
-        - ICMP flood protection and rate limiting  
+        - ICMP flood protection and rate limiting
         - Source routing and redirect protections
         - Enhanced firewall rules with connection tracking
         - Network packet inspection and logging
-        
+
         Includes rate limiting for SSH connections and other network services
         to prevent brute force attacks.
       '';
@@ -66,7 +66,7 @@ in
         - Process isolation and privilege restrictions
         - Kernel module signature enforcement
         - Disable dangerous kernel features (vsyscall, debugfs)
-        
+
         WARNING: May impact performance and compatibility with some applications.
         Test thoroughly before deploying to production systems.
       '';
@@ -81,7 +81,7 @@ in
         - Capability dropping and privilege restrictions
         - Network and namespace isolation where appropriate
         - Resource limits and control group restrictions
-        
+
         These restrictions provide defense-in-depth against service compromise
         but may require adjustment for applications with specific requirements.
       '';
@@ -94,7 +94,7 @@ in
         - Security event logging with appropriate log levels
         - System activity monitoring and alerting
         - Log persistence and compression for forensic analysis
-        
+
         Helps with compliance requirements and security incident response.
         Logs are retained for 1 month with 1GB maximum system usage.
       '';

@@ -20,21 +20,21 @@ let
       # Check for common virtualization indicators with safe fallbacks
       productName = safeReadFile "/sys/class/dmi/id/product_name" "";
       sysVendor = safeReadFile "/sys/class/dmi/id/sys_vendor" "";
-      
+
       hasQemuDmi = lib.hasInfix "QEMU" productName;
       hasVMwareeDmi = lib.hasInfix "VMware" sysVendor || lib.hasInfix "VMware" productName;
       hasVirtualBoxDmi = lib.hasInfix "VirtualBox" productName;
       hasHyperVDmi = lib.hasInfix "Microsoft Corporation" sysVendor ||
-                      lib.hasInfix "Hyper-V" productName;
+        lib.hasInfix "Hyper-V" productName;
       hasWSLInterop = builtins.pathExists "/proc/sys/fs/binfmt_misc/WSLInterop" ||
-                      builtins.pathExists "/run/WSL";
+        builtins.pathExists "/run/WSL";
       hasDockerEnv = builtins.pathExists "/.dockerenv";
       hasContainerEnv = builtins.getEnv "container" != "";
-      
+
       # Additional detection methods
       hasSystemdContainer = builtins.getEnv "SYSTEMD_VIRTUALIZATION" != "";
-      hasVirtWhat = builtins.pathExists "/proc/xen" || 
-                    lib.hasInfix "paravirt" (safeReadFile "/proc/cpuinfo" "");
+      hasVirtWhat = builtins.pathExists "/proc/xen" ||
+        lib.hasInfix "paravirt" (safeReadFile "/proc/cpuinfo" "");
     in
     {
       isVirtualMachine = hasQemuDmi || hasVMwareeDmi || hasVirtualBoxDmi || hasHyperVDmi;
@@ -54,9 +54,9 @@ let
   detectCPU =
     let
       cpuinfo = safeReadFile "/proc/cpuinfo" "";
-      
+
       # Fallback CPU detection using Nix platform information
-      platformVendor = 
+      platformVendor =
         if pkgs.stdenv.hostPlatform.isx86_64 || pkgs.stdenv.hostPlatform.isx86_32
         then "x86"
         else if pkgs.stdenv.hostPlatform.isAarch64
@@ -71,10 +71,10 @@ let
       isARM = lib.hasInfix "ARM" cpuinfo || pkgs.stdenv.hostPlatform.isAarch64;
 
       # CPU features detection with safe parsing
-      flags = lib.concatStringsSep " " 
+      flags = lib.concatStringsSep " "
         (lib.filter (line: lib.hasPrefix "flags" line || lib.hasPrefix "Features" line)
-         (lib.splitString "\n" cpuinfo));
-      
+          (lib.splitString "\n" cpuinfo));
+
       hasAVX = lib.hasInfix " avx " flags || lib.hasInfix " avx\t" flags;
       hasAVX2 = lib.hasInfix " avx2 " flags || lib.hasInfix " avx2\t" flags;
       hasAVX512 = lib.hasInfix "avx512" flags;
@@ -88,29 +88,29 @@ let
           processorLines = builtins.filter (line: lib.hasPrefix "processor" line)
             (lib.splitString "\n" cpuinfo);
           procCount = builtins.length processorLines;
-          
+
           # Method 2: Try nproc via /proc/sys/kernel/nproc
-          nprocValue = 
+          nprocValue =
             let nprocContent = safeReadFile "/sys/devices/system/cpu/online" "";
             in if nprocContent != ""
-               then # Parse range like "0-3" or "0-7"
-                 let
-                   cleanContent = lib.strings.trim nprocContent;
-                   parts = lib.splitString "-" cleanContent;
-                 in
-                 if builtins.length parts == 2 
-                 then (lib.strings.toInt (builtins.elemAt parts 1)) + 1
-                 else 1
-               else 0;
-          
+            then # Parse range like "0-3" or "0-7"
+              let
+                cleanContent = lib.strings.trim nprocContent;
+                parts = lib.splitString "-" cleanContent;
+              in
+              if builtins.length parts == 2
+              then (lib.strings.toInt (builtins.elemAt parts 1)) + 1
+              else 1
+            else 0;
+
           # Method 3: Fallback based on platform
-          platformDefault = 
+          platformDefault =
             if pkgs.stdenv.hostPlatform.isx86_64 then 4
             else if pkgs.stdenv.hostPlatform.isAarch64 then 4
             else 2;
         in
         if procCount > 0 then procCount
-        else if nprocValue > 0 then nprocValue  
+        else if nprocValue > 0 then nprocValue
         else platformDefault;
 
       # CPU model detection with improved parsing
@@ -120,7 +120,7 @@ let
             (lib.splitString "\n" cpuinfo);
           firstModelLine = if modelLines != [ ] then builtins.head modelLines else "";
           modelMatch = builtins.match "model name[[:space:]]*:[[:space:]]*(.*)" firstModelLine;
-          
+
           # Fallback for ARM
           armModelLines = builtins.filter (line: lib.hasPrefix "Processor" line)
             (lib.splitString "\n" cpuinfo);
@@ -145,7 +145,7 @@ let
       # Additional metadata for debugging
       detection = {
         cpuinfoAvailable = cpuinfo != "";
-        detectionMethod = 
+        detectionMethod =
           if cpuinfo != "" then "procfs"
           else "platform-fallback";
       };
@@ -159,24 +159,25 @@ let
       totalMemMatch = builtins.match ".*MemTotal:[[:space:]]*([0-9]+) kB.*" meminfo;
       totalMemKB =
         if totalMemMatch != null
-        then 
+        then
           let
             memStr = builtins.head totalMemMatch;
             # Safe integer conversion
             memInt = builtins.fromJSON memStr;
-          in memInt
-        else 
-          # Fallback estimation based on common system configurations
-          let 
+          in
+          memInt
+        else
+        # Fallback estimation based on common system configurations
+          let
             # Try alternative detection methods
             sysMemInfo = safeReadFile "/sys/devices/system/memory/auto_online_blocks" "";
           in
           if pkgs.stdenv.hostPlatform.isx86_64 then 8388608  # 8GB default for x64
-          else if pkgs.stdenv.hostPlatform.isAarch64 then 4194304  # 4GB default for ARM64  
+          else if pkgs.stdenv.hostPlatform.isAarch64 then 4194304  # 4GB default for ARM64
           else 2097152; # 2GB minimal default
 
       # Convert to GB with safer arithmetic
-      totalMemGB = 
+      totalMemGB =
         if totalMemKB > 0
         then totalMemKB / 1024 / 1024
         else 8; # 8GB reasonable default for modern systems
@@ -195,15 +196,15 @@ let
   detectStorage =
     let
       # Safe directory reading with fallbacks
-      blockDevs = 
+      blockDevs =
         if builtins.pathExists "/sys/block"
         then (builtins.readDir "/sys/block") or { }
         else { };
-      
+
       devNames = builtins.attrNames blockDevs;
-      
+
       # Detect NVMe with multiple methods
-      hasNVMe = 
+      hasNVMe =
         builtins.any (dev: lib.hasPrefix "nvme" dev) devNames ||
         builtins.pathExists "/dev/nvme0n1" ||
         builtins.pathExists "/sys/class/nvme";
@@ -212,15 +213,15 @@ let
       hasSSD = hasNVMe || # NVMe is always SSD
         builtins.any
           (dev:
-            let 
+            let
               rotationalFile = "/sys/block/${dev}/queue/rotational";
               rotationalContent = safeReadFile rotationalFile "1";
             in
-            (lib.hasPrefix "sd" dev || lib.hasPrefix "vd" dev) && 
-            (rotationalContent == "0\n" || rotationalContent == "0")
+            (lib.hasPrefix "sd" dev || lib.hasPrefix "vd" dev) &&
+              (rotationalContent == "0\n" || rotationalContent == "0")
           )
           devNames;
-      
+
       # Additional storage type detection
       hasVirtIO = builtins.any (dev: lib.hasPrefix "vd" dev) devNames;
       hasMMC = builtins.any (dev: lib.hasPrefix "mmcblk" dev) devNames;
@@ -246,33 +247,33 @@ let
   detectGPU =
     let
       # Check for GPU vendors with multiple detection methods
-      hasNvidiaDevice = 
+      hasNvidiaDevice =
         builtins.pathExists "/proc/driver/nvidia" ||
         builtins.pathExists "/dev/nvidia0" ||
         builtins.pathExists "/sys/module/nvidia";
-      
-      drmDevs = 
+
+      drmDevs =
         if builtins.pathExists "/sys/class/drm"
         then (builtins.readDir "/sys/class/drm") or { }
         else { };
-      
+
       drmDevNames = builtins.attrNames drmDevs;
-      
-      hasAMDDevice = 
+
+      hasAMDDevice =
         builtins.any (dev: lib.hasInfix "amd" dev || lib.hasInfix "radeon" dev) drmDevNames ||
         builtins.pathExists "/sys/module/amdgpu" ||
         builtins.pathExists "/sys/module/radeon";
-      
-      hasIntelDevice = 
+
+      hasIntelDevice =
         builtins.any (dev: lib.hasInfix "intel" dev || lib.hasInfix "i915" dev) drmDevNames ||
         builtins.pathExists "/sys/module/i915" ||
         builtins.pathExists "/sys/module/xe"; # Intel Xe graphics
-      
+
       # Additional GPU detection
-      hasVirtIOGPU = 
+      hasVirtIOGPU =
         builtins.any (dev: lib.hasInfix "virtio" dev) drmDevNames ||
         builtins.pathExists "/sys/module/virtio_gpu";
-        
+
       hasNouveau = builtins.pathExists "/sys/module/nouveau";
     in
     {
@@ -318,14 +319,14 @@ in
         Enable comprehensive hardware detection and automatic optimization.
         This module analyzes system hardware characteristics and applies
         appropriate optimizations for CPU, memory, storage, and GPU.
-        
+
         Detection includes:
         - CPU vendor, cores, features (AVX, AES, etc.)
         - Memory size and classification (minimal/low/medium/high)
         - Storage type detection (NVMe, SSD, HDD, VirtIO)
         - GPU vendor detection (Intel, AMD, NVIDIA)
         - Virtualization environment detection (QEMU, VMware, WSL, etc.)
-        
+
         Results are made available to other modules for optimization decisions.
       '';
     };
@@ -335,14 +336,14 @@ in
       default = true;
       description = ''
         Automatically apply hardware-specific optimizations based on detection results.
-        
+
         When enabled, applies:
         - CPU vendor-specific optimizations (microcode, power states)
         - Memory-based kernel parameter tuning
         - Storage I/O scheduler optimization
         - GPU driver configuration
         - Virtualization environment adaptations
-        
+
         Disable if you prefer manual hardware configuration or experience
         compatibility issues with automatic optimizations.
       '';
@@ -353,13 +354,13 @@ in
       default = null;
       description = ''
         Override automatic performance profile detection with manual classification.
-        
+
         Automatic detection determines profile based on:
         - `high-performance`: ≥32GB RAM, ≥8 cores, NVMe storage
         - `balanced`: ≥8GB RAM, ≥4 cores, SSD storage
         - `resource-constrained`: <8GB RAM
         - `minimal`: Fallback for limited hardware
-        
+
         Manual override useful for specialized workloads or testing different
         optimization levels on the same hardware.
       '';
@@ -372,11 +373,11 @@ in
         default = true;
         description = ''
           Enable hardware detection reporting and logging.
-          
+
           When enabled, creates a systemd service that logs detected hardware
           characteristics at boot time. Useful for troubleshooting hardware
           detection issues and verifying optimization decisions.
-          
+
           Reports include CPU, memory, storage, GPU, and virtualization details.
         '';
       };
@@ -386,11 +387,11 @@ in
         default = "info";
         description = ''
           Hardware detection logging verbosity level:
-          
+
           - `info`: Basic hardware summary (CPU, memory, storage type, performance profile)
           - `debug`: Detailed hardware information including CPU features, GPU devices,
             storage devices, and detection methodology used for each component
-          
+
           Debug level useful for troubleshooting detection issues or optimization problems.
         '';
       };
@@ -403,11 +404,11 @@ in
           default = null;
           description = ''
             Override automatic CPU vendor detection.
-            
+
             Useful when running in virtualized environments where CPU vendor
             detection may be unreliable, or when testing vendor-specific
             optimizations on different hardware.
-            
+
             When set, applies vendor-specific optimizations regardless of
             actual hardware detected.
           '';
@@ -419,11 +420,11 @@ in
           default = null;
           description = ''
             Override automatic CPU core count detection.
-            
+
             Useful when automatic detection fails (e.g., in some virtualized
             environments) or when you want to limit the number of cores used
             for performance optimization calculations.
-            
+
             Affects build parallelism, memory tuning, and CPU governor selection.
           '';
           example = 8;
@@ -436,14 +437,14 @@ in
           default = null;
           description = ''
             Override automatic virtualization environment detection.
-            
+
             Detection may fail in some environments or you may want to force
             specific virtualization optimizations. Affects:
             - Guest tools and drivers installation
-            - Power management settings  
+            - Power management settings
             - I/O scheduler selection
             - Service configuration (e.g., disable hardware monitoring in VMs)
-            
+
             Use "bare-metal" to disable all virtualization optimizations.
           '';
           example = "qemu";

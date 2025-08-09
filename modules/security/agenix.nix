@@ -11,18 +11,18 @@ in
     enable = mkEnableOption "Age-based secret management with agenix" // {
       description = ''
         Enable agenix for declarative secrets management using age encryption.
-        
+
         Agenix provides secure, version-controlled secret management that integrates
         seamlessly with NixOS configurations. Secrets are encrypted with age keys
         and automatically decrypted at boot time to specified locations.
-        
+
         Features:
         - Age-based encryption (modern alternative to GPG)
         - Declarative secret configuration in Nix
         - Automatic secret decryption and placement
         - Support for multiple recipients per secret
         - Integration with systemd services and user accounts
-        
+
         See docs/AGENIX-SECRETS.md for setup and usage instructions.
       '';
     };
@@ -32,7 +32,7 @@ in
       default = "/run/agenix";
       description = ''
         Base path where decrypted secrets will be stored at runtime.
-        
+
         Secrets are decrypted to tmpfs (in-memory filesystem) for security.
         Individual secrets can override this location with the 'path' option.
       '';
@@ -43,11 +43,11 @@ in
       default = "0400";
       description = ''
         Default file permissions for decrypted secrets (octal notation).
-        
+
         - "0400": Read-only for owner (recommended for most secrets)
         - "0440": Read-only for owner and group
         - "0444": World-readable (only for public certificates)
-        
+
         Individual secrets can override this with their own mode setting.
       '';
       example = "0440";
@@ -58,7 +58,7 @@ in
       default = "root";
       description = ''
         Default owner for decrypted secrets.
-        
+
         Should match the user that needs to read the secret. For service-specific
         secrets, set this to the service user (e.g., "postgres", "nginx").
         Individual secrets can override this setting.
@@ -71,7 +71,7 @@ in
       default = "root";
       description = ''
         Default group for decrypted secrets.
-        
+
         Useful for sharing secrets between multiple services or users.
         Individual secrets can override this setting.
       '';
@@ -86,17 +86,17 @@ in
       ];
       description = ''
         List of private key files used for decrypting secrets.
-        
+
         These keys correspond to the public keys listed in secrets/secrets.nix.
         Default uses SSH host keys, but you can also use dedicated age keys:
-        
+
         - SSH host keys: Available on all systems, rotated less frequently
         - Dedicated age keys: More secure, can be per-user or per-purpose
-        
+
         Keys are tried in order until decryption succeeds.
       '';
       example = [
-        "/etc/ssh/ssh_host_ed25519_key" 
+        "/etc/ssh/ssh_host_ed25519_key"
         "/root/.config/age/key.txt"
       ];
     };
