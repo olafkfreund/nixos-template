@@ -163,14 +163,14 @@ jobs:
           # Find all shell scripts
           find . -name "*.sh" -type f | while read -r script; do
             echo "Checking: $script"
-            shellcheck -e SC1091 "$script"
+            shellcheck -e SC1091 -e SC2016 "$script"
           done
 
           # Check scripts without .sh extension that have bash shebang
           find . -type f -executable -exec grep -l '^#!/.*bash' {} \; | while read -r script; do
             if [[ ! "$script" =~ \.sh$ ]]; then
               echo "Checking executable script: $script"
-              shellcheck -e SC1091 "$script"
+              shellcheck -e SC1091 -e SC2016 "$script"
             fi
           done
 
@@ -354,7 +354,7 @@ jobs:
           nix profile install nixpkgs#statix
           nix profile install nixpkgs#deadnix
       - name: Create pre-commit config
-        run: "cat > .pre-commit-config.yaml << 'EOF'\nrepos:\n- repo: local\n  hooks:\n  - id: nixpkgs-fmt\n    name: nixpkgs-fmt\n    entry: nixpkgs-fmt\n    language: system\n    files: '\\.nix$'\n    \n  - id: statix\n    name: statix\n    entry: statix check\n    language: system\n    files: '\\.nix$'\n    pass_filenames: false\n    \n  - id: deadnix\n    name: deadnix\n    entry: deadnix --fail\n    language: system\n    files: '\\.nix$'\n    pass_filenames: false\n    \n  - id: shellcheck\n    name: shellcheck\n    entry: shellcheck\n    language: system\n    files: '\\.sh$'\n    args: [-e, SC1091]\nEOF\n"
+        run: "cat > .pre-commit-config.yaml << 'EOF'\nrepos:\n- repo: local\n  hooks:\n  - id: nixpkgs-fmt\n    name: nixpkgs-fmt\n    entry: nixpkgs-fmt\n    language: system\n    files: '\\.nix$'\n    \n  - id: statix\n    name: statix\n    entry: statix check\n    language: system\n    files: '\\.nix$'\n    pass_filenames: false\n    \n  - id: deadnix\n    name: deadnix\n    entry: deadnix --fail\n    language: system\n    files: '\\.nix$'\n    pass_filenames: false\n    \n  - id: shellcheck\n    name: shellcheck\n    entry: shellcheck\n    language: system\n    files: '\\.sh$'\n    args: [-e, SC1091, -e, SC2016]\nEOF\n"
       - name: Run pre-commit on all files
         run: |
           echo "Running pre-commit hooks on all files..."

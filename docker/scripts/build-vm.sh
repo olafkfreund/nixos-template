@@ -185,7 +185,8 @@ build_vm() {
   # Build the VM image
   log_info "Starting nixos-generate build..."
 
-  local build_start=$(date +%s)
+  local build_start
+  build_start=$(date +%s)
 
   if ! nixos-generate \
     --format "$format" \
@@ -198,7 +199,8 @@ build_vm() {
     return 1
   fi
 
-  local build_end=$(date +%s)
+  local build_end
+  build_end=$(date +%s)
   local build_time=$((build_end - build_start))
 
   log_success "VM build completed in ${build_time} seconds"
@@ -280,7 +282,8 @@ main() {
   local output_dir="$DEFAULT_OUTPUT_DIR"
   local disk_size="$DEFAULT_DISK_SIZE"
   local memory_size="$DEFAULT_MEMORY_SIZE"
-  local vm_name="nixos-$(date +%Y%m%d-%H%M%S)"
+  local vm_name
+  vm_name="nixos-$(date +%Y%m%d-%H%M%S)"
   local template=""
   local validate_only=false
 
