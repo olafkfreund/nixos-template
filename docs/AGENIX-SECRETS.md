@@ -11,7 +11,7 @@ This template uses [agenix](https://github.com/ryantm/agenix) for secure, declar
 mkdir -p ~/.config/age
 age-keygen > ~/.config/age/key.txt
 
-# Or convert existing SSH key to age format  
+# Or convert existing SSH key to age format
 ssh-to-age < ~/.ssh/id_ed25519.pub
 ```
 
@@ -47,7 +47,7 @@ agenix -e database-password.age
 { config, ... }: {
   # Enable agenix module
   modules.security.agenix.enable = true;
-  
+
   # Define secrets
   age.secrets = {
     user-password = {
@@ -55,14 +55,14 @@ agenix -e database-password.age
       mode = "0400";
       owner = "user";
     };
-    
+
     database-password = {
       file = ../secrets/database-password.age;
       mode = "0400";
       owner = "postgres";
     };
   };
-  
+
   # Use secrets in services
   services.postgresql = {
     enable = true;
@@ -131,6 +131,7 @@ services.restic.backups.home = {
 ## Key Management Best Practices
 
 ### 1. Key Rotation
+
 ```bash
 # Generate new key
 age-keygen > ~/.config/age/key-new.txt
@@ -140,16 +141,18 @@ agenix --rekey
 ```
 
 ### 2. Multi-User Access
+
 ```nix
 # Allow multiple users to access a secret
-"shared-secret.age".publicKeys = [ 
-  users.alice 
-  users.bob 
-  systems.server 
+"shared-secret.age".publicKeys = [
+  users.alice
+  users.bob
+  systems.server
 ];
 ```
 
 ### 3. Environment-Specific Secrets
+
 ```nix
 # Development secrets
 "dev-api-key.age".publicKeys = [ users.developer systems.dev-server ];
@@ -159,6 +162,7 @@ agenix --rekey
 ```
 
 ### 4. Host-Specific Secrets
+
 ```nix
 # Different database passwords per environment
 "db-password-dev.age".publicKeys = [ systems.dev-server ];
@@ -170,17 +174,20 @@ agenix --rekey
 If migrating from sops-nix:
 
 1. Export existing secrets:
+
 ```bash
 sops -d secrets.yaml > decrypted-secrets.json
 ```
 
 2. Create age secrets:
+
 ```bash
 # For each secret in the JSON
 echo "secret-value" | agenix -e secret-name.age
 ```
 
 3. Update NixOS configuration:
+
 ```nix
 # Replace sops references
 # sops.secrets.mysecret = { ... };
@@ -194,6 +201,7 @@ config.age.secrets.mysecret.path
 ## Troubleshooting
 
 ### Permission Issues
+
 ```bash
 # Check secret file permissions
 sudo ls -la /run/agenix/
@@ -203,6 +211,7 @@ ls -la ~/.config/age/key.txt  # Should be 600
 ```
 
 ### Key Problems
+
 ```bash
 # Test decryption
 age --decrypt -i ~/.config/age/key.txt secrets/test.age
@@ -212,6 +221,7 @@ ssh-to-age < ~/.ssh/id_ed25519.pub
 ```
 
 ### Service Failures
+
 ```bash
 # Check agenix systemd service
 systemctl status agenix-user-password

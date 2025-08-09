@@ -146,7 +146,7 @@ in
           download-attempts = 3;
 
           # Advanced cache settings (expert recommendations)
-          narinfo-cache-negative-ttl = 86400;  # 1 day (increased from 1 hour)
+          narinfo-cache-negative-ttl = 86400; # 1 day (increased from 1 hour)
           narinfo-cache-positive-ttl = 432000; # 5 days
 
           # Build log optimization

@@ -64,18 +64,21 @@ hardware.autoOptimization.enable = true;
 ```
 
 **What it automatically detects and optimizes:**
+
 - 💾 **Memory**: RAM-based ZRAM, swap, and kernel parameter tuning
-- 🏗️ **CPU**: Governor selection, kernel choice, and build parallelism  
+- 🏗️ **CPU**: Governor selection, kernel choice, and build parallelism
 - 🖥️ **GPU**: Automatic driver installation (NVIDIA, AMD, Intel)
 - 💿 **Storage**: SSD vs HDD optimizations and I/O scheduler selection
 - 🔋 **Platform**: Laptop vs desktop power management differences
 
 **Hardware-specific examples:**
+
 - **Gaming Rig** (32GB, RTX GPU): Performance governor, NVIDIA drivers, low-latency memory
-- **Laptop** (16GB, Intel GPU): Power-saving governor, TLP, thermal management  
+- **Laptop** (16GB, Intel GPU): Power-saving governor, TLP, thermal management
 - **Server** (8GB, no GPU): Ondemand governor, hardened kernel, server optimizations
 
 **Debug and verify:**
+
 ```bash
 # Quick hardware summary
 hw-info
@@ -1195,7 +1198,7 @@ This template uses **Agenix** for encrypted secrets management with age encrypti
 ### Setup
 
 1. Generate a key: `age-keygen > ~/.config/age/key.txt`
-1. Configure `secrets/secrets.nix` with your public keys  
+1. Configure `secrets/secrets.nix` with your public keys
 1. Create encrypted files: `agenix -e my-secret.age`
 
 ### Using Secrets

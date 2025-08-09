@@ -14,9 +14,9 @@
   # Enable agenix secrets management
   modules.security.agenix = {
     enable = true;
-    secretsPath = "/run/agenix";  # Default location for decrypted secrets
-    secretsMode = "0400";         # Read-only for owner
-    secretsOwner = "root";        # Default owner
+    secretsPath = "/run/agenix"; # Default location for decrypted secrets
+    secretsMode = "0400"; # Read-only for owner
+    secretsOwner = "root"; # Default owner
   };
 
   # Define secrets that this system needs
@@ -28,7 +28,7 @@
       owner = "root";
       group = "root";
     };
-    
+
     # SSH host key
     ssh-host-key = {
       file = ../../secrets/ssh-host-key.age;
@@ -37,7 +37,7 @@
       owner = "root";
       group = "root";
     };
-    
+
     # Application database password
     postgres-password = {
       file = ../../secrets/database-password.age;
@@ -45,7 +45,7 @@
       owner = "postgres";
       group = "postgres";
     };
-    
+
     # Web service API key
     api-key = {
       file = ../../secrets/api-key.age;
@@ -53,7 +53,7 @@
       owner = "nginx";
       group = "nginx";
     };
-    
+
     # Backup encryption password
     restic-password = {
       file = ../../secrets/restic-password.age;
@@ -61,7 +61,7 @@
       owner = "root";
       group = "root";
     };
-    
+
     # Wireless network credentials
     wifi-config = {
       file = ../../secrets/wifi-password.age;
@@ -69,7 +69,7 @@
       owner = "root";
       group = "root";
     };
-    
+
     # Email service credentials
     email-password = {
       file = ../../secrets/email-password.age;
@@ -77,7 +77,7 @@
       owner = "mail";
       group = "mail";
     };
-    
+
     # VPN configuration
     wireguard-private-key = {
       file = ../../secrets/vpn-config.age;
@@ -85,22 +85,22 @@
       owner = "systemd-network";
       group = "systemd-network";
     };
-    
+
     # SSL/TLS certificates
     tls-cert = {
       file = ../../secrets/tls-cert.age;
-      mode = "0444";  # World-readable (certificates are public)
+      mode = "0444"; # World-readable (certificates are public)
       owner = "root";
       group = "root";
     };
-    
+
     tls-key = {
       file = ../../secrets/tls-key.age;
-      mode = "0400";  # Private key - very restricted
+      mode = "0400"; # Private key - very restricted
       owner = "root";
       group = "root";
     };
-    
+
     # Development environment variables
     dev-env = {
       file = ../../secrets/dev-api-key.age;
@@ -139,11 +139,11 @@
   services.nginx = {
     enable = true;
     virtualHosts."example.com" = {
-      enableACME = false;  # Using custom certificates
+      enableACME = false; # Using custom certificates
       forceSSL = true;
       sslCertificate = config.age.secrets.tls-cert.path;
       sslCertificateKey = config.age.secrets.tls-key.path;
-      
+
       locations."/" = {
         proxyPass = "http://127.0.0.1:3000";
         extraConfig = ''
@@ -221,28 +221,28 @@
     description = "My Application";
     after = [ "network.target" "postgresql.service" ];
     wantedBy = [ "multi-user.target" ];
-    
+
     serviceConfig = {
       Type = "simple";
       User = "myapp";
       Group = "myapp";
       Restart = "always";
       RestartSec = 10;
-      
+
       # Load environment variables from secret file
       EnvironmentFile = config.age.secrets.dev-env.path;
-      
+
       # Additional security
       NoNewPrivileges = true;
       ProtectSystem = "strict";
       ProtectHome = true;
       PrivateTmp = true;
     };
-    
+
     script = ''
       export DATABASE_URL="postgresql://myapp_user:$(cat ${config.age.secrets.postgres-password.path})@localhost/myapp"
       export API_KEY="$(cat ${config.age.secrets.api-key.path})"
-      
+
       exec ${pkgs.myapp}/bin/myapp
     '';
   };
@@ -266,7 +266,7 @@
       KbdInteractiveAuthentication = false;
       PermitRootLogin = "no";
     };
-    
+
     hostKeys = [
       {
         path = "/etc/ssh/ssh_host_ed25519_key";
@@ -280,7 +280,7 @@
 
   # System configuration
   system.stateVersion = "24.05";
-  
+
   # Enable modules
   modules = {
     core = {
