@@ -160,6 +160,6 @@
         # Backup solutions
         borgbackup
       ];
-
-    };
-  }
+    }; # Close users.admin
+  }; # Close home-manager
+}

@@ -9,8 +9,6 @@
   # Override desktop defaults for server environment
   # Home configuration consolidated
   home = {
-    sessionVariables.TERMINAL = lib.mkForce "tmux"; # Servers need tmux
-
     # Server-focused packages
     packages = with pkgs; [
       # System monitoring

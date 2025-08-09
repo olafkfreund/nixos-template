@@ -112,7 +112,7 @@
 
     # Toggle power profile
     power-profile() {
-      local profile=${1:-balanced}
+      local profile=''${1:-balanced}
       case $profile in
         "performance"|"perf")
           echo "Setting performance profile"

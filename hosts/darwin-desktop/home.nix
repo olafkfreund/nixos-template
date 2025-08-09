@@ -237,7 +237,7 @@
           fi
 
           project_name="$1"
-          project_type="${2:-web}"
+          project_type="''${2:-web}"
 
           case "$project_type" in
             "web"|"frontend"|"react"|"vue")
