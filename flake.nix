@@ -266,6 +266,13 @@
         nixpkgs.config.permittedInsecurePackages = [ "libsoup-2.74.3" ];
       };
     in
+    let
+      # Import flake utilities to reduce duplication
+      flakeUtils = import ./lib/flake-utils.nix {
+        inherit inputs outputs nixpkgs self home-manager;
+        sops-nix = agenix; # Use agenix as sops-nix (they're compatible)
+      };
+    in
     {
       # Custom packages and modifications, exported as overlays
       overlays = import ./overlays { inherit inputs; };
@@ -619,157 +626,8 @@
 
       # NixOS configuration entrypoint
       # Available through 'nixos-rebuild --flake .#your-hostname'
-      nixosConfigurations = {
-        # Template configurations (examples, not directly usable)
-        laptop-template = mkSystem {
-          hostname = "laptop-template";
-          extraModules = [ templateConfig ];
-        };
-
-        desktop-template = mkSystem {
-          hostname = "desktop-template";
-          extraModules = [ templateConfig ];
-        };
-
-        server-template = mkSystem {
-          hostname = "server-template";
-          extraModules = [ templateConfig ];
-        };
-
-        # WSL2 template configuration
-        wsl2-template = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = { inherit inputs outputs; };
-          modules = [
-            ./hosts/wsl2-template/configuration.nix
-            nixos-wsl.nixosModules.wsl
-            home-manager.nixosModules.home-manager
-            agenix.nixosModules.default
-            templateConfig
-          ];
-        };
-
-        # Example VM configurations
-        qemu-vm = mkSystem { hostname = "qemu-vm"; };
-        microvm = mkSystem { hostname = "microvm"; };
-        desktop-test = mkSystem {
-          hostname = "desktop-test";
-          extraModules = [ templateConfig ];
-        };
-
-        # Preset system test configurations
-        test-workstation = mkSystem { hostname = "test-workstation"; };
-        test-gaming = mkSystem { hostname = "test-gaming"; };
-        test-server = mkSystem { hostname = "test-server"; };
-
-        # Custom installer ISO configurations
-        # Build with: nix build .#nixosConfigurations.installer-minimal.config.system.build.isoImage
-        installer-minimal = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = { inherit inputs outputs; };
-          modules = [
-            ./hosts/installer-isos/minimal-installer.nix
-            templateConfig
-          ];
-        };
-
-        installer-desktop = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = { inherit inputs outputs; };
-          modules = [
-            ./hosts/installer-isos/desktop-installer.nix
-            templateConfig
-          ];
-        };
-
-        installer-preconfigured = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = { inherit inputs outputs; };
-          modules = [
-            ./hosts/installer-isos/preconfigured-installer.nix
-            templateConfig
-          ];
-        };
-
-        # macOS VM configurations - optimized for UTM/QEMU on Mac
-        # Build with: nix build .#nixosConfigurations.desktop-macos.config.system.build.vm
-        desktop-macos = mkSystem {
-          hostname = "macos-vms/desktop-macos";
-          system = "aarch64-linux"; # Apple Silicon default, can override for x86_64
-          extraModules = [ templateConfig ];
-        };
-
-        laptop-macos = mkSystem {
-          hostname = "macos-vms/laptop-macos";
-          system = "aarch64-linux";
-          extraModules = [ templateConfig ];
-        };
-
-        server-macos = mkSystem {
-          hostname = "macos-vms/server-macos";
-          system = "aarch64-linux";
-          extraModules = [ templateConfig ];
-        };
-
-        # macOS VM configurations for Intel Macs (x86_64)
-        desktop-macos-intel = mkSystem {
-          hostname = "macos-vms/desktop-macos";
-          system = "x86_64-linux";
-          extraModules = [ templateConfig ];
-        };
-
-        laptop-macos-intel = mkSystem {
-          hostname = "macos-vms/laptop-macos";
-          system = "x86_64-linux";
-          extraModules = [ templateConfig ];
-        };
-
-        server-macos-intel = mkSystem {
-          hostname = "macos-vms/server-macos";
-          system = "x86_64-linux";
-          extraModules = [ templateConfig ];
-        };
-
-        # macOS installer ISO configurations
-        # Build with: nix build .#nixosConfigurations.installer-desktop-macos.config.system.build.isoImage
-        installer-desktop-macos = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux"; # ISOs typically x86_64 for compatibility
-          specialArgs = { inherit inputs outputs; };
-          modules = [
-            ./hosts/macos-isos/desktop-iso-macos.nix
-            templateConfig
-          ];
-        };
-
-        installer-minimal-macos = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = { inherit inputs outputs; };
-          modules = [
-            ./hosts/macos-isos/minimal-iso-macos.nix
-            templateConfig
-          ];
-        };
-
-        # macOS installer ISOs for Apple Silicon (aarch64)
-        installer-desktop-macos-aarch64 = nixpkgs.lib.nixosSystem {
-          system = "aarch64-linux";
-          specialArgs = { inherit inputs outputs; };
-          modules = [
-            ./hosts/macos-isos/desktop-iso-macos.nix
-            templateConfig
-          ];
-        };
-
-        installer-minimal-macos-aarch64 = nixpkgs.lib.nixosSystem {
-          system = "aarch64-linux";
-          specialArgs = { inherit inputs outputs; };
-          modules = [
-            ./hosts/macos-isos/minimal-iso-macos.nix
-            templateConfig
-          ];
-        };
-
-      };
+      # All configurations are now generated using flake-utils.nix to reduce duplication
+      nixosConfigurations = flakeUtils.allConfigurations;
 
       # nix-darwin configuration entrypoint
       # Available through 'darwin-rebuild switch --flake .#your-hostname'

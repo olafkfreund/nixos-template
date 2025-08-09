@@ -378,10 +378,10 @@ Once comfortable with NixOS in VMs:
 
 ## Getting Help
 
-- **NixOS Manual**: https://nixos.org/manual/nixos/stable/
-- **Nix Pills**: https://nixos.org/guides/nix-pills/
-- **NixOS Options**: https://search.nixos.org/options
-- **Community**: https://discourse.nixos.org/
+- **NixOS Manual**: <https://nixos.org/manual/nixos/stable/>
+- **Nix Pills**: <https://nixos.org/guides/nix-pills/>
+- **NixOS Options**: <https://search.nixos.org/options>
+- **Community**: <https://discourse.nixos.org/>
 - **This Repo Issues**: For template-specific questions
 
 ---

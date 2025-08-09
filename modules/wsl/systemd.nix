@@ -98,11 +98,11 @@ in
           DefaultTimeoutStopSec=10s
           DefaultDeviceTimeoutSec=10s
           DefaultRestartSec=100ms
-          
+
           # Faster shutdown
           ShutdownWatchdogSec=30s
           RuntimeWatchdogSec=30s
-          
+
           # WSL2-specific optimizations
           DefaultMemoryAccountingUnit=16M
           DefaultTasksAccountingUnit=10000
@@ -123,22 +123,22 @@ in
           Storage=persistent
           Compress=yes
           Seal=yes
-          
+
           # Size limits
           SystemMaxUse=${cfg.logging.maxLogSize}
           SystemKeepFree=500M
           RuntimeMaxUse=100M
           RuntimeKeepFree=100M
-          
+
           # Retention
           MaxRetentionSec=${cfg.logging.retention}
           MaxFileSec=1day
-          
+
           # Performance
           SyncIntervalSec=5m
           RateLimitInterval=30s
           RateLimitBurst=10000
-          
+
           # WSL2-specific settings
           ForwardToWall=no
           ForwardToConsole=no
@@ -163,13 +163,13 @@ in
             script = ''
               # WSL2 environment setup
               echo "Initializing WSL2 environment..."
-            
+
               # Create necessary directories
               mkdir -p /run/wsl
-            
+
               # Set up WSL-specific environment
               echo "$(date): WSL2 initialization completed" > /run/wsl/init-status
-            
+
               # Log system information
               echo "WSL2 Host: $(cat /proc/sys/kernel/osrelease)" >> /run/wsl/system-info
               echo "Memory: $(free -h | grep '^Mem:' | awk '{print $2}')" >> /run/wsl/system-info
@@ -192,10 +192,10 @@ in
             script = ''
               # WSL2 cleanup tasks
               echo "Performing WSL2 cleanup..."
-            
+
               # Clean temporary files
               find /tmp -type f -mtime +1 -delete 2>/dev/null || true
-            
+
               # Update cleanup timestamp
               echo "$(date): WSL2 cleanup completed" > /run/wsl/cleanup-status
             '';
@@ -217,7 +217,7 @@ in
               # User-specific WSL2 setup
               mkdir -p "$HOME/.local/share/wsl"
               mkdir -p "$HOME/.cache/wsl"
-            
+
               # Create user WSL configuration
               cat > "$HOME/.local/share/wsl/config" << 'EOF'
               # WSL2 User Configuration
@@ -225,14 +225,14 @@ in
               export WSL_USER="$USER"
               export WSL_HOME="$HOME"
               EOF
-            
+
               echo "$(date): User WSL2 setup completed for $USER" > "$HOME/.local/share/wsl/setup-status"
             '';
           };
         };
       }
 
-      # User services for WSL2  
+      # User services for WSL2
       (mkIf cfg.userServices {
         systemd.user.services = {
           # User WSL environment
@@ -249,11 +249,11 @@ in
             script = ''
               # Set up user-specific WSL2 environment
               export WSL_USER_ENV_LOADED=1
-          
+
               # Create user directories
               mkdir -p "$HOME/.local/bin"
               mkdir -p "$HOME/.local/share/applications"
-          
+
               # User-specific optimizations
               echo "WSL2 user environment loaded for $USER"
             '';
@@ -273,10 +273,10 @@ in
             script = ''
               # Development services coordination
               echo "Development services manager started"
-          
+
               # This service can be extended to manage development servers
               # Example: Start/stop development databases, web servers, etc.
-          
+
               # Create a simple status file
               echo "$(date): Development services ready" > "$HOME/.local/share/wsl/dev-services-status"
             '';
@@ -284,40 +284,40 @@ in
         };
       })
 
-      # WSL2 systemd management scripts  
+      # WSL2 systemd management scripts
       {
         environment.etc."wsl-scripts/systemd-status.sh" = {
           text = ''
             #!/bin/bash
             # WSL2 Systemd Status and Management
-        
+
             echo "=== WSL2 Systemd Status ==="
             echo
-        
+
             echo "Boot Analysis:"
             systemd-analyze
             echo
-        
+
             echo "Critical Chain:"
             systemd-analyze critical-chain
             echo
-        
+
             echo "Failed Services:"
             systemctl --failed --no-pager
             echo
-        
+
             echo "WSL2-specific Services:"
             systemctl status wsl-init wsl-cleanup --no-pager -l
             echo
-        
+
             echo "User Services:"
             systemctl --user status wsl-user-env --no-pager -l 2>/dev/null || echo "User services not available"
             echo
-        
+
             echo "System Load:"
             systemctl status --no-pager | head -n 5
             echo
-        
+
             echo "Journal Size:"
             journalctl --disk-usage
           '';
@@ -328,27 +328,27 @@ in
           text = ''
             #!/bin/bash
             # WSL2 Systemd Optimization Script
-        
+
             echo "=== WSL2 Systemd Optimization ==="
-        
+
             # Analyze boot performance
             echo "Boot Performance Analysis:"
             systemd-analyze blame | head -n 10
             echo
-        
+
             echo "Service Dependencies:"
             systemd-analyze plot > /tmp/systemd-plot.svg 2>/dev/null
             echo "Boot plot saved to /tmp/systemd-plot.svg (view in browser)"
             echo
-        
+
             # Check for common issues
             echo "Checking for common systemd issues..."
-        
+
             # Check for long-running services
             echo "Long-running startup services:"
             systemd-analyze blame | awk '$1 > "10s" {print}' | head -n 5
             echo
-        
+
             # Check for failed services
             FAILED=$(systemctl --failed --no-legend | wc -l)
             if [ "$FAILED" -gt 0 ]; then
@@ -358,7 +358,7 @@ in
               echo "No failed services found"
             fi
             echo
-        
+
             echo "Optimization recommendations:"
             echo "1. Services taking >10s to start may need optimization"
             echo "2. Consider disabling unused services with 'systemctl disable SERVICE'"

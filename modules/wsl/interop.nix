@@ -102,7 +102,7 @@ in
           text = ''
             #!/bin/bash
             # File association handlers for WSL
-            
+
             case "$1" in
               *.docx|*.doc)
                 /mnt/c/Program\ Files/Microsoft\ Office/root/Office16/WINWORD.EXE "$@"
@@ -131,12 +131,12 @@ in
           text = ''
             #!/bin/bash
             # Open file or directory in Windows
-            
+
             if [ -z "$1" ]; then
               echo "Usage: $0 <file_or_directory>"
               exit 1
             fi
-            
+
             # Convert WSL path to Windows path
             WINDOWS_PATH=$(wslpath -w "$1")
             explorer.exe "$WINDOWS_PATH"
@@ -148,15 +148,15 @@ in
           text = ''
             #!/bin/bash
             # Edit file in Windows application
-            
+
             if [ -z "$1" ]; then
               echo "Usage: $0 <file>"
               exit 1
             fi
-            
+
             # Convert WSL path to Windows path
             WINDOWS_PATH=$(wslpath -w "$1")
-            
+
             # Detect file type and open appropriate editor
             case "$1" in
               *.md|*.txt|*.log)

@@ -432,16 +432,16 @@
     configFile."niri/config.kdl".text = ''
       // Custom Niri configuration
       // This file is managed by Home Manager
-      
+
       // You can override the system niri configuration here
       // or add user-specific settings
-      
+
       // Example: Custom window rules for user applications
       window-rule {
           match app-id="firefox"
           default-column-width { proportion 0.75; }
       }
-      
+
       window-rule {
           match app-id="code"
           default-column-width { proportion 0.6; }

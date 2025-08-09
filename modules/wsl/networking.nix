@@ -118,10 +118,10 @@ in
         nameserver 172.16.0.1
         nameserver 8.8.8.8
         nameserver 1.1.1.1
-        
+
         # Search domains
         search localdomain
-        
+
         # Options for faster resolution
         options timeout:2 attempts:3 rotate
       '';
@@ -169,15 +169,15 @@ in
       script = ''
         # WSL2 network setup script
         echo "Setting up WSL2 network optimizations..."
-        
+
         # Configure network interfaces
         ${pkgs.iproute2}/bin/ip link set dev eth0 mtu 1500 || echo "Could not set MTU"
-        
+
         # Enable TCP BBR congestion control if available
         if [ -f /proc/sys/net/ipv4/tcp_congestion_control ]; then
           echo bbr > /proc/sys/net/ipv4/tcp_congestion_control 2>/dev/null || echo "BBR not available"
         fi
-        
+
         echo "WSL2 network setup completed"
       '';
     };
@@ -208,34 +208,34 @@ in
       text = ''
         #!/bin/bash
         # WSL2 Network Diagnostics
-        
+
         echo "=== WSL2 Network Diagnostics ==="
         echo
-        
+
         echo "Network Interfaces:"
         ip addr show
         echo
-        
+
         echo "Routing Table:"
         ip route show
         echo
-        
+
         echo "DNS Configuration:"
         cat /etc/resolv.conf
         echo
-        
+
         echo "DNS Resolution Test:"
         nslookup google.com
         echo
-        
+
         echo "Network Connectivity Test:"
         ping -c 3 8.8.8.8
         echo
-        
+
         echo "Port Listening:"
         netstat -tlnp
         echo
-        
+
         echo "WSL2 Host IP:"
         cat /etc/resolv.conf | grep nameserver | awk '{print $2}' | head -1
         echo

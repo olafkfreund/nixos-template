@@ -10,7 +10,7 @@
     # Core system packages (essential tools for all hosts)
     ../modules/packages/core-system.nix
 
-    # Home Manager integration  
+    # Home Manager integration
     inputs.home-manager.nixosModules.home-manager
   ];
 

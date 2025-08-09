@@ -12,7 +12,7 @@
     # Fast DNS servers (opinionated choice for template)
     nameservers = [
       "1.1.1.1" # Cloudflare
-      "8.8.8.8" # Google  
+      "8.8.8.8" # Google
     ];
 
     # Firewall configuration moved to modules/core/security.nix to avoid duplication

@@ -1,4 +1,4 @@
-# Hardware Configuration Template  
+# Hardware Configuration Template
 # Generate your actual hardware config with: sudo nixos-generate-config
 { config, lib, ... }: {
   boot = {

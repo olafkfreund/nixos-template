@@ -1,7 +1,7 @@
 # SOPS-based Secrets Management
 # Provides centralized, declarative secret management using sops-nix
 
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, options, ... }:
 
 with lib;
 
@@ -128,8 +128,9 @@ in
     };
   };
 
-  config = mkIf cfg.enable {
-    # SOPS configuration
+  config = mkIf (cfg.enable && options ? sops) {
+    # Only configure sops if the sops-nix module is available
+    # This prevents errors when sops-nix is not imported
     sops = {
       defaultSopsFile = mkIf (cfg.defaultSopsFile != null) cfg.defaultSopsFile;
 

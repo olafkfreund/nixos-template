@@ -32,7 +32,7 @@ in
       };
     };
 
-    # Container support for services  
+    # Container support for services
     # Temporarily disable our custom podman module to test NixOS built-in
     # modules.virtualization.podman.enable = lib.mkDefault true;
     # Use NixOS built-in podman module instead
@@ -148,7 +148,7 @@ in
     # System optimization
     systemd = {
 
-      # Optimize for server workloads (preset configuration) 
+      # Optimize for server workloads (preset configuration)
       settings.Manager = {
         DefaultTimeoutStopSec = "10s";
         DefaultTimeoutStartSec = "10s";

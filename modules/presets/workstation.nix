@@ -40,7 +40,7 @@ in
         gnome.enable = true;
       };
 
-      # Development environment (preset choice - use lib.mkDefault to allow override) 
+      # Development environment (preset choice - use lib.mkDefault to allow override)
       development.git.enable = lib.mkDefault true;
     };
 
@@ -60,7 +60,7 @@ in
       };
     };
 
-    # Networking optimized for desktop  
+    # Networking optimized for desktop
     networking = {
       networkmanager.enable = true;
       firewall = {

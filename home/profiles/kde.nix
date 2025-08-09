@@ -58,12 +58,12 @@
   # Plasma desktop configuration (via plasma-manager if available)
   # programs.plasma = {
   #   enable = true;
-  #   
+  #
   #   workspace = {
   #     lookAndFeel = "org.kde.breezedark.desktop";
   #     theme = "breeze-dark";
   #   };
-  #   
+  #
   #   panels = [
   #     {
   #       location = "bottom";

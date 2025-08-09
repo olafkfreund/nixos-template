@@ -51,7 +51,7 @@
       bashrcExtra = ''
         # Simple prompt
         export PS1="\u@\h:\w\$ "
-        
+
         # Basic history settings
         export HISTSIZE=1000
         export HISTFILESIZE=2000

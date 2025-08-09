@@ -54,12 +54,12 @@ in
       script = ''
         # Create GPU info file
         mkdir -p /run/gpu-info
-        
+
         # Detect GPUs using lspci
         ${pkgs.pciutils}/bin/lspci -nn | grep -i vga > /run/gpu-info/detected || true
         ${pkgs.pciutils}/bin/lspci -nn | grep -i 3d >> /run/gpu-info/detected || true
         ${pkgs.pciutils}/bin/lspci -nn | grep -i display >> /run/gpu-info/detected || true
-        
+
         # Log detected GPUs
         if [ -s /run/gpu-info/detected ]; then
           echo "Detected GPUs:" >&2

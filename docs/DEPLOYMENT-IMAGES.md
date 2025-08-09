@@ -4,7 +4,7 @@ This NixOS template includes comprehensive deployment image generation using **n
 
 ## Quick Start
 
-### Build a specific image:
+### Build a specific image
 
 ```bash
 # Cloud deployment images
@@ -32,7 +32,7 @@ nix build .#development-vm   # Development environment
 nix build .#production-server # Production server
 ```
 
-### List all available images:
+### List all available images
 
 ```bash
 nix flake show | grep "packages.*-image\|packages.*-ami\|packages.*-iso"

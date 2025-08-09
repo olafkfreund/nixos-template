@@ -237,19 +237,19 @@ in
           script = ''
             # Apply WSL2-specific performance optimizations
             echo "Applying WSL2 performance optimizations..."
-            
+
             # Enable BBR congestion control if available
             if [ -w /proc/sys/net/ipv4/tcp_congestion_control ]; then
               echo bbr > /proc/sys/net/ipv4/tcp_congestion_control 2>/dev/null || echo "BBR not available"
             fi
-            
+
             # Optimize I/O scheduler for SSD (WSL2 typically uses SSD on host)
             for dev in /sys/block/*/queue/scheduler; do
               if [ -f "$dev" ]; then
                 echo mq-deadline > "$dev" 2>/dev/null || true
               fi
             done
-            
+
             echo "WSL2 performance optimizations applied"
           '';
         };
@@ -342,20 +342,20 @@ in
       text = ''
         #!/bin/bash
         # WSL2 Performance Tuning Script
-        
+
         echo "=== WSL2 Performance Tuning ==="
-        
+
         # Check current swappiness
         echo "Current swappiness: $(cat /proc/sys/vm/swappiness)"
-        
+
         # Check memory usage
         echo "Memory usage:"
         free -h
-        
+
         # Check I/O scheduler
         echo "I/O schedulers:"
         find /sys/block -name scheduler -exec sh -c 'echo -n "$1: "; cat "$1"' _ {} \;
-        
+
         # Check CPU frequency scaling
         if [ -d /sys/devices/system/cpu/cpu0/cpufreq ]; then
           echo "CPU frequency scaling governor:"
@@ -363,11 +363,11 @@ in
         else
           echo "CPU frequency scaling not available (normal for WSL2)"
         fi
-        
+
         # Check mount options
         echo "Important mount points:"
         mount | grep -E "(tmpfs|ext4|ntfs)" | grep -E "(/tmp|/mnt|/)"
-        
+
         # Performance recommendations
         echo ""
         echo "=== Performance Tips ==="

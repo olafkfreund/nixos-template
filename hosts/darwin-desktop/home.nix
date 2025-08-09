@@ -1,6 +1,5 @@
-# Home Manager configuration for nix-darwin Desktop
-# User-specific configuration and applications
-
+# Darwin Desktop Home Manager Configuration
+# Uses shared profiles optimized for desktop development
 { config, pkgs, lib, inputs, outputs, ... }:
 
 {
@@ -10,282 +9,112 @@
     useUserPackages = true;
 
     users.admin = { config, pkgs, ... }: {
-      # User information
-      home.username = "admin";
-      home.homeDirectory = lib.mkDefault "/Users/admin";
-      home.stateVersion = "25.05"; # Match your Home Manager version
+      # Import shared Home Manager profiles
+      imports = [
+        ../../home/profiles/base.nix # Base configuration with git, bash, etc.
+        ../../home/profiles/desktop.nix # Desktop applications and GUI tools
+        ../../home/profiles/development.nix # Development tools and environments
+      ];
 
-      # User packages
+      # Host-specific user info
+      home = {
+        username = "admin";
+        homeDirectory = lib.mkDefault "/Users/admin";
+      };
+
+      # Override git configuration for Darwin desktop development
+      programs.git = {
+        userName = "Darwin Desktop Developer";
+        userEmail = "developer@darwin-desktop.local";
+
+        extraConfig = {
+          # VS Code integration for Darwin
+          core.editor = "code --wait";
+          diff.tool = "vscode";
+          merge.tool = "vscode";
+          "difftool \"vscode\".cmd" = "code --wait --diff $LOCAL $REMOTE";
+          "mergetool \"vscode\".cmd" = "code --wait $MERGED";
+        };
+      };
+
+      # Darwin desktop-specific environment variables
+      home.sessionVariables = {
+        # Desktop-optimized editor settings
+        EDITOR = "code --wait";
+        VISUAL = "code --wait";
+        BROWSER = "open";
+        TERMINAL = "alacritty";
+
+        # Development settings for desktop workstation
+        NODE_OPTIONS = "--max-old-space-size=4096"; # Full desktop resources
+        PYTHONDONTWRITEBYTECODE = "1";
+
+        # Development paths
+        GOPATH = "$HOME/go";
+        CARGO_HOME = "$HOME/.cargo";
+
+        # Homebrew settings
+        HOMEBREW_NO_ANALYTICS = "1";
+      };
+
+      # Darwin desktop-specific additional packages (extends profiles)
       home.packages = with pkgs; [
-        # Terminal applications
-        alacritty
+        # Additional terminal emulators for desktop use
         kitty
         wezterm
 
-        # Development tools
-        vscode
+        # Professional IDEs for desktop development
         jetbrains.idea-community
         jetbrains.webstorm
 
-        # Version control
-        git
-        gh
-        git-lfs
-
-        # Languages and runtimes
-        nodejs_20
-        python311
-        rustc
-        cargo
-        go
-
-        # Database tools
-        postgresql
-        redis
-
-        # Cloud and DevOps
-        docker
-        kubectl
-        terraform
-        ansible
-
-        # Productivity
-        obsidian
-        notion
-
-        # Media tools
+        # Media tools for desktop content creation
         ffmpeg
         imagemagick
 
-        # System utilities
-        htop
-        btop
-        tree
-        fd
-        ripgrep
-        bat
-        eza
-        zoxide
-        fzf
+        # Productivity applications
+        obsidian
+
+        # Advanced development tools
+        git-lfs # Large file support
       ];
 
-      # Git configuration
-      programs.git = {
-        enable = true;
-        userName = lib.mkDefault "Your Name";
-        userEmail = lib.mkDefault "your.email@example.com";
+      # Darwin desktop-specific shell aliases (extends base profile)
+      programs.zsh.shellAliases = {
+        # Development shortcuts optimized for desktop workflow
+        "npm-update" = "npm update && npm audit fix";
+        "py" = "python3";
 
-        extraConfig = {
-          init.defaultBranch = "main";
-          pull.rebase = true;
-          push.autoSetupRemote = true;
-          core = {
-            editor = "code --wait";
-            autocrlf = "input";
-          };
-          diff = {
-            tool = "vscode";
-          };
-          merge = {
-            tool = "vscode";
-          };
-          "difftool \"vscode\"" = {
-            cmd = "code --wait --diff $LOCAL $REMOTE";
-          };
-          "mergetool \"vscode\"" = {
-            cmd = "code --wait $MERGED";
-          };
-        };
+        # macOS desktop-specific shortcuts
+        "showfiles" = "defaults write com.apple.finder AppleShowAllFiles YES; killall Finder";
+        "hidefiles" = "defaults write com.apple.finder AppleShowAllFiles NO; killall Finder";
+
+        # Desktop project shortcuts
+        "dev" = "cd ~/Development";
+        "proj" = "cd ~/Projects";
+        "code-here" = "code .";
       };
 
-      # Shell configuration
-      programs.zsh = {
-        enable = true;
-        enableCompletion = true;
-        autosuggestion.enable = true;
-        syntaxHighlighting.enable = true;
+      # Darwin desktop-specific zsh enhancements
+      programs.zsh.initExtra = ''
+        # Darwin desktop environment setup
 
-        shellAliases = {
-          # Navigation
-          ll = "eza -la";
-          ls = "eza";
-          la = "eza -a";
-          tree = "eza --tree";
+        # Desktop-optimized FZF configuration
+        export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+        export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+        export FZF_DEFAULT_OPTS="--height 60% --layout=reverse --border --preview 'bat --color=always --style=header,grid {}'"
 
-          # Git shortcuts
-          g = "git";
-          gs = "git status";
-          ga = "git add";
-          gc = "git commit";
-          gp = "git push";
-          gl = "git pull";
-          gco = "git checkout";
-          gb = "git branch";
-          gd = "git diff";
-          glog = "git log --oneline --graph --decorate";
+        # Desktop development paths
+        export PATH="$HOME/.local/bin:$PATH"
+        export PATH="$HOME/.cargo/bin:$PATH"
+        export PATH="$GOPATH/bin:$PATH"
 
-          # Development shortcuts
-          code = "code .";
-          npm-update = "npm update && npm audit fix";
-          py = "python3";
+        # Darwin desktop welcome message
+        echo "🖥️  Darwin Desktop Development Environment"
+        echo "🚀 Full-featured workstation ready for development"
+        echo "💻 IDEs: VS Code, IntelliJ IDEA, WebStorm"
+      '';
 
-          # System shortcuts
-          reload = "source ~/.zshrc";
-          ..= "cd ..";
-          ... = "cd ../..";
-
-          # macOS specific
-          showfiles = "defaults write com.apple.finder AppleShowAllFiles YES; killall Finder";
-          hidefiles = "defaults write com.apple.finder AppleShowAllFiles NO; killall Finder";
-        };
-
-        initContent = ''
-          # Load direnv with validation
-          if command -v direnv > /dev/null; then
-            direnv_hook="$(direnv hook zsh 2>/dev/null || echo '')"
-            if [[ -n "$direnv_hook" && "$direnv_hook" =~ ^[[:space:]]*direnv ]]; then
-              eval "$direnv_hook"
-            fi
-          fi
-          
-          # Initialize zoxide with validation
-          if command -v zoxide > /dev/null; then
-            zoxide_hook="$(zoxide init zsh 2>/dev/null || echo '')"
-            if [[ -n "$zoxide_hook" && "$zoxide_hook" =~ ^[[:space:]]*export ]]; then
-              eval "$zoxide_hook"
-            fi
-          fi
-          
-          # FZF configuration
-          export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
-          export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-          
-          # Development environment variables
-          export EDITOR="code --wait"
-          export VISUAL="code --wait"
-          
-          # Node.js configuration
-          export NODE_OPTIONS="--max-old-space-size=4096"
-          
-          # Go configuration
-          export GOPATH="$HOME/go"
-          export PATH="$GOPATH/bin:$PATH"
-          
-          # Rust configuration
-          export PATH="$HOME/.cargo/bin:$PATH"
-          
-          # Python configuration
-          export PATH="$HOME/.local/bin:$PATH"
-          
-          # Welcome message
-          echo "👋 Welcome to your nix-darwin desktop environment!"
-          echo "🚀 Happy coding!"
-        '';
-
-        oh-my-zsh = {
-          enable = true;
-          theme = "robbyrussell";
-          plugins = [
-            "git"
-            "docker"
-            "npm"
-            "node"
-            "python"
-            "rust"
-            "golang"
-            "kubectl"
-            "terraform"
-            "macos"
-          ];
-        };
-      };
-
-      # Starship prompt
-      programs.starship = {
-        enable = true;
-        settings = {
-          format = lib.concatStrings [
-            "$username"
-            "$hostname"
-            "$directory"
-            "$git_branch"
-            "$git_state"
-            "$git_status"
-            "$cmd_duration"
-            "$line_break"
-            "$python"
-            "$nodejs"
-            "$rust"
-            "$golang"
-            "$docker_context"
-            "$character"
-          ];
-
-          character = {
-            success_symbol = "[➜](bold green)";
-            error_symbol = "[➜](bold red)";
-          };
-
-          directory = {
-            style = "blue";
-            truncation_length = 4;
-            truncation_symbol = "…/";
-          };
-
-          git_branch = {
-            format = "[$branch]($style)";
-            style = "bright-black";
-          };
-
-          git_status = {
-            format = "([\\[$all_status$ahead_behind\\]]($style) )";
-            style = "cyan";
-          };
-
-          nodejs = {
-            format = "[$symbol($version )]($style)";
-            symbol = "⬢ ";
-          };
-
-          python = {
-            format = "[$symbol($version )]($style)";
-            symbol = "🐍 ";
-          };
-
-          rust = {
-            format = "[$symbol($version )]($style)";
-            symbol = "🦀 ";
-          };
-
-          golang = {
-            format = "[$symbol($version )]($style)";
-            symbol = "🐹 ";
-          };
-        };
-      };
-
-      # Direnv for development environments
-      programs.direnv = {
-        enable = true;
-        nix-direnv.enable = true;
-      };
-
-      # FZF fuzzy finder
-      programs.fzf = {
-        enable = true;
-        enableZshIntegration = true;
-      };
-
-      # Bat (better cat)
-      programs.bat = {
-        enable = true;
-        config = {
-          theme = "TwoDark";
-          pager = "less -FR";
-        };
-      };
-
-      # Alacritty terminal emulator
+      # Enhanced Alacritty configuration for desktop use
       programs.alacritty = {
         enable = true;
         settings = {
@@ -293,6 +122,10 @@
             decorations = "full";
             opacity = 0.9;
             startup_mode = "Windowed";
+            dimensions = {
+              columns = 120;
+              lines = 40; # Larger for desktop screens
+            };
           };
 
           font = {
@@ -308,7 +141,7 @@
               family = "JetBrainsMono Nerd Font";
               style = "Italic";
             };
-            size = 14;
+            size = 14; # Larger for desktop displays
           };
 
           colors = {
@@ -322,13 +155,14 @@
             { key = "V"; mods = "Command"; action = "Paste"; }
             { key = "C"; mods = "Command"; action = "Copy"; }
             { key = "N"; mods = "Command"; action = "SpawnNewInstance"; }
+            { key = "T"; mods = "Command"; action = "CreateNewTab"; }
           ];
         };
       };
 
-      # Development configuration files
+      # Darwin desktop development configuration files
       home.file = {
-        # VS Code settings
+        # Enhanced VS Code settings for desktop development
         ".vscode/settings.json".text = builtins.toJSON {
           "editor.fontFamily" = "JetBrainsMono Nerd Font";
           "editor.fontSize" = 14;
@@ -337,21 +171,30 @@
           "editor.formatOnSave" = true;
           "editor.codeActionsOnSave" = {
             "source.fixAll" = true;
+            "source.organizeImports" = true;
           };
           "workbench.colorTheme" = "Dark+ (default dark)";
           "terminal.integrated.fontFamily" = "JetBrainsMono Nerd Font";
+          "terminal.integrated.fontSize" = 13;
+
+          # Desktop-optimized settings
+          "editor.minimap.enabled" = true;
+          "workbench.sideBar.location" = "left";
+          "explorer.confirmDragAndDrop" = false;
+          "files.autoSave" = "onWindowChange";
         };
 
-        # Prettier configuration
+        # Prettier configuration for consistent formatting
         ".prettierrc".text = builtins.toJSON {
           semi = true;
           trailingComma = "es5";
           singleQuote = true;
           printWidth = 80;
           tabWidth = 2;
+          useTabs = false;
         };
 
-        # ESLint configuration
+        # ESLint configuration for JavaScript/TypeScript
         ".eslintrc.json".text = builtins.toJSON {
           env = {
             browser = true;
@@ -360,61 +203,77 @@
           };
           extends = [
             "eslint:recommended"
+            "@typescript-eslint/recommended"
           ];
           parserOptions = {
             ecmaVersion = "latest";
             sourceType = "module";
           };
+          rules = {
+            "no-console" = "warn";
+            "no-unused-vars" = "error";
+          };
         };
       };
 
-      # XDG directories
-      xdg = {
-        enable = true;
-
-        userDirs = {
-          enable = true;
-          createDirectories = true;
-          desktop = "$HOME/Desktop";
-          documents = "$HOME/Documents";
-          download = "$HOME/Downloads";
-          music = "$HOME/Music";
-          pictures = "$HOME/Pictures";
-          videos = "$HOME/Videos";
-          templates = "$HOME/Templates";
-          publicShare = "$HOME/Public";
-        };
-      };
-
-      # Session variables
-      home.sessionVariables = {
-        EDITOR = "code --wait";
-        BROWSER = "open";
-        TERMINAL = "alacritty";
-
-        # Development paths
-        GOPATH = "$HOME/go";
-        CARGO_HOME = "$HOME/.cargo";
-
-        # Node.js settings
-        NODE_OPTIONS = "--max-old-space-size=4096";
-
-        # Python settings
-        PYTHONDONTWRITEBYTECODE = "1";
-
-        # Homebrew settings
-        HOMEBREW_NO_ANALYTICS = "1";
-      };
-
-      # Create development directories
+      # Create Darwin desktop-specific development structure
       home.activation = {
-        createDevelopmentDirs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-          mkdir -p "$HOME/Development"
-          mkdir -p "$HOME/Projects"
-          mkdir -p "$HOME/.config"
-          mkdir -p "$HOME/.local/bin"
-          
-          echo "Development directories created"
+        createDarwinDesktopDirs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+                    mkdir -p "$HOME/Development"
+                    mkdir -p "$HOME/Projects/Web"
+                    mkdir -p "$HOME/Projects/Mobile"
+                    mkdir -p "$HOME/Projects/Desktop"
+                    mkdir -p "$HOME/Projects/Scripts"
+                    mkdir -p "$HOME/.config/development"
+                    mkdir -p "$HOME/.local/bin"
+
+                    # Create development shortcuts
+                    cat > "$HOME/.local/bin/new-project" << 'EOF'
+          #!/bin/bash
+          echo "🚀 New Darwin Desktop Project Setup"
+          if [ -z "$1" ]; then
+            echo "Usage: new-project <project-name> [web|mobile|desktop|script]"
+            exit 1
+          fi
+
+          project_name="$1"
+          project_type="${2:-web}"
+
+          case "$project_type" in
+            "web"|"frontend"|"react"|"vue")
+              project_dir="$HOME/Projects/Web/$project_name"
+              ;;
+            "mobile"|"ios"|"android"|"flutter")
+              project_dir="$HOME/Projects/Mobile/$project_name"
+              ;;
+            "desktop"|"electron"|"tauri")
+              project_dir="$HOME/Projects/Desktop/$project_name"
+              ;;
+            "script"|"automation")
+              project_dir="$HOME/Projects/Scripts/$project_name"
+              ;;
+            *)
+              project_dir="$HOME/Projects/$project_name"
+              ;;
+          esac
+
+          mkdir -p "$project_dir"
+          cd "$project_dir"
+          echo "📁 Created project: $project_dir"
+
+          # Initialize common files
+          echo "# $project_name" > README.md
+          echo "node_modules/" > .gitignore
+          git init
+
+          echo "✅ Project $project_name created successfully!"
+          echo "📂 Location: $project_dir"
+          code "$project_dir"
+          EOF
+                    chmod +x "$HOME/.local/bin/new-project"
+
+                    echo "Darwin desktop development environment created"
+                    echo "💡 Use 'new-project <name> [type]' to create new projects"
         '';
       };
     };

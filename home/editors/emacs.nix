@@ -113,11 +113,11 @@
     extraConfig = ''
       ;; Emacs Configuration
       ;; This configuration provides a modern Emacs experience with sensible defaults
-      
+
       ;; Performance optimizations
       (setq gc-cons-threshold 100000000)
       (setq read-process-output-max (* 1024 1024))
-      
+
       ;; Basic settings
       (setq inhibit-startup-message t)
       (setq initial-scratch-message "")
@@ -125,7 +125,7 @@
       (setq make-backup-files nil)
       (setq auto-save-default nil)
       (setq create-lockfiles nil)
-      
+
       ;; UI improvements
       (menu-bar-mode -1)
       (tool-bar-mode -1)
@@ -134,22 +134,22 @@
       (column-number-mode 1)
       (show-paren-mode 1)
       (global-hl-line-mode 1)
-      
+
       ;; Font configuration
       (set-face-attribute 'default nil :font "JetBrains Mono-12")
-      
+
       ;; Better defaults
       (setq-default indent-tabs-mode nil)
       (setq-default tab-width 2)
       (setq sentence-end-double-space nil)
       (setq require-final-newline t)
       (global-auto-revert-mode t)
-      
+
       ;; Use-package configuration
       (require 'use-package)
       (setq use-package-always-ensure t)
       (setq use-package-verbose t)
-      
+
       ;; Theme
       (use-package doom-themes
         :config
@@ -159,37 +159,37 @@
         (doom-themes-visual-bell-config)
         (doom-themes-neotree-config)
         (doom-themes-org-config))
-      
+
       ;; Modeline
       (use-package doom-modeline
         :init (doom-modeline-mode 1)
         :config
         (setq doom-modeline-height 25)
         (setq doom-modeline-buffer-file-name-style 'truncate-upto-project))
-      
+
       ;; Icons (required for doom-modeline)
       (use-package all-the-icons
         :if (display-graphic-p))
-      
+
       ;; Completion framework
       (use-package vertico
         :init
         (vertico-mode)
         :config
         (setq vertico-cycle t))
-      
+
       (use-package orderless
         :init
         (setq completion-styles '(orderless basic)
               completion-category-defaults nil
               completion-category-overrides '((file (styles partial-completion)))))
-      
+
       (use-package marginalia
         :bind (:map minibuffer-local-map
                ("M-A" . marginalia-cycle))
         :init
         (marginalia-mode))
-      
+
       (use-package consult
         :bind (("C-s" . consult-line)
                ("C-M-s" . consult-line-multi)
@@ -205,14 +205,14 @@
         (setq register-preview-delay 0.5
               register-preview-function #'consult-register-format)
         (advice-add #'register-preview :override #'consult-register-window))
-      
+
       ;; Key binding help
       (use-package which-key
         :diminish which-key-mode
         :config
         (which-key-mode)
         (setq which-key-idle-delay 0.3))
-      
+
       ;; Project management
       (use-package projectile
         :diminish projectile-mode
@@ -223,15 +223,15 @@
         (when (file-directory-p "~/Projects")
           (setq projectile-project-search-path '("~/Projects")))
         (setq projectile-switch-project-action #'projectile-dired))
-      
+
       ;; Git integration
       (use-package magit
         :bind ("C-x g" . magit-status))
-      
+
       (use-package git-gutter
         :config
         (global-git-gutter-mode +1))
-      
+
       ;; LSP Mode
       (use-package lsp-mode
         :init
@@ -248,14 +248,14 @@
         (setq lsp-auto-guess-root t)
         (setq lsp-prefer-flymake nil)
         (setq lsp-enable-snippet t))
-      
+
       (use-package lsp-ui
         :commands lsp-ui-mode
         :config
         (setq lsp-ui-doc-enable t)
         (setq lsp-ui-doc-position 'bottom)
         (setq lsp-ui-sideline-enable t))
-      
+
       ;; Company mode for completion
       (use-package company
         :diminish company-mode
@@ -264,51 +264,51 @@
         (setq company-idle-delay 0.2)
         (setq company-minimum-prefix-length 1)
         (setq company-selection-wrap-around t))
-      
+
       ;; Yasnippet
       (use-package yasnippet
         :config
         (yas-global-mode 1))
-      
+
       (use-package yasnippet-snippets)
-      
+
       ;; Flycheck
       (use-package flycheck
         :config
         (global-flycheck-mode))
-      
+
       ;; Language modes
       (use-package nix-mode
         :mode "\\.nix\\'")
-      
+
       (use-package rust-mode
         :mode "\\.rs\\'")
-      
+
       (use-package go-mode
         :mode "\\.go\\'")
-      
+
       (use-package python-mode
         :mode "\\.py\\'")
-      
+
       (use-package js2-mode
         :mode "\\.js\\'"
         :config
         (setq js2-basic-offset 2))
-      
+
       (use-package typescript-mode
         :mode "\\.ts\\'")
-      
+
       (use-package yaml-mode
         :mode "\\.ya?ml\\'")
-      
+
       (use-package json-mode
         :mode "\\.json\\'")
-      
+
       (use-package markdown-mode
         :mode ("\\.md\\'" . markdown-mode)
         :config
         (setq markdown-command "pandoc"))
-      
+
       ;; Org mode enhancements
       (use-package org
         :config
@@ -316,40 +316,40 @@
         (setq org-hide-leading-stars t)
         (setq org-src-tab-acts-natively t)
         (setq org-edit-src-content-indentation 0))
-      
+
       (use-package org-bullets
         :hook (org-mode . org-bullets-mode))
-      
+
       ;; Visual enhancements
       (use-package rainbow-delimiters
         :hook (prog-mode . rainbow-delimiters-mode))
-      
+
       (use-package highlight-indent-guides
         :hook (prog-mode . highlight-indent-guides-mode)
         :config
         (setq highlight-indent-guides-method 'character))
-      
+
       ;; Window management
       (use-package ace-window
         :bind ("M-o" . ace-window))
-      
+
       ;; Multiple cursors
       (use-package multiple-cursors
         :bind (("C-S-c C-S-c" . mc/edit-lines)
                ("C->" . mc/mark-next-like-this)
                ("C-<" . mc/mark-previous-like-this)
                ("C-c C-<" . mc/mark-all-like-this)))
-      
+
       ;; Undo tree
       (use-package undo-tree
         :diminish undo-tree-mode
         :config
         (global-undo-tree-mode 1))
-      
+
       ;; Terminal
       (use-package vterm
         :bind ("C-c t" . vterm))
-      
+
       ;; Dashboard
       (use-package dashboard
         :config
@@ -358,26 +358,26 @@
         (setq dashboard-items '((recents  . 5)
                               (bookmarks . 5)
                               (projects . 5))))
-      
+
       ;; Custom key bindings
       (global-set-key (kbd "C-x C-b") 'ibuffer)
       (global-set-key (kbd "M-/") 'hippie-expand)
       (global-set-key (kbd "C-c r") 'revert-buffer)
-      
+
       ;; Custom functions
       (defun my/reload-emacs-config ()
         "Reload Emacs configuration"
         (interactive)
         (load-file "~/.emacs.d/init.el")
         (message "Configuration reloaded!"))
-      
+
       (global-set-key (kbd "C-c R") 'my/reload-emacs-config)
-      
+
       ;; Enable gcmh for better garbage collection
       (use-package gcmh
         :config
         (gcmh-mode 1))
-      
+
       ;; Helpful for better help
       (use-package helpful
         :bind
@@ -385,7 +385,7 @@
         ([remap describe-command] . helpful-command)
         ([remap describe-variable] . helpful-variable)
         ([remap describe-key] . helpful-key))
-      
+
       ;; Final message
       (message "Emacs configuration loaded successfully!")
     '';
@@ -447,12 +447,12 @@
     (setq gc-cons-threshold most-positive-fixnum)
     (setq gc-cons-percentage 0.6)
     (setq package-enable-at-startup nil)
-    
+
     ;; UI optimizations
     (push '(menu-bar-lines . 0) default-frame-alist)
     (push '(tool-bar-lines . 0) default-frame-alist)
     (push '(vertical-scroll-bars) default-frame-alist)
-    
+
     ;; Disable package.el in favor of straight.el or use-package
     (setq package-enable-at-startup nil)
   '';

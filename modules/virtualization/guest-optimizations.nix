@@ -114,7 +114,7 @@ in
       MALLOC_CHECK_ = "0";
     };
 
-    # Minimal filesystem optimizations  
+    # Minimal filesystem optimizations
     fileSystems = lib.mkIf cfg.optimizeForSpeed {
       "/" = {
         options = [ "noatime" "nodiratime" ];

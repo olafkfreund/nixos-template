@@ -88,7 +88,7 @@
   environment.etc."installer/desktop-install.sh" = {
     text = ''
       #!/usr/bin/env bash
-      
+
       echo "NixOS Desktop Installer"
       echo "======================"
       echo
@@ -109,7 +109,7 @@
       echo "5. Install: nixos-install"
       echo "6. Reboot and enjoy NixOS!"
       echo
-      
+
       read -p "Press Enter to continue..."
     '';
     mode = "0755";

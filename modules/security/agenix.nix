@@ -92,7 +92,7 @@ in
             group = "networkmanager";
             mode = "0440";
           };
-          
+
           "user-password" = {
             file = ../secrets/user-password.age;
             path = "/run/agenix/user-password";
@@ -205,10 +205,10 @@ in
             # Ensure secrets directory exists
             mkdir -p ${cfg.secretsPath}
             chmod 755 ${cfg.secretsPath}
-            
+
             # Set proper ownership
             chown root:root ${cfg.secretsPath}
-            
+
             echo "Agenix secrets installation completed"
           '';
         };

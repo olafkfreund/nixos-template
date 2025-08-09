@@ -165,10 +165,10 @@
     extraConfig = ''
       # Homebrew analytics opt-out (for privacy)
       export HOMEBREW_NO_ANALYTICS=1
-      
+
       # Auto-cleanup settings
       export HOMEBREW_INSTALL_CLEANUP=1
-      
+
       # Brewfile settings
       export HOMEBREW_BUNDLE_FILE_GLOBAL=~/.config/Brewfile
     '';

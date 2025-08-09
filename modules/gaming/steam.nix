@@ -278,12 +278,12 @@ in
             ExecStart = pkgs.writeShellScript "steam-system-optimize" ''
               # System-wide gaming optimizations
               echo 'Applying system-wide gaming optimizations...'
-              
+
               # Increase file descriptor limits
               echo '* soft nofile 1048576' >> /etc/security/limits.conf
               echo '* hard nofile 1048576' >> /etc/security/limits.conf
-              
-              # Note: vm.max_map_count and vm.swappiness are now configured 
+
+              # Note: vm.max_map_count and vm.swappiness are now configured
               # declaratively in the gaming preset module
             '';
           };
@@ -314,17 +314,17 @@ in
             ExecStart = pkgs.writeShellScript "steam-optimize" ''
               # Set CPU governor to performance when Steam is running
               echo 'Applying Steam optimizations...'
-              
+
               # Disable CPU power management
               echo 1 > /sys/devices/system/cpu/intel_pstate/no_turbo 2>/dev/null || true
-              
+
               # Set I/O scheduler to mq-deadline for better gaming performance
               for dev in /sys/block/sd*/queue/scheduler; do
                 if [ -w "$dev" ]; then
                   echo mq-deadline > "$dev" 2>/dev/null || true
                 fi
               done
-              
+
               # Increase vm.max_map_count for memory-intensive games
               sysctl -w vm.max_map_count=2147483642 2>/dev/null || true
             '';
@@ -422,26 +422,26 @@ in
       # Steam Controller
       SUBSYSTEM=="usb", ATTRS{idVendor}=="28de", MODE="0666"
       KERNEL=="uinput", MODE="0660", GROUP="input", OPTIONS+="static_node=uinput"
-      
+
       # Steam Deck in bootloader/fastboot mode
       SUBSYSTEM=="usb", ATTRS{idVendor}=="1050", ATTRS{idProduct}=="0407", MODE="0666"
-      
+
       # Valve generic HID devices
       SUBSYSTEM=="hidraw", ATTRS{idVendor}=="28de", MODE="0666"
       SUBSYSTEM=="usb", ATTRS{idVendor}=="28de", MODE="0666"
-      
+
       # Nintendo Switch Pro Controller
       SUBSYSTEM=="usb", ATTRS{idVendor}=="057e", ATTRS{idProduct}=="2009", MODE="0666"
       SUBSYSTEM=="hidraw", KERNELS=="*057E:2009*", MODE="0666"
-      
+
       # Sony DualShock 4
       SUBSYSTEM=="usb", ATTRS{idVendor}=="054c", ATTRS{idProduct}=="05c4", MODE="0666"
       SUBSYSTEM=="usb", ATTRS{idVendor}=="054c", ATTRS{idProduct}=="09cc", MODE="0666"
-      
+
       # Sony DualSense (PS5)
       SUBSYSTEM=="usb", ATTRS{idVendor}=="054c", ATTRS{idProduct}=="0ce6", MODE="0666"
       SUBSYSTEM=="hidraw", KERNELS=="*054C:0CE6*", MODE="0666"
-      
+
       # Xbox controllers
       SUBSYSTEM=="usb", ATTRS{idVendor}=="045e", MODE="0666"
       SUBSYSTEM=="hidraw", KERNELS=="*045E:*", MODE="0666"
@@ -489,20 +489,20 @@ in
     # DXVK configuration
     environment.etc."dxvk.conf".text = ''
       # DXVK configuration for gaming optimization
-      
+
       # Enable State Cache
       dxvk.enableStateCache = True
-      
+
       # GPU selection (auto-detect)
       dxvk.gpuSelection = 0
-      
+
       # Memory allocation
       dxvk.maxFrameLatency = 1
       dxvk.numCompilerThreads = 0
-      
+
       # Shader compilation
       dxvk.useRawSsbo = True
-      
+
       # D3D11 specific
       d3d11.constantBufferRangeCheck = False
       d3d11.relaxedBarriers = True
@@ -513,14 +513,14 @@ in
     environment.etc."mangohud/MangoHud.conf" = mkIf cfg.performance.mangohud {
       text = ''
         # MangoHud configuration for gaming
-        
+
         # Display settings
         position=top-left
         width=350
         height=140
         background_alpha=0.4
         font_size=24
-        
+
         # Performance metrics
         fps
         frametime=0
@@ -531,27 +531,27 @@ in
         gpu_temp
         ram
         vram
-        
+
         # Controls
         toggle_hud=Shift_R+F12
         toggle_logging=Shift_L+F2
         reload_cfg=Shift_L+F4
-        
+
         # Logging
         output_folder=$HOME/Documents/mangohud-logs
         log_duration=60
         autostart_log=0
-        
+
         # Performance limits (optional)
         fps_limit=0,60,120,144,165,240
         vsync=0
         gl_vsync=-1
-        
+
         # Additional info
         wine
         gamemode
         vkbasalt
-        
+
         # Filtering
         blacklist=
       '';

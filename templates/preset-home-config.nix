@@ -1,4 +1,4 @@
-# HOSTNAME Home Configuration  
+# HOSTNAME Home Configuration
 # Generated using: just new-host HOSTNAME PRESET
 { ... }:
 

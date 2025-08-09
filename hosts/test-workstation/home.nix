@@ -1,4 +1,4 @@
-# test-workstation Home Configuration  
+# test-workstation Home Configuration
 # Workstation setup with development tools and desktop environment
 { ... }:
 

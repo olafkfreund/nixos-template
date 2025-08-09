@@ -19,7 +19,7 @@ in
 
     # Hardware configuration
     hardware = {
-      # GPU model for specific optimizations  
+      # GPU model for specific optimizations
       model = lib.mkOption {
         type = lib.types.enum [ "auto" "rtx40" "rtx30" "rtx20" "gtx16" "gtx10" "legacy" ];
         default = "auto";
@@ -152,7 +152,7 @@ in
         # NVIDIA packages
         nvidia-vaapi-driver # VAAPI support
       ] ++ lib.optionals cfg.gaming.nvenc [
-        # Video encoding  
+        # Video encoding
         nv-codec-headers
       ] ++ lib.optionals cfg.compute.cuda [
         # CUDA runtime
@@ -222,7 +222,7 @@ in
         LIBVA_DRIVER_NAME = lib.mkIf cfg.gaming.nvenc "nvidia";
       })
 
-      # Compute environment  
+      # Compute environment
       (lib.mkIf (cfg.compute.enable && cfg.compute.cuda) {
         # CUDA environment
         CUDA_PATH = "${pkgs.cudatoolkit}";
@@ -263,7 +263,7 @@ in
           script = ''
             # Wait for nvidia-ml to be available
             sleep 2
-            
+
             # Set power limit using nvidia-smi
             ${config.hardware.nvidia.package.bin}/bin/nvidia-smi -pl ${toString cfg.hardware.powerLimit} || true
           '';

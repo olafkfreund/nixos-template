@@ -40,7 +40,7 @@
   # VM-specific optimizations for macOS hosts
   # Note: This configuration is designed for manual QEMU/UTM setup on macOS
   # The VM build system in NixOS doesn't directly support macOS-specific options
-  # 
+  #
   # For UTM/QEMU on macOS, use these recommended settings:
   # - Memory: 4GB RAM
   # - CPU: 4 cores with Apple Silicon acceleration (-machine virt,accel=hvf)

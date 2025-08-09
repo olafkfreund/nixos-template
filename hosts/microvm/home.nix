@@ -33,7 +33,7 @@
     bashrcExtra = ''
       # Ultra-minimal prompt
       export PS1="μvm:\w\$ "
-      
+
       # Show system info on login (minimal)
       echo "μVM: $(hostname) [$(free -h | grep Mem | awk '{print $3}') used]"
     '';
@@ -60,7 +60,7 @@
     iproute2 # ip command
     iputils # ping
 
-    # File utilities  
+    # File utilities
     file
     which
   ];
@@ -76,7 +76,7 @@
   };
 
   # No GUI applications
-  # No development tools 
+  # No development tools
   # No extras - keep it ultra-minimal
 
   # Essential directories only

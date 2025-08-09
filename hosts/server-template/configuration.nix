@@ -124,22 +124,22 @@
         ChallengeResponseAuthentication no
         KerberosAuthentication no
         GSSAPIAuthentication no
-        
+
         # Logging
         SyslogFacility AUTH
         LogLevel INFO
-        
+
         # Network settings
         TCPKeepAlive yes
         Compression delayed
-        
+
         # Security
         StrictModes yes
         IgnoreRhosts yes
         HostbasedAuthentication no
         PermitEmptyPasswords no
         PermitUserEnvironment no
-        
+
         # Banner
         Banner /etc/ssh/banner
       '';

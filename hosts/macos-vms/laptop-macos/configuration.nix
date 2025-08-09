@@ -72,7 +72,7 @@
       enable = true;
       videoDrivers = [ "modesetting" "virtio" ];
 
-      # Laptop input optimization  
+      # Laptop input optimization
       # Note: libinput configuration moved to services.libinput
     };
 
@@ -275,17 +275,17 @@
 
     (writeShellScriptBin "laptop-vm-optimize" ''
       echo "Optimizing laptop VM performance..."
-      
+
       # CPU governor simulation
       echo "Setting CPU performance profile..."
-      
+
       # Network optimization
       echo "Optimizing network settings..."
       nmcli connection modify "Wired connection 1" connection.autoconnect yes 2>/dev/null || true
-      
+
       # Power management
       echo "Configuring power management..."
-      
+
       echo "Laptop VM optimization complete!"
     '')
   ];

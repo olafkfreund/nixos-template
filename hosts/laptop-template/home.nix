@@ -1,380 +1,154 @@
-# Laptop Home Manager Configuration
-# Optimized for mobile productivity and battery efficiency
-{ pkgs, lib, ... }:
+# Laptop Template Home Manager Configuration
+# Uses shared profiles optimized for mobile computing
+{ config, pkgs, ... }:
 
 {
-  # Home Manager basics
+  # Import shared Home Manager profiles
+  imports = [
+    ../../home/profiles/base.nix # Base configuration with git, bash, etc.
+    ../../home/profiles/desktop.nix # Desktop applications and GUI tools
+    ../../home/profiles/development.nix # Development tools
+  ];
+
+  # Host-specific user info (overrides base profile defaults)
   home = {
     username = "user";
-    homeDirectory = lib.mkForce "/home/user";
-    stateVersion = "25.05";
-
-    packages = with pkgs; [
-      # Productivity apps for mobile work
-      firefox
-      thunderbird # Email client
-      libreoffice # Office suite
-      evince # PDF viewer
-
-      # Development tools (lightweight)
-      git
-      vim
-      vscode
-
-      # System utilities
-      htop
-      tree
-      file
-      unzip
-      wget
-      curl
-
-      # Media and communication
-      vlc
-      signal-desktop
-
-      # Cloud storage clients
-      rclone
-
-      # Laptop-specific utilities
-      brightnessctl
-      acpi
-      upower
-      tlp
-    ];
-
-    # Session variables for laptop use
-    sessionVariables = {
-      EDITOR = "vim";
-      BROWSER = "firefox";
-
-      # Reduce background processes
-      NIXOS_OZONE_WL = "1"; # Enable Wayland for Electron apps
-    };
+    homeDirectory = "/home/user";
   };
 
-  # Programs configuration
-  programs = {
-    # Git configuration
-    git = {
-      enable = true;
-      userName = "Laptop User";
-      userEmail = "user@example.com";
-      extraConfig = {
-        init.defaultBranch = "main";
-        pull.rebase = false;
-
-        # Laptop-friendly settings
-        core.autocrlf = "input";
-        push.autoSetupRemote = true;
-
-        # Reduce network usage
-        fetch.prune = true;
-        remote.origin.prune = true;
-      };
-    };
-
-    # Terminal configuration
-    bash = {
-      enable = true;
-      enableCompletion = true;
-      historySize = 10000;
-      historyControl = [ "ignoreboth" ];
-
-      shellAliases = {
-        ll = "ls -la";
-        la = "ls -la";
-        l = "ls -l";
-        ".." = "cd ..";
-        "..." = "cd ../..";
-
-        # Power management aliases
-        "battery" = "acpi -b";
-        "thermal" = "acpi -t";
-        "powersave" = "sudo tlp bat";
-        "performance" = "sudo tlp ac";
-
-        # Brightness control
-        "bright" = "brightnessctl";
-        "dim" = "brightnessctl set 50%";
-        "bright-max" = "brightnessctl set 100%";
-      };
-
-      bashrcExtra = ''
-        # Show battery status in prompt
-        show_battery() {
-          if command -v acpi >/dev/null 2>&1; then
-            local battery=$(acpi -b 2>/dev/null | cut -d',' -f2 | tr -d ' ')
-            if [[ -n "$battery" ]]; then
-              echo "[$battery]"
-            fi
-          fi
-        }
-        
-        # Custom prompt with battery indicator
-        PS1="\[\033[01;32m\]\u@\h\[\033[00m\] \$(show_battery) \[\033[01;34m\]\w\[\033[00m\]\$ "
-        
-        # Auto-adjust screen brightness based on time
-        auto_brightness() {
-          local hour=$(date +%H)
-          if [[ $hour -gt 18 || $hour -lt 8 ]]; then
-            brightnessctl set 30% >/dev/null 2>&1
-          else
-            brightnessctl set 70% >/dev/null 2>&1
-          fi
-        }
-        
-        # Call auto_brightness when opening new terminal
-        auto_brightness
-      '';
-    };
-
-    # Direnv for development
-    direnv = {
-      enable = true;
-      enableBashIntegration = true;
-      nix-direnv.enable = true;
-    };
-
-    # SSH configuration
-    ssh = {
-      enable = true;
-      controlMaster = "auto";
-      controlPersist = "10m";
-
-      # Mobile-friendly SSH settings
-      extraConfig = ''
-        ServerAliveInterval 60
-        ServerAliveCountMax 3
-        TCPKeepAlive yes
-        
-        # Reduce connection attempts for faster failures
-        ConnectTimeout 10
-        ConnectionAttempts 2
-      '';
-    };
-
-    # Firefox configuration
-    firefox = {
-      enable = true;
-      profiles.default = {
-        id = 0;
-        isDefault = true;
-        settings = {
-          # Battery-friendly settings
-          "dom.ipc.processCount" = 4; # Limit content processes
-          "browser.tabs.remote.autostart" = true;
-
-          # Privacy settings for mobile use
-          "privacy.donottrackheader.enabled" = true;
-          "privacy.trackingprotection.enabled" = true;
-
-          # Performance settings
-          "browser.cache.disk.enable" = true;
-          "browser.cache.memory.enable" = true;
-          "browser.cache.memory.capacity" = 51200; # 50MB RAM cache
-
-          # Reduce background activity
-          "browser.sessionstore.interval" = 30000; # 30 seconds
-          "browser.tabs.animate" = false;
-          "browser.fullscreen.animateUp" = 0;
-
-          # Dark mode preference (better for battery on OLED screens)
-          "ui.systemUsesDarkTheme" = 1;
-        };
-      };
-    };
+  # Override git configuration with host-specific details
+  programs.git = {
+    userName = "Laptop User";
+    userEmail = "laptop-user@example.com";
   };
 
-  # Services configuration
-  services = {
-    # Battery notifications
-    dunst = {
-      enable = true;
-      settings = {
-        global = {
-          geometry = "300x60-30+20";
-          transparency = 10;
-          font = "Noto Sans 10";
-          format = "%s %p\\n%b";
-          show_age_threshold = 60;
-          idle_threshold = 120;
-        };
+  # Laptop-specific environment variables
+  home.sessionVariables = {
+    # Optimize for laptop usage
+    EDITOR = "code";
+    BROWSER = "firefox";
 
-        urgency_low = {
-          background = "#1d2021";
-          foreground = "#a89984";
-          timeout = 10;
-        };
+    # Power efficiency for laptops
+    GDK_SCALE = "1.25"; # For HiDPI laptop screens
+    QT_SCALE_FACTOR = "1.25";
 
-        urgency_normal = {
-          background = "#458588";
-          foreground = "#ebdbb2";
-          timeout = 10;
-        };
-
-        urgency_critical = {
-          background = "#cc241d";
-          foreground = "#ebdbb2";
-          timeout = 0;
-        };
-      };
-    };
-
-    # Redshift for eye strain reduction
-    redshift = {
-      enable = true;
-      provider = "geoclue2";
-      temperature = {
-        day = 6500;
-        night = 3500;
-      };
-      settings = {
-        redshift = {
-          brightness-day = "1.0";
-          brightness-night = "0.8";
-        };
-      };
-    };
-
-    # GPG agent configuration
-    gpg-agent = {
-      enable = true;
-      enableSshSupport = true;
-      pinentry.package = pkgs.pinentry-gtk2;
-
-      # Laptop-friendly timeouts
-      defaultCacheTtl = 3600; # 1 hour
-      defaultCacheTtlSsh = 3600; # 1 hour
-      maxCacheTtl = 7200; # 2 hours
-    };
-
-    # Syncthing for file synchronization
-    syncthing = {
-      enable = true;
-      tray.enable = true;
-    };
+    # Laptop-optimized Wayland support
+    NIXOS_OZONE_WL = "1";
+    MOZ_ENABLE_WAYLAND = "1";
   };
 
-  # Desktop environment specific configuration
-  dconf.settings = {
-    "org/gnome/desktop/interface" = {
-      gtk-theme = "Adwaita-dark";
-      icon-theme = "Adwaita";
-      cursor-theme = "Adwaita";
+  # Laptop-specific packages (lightweight alternatives and mobile tools)
+  home.packages = with pkgs; [
+    # Laptop productivity tools
+    calibre # E-book management for reading on the go
+    zotero # Research management
 
-      # Power-saving settings
-      enable-animations = false; # Disable animations to save power
-    };
+    # Mobile development
+    android-tools
+    scrcpy # Android screen mirroring
 
-    "org/gnome/desktop/session" = {
-      idle-delay = lib.hm.gvariant.mkUint32 300; # 5 minutes
-    };
+    # Network tools for mobile use
+    wireshark
+    nmap
 
-    "org/gnome/settings-daemon/plugins/power" = {
-      sleep-inactive-ac-type = "nothing";
-      sleep-inactive-battery-type = "suspend";
-      sleep-inactive-battery-timeout = 900; # 15 minutes
-    };
+    # Battery and power management utilities
+    powertop
+    acpi
 
-    "org/gnome/desktop/screensaver" = {
-      lock-enabled = true;
-      lock-delay = lib.hm.gvariant.mkUint32 0; # Lock immediately
-    };
+    # Synchronization tools for mobile work
+    syncthing
+    rclone
+
+    # Lightweight alternatives
+    mousepad # Lightweight text editor
+    thunar # Lightweight file manager
+  ];
+
+  # Laptop-optimized bash aliases (extends base profile)
+  programs.bash.shellAliases = {
+    # Battery and power management
+    "battery" = "acpi -b";
+    "powersave" = "sudo powertop --auto-tune";
+    "thermal" = "cat /sys/class/thermal/thermal_zone*/temp | awk '{print $1/1000\"°C\"}'";
+
+    # Network utilities for mobile work
+    "wifi" = "nmcli dev wifi";
+    "wificonnect" = "nmcli dev wifi connect";
+    "netinfo" = "ip addr show";
+
+    # Mobile-friendly shortcuts
+    "suspend" = "systemctl suspend";
+    "hibernate" = "systemctl hibernate";
+
+    # Screen brightness (if using brightnessctl)
+    "bright+" = "brightnessctl set +10%";
+    "bright-" = "brightnessctl set 10%-";
+
+    # Quick file synchronization
+    "syncup" = "rclone sync ~/Documents remote:Documents";
+    "syncdown" = "rclone sync remote:Documents ~/Documents";
   };
 
-  # XDG configuration
-  xdg = {
-    enable = true;
+  # Laptop-specific bash functions
+  programs.bash.bashrcExtra = ''
+    # Laptop management functions
 
-    # Default applications
-    mimeApps = {
-      enable = true;
-      defaultApplications = {
-        "text/html" = "firefox.desktop";
-        "x-scheme-handler/http" = "firefox.desktop";
-        "x-scheme-handler/https" = "firefox.desktop";
-        "x-scheme-handler/about" = "firefox.desktop";
-        "x-scheme-handler/unknown" = "firefox.desktop";
+    # WiFi connection helper
+    wifi-connect() {
+      if [ $# -eq 0 ]; then
+        nmcli dev wifi list
+      else
+        nmcli dev wifi connect "$1"
+      fi
+    }
 
-        "application/pdf" = "evince.desktop";
+    # Battery status with notification
+    battery-notify() {
+      local battery_level=$(acpi -b | grep -P -o '[0-9]+(?=%)')
+      if [ "$battery_level" -le 20 ]; then
+        notify-send "Battery Low" "Battery level: $battery_level%"
+      fi
+    }
 
-        "text/plain" = "org.gnome.TextEditor.desktop";
-      };
-    };
+    # Toggle power profile
+    power-profile() {
+      local profile=${1:-balanced}
+      case $profile in
+        "performance"|"perf")
+          echo "Setting performance profile"
+          sudo cpupower frequency-set -g performance
+          ;;
+        "powersave"|"save")
+          echo "Setting powersave profile"
+          sudo cpupower frequency-set -g powersave
+          ;;
+        "balanced"|*)
+          echo "Setting balanced profile"
+          sudo cpupower frequency-set -g ondemand
+          ;;
+      esac
+    }
 
-    # Desktop entries for custom laptop utilities
-    desktopEntries = {
-      battery-info = {
-        name = "Battery Information";
-        comment = "Show detailed battery information";
-        exec = "${pkgs.gnome-terminal}/bin/gnome-terminal -- ${pkgs.acpi}/bin/acpi -bi";
-        icon = "battery";
-        categories = [ "System" "Monitor" ];
-      };
+    # Quick laptop status
+    laptop-status() {
+      echo "=== Laptop Status ==="
+      echo "Battery: $(acpi -b | cut -d',' -f2)"
+      echo "Temperature: $(cat /sys/class/thermal/thermal_zone*/temp | awk '{print $1/1000\"°C\"}' | head -1)"
+      echo "WiFi: $(nmcli -t -f active,ssid dev wifi | grep '^yes' | cut -d':' -f2)"
+      echo "Brightness: $(brightnessctl get 2>/dev/null || echo 'N/A')"
+    }
+  '';
 
-      power-settings = {
-        name = "Power Settings";
-        comment = "Quick access to power management";
-        exec = "${pkgs.gnome-control-center}/bin/gnome-control-center power";
-        icon = "preferences-system-power";
-        categories = [ "Settings" "System" ];
-      };
-    };
-  };
+  # Laptop-optimized Git configuration for mobile work
+  programs.git.extraConfig = {
+    # Laptop-specific Git optimizations
+    core.preloadindex = true;
+    core.fscache = true;
+    gc.auto = 256; # More frequent GC for limited storage
 
-  # GTK configuration
-  gtk = {
-    enable = true;
-    theme = {
-      name = "Adwaita-dark";
-    };
-    iconTheme = {
-      name = "Adwaita";
-    };
-    cursorTheme = {
-      name = "Adwaita";
-    };
-
-    gtk3.extraConfig = {
-      gtk-application-prefer-dark-theme = 1;
-    };
-
-    gtk4.extraConfig = {
-      gtk-application-prefer-dark-theme = 1;
-    };
-  };
-
-  # Systemd user services
-  systemd.user.services = {
-    # Battery level monitor
-    battery-monitor = {
-      Unit = {
-        Description = "Battery Level Monitor";
-        After = [ "graphical-session.target" ];
-      };
-
-      Service = {
-        Type = "simple";
-        ExecStart = "${pkgs.writeShellScript "battery-monitor" ''
-          #!/bin/bash
-          while true; do
-            battery_level=$(${pkgs.acpi}/bin/acpi -b | grep -P -o '[0-9]+(?=%)')
-            if [[ $battery_level -le 20 ]]; then
-              ${pkgs.libnotify}/bin/notify-send -u critical "Battery Low" "Battery level: $battery_level%"
-            elif [[ $battery_level -le 10 ]]; then
-              ${pkgs.libnotify}/bin/notify-send -u critical "Battery Critical" "Battery level: $battery_level% - Connect charger immediately!"
-            fi
-            sleep 300  # Check every 5 minutes
-          done
-        ''}";
-        Restart = "always";
-        RestartSec = 10;
-      };
-
-      Install = {
-        WantedBy = [ "default.target" ];
-      };
-    };
+    # Mobile-friendly settings
+    credential.helper = "store"; # Store credentials for mobile convenience
+    push.default = "simple";
+    pull.rebase = true; # Cleaner history for mobile sync
   };
 }

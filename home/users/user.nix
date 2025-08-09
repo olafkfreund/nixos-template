@@ -51,7 +51,7 @@
       bashrcExtra = ''
         # Custom prompt
         export PS1="\[\e[32m\]\u@\h\[\e[m\]:\[\e[34m\]\w\[\e[m\]\$ "
-        
+
         # History settings
         export HISTSIZE=10000
         export HISTFILESIZE=20000

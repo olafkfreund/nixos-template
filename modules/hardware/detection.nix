@@ -268,19 +268,19 @@ in
               # Build safe hardware detection script
               detectionScript = pkgs.writeShellScript "hardware-detection" ''
                 set -euo pipefail
-              
+
                 # Safe logging function
                 log_info() {
                   echo "$1" | ${pkgs.systemd}/bin/systemd-cat -t hardware-detection -p info
                 }
-              
+
                 log_debug() {
                   echo "$1" | ${pkgs.systemd}/bin/systemd-cat -t hardware-detection -p debug
                 }
-              
+
                 # Header
                 log_info "=== NixOS Hardware Detection Report ==="
-              
+
                 # CPU Information
                 if [[ -r /proc/cpuinfo ]]; then
                   CPU_VENDOR=$(grep -m1 "vendor_id" /proc/cpuinfo | cut -d: -f2 | xargs || echo "unknown")
@@ -290,7 +290,7 @@ in
                 else
                   log_info "CPU: Information unavailable"
                 fi
-              
+
                 # Memory Information
                 if [[ -r /proc/meminfo ]]; then
                   MEMORY_KB=$(grep "MemTotal" /proc/meminfo | awk '{print $2}' || echo "0")
@@ -308,7 +308,7 @@ in
                 else
                   log_info "Memory: Information unavailable"
                 fi
-              
+
                 # Storage Information
                 if [[ -d /sys/block ]]; then
                   if ls /sys/block/nvme* >/dev/null 2>&1; then
@@ -329,7 +329,7 @@ in
                 else
                   log_info "Storage: Information unavailable"
                 fi
-              
+
                 # Virtualization Detection
                 VIRT_TYPE="bare-metal"
                 if [[ -r /sys/class/dmi/id/product_name ]]; then
@@ -340,15 +340,15 @@ in
                     *VMware*) VIRT_TYPE="vmware" ;;
                   esac
                 fi
-              
+
                 if [[ -r /proc/sys/fs/binfmt_misc/WSLInterop ]]; then
                   VIRT_TYPE="wsl"
                 elif [[ -f /.dockerenv ]] || [[ -n "''${container:-}" ]]; then
                   VIRT_TYPE="container"
                 fi
-              
+
                 log_info "Virtualization: $VIRT_TYPE"
-              
+
                 # Performance Profile (determined by script)
                 if [[ "$MEMORY_CLASS" == "high" && "$CPU_CORES" -ge 8 && "$STORAGE_TYPE" == "nvme" ]]; then
                   PROFILE="high-performance"
@@ -359,13 +359,13 @@ in
                 else
                   PROFILE="minimal"
                 fi
-              
+
                 log_info "Performance Profile: $PROFILE"
-              
+
                 ${optionalString (cfg.reporting.logLevel == "debug") ''
                 # Debug Information
                 log_debug "=== Debug Information ==="
-              
+
                 # CPU Features
                 if [[ -r /proc/cpuinfo ]]; then
                   CPU_FLAGS=$(grep -m1 "^flags" /proc/cpuinfo | cut -d: -f2 || echo "")
@@ -374,16 +374,16 @@ in
                   AES=$(echo "$CPU_FLAGS" | grep -o "aes" | head -1 || echo "false")
                   log_debug "CPU Features: AVX=$([[ -n $AVX ]] && echo true || echo false) AVX2=$([[ -n $AVX2 ]] && echo true || echo false) AES=$([[ -n $AES ]] && echo true || echo false)"
                 fi
-              
+
                 # GPU Detection
                 GPU_NVIDIA="false"
                 GPU_AMD="false"
                 GPU_INTEL="false"
-              
+
                 if [[ -d /proc/driver/nvidia ]]; then
                   GPU_NVIDIA="true"
                 fi
-              
+
                 if [[ -d /sys/class/drm ]]; then
                   if ls /sys/class/drm/*amd* >/dev/null 2>&1; then
                     GPU_AMD="true"
@@ -392,14 +392,14 @@ in
                     GPU_INTEL="true"
                   fi
                 fi
-              
+
                 log_debug "GPU: NVIDIA=$GPU_NVIDIA AMD=$GPU_AMD Intel=$GPU_INTEL"
-              
+
                 # Storage Details
                 if [[ -d /sys/block ]]; then
                   HAS_NVME="false"
                   HAS_SSD="false"
-                
+
                   if ls /sys/block/nvme* >/dev/null 2>&1; then
                     HAS_NVME="true"
                     HAS_SSD="true"
@@ -411,11 +411,11 @@ in
                       fi
                     done
                   fi
-                
+
                   log_debug "Storage: NVMe=$HAS_NVME SSD=$HAS_SSD"
                 fi
                 ''}
-              
+
                 log_info "=== Hardware Detection Complete ==="
               '';
             in
@@ -456,7 +456,7 @@ in
     })
 
     (mkIf (cfg.autoOptimize && hardwareProfile.cpu.vendor == "amd") {
-      # AMD microcode updates  
+      # AMD microcode updates
       hardware.cpu.amd.updateMicrocode = true;
 
       # AMD-specific kernel parameters

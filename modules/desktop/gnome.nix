@@ -20,7 +20,7 @@ in
       wayland = true; # Use Wayland by default
     };
 
-    # Desktop environment (updated path)  
+    # Desktop environment (updated path)
     services.desktopManager.gnome.enable = true;
 
     # GNOME services

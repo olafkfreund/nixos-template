@@ -69,14 +69,14 @@
     bashrcExtra = ''
       # Gaming-focused prompt
       export PS1="\[\e[32m\]\u@\h\[\e[m\]:\[\e[34m\]\w\[\e[m\]\$ "
-      
+
       # Gaming environment variables
       export STEAM_RUNTIME_PREFER_HOST_LIBRARIES=0
       export DXVK_LOG_LEVEL=none
       export PROTON_USE_WINED3D=0
       export PROTON_NO_ESYNC=0
       export PROTON_NO_FSYNC=0
-      
+
       # Performance optimizations
       export __GL_THREADED_OPTIMIZATIONS=1
       export __GL_SHADER_DISK_CACHE=1
@@ -270,11 +270,11 @@
       position=top-left
       background_alpha=0.4
       font_size=24
-      
+
       # Toggle key
       toggle_hud=Shift_R+F12
       toggle_logging=Shift_L+F2
-      
+
       # Logging
       output_folder=${config.home.homeDirectory}/Recordings
       log_duration=60
@@ -285,17 +285,17 @@
       [general]
       renice=10
       ioprio=7
-      
+
       [filter]
       whitelist=steam
       whitelist=lutris
       whitelist=heroic
-      
+
       [gpu]
       apply_gpu_optimisations=accept-responsibility
       gpu_device=0
       amd_performance_level=high
-      
+
       [custom]
       start=${pkgs.libnotify}/bin/notify-send "GameMode activated"
       end=${pkgs.libnotify}/bin/notify-send "GameMode deactivated"

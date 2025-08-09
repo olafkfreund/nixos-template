@@ -55,7 +55,7 @@ in
         # Enable FBC (Frame Buffer Compression)
         "i915.enable_fbc=1"
 
-        # Enable PSR (Panel Self Refresh) 
+        # Enable PSR (Panel Self Refresh)
         "i915.enable_psr=1"
       ] ++ lib.optionals cfg.powerManagement.rc6 [
         # RC6 power states
@@ -201,7 +201,7 @@ in
         if [ -d /sys/kernel/debug/dri/0 ]; then
           echo "auto" > /sys/kernel/debug/dri/0/i915_ring_freq_table || true
         fi
-        
+
         # Enable RC6 if available
         if [ -f /sys/class/drm/card0/power/rc6_enable ]; then
           echo 1 > /sys/class/drm/card0/power/rc6_enable || true
@@ -236,7 +236,7 @@ in
     services.udev.extraRules = lib.mkIf cfg.compute.enable ''
       # Intel GPU compute device permissions
       SUBSYSTEM=="drm", KERNEL=="renderD*", GROUP="render", MODE="0666"
-      
+
       # Intel Arc/Xe specific rules
       SUBSYSTEM=="drm", KERNEL=="card*", ATTRS{vendor}=="0x8086", GROUP="video", MODE="0666"
     '';

@@ -664,28 +664,28 @@ in
 
 ### Documentation
 
-- **nix-darwin Manual:** https://daiderd.com/nix-darwin/manual/
-- **Home Manager Manual:** https://nix-community.github.io/home-manager/
-- **NixOS Manual:** https://nixos.org/manual/nixos/stable/
-- **Nix Reference:** https://nixos.org/manual/nix/stable/
+- **nix-darwin Manual:** <https://daiderd.com/nix-darwin/manual/>
+- **Home Manager Manual:** <https://nix-community.github.io/home-manager/>
+- **NixOS Manual:** <https://nixos.org/manual/nixos/stable/>
+- **Nix Reference:** <https://nixos.org/manual/nix/stable/>
 
 ### Community
 
-- **nix-darwin Issues:** https://github.com/LnL7/nix-darwin/issues
-- **NixOS Discourse:** https://discourse.nixos.org/
+- **nix-darwin Issues:** <https://github.com/LnL7/nix-darwin/issues>
+- **NixOS Discourse:** <https://discourse.nixos.org/>
 - **Matrix Chat:** #nix-darwin:nixos.org
 - **Reddit:** r/NixOS
 
 ### Examples and Templates
 
-- **nix-darwin Examples:** https://github.com/LnL7/nix-darwin/tree/master/examples
+- **nix-darwin Examples:** <https://github.com/LnL7/nix-darwin/tree/master/examples>
 - **Community Dotfiles:** Search GitHub for "nix-darwin configuration"
-- **NixOS Wiki:** https://nixos.wiki/wiki/Darwin
+- **NixOS Wiki:** <https://nixos.wiki/wiki/Darwin>
 
 ### Learning Resources
 
-- **Nix Pills:** https://nixos.org/guides/nix-pills/
-- **NixOS & Flakes Book:** https://nixos-and-flakes.thiscute.world/
-- **Zero to Nix:** https://zero-to-nix.com/
+- **Nix Pills:** <https://nixos.org/guides/nix-pills/>
+- **NixOS & Flakes Book:** <https://nixos-and-flakes.thiscute.world/>
+- **Zero to Nix:** <https://zero-to-nix.com/>
 
 This guide provides comprehensive coverage of nix-darwin usage. For additional help with the template, run `darwin-info` or refer to the configuration files in `~/.config/nix-darwin/`.

@@ -34,7 +34,7 @@
       disk = "df -h | grep -E '^/dev/'";
       mem = "free -h";
 
-      # Network shortcuts  
+      # Network shortcuts
       firewall = "sudo iptables -L";
       connections = "ss -tuln";
     };

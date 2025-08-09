@@ -1,173 +1,126 @@
-{ config, pkgs, ... }:
+# QEMU VM Home Manager Configuration
+# Uses shared profiles optimized for VM testing and development
+{ config, pkgs, inputs, ... }:
 
 {
-  # Home Manager configuration for VM user
+  # Import shared Home Manager profiles using inputs.self
+  imports = [
+    (inputs.self + "/home/profiles/base.nix") # Base configuration with git, bash, etc.
+    (inputs.self + "/home/profiles/desktop.nix") # Desktop applications for GUI testing
+    (inputs.self + "/home/profiles/development.nix") # Development tools for VM testing
+  ];
 
-  # Basic user info
+  # Host-specific user info
   home = {
     username = "vm-user";
     homeDirectory = "/home/vm-user";
-    stateVersion = "25.05";
   };
 
-  # Let Home Manager manage itself
-  programs.home-manager.enable = true;
-
-  # Git configuration for development
+  # Override git configuration for VM testing
   programs.git = {
-    enable = true;
-    userName = "VM User";
-    userEmail = "vm-user@example.com";
-
-    extraConfig = {
-      init.defaultBranch = "main";
-      pull.rebase = true;
-      push.autoSetupRemote = true;
-    };
+    userName = "VM Test User";
+    userEmail = "vm-test@example.com";
   };
 
-  # Shell configuration optimized for VMs
-  programs.bash = {
-    enable = true;
+  # VM-specific environment variables
+  home.sessionVariables = {
+    # VM identification
+    VM_ENVIRONMENT = "qemu";
+    VM_TYPE = "development";
 
-    shellAliases = {
-      # Use eza instead of ls for better file listing
-      ls = "eza";
-      ll = "eza -l";
-      la = "eza -la";
-      tree = "eza --tree";
-      l = "ls -CF";
-      ".." = "cd ..";
-      "..." = "cd ../..";
-
-      # VM-specific aliases
-      "vm-info" = "echo 'VM: ${config.home.username}@'$(hostname) && uname -a";
-      "net-info" = "ip addr show && ip route show";
-
-      # NixOS specific aliases
-      rebuild = "sudo nixos-rebuild switch --flake ~/nixos-config";
-      rebuild-test = "sudo nixos-rebuild test --flake ~/nixos-config";
-    };
-
-    bashrcExtra = ''
-      # VM-friendly prompt with hostname
-      export PS1="\[\e[36m\][\[\e[m\]\[\e[32m\]\u\[\e[m\]\[\e[36m\]@\[\e[m\]\[\e[34m\]\h\[\e[m\]\[\e[36m\]]\[\e[m\] \[\e[33m\]\w\[\e[m\]\$ "
-      
-      # Show VM info on login
-      echo "🖥️  VM Environment: $(hostname)"
-      echo "📍 IP: $(hostname -I | awk '{print $1}')"
-    '';
+    # Lightweight editor for VM
+    EDITOR = "vim";
   };
 
-  # Essential terminal applications for VMs
-  programs = {
-    # Better file listing
-    eza = {
-      enable = true;
-    };
-
-    # Better cat
-    bat.enable = true;
-
-    # System monitoring
-    htop.enable = true;
-
-    # Directory navigation
-    zoxide.enable = true;
-
-    # Terminal multiplexer for persistent sessions
-    tmux = {
-      enable = true;
-      terminal = "screen-256color";
-      prefix = "C-a";
-      keyMode = "vi";
-
-      extraConfig = ''
-        # VM-friendly tmux configuration
-        set -g mouse on
-        set -g history-limit 10000
-        
-        # Status bar
-        set -g status-bg blue
-        set -g status-fg white
-        set -g status-left '[VM:#{host_short}] '
-        set -g status-right '%Y-%m-%d %H:%M'
-      '';
-    };
-  };
-
-  # VM-focused packages
+  # VM-specific packages (lightweight and testing-focused)
   home.packages = with pkgs; [
-    # Network tools
-    curl
-    wget
+    # VM management and testing tools
+    qemu-utils
+
+    # Network testing tools for VMs
     netcat
     socat
     nmap
 
-    # File transfer
-    rsync
-    openssh # includes scp
-
-    # System utilities
-    tree
-    file
-    which
+    # System analysis for VM testing
     lsof
     strace
+    iotop
 
-    # Text processing
-    jq
-    yq
-
-    # VM management tools
-    qemu-utils
-
-    # Development tools (lightweight)
-    git
-    nano
-    vim
+    # Quick file operations in VMs
+    tree
+    file
+    unzip
   ];
 
-  # XDG directories (minimal for VMs)
-  xdg = {
-    enable = true;
+  # VM-specific bash aliases (extends base profile)
+  programs.bash.shellAliases = {
+    # VM information shortcuts
+    "vm-info" = "echo 'QEMU VM: ${config.home.username}@'$(hostname) && uname -a";
+    "vm-stats" = "echo 'CPU:' $(nproc) 'Memory:' $(free -h | awk '/^Mem:/ {print $2}')";
 
-    userDirs = {
-      enable = true;
-      createDirectories = true;
-      desktop = "${config.home.homeDirectory}/Desktop";
-      documents = "${config.home.homeDirectory}/Documents";
-      download = "${config.home.homeDirectory}/Downloads";
-    };
+    # Quick VM network info
+    "vm-net" = "ip addr show | grep -E '(inet|UP)'";
+    "vm-routes" = "ip route show";
+
+    # VM-optimized shortcuts
+    # "ll" - inherited from base profile
+    "ports" = "netstat -tuln";
+    "procs" = "ps aux | head -20";
   };
 
-  # SSH configuration for VM access
-  programs.ssh = {
+  # VM-specific bash enhancements
+  programs.bash.bashrcExtra = ''
+    # VM-friendly prompt with hostname highlighting
+    export PS1="\[\e[36m\][\[\e[m\]\[\e[32m\]\u\[\e[m\]\[\e[36m\]@\[\e[m\]\[\e[31m\]VM:\h\[\e[m\]\[\e[36m\]]\[\e[m\] \[\e[33m\]\w\[\e[m\]\$ "
+
+    # Show VM info on login
+    echo "🖥️  QEMU VM Environment: $(hostname)"
+    echo "📊 CPU: $(nproc) cores, RAM: $(free -h | awk '/^Mem:/ {print $2}')"
+
+    # VM testing helper functions
+    vm-test-network() {
+      echo "=== VM Network Test ==="
+      echo "Interface info:"
+      ip addr show | grep -E "(UP|inet )"
+      echo ""
+      echo "Gateway test:"
+      ping -c 2 $(ip route | awk '/default/ {print $3}') 2>/dev/null && echo "✓ Gateway reachable" || echo "✗ Gateway unreachable"
+      echo ""
+      echo "DNS test:"
+      nslookup google.com 2>/dev/null && echo "✓ DNS working" || echo "✗ DNS issues"
+    }
+
+    # Quick system resource check
+    vm-resources() {
+      echo "=== VM Resource Usage ==="
+      echo "CPU: $(top -bn1 | grep "Cpu(s)" | awk '{print $2}' | cut -d'%' -f1)% used"
+      echo "Memory: $(free | awk '/Mem:/ {printf "%.1f%%\n", $3/$2 * 100}')"
+      echo "Disk: $(df -h / | awk 'NR==2 {print $5}')"
+      echo "Processes: $(ps aux | wc -l)"
+    }
+  '';
+
+  # Lightweight tmux config for VM testing
+  programs.tmux = {
     enable = true;
+    keyMode = "vi";
+    prefix = "C-a";
 
     extraConfig = ''
-      # VM-friendly SSH settings
-      Host *
-        ServerAliveInterval 60
-        ServerAliveCountMax 3
-        TCPKeepAlive yes
-        
-      # Common VM access patterns
-      Host host hypervisor
-        HostName 10.0.2.2
-        User your-username
-        Port 22
+      # VM-optimized tmux settings
+      set -g mouse on
+      set -g history-limit 5000
+
+      # VM status bar
+      set -g status-bg colour235
+      set -g status-fg colour250
+      set -g status-left '[QEMU:#{host_short}] '
+      set -g status-right '%H:%M %d-%b'
+
+      # Quick VM monitoring windows
+      bind V neww -n 'vm-info' 'watch -n 2 "echo \"VM: $(hostname)\"; free -h; df -h /"'
+      bind N neww -n 'network' 'watch -n 2 "ip addr show; echo; netstat -tuln"'
     '';
-  };
-
-  # Environment variables for VMs
-  home.sessionVariables = {
-    EDITOR = "nano";
-    PAGER = "less";
-
-    # VM identification
-    VM_ENVIRONMENT = "true";
-    VM_HOSTNAME = "qemu-vm";
   };
 }

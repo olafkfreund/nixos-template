@@ -745,11 +745,11 @@ networking = {
 
 ## Resources
 
-- **NixOS Manual**: https://nixos.org/manual/nixos/stable/
-- **NixOS-WSL Project**: https://github.com/nix-community/NixOS-WSL
-- **Home Manager Manual**: https://nix-community.github.io/home-manager/
-- **WSL Documentation**: https://docs.microsoft.com/en-us/windows/wsl/
-- **Template Repository**: https://github.com/yourusername/nixos-template
+- **NixOS Manual**: <https://nixos.org/manual/nixos/stable/>
+- **NixOS-WSL Project**: <https://github.com/nix-community/NixOS-WSL>
+- **Home Manager Manual**: <https://nix-community.github.io/home-manager/>
+- **WSL Documentation**: <https://docs.microsoft.com/en-us/windows/wsl/>
+- **Template Repository**: <https://github.com/yourusername/nixos-template>
 
 ## Contributing
 

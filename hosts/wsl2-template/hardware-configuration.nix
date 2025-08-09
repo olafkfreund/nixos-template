@@ -9,12 +9,14 @@
   ];
 
   # WSL2 doesn't use traditional bootloaders
-  boot.loader.systemd-boot.enable = false;
-  boot.loader.grub.enable = false;
-  boot.initrd.availableKernelModules = [ ];
-  boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ ];
-  boot.extraModulePackages = [ ];
+  boot = {
+    loader.systemd-boot.enable = false;
+    loader.grub.enable = false;
+    initrd.availableKernelModules = [ ];
+    initrd.kernelModules = [ ];
+    kernelModules = [ ];
+    extraModulePackages = [ ];
+  };
 
   # WSL2 filesystem configuration
   fileSystems."/" = {

@@ -35,7 +35,7 @@
       #   theme.darkMode = true;      # Dark theme
       # };
 
-      # Hyprland Tiling Window Manager  
+      # Hyprland Tiling Window Manager
       # hyprland = {
       #   enable = true;
       #   waybar.enable = true;       # Status bar
@@ -102,7 +102,7 @@
       #   };
       # };
 
-      # NVIDIA GPU  
+      # NVIDIA GPU
       # nvidia = {
       #   enable = true;
       #   driver = "stable";  # stable, beta, production, open
@@ -154,7 +154,7 @@
     # Printing support
     printing.enable = true;
 
-    # Bluetooth support  
+    # Bluetooth support
     blueman.enable = true;
 
     # Location services

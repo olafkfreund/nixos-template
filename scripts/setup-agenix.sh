@@ -199,29 +199,29 @@ let
   # Helper functions for common key combinations
   allUsers = builtins.attrValues users;
   allSystems = builtins.attrValues systems;
-  
+
 in
 {
   # Example secrets configuration
   # Each secret specifies which keys can decrypt it
-  
+
   # User passwords
   "user-password.age".publicKeys = [ users.$(whoami) systems.$hostname ];
   "root-password.age".publicKeys = [ systems.$hostname ];
-  
+
   # SSH keys
   "ssh-private-key.age".publicKeys = [ users.$(whoami) systems.$hostname ];
-  
+
   # Network configuration
   "wifi-password.age".publicKeys = [ systems.$hostname ];
-  
-  # Application secrets  
+
+  # Application secrets
   "database-password.age".publicKeys = [ systems.$hostname ];
   "api-key.age".publicKeys = [ users.$(whoami) systems.$hostname ];
-  
+
   # Email configuration
   "email-password.age".publicKeys = [ users.$(whoami) systems.$hostname ];
-  
+
   # Backup and sync
   "restic-password.age".publicKeys = [ systems.$hostname ];
 }

@@ -280,63 +280,63 @@ in
         "hypr/hyprland.conf".text = ''
           # Monitor configuration
           ${lib.concatMapStringsSep "\n" (monitor: "monitor=${monitor}") cfg.settings.monitors}
-          
+
           # Input configuration
           input {
               kb_layout = ${cfg.settings.input.kb_layout}
               follow_mouse = ${toString cfg.settings.input.follow_mouse}
-              
+
               touchpad {
                   natural_scroll = ${if cfg.settings.input.touchpad.natural_scroll then "yes" else "no"}
                   disable_while_typing = ${if cfg.settings.input.touchpad.disable_while_typing then "yes" else "no"}
               }
           }
-          
+
           # General configuration
           general {
               gaps_in = ${toString cfg.settings.appearance.gaps_in}
               gaps_out = ${toString cfg.settings.appearance.gaps_out}
               border_size = ${toString cfg.settings.appearance.border_size}
-              
+
               # Border colors (Catppuccin-inspired)
               col.active_border = rgba(cba6f7ee) rgba(89b4faee) 45deg
               col.inactive_border = rgba(585b70aa)
-              
+
               resize_on_border = false
               allow_tearing = false
               layout = dwindle
           }
-          
+
           # Decoration
           decoration {
               rounding = ${toString cfg.settings.appearance.rounding}
-              
+
               # Opacity
               active_opacity = 1.0
               inactive_opacity = 1.0
-              
+
               # Shadow
               drop_shadow = true
               shadow_range = 4
               shadow_render_power = 3
               col.shadow = rgba(1a1a1aee)
-              
+
               # Blur
               blur {
                   enabled = true
                   size = 3
                   passes = 1
-                  
+
                   vibrancy = 0.1696
               }
           }
-          
+
           # Animations
           animations {
               enabled = ${if cfg.settings.animations.enable then "yes" else "no"}
-              
+
               bezier = myBezier, 0.05, 0.9, 0.1, 1.05
-              
+
               animation = windows, 1, 7, myBezier
               animation = windowsOut, 1, 7, default, popin 80%
               animation = border, 1, 10, default
@@ -344,52 +344,52 @@ in
               animation = fade, 1, 7, default
               animation = workspaces, 1, 6, default
           }
-          
+
           # Layout configuration
           dwindle {
               pseudotile = yes
               preserve_split = yes
           }
-          
+
           master {
               new_is_master = true
           }
-          
+
           # Gestures
           gestures {
               workspace_swipe = false
           }
-          
+
           # Misc settings
-          misc { 
+          misc {
               force_default_wallpaper = 0
               disable_hyprland_logo = false
           }
-          
+
           # Key bindings
           $mainMod = SUPER
-          
+
           # Application bindings
           bind = $mainMod, Q, exec, ${cfg.applications.terminal}
-          bind = $mainMod, C, killactive, 
-          bind = $mainMod, M, exit, 
+          bind = $mainMod, C, killactive,
+          bind = $mainMod, M, exit,
           bind = $mainMod, E, exec, ${cfg.applications.fileManager}
-          bind = $mainMod, V, togglefloating, 
+          bind = $mainMod, V, togglefloating,
           bind = $mainMod, R, exec, ${cfg.applications.launcher}
           bind = $mainMod, P, pseudo,
           bind = $mainMod, J, togglesplit,
           bind = $mainMod, B, exec, ${cfg.applications.browser}
-          
+
           # Screenshot bindings
           bind = , Print, exec, ${cfg.applications.screenshot} -g "$(slurp)" - | wl-copy
           bind = $mainMod, Print, exec, ${cfg.applications.screenshot} - | wl-copy
-          
+
           # Move focus with mainMod + arrow keys
           bind = $mainMod, left, movefocus, l
           bind = $mainMod, right, movefocus, r
           bind = $mainMod, up, movefocus, u
           bind = $mainMod, down, movefocus, d
-          
+
           # Switch workspaces with mainMod + [0-9]
           bind = $mainMod, 1, workspace, 1
           bind = $mainMod, 2, workspace, 2
@@ -401,7 +401,7 @@ in
           bind = $mainMod, 8, workspace, 8
           bind = $mainMod, 9, workspace, 9
           bind = $mainMod, 0, workspace, 10
-          
+
           # Move active window to a workspace with mainMod + SHIFT + [0-9]
           bind = $mainMod SHIFT, 1, movetoworkspace, 1
           bind = $mainMod SHIFT, 2, movetoworkspace, 2
@@ -413,22 +413,22 @@ in
           bind = $mainMod SHIFT, 8, movetoworkspace, 8
           bind = $mainMod SHIFT, 9, movetoworkspace, 9
           bind = $mainMod SHIFT, 0, movetoworkspace, 10
-          
+
           # Scroll through existing workspaces with mainMod + scroll
           bind = $mainMod, mouse_down, workspace, e+1
           bind = $mainMod, mouse_up, workspace, e-1
-          
+
           # Move/resize windows with mainMod + LMB/RMB and dragging
           bindm = $mainMod, mouse:272, movewindow
           bindm = $mainMod, mouse:273, resizewindow
-          
+
           # Volume and brightness controls
           bind = , XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
           bind = , XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
           bind = , XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
           bind = , XF86MonBrightnessUp, exec, brightnessctl set 10%+
           bind = , XF86MonBrightnessDown, exec, brightnessctl set 10%-
-          
+
           # Autostart applications
           exec-once = waybar
           exec-once = dunst
@@ -515,7 +515,7 @@ in
           };
         });
 
-        # Waybar style configuration  
+        # Waybar style configuration
         "xdg/waybar/style.css".text = lib.mkIf cfg.waybar.enable ''
           * {
               border: none;
@@ -524,38 +524,38 @@ in
               font-size: 13px;
               min-height: 0;
           }
-      
+
           window#waybar {
               background-color: transparent;
               color: #ffffff;
               transition-property: background-color;
               transition-duration: .5s;
           }
-      
+
           window#waybar.hidden {
               opacity: 0.2;
           }
-      
+
           #workspaces {
               margin: 0 4px;
           }
-      
+
           #workspaces button {
               padding: 0 5px;
               background-color: transparent;
               color: #ffffff;
               border-bottom: 3px solid transparent;
           }
-      
+
           #workspaces button:hover {
               background: rgba(0, 0, 0, 0.2);
           }
-      
+
           #workspaces button.active {
               background-color: #64727D;
               border-bottom: 3px solid #ffffff;
           }
-      
+
           #clock,
           #battery,
           #cpu,
@@ -575,22 +575,22 @@ in
               padding: 0 10px;
               color: #ffffff;
           }
-      
+
           #window {
               margin: 0 4px;
           }
-      
+
           #battery.charging, #battery.plugged {
               color: #26A65B;
           }
-      
+
           @keyframes blink {
               to {
                   background-color: #ffffff;
                   color: #000000;
               }
           }
-      
+
           #battery.critical:not(.charging) {
               background-color: #f53c3c;
               color: #ffffff;
@@ -650,22 +650,22 @@ in
           mouse_left_click = close_current
           mouse_middle_click = do_action, close_current
           mouse_right_click = close_all
-      
+
           [experimental]
           per_monitor_dpi = false
-      
+
           [urgency_low]
           background = "#282828"
           foreground = "#928374"
           timeout = ${toString cfg.dunst.settings.urgency_low.timeout}
           frame_color = "#32302f"
-      
+
           [urgency_normal]
           background = "#458588"
           foreground = "#ebdbb2"
           timeout = ${toString cfg.dunst.settings.urgency_normal.timeout}
           frame_color = "#689d6a"
-      
+
           [urgency_critical]
           background = "#cc241d"
           foreground = "#ebdbb2"

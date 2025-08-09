@@ -46,21 +46,21 @@
       echo "🔋 Battery Information"
       echo "====================="
       echo ""
-      
+
       # Battery percentage and status
       pmset -g batt | grep -E "([0-9]+%)" | sed 's/^/  /'
       echo ""
-      
+
       # Power source
       echo "⚡ Power Source:"
       pmset -g ps | grep "Power" | sed 's/^/  /'
       echo ""
-      
+
       # Sleep settings
       echo "😴 Sleep Settings:"
       pmset -g | grep -E "(sleep|displaysleep|disksleep)" | sed 's/^/  /'
       echo ""
-      
+
       # Power adapter info
       echo "🔌 Power Adapter:"
       system_profiler SPPowerDataType | grep -A 5 "Power Adapter" | sed 's/^/  /' || echo "  No adapter info available"
@@ -70,37 +70,37 @@
       echo "💻 Laptop Optimization"
       echo "======================"
       echo ""
-      
+
       echo "⚡ Optimizing power settings..."
       # Optimize for battery life
       sudo pmset -b displaysleep 5
       sudo pmset -b disksleep 10
       sudo pmset -b sleep 15
       sudo pmset -b hibernatemode 3
-      
+
       # Optimize for AC power
       sudo pmset -c displaysleep 10
       sudo pmset -c disksleep 15
       sudo pmset -c sleep 30
       sudo pmset -c hibernatemode 0
-      
+
       echo "  Power settings optimized"
       echo ""
-      
+
       echo "🧹 Cleaning up system..."
       # Clear caches to free space
       sudo purge
       echo "  Memory purged"
-      
+
       # Clean up Nix store
       nix-collect-garbage -d >/dev/null 2>&1 || echo "  Nix cleanup skipped (requires Nix)"
       echo "  System cleaned"
       echo ""
-      
+
       echo "🌐 Checking network..."
       ping -c 1 8.8.8.8 >/dev/null 2>&1 && echo "  Internet: Connected" || echo "  Internet: Disconnected"
       echo ""
-      
+
       echo "✅ Laptop optimization complete!"
     '')
 
@@ -108,7 +108,7 @@
       echo "📶 Wi-Fi Manager"
       echo "================"
       echo ""
-      
+
       case "''${1:-status}" in
         "status")
           echo "Current Wi-Fi Status:"
@@ -140,27 +140,27 @@
       echo "💻 Laptop System Information"
       echo "============================"
       echo ""
-      
+
       echo "🖥️  System:"
       echo "  Model: $(system_profiler SPHardwareDataType | grep "Model Name" | cut -d: -f2 | xargs)"
       echo "  Chip: $(system_profiler SPHardwareDataType | grep "Chip" | cut -d: -f2 | xargs)"
       echo "  Memory: $(system_profiler SPHardwareDataType | grep "Memory" | cut -d: -f2 | xargs)"
       echo "  macOS: $(sw_vers -productVersion)"
       echo ""
-      
+
       echo "🔋 Battery:"
       pmset -g batt | grep -E "([0-9]+%)" | sed 's/^/  /'
       echo ""
-      
+
       echo "🌐 Connectivity:"
       networksetup -getairportpower en0 | sed 's/^/  Wi-Fi: /'
       ping -c 1 -W 1000 8.8.8.8 >/dev/null 2>&1 && echo "  Internet: Connected" || echo "  Internet: Disconnected"
       echo ""
-      
+
       echo "💾 Storage:"
       df -h / | tail -1 | awk '{print "  Available: " $4 " of " $2 " (" $5 " used)"}'
       echo ""
-      
+
       echo "🏃 Performance:"
       echo "  CPU Temperature: $(sudo powermetrics --samplers smc_temp --sample-count 1 -n 1 | grep "CPU die temperature" | cut -d: -f2 | xargs || echo "Not available")"
       echo "  Thermal State: $(pmset -g therm | grep "CPU_Scheduler_Limit" | cut -d= -f2 || echo "Normal")"
@@ -170,17 +170,17 @@
       echo "📱 Mobile Development Setup"
       echo "=========================="
       echo ""
-      
+
       # Check if we're on battery
       if pmset -g batt | grep -q "Battery Power"; then
         echo "🔋 Running on battery - using lightweight setup"
-        
+
         echo "Setting up minimal development environment..."
-        
+
         # Use lightweight alternatives
         export EDITOR="vim"
         export NODE_OPTIONS="--max-old-space-size=2048"  # Reduce memory usage
-        
+
         # Suggest battery-friendly practices
         echo ""
         echo "💡 Battery-friendly development tips:"
@@ -188,16 +188,16 @@
         echo "  • Reduce Node.js memory usage: NODE_OPTIONS=\"--max-old-space-size=2048\""
         echo "  • Use 'npm run build' instead of dev servers when possible"
         echo "  • Consider using remote development (SSH to a server)"
-        
+
       else
         echo "🔌 Running on AC power - full development setup available"
-        
+
         # Full development setup
         export NODE_OPTIONS="--max-old-space-size=4096"
-        
+
         echo "✅ Full development environment ready"
       fi
-      
+
       echo ""
       echo "Current power source:"
       pmset -g ps | head -1 | sed 's/^/  /'
@@ -288,22 +288,22 @@
   # Laptop-specific power management
   system.activationScripts.powerOptimization.text = ''
     # Set energy-efficient defaults
-    
+
     # Battery power settings
     pmset -b displaysleep 5 2>/dev/null || true
     pmset -b disksleep 10 2>/dev/null || true
     pmset -b sleep 15 2>/dev/null || true
     pmset -b hibernatemode 3 2>/dev/null || true
-    
+
     # AC power settings (more performance)
     pmset -c displaysleep 15 2>/dev/null || true
     pmset -c disksleep 30 2>/dev/null || true
     pmset -c sleep 60 2>/dev/null || true
     pmset -c hibernatemode 0 2>/dev/null || true
-    
+
     # Enable automatic graphics switching (battery saving)
     pmset -a gpuswitch 2 2>/dev/null || true
-    
+
     echo "Power management optimized for laptop use"
   '';
 
@@ -343,30 +343,30 @@
       alias optimize="laptop-optimize"
       alias wifi="wifi-manager"
       alias mobile="dev-mobile"
-      
+
       # Quick navigation for mobile workflows
       alias proj="cd ~/Projects"
       alias desk="cd ~/Desktop"
       alias docs="cd ~/Documents"
-      
+
       # Power-aware aliases
       alias code-lite="code --disable-extensions --disable-gpu"
       alias vim-config="vim ~/.vimrc"
-      
+
       # Network shortcuts
       alias ip="curl -s ifconfig.me && echo"
       alias ping-test="ping -c 3 8.8.8.8"
-      
+
       # System shortcuts
       alias cleanup="sudo purge && nix-collect-garbage -d"
       alias temp="sudo powermetrics --samplers smc_temp --sample-count 1 -n 1"
-      
+
       # Git shortcuts for mobile
       alias gst="git status -s"  # Short status
       alias gcm="git commit -m"
       alias gps="git push"
       alias gpl="git pull"
-      
+
       echo "💻 nix-darwin Laptop Environment Ready!"
       echo "🔋 Battery: $(pmset -g batt | grep -E "([0-9]+%)" | awk '{print $3}' | tr -d ';')"
     '';

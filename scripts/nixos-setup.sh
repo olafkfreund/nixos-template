@@ -246,15 +246,15 @@ prompt_yes_no() {
     fi
 
     case "$choice" in
-    y | yes)
-      echo "yes"
-      return 0
-      ;;
-    n | no)
-      echo "no"
-      return 0
-      ;;
-    *) print_error "Please answer yes (y) or no (n)" ;;
+      y | yes)
+        echo "yes"
+        return 0
+        ;;
+      n | no)
+        echo "no"
+        return 0
+        ;;
+      *) print_error "Please answer yes (y) or no (n)" ;;
     esac
   done
 }
@@ -398,9 +398,9 @@ detect_hardware() {
   local cpu_arch
   cpu_arch=$(uname -m)
   case "$cpu_arch" in
-  x86_64) print_success "Architecture: x86_64 (64-bit)" ;;
-  aarch64) print_success "Architecture: ARM64" ;;
-  *) print_warning "Unsupported architecture: $cpu_arch" ;;
+    x86_64) print_success "Architecture: x86_64 (64-bit)" ;;
+    aarch64) print_success "Architecture: ARM64" ;;
+    *) print_warning "Unsupported architecture: $cpu_arch" ;;
   esac
 
   # Detect available memory
@@ -556,13 +556,13 @@ generate_configuration() {
   # Determine base template
   local base_template="example-desktop"
   case "$VM_TYPE" in
-  qemu | kvm) base_template="qemu-vm" ;;
-  virtualbox) base_template="virtualbox-vm" ;;
-  *)
-    if [ "$DESKTOP_ENVIRONMENT" = "None (Server)" ]; then
-      base_template="example-server"
-    fi
-    ;;
+    qemu | kvm) base_template="qemu-vm" ;;
+    virtualbox) base_template="virtualbox-vm" ;;
+    *)
+      if [ "$DESKTOP_ENVIRONMENT" = "None (Server)" ]; then
+        base_template="example-server"
+      fi
+      ;;
   esac
 
   print_progress "Using base template: $base_template"
@@ -575,31 +575,31 @@ generate_configuration() {
   imports = [
     # Hardware configuration
     ./hardware-configuration.nix
-    
+
     # Common configuration
     ../common.nix
-    
+
     # Core modules
     ../../modules/core
-    
+
     # Desktop environment
 $([ "$DESKTOP_ENVIRONMENT" != "None (Server)" ] && echo "    ../../modules/desktop")
-    
+
     # Development tools
 $([ "$ENABLE_DEVELOPMENT" != "no" ] && echo "    ../../modules/development")
-    
-    # Gaming support  
+
+    # Gaming support
 $([ "$ENABLE_GAMING" = "yes" ] && echo "    ../../modules/gaming")
-    
+
     # Virtualization support
 $([ "$ENABLE_VIRTUALIZATION" = "yes" ] && echo "    ../../modules/virtualization")
-    
+
     # VM guest optimizations
 $([ "$VM_TYPE" != "physical" ] && echo "    ../../modules/virtualization/vm-guest.nix")
-    
+
     # Secrets management
 $([ "$ENABLE_SECRETS" = "yes" ] && echo "    ../../modules/security/agenix.nix")
-    
+
     # Host-specific secrets
 $([ "$ENABLE_SECRETS" = "yes" ] && echo "    ./secrets.nix")
   ];
@@ -633,14 +633,14 @@ $(
   modules.virtualization.vm-guest = {
     enable = true;
     type = "$VM_TYPE";
-    
+
     optimizations = {
       performance = true;
       graphics = $([ "$DESKTOP_ENVIRONMENT" != "None (Server)" ] && echo "true" || echo "false");
       networking = true;
       storage = true;
     };
-    
+
     guestTools = {
       enable = true;
       clipboard = $([ "$DESKTOP_ENVIRONMENT" != "None (Server)" ] && echo "true" || echo "false");
@@ -657,7 +657,7 @@ $(
   modules.desktop = {
     enable = true;
     environment = "$(echo "$DESKTOP_ENVIRONMENT" | tr '[:upper:]' '[:lower:]')";
-    
+
     audio.enable = true;
     printing.enable = $([ "$VM_TYPE" = "physical" ] && echo "true" || echo "false");
   };
@@ -674,7 +674,7 @@ $(
       PermitRootLogin = "no";
     };
   };
-  
+
   networking.firewall.allowedTCPPorts = [ 22 ];
 SSH
   )
@@ -703,7 +703,7 @@ $(
     languages = [ "nix" ];
     git = {
       enable = true;
-      userName = "Change Me"; 
+      userName = "Change Me";
       userEmail = "change@example.com";
     };
 BASICDEV
@@ -786,12 +786,12 @@ generate_home_config() {
   # Map user template to actual template file
   local template_file
   case "$USER_TEMPLATE" in
-  "Basic user") template_file="user.nix" ;;
-  "Developer") template_file="developer.nix" ;;
-  "Gamer") template_file="gamer.nix" ;;
-  "Minimal") template_file="minimal.nix" ;;
-  "Server admin") template_file="server.nix" ;;
-  *) template_file="user.nix" ;;
+    "Basic user") template_file="user.nix" ;;
+    "Developer") template_file="developer.nix" ;;
+    "Gamer") template_file="gamer.nix" ;;
+    "Minimal") template_file="minimal.nix" ;;
+    "Server admin") template_file="server.nix" ;;
+    *) template_file="user.nix" ;;
   esac
 
   if [ -f "$TEMPLATE_ROOT/home/users/$template_file" ]; then
@@ -842,7 +842,7 @@ generate_secrets_config() {
   # Enable agenix secrets management
   modules.security.agenix = {
     enable = true;
-    
+
     secrets = {
       # User password
       "user-password" = {
@@ -851,7 +851,7 @@ generate_secrets_config() {
         group = "root";
         mode = "0400";
       };
-      
+
       # Root password
       "root-password" = {
         file = ../../secrets/root-password.age;
@@ -861,7 +861,7 @@ generate_secrets_config() {
       };
 $(
     [ "$ENABLE_SSH" = "yes" ] && cat <<'SSHSECRETS'
-      
+
       # SSH host key
       "ssh-host-key" = {
         file = ../../secrets/ssh-host-key.age;
@@ -997,28 +997,28 @@ deploy_system() {
   deploy_choice=$(prompt_choice "Choose deployment method:" "Switch (activate immediately)" "Boot (activate on next boot)" "Cancel")
 
   case "$deploy_choice" in
-  "Switch (activate immediately)")
-    print_progress "Switching to new configuration"
-    if sudo nixos-rebuild switch --flake "$TEMPLATE_ROOT#$HOSTNAME"; then
-      print_success "System successfully switched to new configuration"
-    else
-      print_error "Failed to switch to new configuration"
+    "Switch (activate immediately)")
+      print_progress "Switching to new configuration"
+      if sudo nixos-rebuild switch --flake "$TEMPLATE_ROOT#$HOSTNAME"; then
+        print_success "System successfully switched to new configuration"
+      else
+        print_error "Failed to switch to new configuration"
+        return 1
+      fi
+      ;;
+    "Boot (activate on next boot)")
+      print_progress "Setting up configuration for next boot"
+      if sudo nixos-rebuild boot --flake "$TEMPLATE_ROOT#$HOSTNAME"; then
+        print_success "Configuration will be active on next boot"
+      else
+        print_error "Failed to set boot configuration"
+        return 1
+      fi
+      ;;
+    "Cancel")
+      print_info "Deployment cancelled"
       return 1
-    fi
-    ;;
-  "Boot (activate on next boot)")
-    print_progress "Setting up configuration for next boot"
-    if sudo nixos-rebuild boot --flake "$TEMPLATE_ROOT#$HOSTNAME"; then
-      print_success "Configuration will be active on next boot"
-    else
-      print_error "Failed to set boot configuration"
-      return 1
-    fi
-    ;;
-  "Cancel")
-    print_info "Deployment cancelled"
-    return 1
-    ;;
+      ;;
   esac
 
   return 0

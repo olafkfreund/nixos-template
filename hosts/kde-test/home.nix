@@ -52,7 +52,7 @@
     bashrcExtra = ''
       # VM-friendly prompt with hostname
       export PS1="\[\e[36m\][\[\e[m\]\[\e[32m\]\u\[\e[m\]\[\e[36m\]@\[\e[m\]\[\e[34m\]\h\[\e[m\]\[\e[36m\]]\[\e[m\] \[\e[33m\]\w\[\e[m\]\$ "
-      
+
       # Show VM info on login
       echo "🖥️  VM Environment: $(hostname)"
       echo "📍 IP: $(hostname -I | awk '{print $1}')"
@@ -86,7 +86,7 @@
         # VM-friendly tmux configuration
         set -g mouse on
         set -g history-limit 10000
-        
+
         # Status bar
         set -g status-bg blue
         set -g status-fg white
@@ -152,7 +152,7 @@
         ServerAliveInterval 60
         ServerAliveCountMax 3
         TCPKeepAlive yes
-        
+
       # Common VM access patterns
       Host host hypervisor
         HostName 10.0.2.2

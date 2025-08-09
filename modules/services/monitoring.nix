@@ -612,15 +612,15 @@ in
             healthScript = pkgs.writeShellScript "system-health-check" ''
               #!/bin/bash
               set -euo pipefail
-            
+
               log_metric() {
                 echo "$1" | systemd-cat -t system-health -p info
               }
-            
+
               log_alert() {
                 echo "ALERT: $1" | systemd-cat -t system-health -p warning
               }
-            
+
               ${optionalString (elem "disk-space" cfg.systemHealth.checks) ''
               # Check disk space
               while read -r filesystem blocks used available capacity mountpoint; do
@@ -629,7 +629,7 @@ in
                 fi
               done < <(df -h | tail -n +2 | grep -E '^/dev/')
               ''}
-            
+
               ${optionalString (elem "memory-usage" cfg.systemHealth.checks) ''
               # Check memory usage
               memory_percent=$(free | grep Mem | awk '{printf("%.0f", $3/$2 * 100.0)}')
@@ -638,7 +638,7 @@ in
               fi
               log_metric "memory_usage_percent=$memory_percent"
               ''}
-            
+
               ${optionalString (elem "service-status" cfg.systemHealth.checks) ''
               # Check critical service status
               failed_services=$(systemctl list-units --failed --no-legend | wc -l)
@@ -650,7 +650,7 @@ in
               fi
               log_metric "failed_services_count=$failed_services"
               ''}
-            
+
               ${optionalString (elem "cpu-temperature" cfg.systemHealth.checks) ''
               # Check CPU temperature (if sensors available)
               if command -v sensors >/dev/null; then
@@ -661,7 +661,7 @@ in
                 log_metric "cpu_max_temp_celsius=$max_temp"
               fi
               ''}
-            
+
               ${optionalString (elem "network-connectivity" cfg.systemHealth.checks) ''
               # Check network connectivity
               if ! ping -c 1 -W 5 8.8.8.8 >/dev/null 2>&1; then
@@ -671,7 +671,7 @@ in
                 log_metric "network_connectivity=1"
               fi
               ''}
-            
+
               log_metric "health_check_completed=1"
             '';
           in

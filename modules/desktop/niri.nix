@@ -380,7 +380,7 @@ in
     # Niri configuration file
     environment.etc."niri/config.kdl".text = ''
       // Niri configuration in KDL format
-      
+
       input {
           keyboard {
               xkb {
@@ -388,17 +388,17 @@ in
                   ${lib.optionalString (cfg.settings.input.keyboard.xkb.variant != "") ''variant "${cfg.settings.input.keyboard.xkb.variant}"''}
                   ${lib.optionalString (cfg.settings.input.keyboard.xkb.options != null) ''options "${cfg.settings.input.keyboard.xkb.options}"''}
               }
-              
+
               repeat-delay ${toString cfg.settings.input.keyboard.repeat-delay}
               repeat-rate ${toString cfg.settings.input.keyboard.repeat-rate}
           }
-          
+
           mouse {
               natural-scroll ${if cfg.settings.input.mouse.natural-scroll then "true" else "false"}
               accel-speed ${toString cfg.settings.input.mouse.accel-speed}
               accel-profile "${cfg.settings.input.mouse.accel-profile}"
           }
-          
+
           touchpad {
               tap ${if cfg.settings.input.touchpad.tap then "true" else "false"}
               dwt ${if cfg.settings.input.touchpad.dwt then "true" else "false"}
@@ -406,7 +406,7 @@ in
               click-method "${cfg.settings.input.touchpad.click-method}"
           }
       }
-      
+
       ${lib.concatMapStringsSep "\n" (output: ''
         output "${output.name}" {
             ${lib.optionalString (output.mode != null) ''
@@ -419,27 +419,27 @@ in
             ''}
         }
       '') cfg.settings.outputs}
-      
+
       layout {
           gaps ${toString cfg.settings.layout.gaps}
           center-focused-column "${cfg.settings.layout.center-focused-column}"
-          
+
           preset-column-widths {
               ${lib.concatMapStringsSep "\n          " (width: ''proportion ${toString width.proportion}'') cfg.settings.layout.preset-column-widths}
           }
-          
+
           ${lib.optionalString (cfg.settings.layout.default-column-width != null) ''
             default-column-width { proportion ${toString cfg.settings.layout.default-column-width.proportion} }
           ''}
       }
-      
+
       ${lib.concatMapStringsSep "\n" (rule: ''
         window-rule {
             ${lib.concatMapStringsSep "\n        " (match: ''
               ${lib.optionalString (match.app-id != null) ''match app-id="${match.app-id}"''}
               ${lib.optionalString (match.title != null) ''match title="${match.title}"''}
             '') rule.matches}
-            
+
             ${lib.optionalString (rule.default-column-width != null) ''
               default-column-width { proportion ${toString rule.default-column-width.proportion} }
             ''}
@@ -448,39 +448,39 @@ in
             ${lib.optionalString (rule.open-fullscreen != null) ''open-fullscreen ${if rule.open-fullscreen then "true" else "false"}''}
         }
       '') cfg.settings.window-rules}
-      
+
       prefer-no-csd ${if cfg.settings.prefer-no-csd then "true" else "false"}
-      
+
       hotkey-overlay {
           skip-at-startup ${if cfg.settings.hotkey-overlay.skip-at-startup then "true" else "false"}
       }
-      
+
       ${lib.optionalString (cfg.settings.screenshot-path != null) ''
         screenshot-path "${cfg.settings.screenshot-path}"
       ''}
-      
+
       spawn-at-startup "waybar"
       spawn-at-startup "dunst"
       ${lib.optionalString (cfg.theme.wallpaper != "") ''spawn-at-startup "swaybg" "-i" "${cfg.theme.wallpaper}"''}
-      
+
       // Niri key bindings
       binds {
           Mod+Shift+Slash { show-hotkey-overlay; }
-          
+
           Mod+T { spawn "${cfg.applications.terminal}"; }
           Mod+D { spawn "${cfg.applications.launcher}"; }
           Mod+Q { close-window; }
-          
+
           XF86AudioRaiseVolume { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1+"; }
           XF86AudioLowerVolume { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1-"; }
           XF86AudioMute { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
-          
+
           XF86MonBrightnessUp { spawn "brightnessctl" "set" "10%+"; }
           XF86MonBrightnessDown { spawn "brightnessctl" "set" "10%-"; }
-          
+
           Print { spawn "${cfg.applications.screenshot}" "-g" "$(slurp)" "-" "|" "wl-copy"; }
           Mod+Print { spawn "${cfg.applications.screenshot}" "-" "|" "wl-copy"; }
-          
+
           Mod+Left { focus-column-left; }
           Mod+Right { focus-column-right; }
           Mod+Up { focus-window-up; }
@@ -489,7 +489,7 @@ in
           Mod+L { focus-column-right; }
           Mod+K { focus-window-up; }
           Mod+J { focus-window-down; }
-          
+
           Mod+Ctrl+Left { move-column-left; }
           Mod+Ctrl+Right { move-column-right; }
           Mod+Ctrl+Up { move-window-up; }
@@ -498,12 +498,12 @@ in
           Mod+Ctrl+L { move-column-right; }
           Mod+Ctrl+K { move-window-up; }
           Mod+Ctrl+J { move-window-down; }
-          
+
           Mod+Home { focus-column-first; }
           Mod+End { focus-column-last; }
           Mod+Ctrl+Home { move-column-to-first; }
           Mod+Ctrl+End { move-column-to-last; }
-          
+
           Mod+Shift+Left { focus-monitor-left; }
           Mod+Shift+Right { focus-monitor-right; }
           Mod+Shift+Up { focus-monitor-up; }
@@ -512,7 +512,7 @@ in
           Mod+Shift+L { focus-monitor-right; }
           Mod+Shift+K { focus-monitor-up; }
           Mod+Shift+J { focus-monitor-down; }
-          
+
           Mod+Shift+Ctrl+Left { move-column-to-monitor-left; }
           Mod+Shift+Ctrl+Right { move-column-to-monitor-right; }
           Mod+Shift+Ctrl+Up { move-column-to-monitor-up; }
@@ -521,37 +521,37 @@ in
           Mod+Shift+Ctrl+L { move-column-to-monitor-right; }
           Mod+Shift+Ctrl+K { move-column-to-monitor-up; }
           Mod+Shift+Ctrl+J { move-column-to-monitor-down; }
-          
+
           Mod+Page_Down { focus-workspace-down; }
           Mod+Page_Up { focus-workspace-up; }
           Mod+U { focus-workspace-down; }
           Mod+I { focus-workspace-up; }
-          
+
           Mod+Ctrl+Page_Down { move-column-to-workspace-down; }
           Mod+Ctrl+Page_Up { move-column-to-workspace-up; }
           Mod+Ctrl+U { move-column-to-workspace-down; }
           Mod+Ctrl+I { move-column-to-workspace-up; }
-          
+
           Mod+Shift+Page_Down { move-workspace-down; }
           Mod+Shift+Page_Up { move-workspace-up; }
           Mod+Shift+U { move-workspace-down; }
           Mod+Shift+I { move-workspace-up; }
-          
+
           Mod+WheelScrollDown cooldown-ms=150 { focus-workspace-down; }
           Mod+WheelScrollUp cooldown-ms=150 { focus-workspace-up; }
           Mod+Ctrl+WheelScrollDown cooldown-ms=150 { move-column-to-workspace-down; }
           Mod+Ctrl+WheelScrollUp cooldown-ms=150 { move-column-to-workspace-up; }
-          
+
           Mod+WheelScrollRight { focus-column-right; }
           Mod+WheelScrollLeft { focus-column-left; }
           Mod+Ctrl+WheelScrollRight { move-column-right; }
           Mod+Ctrl+WheelScrollLeft { move-column-left; }
-          
+
           Mod+Shift+WheelScrollDown { focus-column-right; }
           Mod+Shift+WheelScrollUp { focus-column-left; }
           Mod+Ctrl+Shift+WheelScrollDown { move-column-right; }
           Mod+Ctrl+Shift+WheelScrollUp { move-column-left; }
-          
+
           Mod+1 { focus-workspace 1; }
           Mod+2 { focus-workspace 2; }
           Mod+3 { focus-workspace 3; }
@@ -561,7 +561,7 @@ in
           Mod+7 { focus-workspace 7; }
           Mod+8 { focus-workspace 8; }
           Mod+9 { focus-workspace 9; }
-          
+
           Mod+Ctrl+1 { move-column-to-workspace 1; }
           Mod+Ctrl+2 { move-column-to-workspace 2; }
           Mod+Ctrl+3 { move-column-to-workspace 3; }
@@ -571,27 +571,27 @@ in
           Mod+Ctrl+7 { move-column-to-workspace 7; }
           Mod+Ctrl+8 { move-column-to-workspace 8; }
           Mod+Ctrl+9 { move-column-to-workspace 9; }
-          
+
           Mod+Comma { consume-window-into-column; }
           Mod+Period { expel-window-from-column; }
-          
+
           Mod+R { switch-preset-column-width; }
           Mod+F { maximize-column; }
           Mod+Shift+F { fullscreen-window; }
           Mod+C { center-column; }
-          
+
           Mod+Minus { set-column-width "-10%"; }
           Mod+Equal { set-column-width "+10%"; }
-          
+
           Mod+Shift+Minus { set-window-height "-10%"; }
           Mod+Shift+Equal { set-window-height "+10%"; }
-          
+
           Print { screenshot; }
           Mod+Ctrl+L { spawn "swaylock"; }
-          
+
           Mod+Shift+E { quit; }
           Mod+Shift+P { power-off-monitors; }
-          
+
           Mod+Shift+Ctrl+T { toggle-debug-tint; }
       }
     '';
@@ -755,7 +755,7 @@ in
           font-size: 13px;
           min-height: 0;
       }
-      
+
       window#waybar {
           background-color: rgba(30, 30, 46, 0.8);
           color: #cdd6f4;
@@ -763,15 +763,15 @@ in
           transition-duration: .5s;
           border-bottom: 2px solid #cba6f7;
       }
-      
+
       window#waybar.hidden {
           opacity: 0.2;
       }
-      
+
       #workspaces {
           margin: 0 4px;
       }
-      
+
       #workspaces button {
           padding: 0 8px;
           background-color: transparent;
@@ -780,30 +780,30 @@ in
           border-radius: 4px;
           margin: 0 2px;
       }
-      
+
       #workspaces button:hover {
           background: rgba(203, 166, 247, 0.2);
           border-color: #cba6f7;
       }
-      
+
       #workspaces button.active {
           background-color: #cba6f7;
           color: #1e1e2e;
           border-color: #cba6f7;
       }
-      
+
       #workspaces button.urgent {
           background-color: #f38ba8;
           color: #1e1e2e;
           border-color: #f38ba8;
       }
-      
+
       #window {
           margin: 0 4px;
           padding: 0 8px;
           color: #a6e3a1;
       }
-      
+
       #clock,
       #battery,
       #cpu,
@@ -825,18 +825,18 @@ in
           border-radius: 4px;
           margin: 2px 2px;
       }
-      
+
       #battery.charging, #battery.plugged {
           color: #a6e3a1;
       }
-      
+
       @keyframes blink {
           to {
               background-color: #f38ba8;
               color: #1e1e2e;
           }
       }
-      
+
       #battery.critical:not(.charging) {
           background-color: #f38ba8;
           color: #1e1e2e;
@@ -846,18 +846,18 @@ in
           animation-iteration-count: infinite;
           animation-direction: alternate;
       }
-      
+
       #pulseaudio:hover,
       #network:hover,
       #battery:hover,
       #clock:hover {
           background-color: rgba(203, 166, 247, 0.1);
       }
-      
+
       #pulseaudio.muted {
           color: #6c7086;
       }
-      
+
       #network.disconnected {
           color: #f38ba8;
       }
@@ -911,22 +911,22 @@ in
       mouse_left_click = close_current
       mouse_middle_click = do_action, close_current
       mouse_right_click = close_all
-      
+
       [experimental]
       per_monitor_dpi = false
-      
+
       [urgency_low]
       background = "#1e1e2e"
       foreground = "#a6adc8"
       timeout = ${toString cfg.dunst.settings.urgency_low.timeout}
       frame_color = "#313244"
-      
+
       [urgency_normal]
       background = "#1e1e2e"
       foreground = "#cdd6f4"
       timeout = ${toString cfg.dunst.settings.urgency_normal.timeout}
       frame_color = "#cba6f7"
-      
+
       [urgency_critical]
       background = "#1e1e2e"
       foreground = "#f38ba8"

@@ -129,26 +129,26 @@
       extraConfig = ''
         # Improve colors
         set -g default-terminal "screen-256color"
-        
+
         # Set scrollback buffer to 10000
         set -g history-limit 10000
-        
+
         # Customize the status line
         set -g status-fg green
         set -g status-bg black
-        
+
         # Enable mouse support
         set -g mouse on
-        
+
         # Split panes using | and -
         bind | split-window -h
         bind - split-window -v
         unbind '"'
         unbind %
-        
+
         # Reload config file
         bind r source-file ~/.config/tmux/tmux.conf
-        
+
         # Switch panes using Alt-arrow without prefix
         bind -n M-Left select-pane -L
         bind -n M-Right select-pane -R

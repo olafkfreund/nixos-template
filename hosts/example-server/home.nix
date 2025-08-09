@@ -67,20 +67,20 @@
     bashrcExtra = ''
       # Server-focused prompt with system info
       export PS1="\[\e[31m\][\[\e[m\]\[\e[32m\]\u\[\e[m\]\[\e[31m\]@\[\e[m\]\[\e[34m\]\h\[\e[m\]\[\e[31m\]]\[\e[m\] \[\e[33m\]\w\[\e[m\]\$ "
-      
+
       # Show server status on login
       echo "🖥️  Server: $(hostname)"
       echo "📊 Load: $(cat /proc/loadavg | awk '{print $1, $2, $3}')"
       echo "💾 Memory: $(free -h | grep Mem | awk '{print $3\"/\"$2\" (\"$5\" available)\"}')"
       echo "💿 Disk: $(df -h / | tail -1 | awk '{print $3\"/\"$2\" (\"$5\" used)\"}')"
-      
+
       # GPU status if available
       if command -v nvidia-smi &> /dev/null; then
         echo "🎮 GPU: $(nvidia-smi --query-gpu=name,utilization.gpu,temperature.gpu --format=csv,noheader,nounits | head -1)"
       elif command -v radeontop &> /dev/null; then
         echo "🎮 AMD GPU detected"
       fi
-      
+
       echo ""
     '';
   };
@@ -123,7 +123,7 @@
       extraConfig = ''
         # Server-focused tmux configuration
         set -g history-limit 50000
-        
+
         # Status bar with server info
         set -g status-bg black
         set -g status-fg green
@@ -131,14 +131,14 @@
         set -g status-left '[#{host_short}:#{session_name}] '
         set -g status-right-length 50
         set -g status-right 'Load: #(cat /proc/loadavg | cut -d" " -f1-3) | %Y-%m-%d %H:%M'
-        
+
         # Window status colors
         setw -g window-status-current-style bg=green,fg=black,bold
-        
+
         # Pane border colors
         set -g pane-border-style fg=colour238
         set -g pane-active-border-style fg=green
-        
+
         # Copy mode colors
         setw -g mode-style bg=green,fg=black
       '';
@@ -205,12 +205,12 @@
         ServerAliveCountMax 3
         TCPKeepAlive yes
         Compression yes
-        
+
       # Quick access to common server types
       Host gpu-* ai-* ml-*
         Port 22
         ForwardAgent yes
-        
+
       # Local development/staging servers
       Host dev-* staging-*
         Port 22

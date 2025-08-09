@@ -1,4 +1,4 @@
-# Minimal installer ISO configuration  
+# Minimal installer ISO configuration
 { pkgs, ... }:
 
 {

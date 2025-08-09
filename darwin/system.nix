@@ -56,7 +56,7 @@
         TrackpadThreeFingerTapGesture = 2; # Three-finger tap for lookup
       };
 
-      # Mouse settings  
+      # Mouse settings
       NSGlobalDomain = {
         # Key repeat settings
         KeyRepeat = 2; # Fast key repeat
@@ -156,13 +156,13 @@
   system.activationScripts.postUserActivation.text = ''
     # Reload Dock to apply settings
     /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u || true
-    
+
     # Restart Finder to apply settings
     killall Finder || true
-    
+
     # Create Screenshots directory if it doesn't exist
     mkdir -p "$HOME/Pictures/Screenshots" || true
-    
+
     echo "macOS system settings applied!"
   '';
 
@@ -171,11 +171,11 @@
   system.activationScripts.extraActivation.text = ''
     # Disable Spotlight indexing of /nix to prevent slowdowns
     sudo mdutil -i off -d /nix || true 2>/dev/null
-    
+
     # Add /nix to Spotlight privacy list
     defaults write com.apple.Spotlight orderedPrivacyNames -array-add "/nix"
     defaults write com.apple.Spotlight orderedPrivacyPaths -array-add "/nix"
-    
+
     # Restart Spotlight to apply changes
     sudo killall mds || true 2>/dev/null
     sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist || true 2>/dev/null

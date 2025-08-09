@@ -155,7 +155,7 @@
         background-color: #1e1e2e;
         border-radius: 8px;
       }
-      
+
       #input {
         margin: 5px;
         border: 1px solid #6c7086;
@@ -163,40 +163,40 @@
         background-color: #313244;
         border-radius: 4px;
       }
-      
+
       #inner-box {
         margin: 5px;
         border: none;
         background-color: #1e1e2e;
       }
-      
+
       #outer-box {
         margin: 5px;
         border: none;
         background-color: #1e1e2e;
       }
-      
+
       #scroll {
         margin: 0px;
         border: none;
       }
-      
+
       #text {
         margin: 5px;
         border: none;
         color: #cdd6f4;
       }
-      
+
       #entry {
         margin: 2px;
         border: none;
         border-radius: 4px;
       }
-      
+
       #entry:selected {
         background-color: #585b70;
       }
-      
+
       #text:selected {
         color: #cdd6f4;
       }

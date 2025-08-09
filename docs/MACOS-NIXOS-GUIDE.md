@@ -84,7 +84,7 @@ This template provides comprehensive macOS support including:
 
 1. **Install UTM** (recommended):
    - From Mac App Store: Search "UTM"
-   - From GitHub: Download from https://github.com/utmapp/UTM/releases
+   - From GitHub: Download from <https://github.com/utmapp/UTM/releases>
 
 1. **Enable Nix Flakes** (if not enabled):
 
@@ -753,7 +753,7 @@ nix show-config
 
 **Community Resources**:
 
-- NixOS Discourse: https://discourse.nixos.org
+- NixOS Discourse: <https://discourse.nixos.org>
 - Matrix Chat: #nixos:nixos.org
 - GitHub Issues: Template repository issues
 - UTM Community: UTM GitHub discussions
@@ -845,6 +845,7 @@ podman-compose up
 
 1. Enable in UTM VM settings
 1. Mount in NixOS:
+
    ```nix
    fileSystems."/mnt/shared" = {
      device = "share";
@@ -875,14 +876,14 @@ just build-all-macos
 
 ### Documentation
 
-- **NixOS Manual**: https://nixos.org/manual/nixos/stable/
-- **Home Manager Manual**: https://nix-community.github.io/home-manager/
-- **UTM Documentation**: https://docs.getutm.app/
-- **QEMU Documentation**: https://www.qemu.org/docs/
+- **NixOS Manual**: <https://nixos.org/manual/nixos/stable/>
+- **Home Manager Manual**: <https://nix-community.github.io/home-manager/>
+- **UTM Documentation**: <https://docs.getutm.app/>
+- **QEMU Documentation**: <https://www.qemu.org/docs/>
 
 ### Community
 
-- **NixOS Discourse**: https://discourse.nixos.org/
+- **NixOS Discourse**: <https://discourse.nixos.org/>
 - **Matrix Chat**: #nixos:nixos.org
 - **Reddit**: r/NixOS
 - **Stack Overflow**: nixos tag
@@ -895,8 +896,8 @@ just build-all-macos
 
 ### Learning Resources
 
-- **Nix Pills**: https://nixos.org/guides/nix-pills/
-- **NixOS & Flakes Book**: https://nixos-and-flakes.thiscute.world/
-- **Zero to Nix**: https://zero-to-nix.com/
+- **Nix Pills**: <https://nixos.org/guides/nix-pills/>
+- **NixOS & Flakes Book**: <https://nixos-and-flakes.thiscute.world/>
+- **Zero to Nix**: <https://zero-to-nix.com/>
 
 This guide provides comprehensive coverage of running NixOS on macOS. For additional help, run `just macos-help` or refer to the template documentation.

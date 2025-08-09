@@ -102,7 +102,7 @@ in
       # Printing support with KDE integration
       printing.enable = true;
 
-      # Scanner support  
+      # Scanner support
       saned.enable = true;
 
       # Bluetooth with KDE integration

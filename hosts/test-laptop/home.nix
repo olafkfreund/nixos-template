@@ -1,4 +1,4 @@
-# test-laptop Home Configuration  
+# test-laptop Home Configuration
 # Generated using: just new-host test-laptop laptop
 { ... }:
 

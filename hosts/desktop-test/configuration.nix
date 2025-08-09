@@ -8,7 +8,7 @@
     # Common configuration
     ../common.nix
 
-    # Core modules  
+    # Core modules
     ../../modules/core
 
     # Development tools (optional)

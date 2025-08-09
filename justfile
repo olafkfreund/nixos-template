@@ -361,7 +361,7 @@ detect-hardware:
 init-vm host vm_type="auto":
     #!/usr/bin/env bash
     echo "🖥️  Initializing VM configuration for host: {{host}} (type: {{vm_type}})"
-    
+
     # Detect VM type if auto
     if [ "{{vm_type}}" = "auto" ]; then
         vm_type=$(./scripts/detect-vm.sh | grep "VM_TYPE=" | cut -d= -f2)
@@ -373,10 +373,10 @@ init-vm host vm_type="auto":
     else
         vm_type="{{vm_type}}"
     fi
-    
+
     # Create host directory
     mkdir -p hosts/{{host}}
-    
+
     # Copy appropriate VM template
     case "$vm_type" in
         qemu|kvm)
@@ -399,17 +399,17 @@ init-vm host vm_type="auto":
             exit 1
             ;;
     esac
-    
+
     # Update hostname in configuration
     sed -i "s/networking.hostName = \".*\"/networking.hostName = \"{{host}}\"/g" hosts/{{host}}/configuration.nix
-    
+
     # Generate hardware configuration
     if [ ! -f "hosts/{{host}}/hardware-configuration.nix" ]; then
         echo "📝 Generating hardware configuration..."
         sudo nixos-generate-config --show-hardware-config > hosts/{{host}}/hardware-configuration.nix
         echo "✅ Generated hardware-configuration.nix"
     fi
-    
+
     echo "✅ VM configuration initialized for {{host}}"
     echo "📝 Next steps:"
     echo "   1. Review hosts/{{host}}/configuration.nix"
@@ -427,7 +427,7 @@ build-vm-iso host:
     @echo "💿 Building installation ISO for VM host {{host}}..."
     nix build .#nixosConfigurations.{{host}}.config.system.build.isoImage
 
-# Show VM optimization recommendations  
+# Show VM optimization recommendations
 vm-recommendations:
     @echo "🖥️  VM Optimization Recommendations..."
     ./scripts/detect-vm.sh | grep -A 20 "Recommended configuration:" || echo "Run 'just detect-vm' for detailed recommendations"
@@ -437,7 +437,7 @@ init-host host:
     #!/usr/bin/env bash
     echo "Initializing configuration for host: {{host}}"
     mkdir -p hosts/{{host}}
-    
+
     # Generate hardware configuration
     if [ ! -f "hosts/{{host}}/hardware-configuration.nix" ]; then
         echo "Generating hardware configuration..."
@@ -446,7 +446,7 @@ init-host host:
     else
         echo "hardware-configuration.nix already exists"
     fi
-    
+
     # Create basic configuration if it doesn't exist
     if [ ! -f "hosts/{{host}}/configuration.nix" ]; then
         echo "Creating basic configuration..."
@@ -456,7 +456,7 @@ init-host host:
     else
         echo "configuration.nix already exists"
     fi
-    
+
     # Create basic home configuration if it doesn't exist
     if [ ! -f "hosts/{{host}}/home.nix" ]; then
         echo "Creating basic home configuration..."
@@ -465,7 +465,7 @@ init-host host:
     else
         echo "home.nix already exists"
     fi
-    
+
     echo ""
     echo "Host {{host}} initialized!"
     echo "Next steps:"
@@ -550,7 +550,7 @@ build-iso-minimal:
     @echo "📍 Location: result/iso/nixos-minimal-installer.iso"
     @echo "💾 Size: $(du -h result/iso/*.iso | cut -f1)"
 
-# Build desktop installer ISO (GNOME desktop for graphical installation)  
+# Build desktop installer ISO (GNOME desktop for graphical installation)
 build-iso-desktop:
     @echo "🔥 Building desktop NixOS installer ISO..."
     nix build .#nixosConfigurations.installer-desktop.config.system.build.isoImage
@@ -576,7 +576,7 @@ build-iso-preconfigured:
 build-all-isos:
     @echo "🔥 Building all NixOS installer ISOs..."
     just build-iso-minimal
-    just build-iso-desktop  
+    just build-iso-desktop
     just build-iso-preconfigured
     @echo ""
     @echo "✅ All installer ISOs built!"
@@ -594,7 +594,7 @@ list-isos:
     @echo "     • Build: just build-iso-minimal"
     @echo ""
     @echo "  🖥️  desktop       - GNOME desktop installer (~2.5GB)"
-    @echo "     • Full GNOME desktop environment" 
+    @echo "     • Full GNOME desktop environment"
     @echo "     • Firefox browser for documentation"
     @echo "     • GParted for disk partitioning"
     @echo "     • Visual tools for easier installation"
@@ -629,38 +629,38 @@ test-iso iso="minimal":
 # Create bootable USB from built ISO (requires USB device path)
 create-bootable-usb iso device:
     #!/usr/bin/env bash
-    
+
     # Validate inputs
     if [ ! -f "result/iso/{{iso}}" ]; then
         echo "❌ ISO not found: result/iso/{{iso}}"
         echo "Build it first with: just build-iso-*"
         exit 1
     fi
-    
+
     if [ ! -b "{{device}}" ]; then
         echo "❌ Device not found: {{device}}"
         echo "Available devices:"
         lsblk -d -o NAME,SIZE,MODEL | grep -E "sd|nvme"
         exit 1
     fi
-    
+
     # Safety check
     echo "⚠️  This will ERASE all data on {{device}}"
     echo "ISO: {{iso}}"
     echo "Device: {{device}}"
     read -p "Continue? [y/N] " -n 1 -r
     echo
-    
+
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
         echo "❌ Aborted"
         exit 1
     fi
-    
+
     # Create bootable USB
     echo "🔥 Writing ISO to USB device..."
     sudo dd if="result/iso/{{iso}}" of="{{device}}" bs=4M status=progress oflag=sync
     sudo sync
-    
+
     echo "✅ Bootable USB created!"
     echo "🚀 You can now boot from {{device}} to install NixOS"
 
@@ -673,7 +673,7 @@ iso-workflow:
     @echo ""
     @echo "2️⃣  Build the ISO:"
     @echo "   just build-iso-minimal      # Lightweight CLI installer"
-    @echo "   just build-iso-desktop      # GNOME desktop installer"  
+    @echo "   just build-iso-desktop      # GNOME desktop installer"
     @echo "   just build-iso-preconfigured # Template-enabled installer"
     @echo "   just build-all-isos         # Build all types"
     @echo ""
@@ -696,7 +696,7 @@ build-iso:
     @echo "ℹ️  Using minimal installer (for compatibility)"
     @echo "   Use specific commands for other types:"
     @echo "   • just build-iso-minimal"
-    @echo "   • just build-iso-desktop"  
+    @echo "   • just build-iso-desktop"
     @echo "   • just build-iso-preconfigured"
     @echo ""
     just build-iso-minimal
@@ -706,10 +706,10 @@ create-vm host="qemu-vm" memory="2048" disk="10G":
     #!/usr/bin/env bash
     echo "Creating VM: {{host}}"
     echo "Memory: {{memory}}MB, Disk: {{disk}}"
-    
+
     # Create disk image
     qemu-img create -f qcow2 {{host}}.qcow2 {{disk}}
-    
+
     echo "VM disk created: {{host}}.qcow2"
     echo "To start VM:"
     echo "  qemu-system-x86_64 \\"
@@ -724,7 +724,7 @@ test-microvm:
     just build microvm
     @echo "MicroVM configuration validated"
     @nix path-info .#nixosConfigurations.microvm.config.system.build.toplevel
-    
+
 # Show VM configurations available
 list-vms:
     @echo "Available VM configurations:"
@@ -758,7 +758,7 @@ list-desktops:
 test-desktop desktop host=hostname:
     #!/usr/bin/env bash
     echo "Testing {{desktop}} desktop configuration for {{host}}"
-    
+
     case "{{desktop}}" in
         gnome)
             echo "Testing GNOME configuration..."
@@ -782,7 +782,7 @@ test-desktop desktop host=hostname:
             exit 1
             ;;
     esac
-    
+
     echo "✅ {{desktop}} configuration is valid"
 
 # Apply desktop-specific home manager configuration
@@ -898,7 +898,7 @@ show-user template:
 init-user host template:
     #!/usr/bin/env bash
     echo "Initializing user configuration for {{host}} using {{template}} template"
-    
+
     # Check if template exists
     if [ ! -f "home/users/{{template}}.nix" ]; then
         echo "Error: Template '{{template}}' not found"
@@ -906,25 +906,25 @@ init-user host template:
         ls home/users/*.nix | xargs -n 1 basename | sed 's/\.nix$//' | grep -v default | sed 's/^/  /'
         exit 1
     fi
-    
+
     # Create host directory if it doesn't exist
     mkdir -p "hosts/{{host}}"
-    
+
     # Copy template to host home.nix (backup if exists)
     if [ -f "hosts/{{host}}/home.nix" ]; then
         echo "Backing up existing home.nix to home.nix.backup"
         cp "hosts/{{host}}/home.nix" "hosts/{{host}}/home.nix.backup"
     fi
-    
+
     # Copy template and customize
     cp "home/users/{{template}}.nix" "hosts/{{host}}/home.nix"
-    
+
     # Basic customization (replace template username with host)
     if command -v sed >/dev/null 2>&1; then
         sed -i "s/username = \"{{template}}\";/username = \"user\";/g" "hosts/{{host}}/home.nix"
         sed -i "s/homeDirectory = \"\/home\/{{template}}\";/homeDirectory = \"\/home\/user\";/g" "hosts/{{host}}/home.nix"
     fi
-    
+
     echo "User configuration created: hosts/{{host}}/home.nix"
     echo ""
 
@@ -934,9 +934,9 @@ init-user host template:
 new-host host preset:
     #!/usr/bin/env bash
     set -euo pipefail
-    
+
     echo "🚀 Creating new host: {{host}} with {{preset}} preset"
-    
+
     # Validate preset
     case "{{preset}}" in
         "workstation"|"laptop"|"server"|"gaming"|"vm-guest")
@@ -944,7 +944,7 @@ new-host host preset:
         *)
             echo "❌ Invalid preset: {{preset}}"
             echo "Available presets:"
-            echo "  workstation - High-performance desktop for productivity"  
+            echo "  workstation - High-performance desktop for productivity"
             echo "  laptop      - Mobile computing with battery optimization"
             echo "  server      - Headless server with security focus"
             echo "  gaming      - Maximum performance gaming configuration"
@@ -952,19 +952,19 @@ new-host host preset:
             exit 1
             ;;
     esac
-    
+
     # Create host directory
     mkdir -p "hosts/{{host}}"
-    
+
     # Generate configuration files from templates
     cp templates/preset-host-config.nix "hosts/{{host}}/configuration.nix"
     cp templates/preset-home-config.nix "hosts/{{host}}/home.nix"
-    
+
     # Create hardware config if it doesn't exist
     if [ ! -f "hosts/{{host}}/hardware-configuration.nix" ]; then
         cp templates/preset-hardware-config.nix "hosts/{{host}}/hardware-configuration.nix"
     fi
-    
+
     # Replace placeholders in the files
     sed -i "s/HOSTNAME/{{host}}/g" "hosts/{{host}}/configuration.nix"
     sed -i "s/PRESET/{{preset}}/g" "hosts/{{host}}/configuration.nix"
@@ -1001,7 +1001,7 @@ list-presets:
     @echo "                  • Performance optimizations"
     @echo "                  • Gaming peripherals support"
     @echo ""
-    @echo "💻 laptop       - Mobile computing with battery optimization"  
+    @echo "💻 laptop       - Mobile computing with battery optimization"
     @echo "                  • Power management and TLP"
     @echo "                  • WiFi and mobile connectivity"
     @echo "                  • Suspend/resume optimization"
@@ -1032,13 +1032,13 @@ list-presets:
 copy-user-template template:
     #!/usr/bin/env bash
     echo "Copying {{template}} template for customization"
-    
+
     if [ ! -f "home/users/{{template}}.nix" ]; then
         echo "Error: Template '{{template}}' not found"
         just list-users
         exit 1
     fi
-    
+
     cp "home/users/{{template}}.nix" "./{{template}}-custom.nix"
     echo "Template copied to: ./{{template}}-custom.nix"
     echo "Edit this file to customize, then move to your hosts directory"
@@ -1105,7 +1105,7 @@ list-macos:
 build-macos-vm type="desktop" arch="aarch64":
     #!/usr/bin/env bash
     echo "🍎 Building NixOS {{type}} VM for macOS ({{arch}})"
-    
+
     case "{{arch}}" in
         aarch64|arm64)
             arch_suffix=""
@@ -1119,7 +1119,7 @@ build-macos-vm type="desktop" arch="aarch64":
             exit 1
             ;;
     esac
-    
+
     case "{{type}}" in
         desktop)
             nix build ".#nixosConfigurations.desktop-macos${arch_suffix}.config.system.build.vm"
@@ -1142,7 +1142,7 @@ build-macos-vm type="desktop" arch="aarch64":
             exit 1
             ;;
     esac
-    
+
     echo ""
     echo "🚀 To run the VM:"
     echo "   ./result/bin/run-*-vm"
@@ -1154,7 +1154,7 @@ build-macos-vm type="desktop" arch="aarch64":
 build-macos-iso type="minimal" arch="x86_64":
     #!/usr/bin/env bash
     echo "🍎 Building NixOS {{type}} installer ISO for macOS ({{arch}})"
-    
+
     case "{{arch}}" in
         x86_64|intel)
             arch_suffix=""
@@ -1168,7 +1168,7 @@ build-macos-iso type="minimal" arch="x86_64":
             exit 1
             ;;
     esac
-    
+
     case "{{type}}" in
         minimal)
             nix build ".#nixosConfigurations.installer-minimal-macos${arch_suffix}.config.system.build.isoImage"
@@ -1186,7 +1186,7 @@ build-macos-iso type="minimal" arch="x86_64":
             exit 1
             ;;
     esac
-    
+
     echo "💾 Size: $(du -h result/iso/*.iso | cut -f1)"
     echo ""
     echo "🚀 Usage:"
@@ -1198,7 +1198,7 @@ build-macos-iso type="minimal" arch="x86_64":
 test-macos type="desktop" arch="aarch64":
     #!/usr/bin/env bash
     echo "🧪 Testing {{type}} macOS configuration ({{arch}})"
-    
+
     case "{{arch}}" in
         aarch64|arm64)
             arch_suffix=""
@@ -1211,7 +1211,7 @@ test-macos type="desktop" arch="aarch64":
             exit 1
             ;;
     esac
-    
+
     case "{{type}}" in
         desktop)
             nix build ".#nixosConfigurations.desktop-macos${arch_suffix}.config.system.build.toplevel" --no-link
@@ -1227,29 +1227,29 @@ test-macos type="desktop" arch="aarch64":
             exit 1
             ;;
     esac
-    
+
     echo "✅ {{type}} configuration builds successfully for {{arch}}"
 
 # Build all macOS configurations
 build-all-macos:
     @echo "🍎 Building all NixOS configurations for macOS..."
-    
+
     @echo "📱 Building VMs for Apple Silicon..."
     just build-macos-vm desktop aarch64
     just build-macos-vm laptop aarch64
     just build-macos-vm server aarch64
-    
+
     @echo "📱 Building VMs for Intel Macs..."
     just build-macos-vm desktop x86_64
     just build-macos-vm laptop x86_64
     just build-macos-vm server x86_64
-    
+
     @echo "💿 Building ISOs..."
     just build-macos-iso minimal x86_64
     just build-macos-iso desktop x86_64
     just build-macos-iso minimal aarch64
     just build-macos-iso desktop aarch64
-    
+
     @echo ""
     @echo "✅ All macOS configurations built!"
     @echo "📦 Check result/ directory for built artifacts"
@@ -1310,21 +1310,21 @@ macos-help:
 # Test all macOS configurations
 test-all-macos:
     @echo "🧪 Testing all macOS configurations..."
-    
+
     @echo "Testing Apple Silicon (aarch64) VMs..."
     just test-macos desktop aarch64
     just test-macos laptop aarch64
     just test-macos server aarch64
-    
+
     @echo "Testing Intel Mac (x86_64) VMs..."
     just test-macos desktop x86_64
     just test-macos laptop x86_64
     just test-macos server x86_64
-    
+
     @echo "Testing ISOs..."
     just test installer-minimal-macos
     just test installer-desktop-macos
-    
+
     @echo ""
     @echo "✅ All macOS configurations test successfully!"
 

@@ -34,7 +34,7 @@ in
   "wifi-password.age".publicKeys = allSystems;
   "vpn-config.age".publicKeys = [ users.alice systems.laptop ];
 
-  # Application secrets  
+  # Application secrets
   "database-password.age".publicKeys = [ systems.server ];
   "api-key.age".publicKeys = [ users.alice systems.server ];
   "jwt-secret.age".publicKeys = [ systems.server ];

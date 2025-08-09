@@ -766,16 +766,16 @@
     # Extra Lua configuration
     extraConfigLua = ''
       -- Additional Lua configuration
-      
+
       -- Set up custom commands
       vim.api.nvim_create_user_command('Format', function()
         vim.lsp.buf.format()
       end, {})
-      
+
       -- Auto commands
       local augroup = vim.api.nvim_create_augroup
       local autocmd = vim.api.nvim_create_autocmd
-      
+
       -- Highlight on yank
       augroup('YankHighlight', { clear = true })
       autocmd('TextYankPost', {
@@ -784,7 +784,7 @@
           vim.highlight.on_yank({ higroup = 'IncSearch', timeout = '1000' })
         end
       })
-      
+
       -- Auto format on save
       augroup('AutoFormat', { clear = true })
       autocmd('BufWritePre', {
@@ -794,7 +794,7 @@
           vim.lsp.buf.format({ async = false })
         end
       })
-      
+
       -- Close nvim-tree when it's the last buffer
       autocmd('BufEnter', {
         nested = true,
@@ -805,7 +805,7 @@
           end
         end
       })
-      
+
       -- Custom functions
       function _G.toggle_diagnostics()
         if vim.diagnostic.is_disabled() then
@@ -816,10 +816,10 @@
           print("Diagnostics disabled")
         end
       end
-      
+
       -- Key mapping for diagnostics toggle
       vim.keymap.set('n', '<leader>td', toggle_diagnostics, { desc = 'Toggle diagnostics' })
-      
+
       -- Better terminal
       local Terminal = require('toggleterm.terminal').Terminal
       local lazygit = Terminal:new({
@@ -837,11 +837,11 @@
           vim.cmd("startinsert!")
         end,
       })
-      
+
       function _LAZYGIT_TOGGLE()
         lazygit:toggle()
       end
-      
+
       vim.api.nvim_set_keymap("n", "<leader>gg", "<cmd>lua _LAZYGIT_TOGGLE()<CR>", {noremap = true, silent = true})
     '';
 

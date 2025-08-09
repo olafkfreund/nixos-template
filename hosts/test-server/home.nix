@@ -1,4 +1,4 @@
-# test-server Home Configuration  
+# test-server Home Configuration
 # Server administration setup without GUI
 { ... }:
 

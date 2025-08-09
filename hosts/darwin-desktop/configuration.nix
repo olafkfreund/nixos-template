@@ -116,13 +116,13 @@
       echo "🚀 Development Environment Setup"
       echo "==============================="
       echo ""
-      
+
       # Node.js project setup
       if [ -f "package.json" ]; then
         echo "📦 Node.js project detected - installing dependencies..."
         npm install
       fi
-      
+
       # Python project setup
       if [ -f "requirements.txt" ] || [ -f "pyproject.toml" ]; then
         echo "🐍 Python project detected - setting up virtual environment..."
@@ -135,20 +135,20 @@
           pip install -e .
         fi
       fi
-      
+
       # Rust project setup
       if [ -f "Cargo.toml" ]; then
         echo "🦀 Rust project detected - building..."
         cargo build
       fi
-      
+
       # Go project setup
       if [ -f "go.mod" ]; then
         echo "🏃 Go project detected - downloading dependencies..."
         go mod download
         go mod tidy
       fi
-      
+
       echo "✅ Development setup complete!"
     '')
 
@@ -156,18 +156,18 @@
       echo "📁 Project Initialization"
       echo "========================"
       echo ""
-      
+
       read -p "Project name: " project_name
       read -p "Project type (node/python/rust/go/react/vue): " project_type
-      
+
       if [ -z "$project_name" ]; then
         echo "❌ Project name is required"
         exit 1
       fi
-      
+
       mkdir -p "$project_name"
       cd "$project_name"
-      
+
       case "$project_type" in
         "node")
           npm init -y
@@ -199,11 +199,11 @@
           echo "# $project_name" > README.md
           ;;
       esac
-      
+
       git init
       git add .
       git commit -m "Initial commit"
-      
+
       echo "✅ Project '$project_name' initialized!"
       echo "📁 Location: $(pwd)"
     '')
@@ -324,16 +324,16 @@
       alias proj="cd ~/Projects"
       alias downloads="cd ~/Downloads"
       alias desktop="cd ~/Desktop"
-      
+
       # Development server shortcuts
       alias serve="python3 -m http.server 8000"
       alias liveserver="npx live-server"
-      
+
       # Docker shortcuts
       alias dps="docker ps"
       alias dimg="docker images"
       alias dprune="docker system prune -f"
-      
+
       # Git shortcuts for desktop workflow
       alias gst="git status"
       alias gco="git checkout"
@@ -341,12 +341,12 @@
       alias gps="git push"
       alias gpl="git pull"
       alias glog="git log --oneline --graph --decorate"
-      
+
       # macOS-specific shortcuts
       alias showfiles="defaults write com.apple.finder AppleShowAllFiles YES; killall Finder"
       alias hidefiles="defaults write com.apple.finder AppleShowAllFiles NO; killall Finder"
       alias desktop-clean="find ~/Desktop -name '.DS_Store' -delete"
-      
+
       echo "🖥️  nix-darwin Desktop Environment Ready!"
       echo "💡 Tips:"
       echo "  • Run 'desktop-info' for system information"

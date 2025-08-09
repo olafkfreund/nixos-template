@@ -155,12 +155,12 @@ in
     security.polkit.extraConfig = ''
       // Allow users in libvirtd group to manage VMs through GUI applications
       polkit.addRule(function(action, subject) {
-          if (action.id.indexOf("org.libvirt") == 0 && 
+          if (action.id.indexOf("org.libvirt") == 0 &&
               subject.isInGroup("libvirtd")) {
               return polkit.Result.YES;
           }
       });
-      
+
       // GNOME Boxes permissions
       ${optionalString cfg.applications.gnome-boxes ''
       polkit.addRule(function(action, subject) {
@@ -174,11 +174,11 @@ in
           }
       });
       ''}
-      
+
       // Cockpit machines permissions
       ${optionalString cfg.applications.cockpit-machines ''
       polkit.addRule(function(action, subject) {
-          if (action.id.indexOf("org.libvirt") == 0 && 
+          if (action.id.indexOf("org.libvirt") == 0 &&
               subject.user == "cockpit-ws") {
               return polkit.Result.YES;
           }
@@ -270,13 +270,13 @@ in
         text = ''
           # Default libvirt URI
           uri_default = "qemu:///system"
-          
+
           ${optionalString cfg.remoteConnections.ssh ''
           # Enable SSH transport
           remote_display_port_min = 5900
           remote_display_port_max = 65535
           ''}
-          
+
           ${optionalString (!cfg.remoteConnections.ssh) ''
           # Enable TCP transport (less secure)
           listen_tls = 0
@@ -292,22 +292,22 @@ in
           [ui]
           # Show system tray icon
           icon-name = virt-manager
-          
+
           # Console settings
           console-accels = false
           console-scaling = 1
-          
+
           [stats]
           # Update interval in seconds
           update-interval = 1
-          
+
           # History length
           history-length = 120
-          
+
           [console]
           # Console resize settings
           resize-guest = 1
-          
+
           [urls]
           # Help URLs
           local-libvirt = qemu:///system
@@ -322,11 +322,11 @@ in
           cpu-cores = 2
           memory = 2048
           disk-size = 20
-          
-          # UI preferences  
+
+          # UI preferences
           show-suggested = true
           first-run = false
-          
+
           [remote]
           # Remote connection settings
           save-password = false

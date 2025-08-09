@@ -159,7 +159,7 @@ validate_module_imports() {
 
       # Try to evaluate module with minimal context
       if ! nix-instantiate --eval -E "
-                let 
+                let
                   pkgs = import <nixpkgs> {};
                   lib = pkgs.lib;
                   config = {};
@@ -224,20 +224,20 @@ validate_scripts() {
       local script_name
       script_name=$(basename "$script")
       case "$script_name" in
-      "detect-hardware.sh")
-        if "$script" help >/dev/null 2>&1; then
-          print_success "$script_name help command works"
-        else
-          print_warning "$script_name help command failed"
-        fi
-        ;;
-      "detect-vm.sh")
-        if "$script" --help >/dev/null 2>&1; then
-          print_success "$script_name help command works"
-        else
-          print_warning "$script_name help command failed"
-        fi
-        ;;
+        "detect-hardware.sh")
+          if "$script" help >/dev/null 2>&1; then
+            print_success "$script_name help command works"
+          else
+            print_warning "$script_name help command failed"
+          fi
+          ;;
+        "detect-vm.sh")
+          if "$script" --help >/dev/null 2>&1; then
+            print_success "$script_name help command works"
+          else
+            print_warning "$script_name help command failed"
+          fi
+          ;;
       esac
 
     done < <(find "$scripts_dir" -name "*.sh" -type f -print0)
@@ -269,7 +269,7 @@ build_test_vm() {
   cat >"$temp_dir/flake.nix" <<'EOF'
 {
   description = "Test VM configuration";
-  
+
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     home-manager = {
@@ -277,7 +277,7 @@ build_test_vm() {
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
-  
+
   outputs = { self, nixpkgs, home-manager }:
   let
     system = "x86_64-linux";
@@ -292,7 +292,7 @@ build_test_vm() {
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          
+
           # Provide dummy location coordinates for services that need them (like clight)
           location.latitude = 40.7128;
           location.longitude = -74.0060;
@@ -310,14 +310,14 @@ EOF
 
 {
   boot.loader.grub.device = "/dev/vda";
-  
+
   fileSystems."/" = {
     device = "/dev/vda1";
     fsType = "ext4";
   };
-  
+
   networking.interfaces.enp0s3.useDHCP = true;
-  
+
   boot.initrd.availableKernelModules = [ "ata_piix" "ohci_pci" "ehci_pci" "ahci" "sd_mod" "sr_mod" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ ];
@@ -434,24 +434,24 @@ show_help() {
 
 main() {
   case "${VALIDATION_LEVEL}" in
-  "help" | "-h" | "--help")
-    show_help
-    exit 0
-    ;;
-  "minimal")
-    validate_flake && validate_nix_syntax && validate_template_structure
-    ;;
-  "standard")
-    run_full_validation
-    ;;
-  "full" | "vm")
-    run_full_validation
-    ;;
-  *)
-    print_error "Unknown validation level: $VALIDATION_LEVEL"
-    show_help
-    exit 1
-    ;;
+    "help" | "-h" | "--help")
+      show_help
+      exit 0
+      ;;
+    "minimal")
+      validate_flake && validate_nix_syntax && validate_template_structure
+      ;;
+    "standard")
+      run_full_validation
+      ;;
+    "full" | "vm")
+      run_full_validation
+      ;;
+    *)
+      print_error "Unknown validation level: $VALIDATION_LEVEL"
+      show_help
+      exit 1
+      ;;
   esac
 }
 

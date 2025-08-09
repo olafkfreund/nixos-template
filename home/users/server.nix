@@ -89,19 +89,19 @@
       bashrcExtra = ''
         # Server admin prompt with system info
         export PS1="[\u@\h \W]\$ "
-      
+
         # History settings for server administration
         export HISTSIZE=10000
         export HISTFILESIZE=20000
         export HISTCONTROL=ignoredups:erasedups
         export HISTTIMEFORMAT="%F %T "
         shopt -s histappend
-      
+
         # Server environment
         export EDITOR="vim"
         export VISUAL="vim"
         export PAGER="less"
-      
+
         # Useful functions
         sysinfo() {
           echo "=== System Information ==="
@@ -113,7 +113,7 @@
           echo "Users: $(who | wc -l) logged in"
           echo ""
         }
-      
+
         # Network info function
         netinfo() {
           echo "=== Network Information ==="
@@ -122,13 +122,13 @@
           echo "Active connections:"
           ss -tup | head -10
         }
-      
-        # Service status function  
+
+        # Service status function
         services() {
           echo "=== Critical Services Status ==="
           systemctl is-active sshd nginx postgresql redis docker 2>/dev/null | paste <(echo -e "sshd\nnginx\npostgresql\nredis\ndocker") -
         }
-      
+
         # Show system info on login
         sysinfo
       '';
@@ -228,12 +228,12 @@
         set tabstop=2
         set shiftwidth=2
         set expandtab
-        
+
         " Useful for config files
         set backspace=indent,eol,start
         set wildmenu
         set wildmode=list:longest
-        
+
         " Show whitespace
         set listchars=tab:>-,trail:·
         set list
@@ -387,7 +387,7 @@
       text = ''
         #!/bin/bash
         # System information script
-        
+
         echo "=== System Information ==="
         echo "Hostname: $(hostname)"
         echo "OS: $(cat /etc/os-release | grep PRETTY_NAME | cut -d'"' -f2)"
@@ -395,19 +395,19 @@
         echo "Uptime: $(uptime -p)"
         echo "Load Average: $(uptime | awk -F'load average:' '{print $2}')"
         echo ""
-        
+
         echo "=== Memory Usage ==="
         free -h
         echo ""
-        
+
         echo "=== Disk Usage ==="
         df -h
         echo ""
-        
+
         echo "=== Network Interfaces ==="
         ip -4 addr show | grep -E '^[0-9]+:' -A 2
         echo ""
-        
+
         echo "=== Active Services ==="
         systemctl list-units --type=service --state=active | head -10
       '';
@@ -418,12 +418,12 @@
       text = ''
         #!/bin/bash
         # Simple backup verification script
-        
+
         BACKUP_DIR="/path/to/backups"
-        
+
         echo "=== Backup Status Check ==="
         echo "Checking backups in: $BACKUP_DIR"
-        
+
         if [ -d "$BACKUP_DIR" ]; then
             echo "Latest backups:"
             ls -lt "$BACKUP_DIR" | head -5
@@ -437,30 +437,30 @@
     # tmux configuration for server administration
     ".tmux.conf".text = ''
       # Server administration tmux configuration
-      
+
       # Set prefix key
       set -g prefix C-a
       unbind C-b
       bind C-a send-prefix
-      
+
       # Basic settings
       set -g default-terminal "screen-256color"
       set -g history-limit 10000
       set -g mouse on
-      
+
       # Status bar
       set -g status-bg colour235
       set -g status-fg colour248
       set -g status-left '[#S] '
       set -g status-right '%Y-%m-%d %H:%M'
-      
+
       # Window settings
       setw -g window-status-current-style 'fg=colour15 bg=colour238 bold'
-      
+
       # Pane settings
       set -g pane-border-style 'fg=colour238'
       set -g pane-active-border-style 'fg=colour51'
-      
+
       # Key bindings
       bind | split-window -h
       bind - split-window -v

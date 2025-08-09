@@ -2,7 +2,7 @@
 
 {
   # Available user templates
-  # 
+  #
   # To use a user template:
   # 1. Copy the desired template to your hostname directory
   # 2. Import it in your Home Manager configuration

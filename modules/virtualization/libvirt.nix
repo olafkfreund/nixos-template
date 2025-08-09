@@ -126,18 +126,18 @@ in
           unix_sock_rw_perms = "0770"
           auth_unix_ro = "none"
           auth_unix_rw = "none"
-          
+
           # Logging
           log_level = 3
           log_filters = "3:remote 4:event"
           log_outputs = "3:syslog:libvirtd"
-          
+
           # Process limits
           max_clients = 5000
           max_workers = 20
           max_requests = 20
           max_client_requests = 5
-          
+
           ${cfg.extraConfig}
         '';
 
@@ -259,7 +259,7 @@ in
         script = ''
           # Wait for libvirtd to be ready
           sleep 5
-          
+
           # Define and start default network if it doesn't exist
           if ! ${pkgs.libvirt}/bin/virsh net-list --all | grep -q "default"; then
             ${pkgs.libvirt}/bin/virsh net-define ${pkgs.writeText "default-network.xml" ''
@@ -280,7 +280,7 @@ in
               </network>
             ''}
           fi
-          
+
           # Auto-start default network
           ${pkgs.libvirt}/bin/virsh net-autostart default 2>/dev/null || true
           ${pkgs.libvirt}/bin/virsh net-start default 2>/dev/null || true
@@ -299,16 +299,16 @@ in
         script = ''
           # Wait for libvirtd to be ready
           sleep 5
-          
+
           ${concatMapStringsSep "\n" (pool: ''
             # Create directory if it doesn't exist
             mkdir -p ${pool.path}
-            
+
             # Define storage pool if it doesn't exist
             if ! ${pkgs.libvirt}/bin/virsh pool-list --all | grep -q "${pool.name}"; then
               ${pkgs.libvirt}/bin/virsh pool-define-as ${pool.name} ${pool.type} - - - - ${pool.path}
             fi
-            
+
             # Build and start storage pool
             ${pkgs.libvirt}/bin/virsh pool-build ${pool.name} 2>/dev/null || true
             ${pkgs.libvirt}/bin/virsh pool-autostart ${pool.name} 2>/dev/null || true
@@ -357,7 +357,7 @@ in
                   return polkit.Result.YES;
           }
       });
-      
+
       polkit.addRule(function(action, subject) {
           if (action.id == "org.libvirt.api.domain.start" &&
               subject.isInGroup("libvirtd")) {
@@ -370,10 +370,10 @@ in
     services.udev.extraRules = ''
       # Allow libvirt to access USB devices
       SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", GROUP="libvirtd", MODE="0664"
-      
+
       # KVM device permissions
       KERNEL=="kvm", GROUP="kvm", MODE="0666"
-      
+
       # VFIO device permissions for GPU passthrough
       SUBSYSTEM=="vfio", GROUP="libvirtd", MODE="0666"
     '';

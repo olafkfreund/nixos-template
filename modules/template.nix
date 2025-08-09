@@ -281,7 +281,7 @@ in
             script = ''
               echo "Starting ${name} on port ${toString serviceCfg.port}"
               echo "Configuration: ${builtins.toJSON serviceCfg.extraConfig}"
-            
+
               # Start the actual service
               exec ${cfg.package}/bin/hello
             '';
@@ -338,7 +338,7 @@ in
               exit 1
             fi
           '') (filterAttrs (_: s: s.enable) cfg.services)}
-          
+
           echo "All services healthy"
         '';
         startAt = "*:0/5"; # Every 5 minutes

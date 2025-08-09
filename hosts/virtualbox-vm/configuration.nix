@@ -11,7 +11,7 @@
     # VM guest optimizations
     ../../modules/virtualization/vm-guest.nix
 
-    # Core modules  
+    # Core modules
     ../../modules/core
 
     # Desktop environment (optional)

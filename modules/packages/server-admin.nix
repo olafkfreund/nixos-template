@@ -35,7 +35,7 @@
     ltrace
     lsof
 
-    # Log management  
+    # Log management
     # Note: journalctl is part of systemd, always available
     logrotate
   ];

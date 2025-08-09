@@ -108,7 +108,7 @@
       echo "🖥️  Server Status Dashboard"
       echo "=========================="
       echo ""
-      
+
       echo "💻 System Information:"
       echo "  Hostname: $(hostname)"
       echo "  macOS: $(sw_vers -productVersion)"
@@ -116,7 +116,7 @@
       echo "  Uptime: $(uptime | cut -d',' -f1 | cut -d' ' -f4-)"
       echo "  Load Average: $(uptime | cut -d':' -f4-)"
       echo ""
-      
+
       echo "💾 Memory Usage:"
       vm_stat | awk '
         /free/ { free = $3 }
@@ -129,17 +129,17 @@
           printf "  Total: %.1f GB, Used: %.1f GB (%.0f%%)\n", total, used, (used/total)*100
         }'
       echo ""
-      
+
       echo "💿 Disk Usage:"
       df -h / | tail -1 | awk '{print "  Root: " $3 " used of " $2 " (" $5 " full)"}'
       echo "  Nix Store: $(du -sh /nix/store 2>/dev/null | cut -f1 || echo 'Unknown')"
       echo ""
-      
+
       echo "🌐 Network:"
       echo "  External IP: $(curl -s ifconfig.me 2>/dev/null || echo 'Unable to determine')"
       echo "  Active Connections: $(netstat -an | grep LISTEN | wc -l | xargs)"
       echo ""
-      
+
       echo "🚀 Development Services:"
       services=("postgresql" "redis-server" "nginx" "docker")
       for service in "''${services[@]}"; do
@@ -150,14 +150,14 @@
         fi
       done
       echo ""
-      
+
       echo "🔧 Development Environment:"
       echo "  Node.js: $(node --version 2>/dev/null || echo 'Not installed')"
       echo "  Python: $(python3 --version 2>/dev/null || echo 'Not installed')"
       echo "  Go: $(go version 2>/dev/null | cut -d' ' -f3 || echo 'Not installed')"
       echo "  Docker: $(docker --version 2>/dev/null | cut -d' ' -f3 | tr -d ',' || echo 'Not running')"
       echo ""
-      
+
       echo "📊 Resource Usage:"
       echo "  CPU Temperature: $(sudo powermetrics --samplers smc_temp --sample-count 1 -n 1 2>/dev/null | grep "CPU die temperature" | cut -d: -f2 | xargs || echo "Not available")"
     '')
@@ -166,10 +166,10 @@
       echo "📋 Server Logs"
       echo "=============="
       echo ""
-      
+
       service="''${1:-system}"
       lines="''${2:-50}"
-      
+
       case "$service" in
         "system")
           echo "🖥️  System logs (last $lines lines):"
@@ -198,10 +198,10 @@
       echo "🚀 Development Server Manager"
       echo "============================="
       echo ""
-      
+
       action="''${1:-status}"
       service="''${2:-all}"
-      
+
       start_postgres() {
         if ! pgrep -f postgres >/dev/null; then
           echo "🐘 Starting PostgreSQL..."
@@ -212,7 +212,7 @@
           echo "  PostgreSQL already running"
         fi
       }
-      
+
       start_redis() {
         if ! pgrep -f redis >/dev/null; then
           echo "🔴 Starting Redis..."
@@ -223,7 +223,7 @@
           echo "  Redis already running"
         fi
       }
-      
+
       start_nginx() {
         if ! pgrep -f nginx >/dev/null; then
           echo "🌐 Starting Nginx..."
@@ -234,7 +234,7 @@
           echo "  Nginx already running"
         fi
       }
-      
+
       start_docker() {
         if ! docker info >/dev/null 2>&1; then
           echo "🐳 Starting Docker..."
@@ -245,7 +245,7 @@
           echo "  Docker already running"
         fi
       }
-      
+
       case "$action" in
         "start")
           case "$service" in
@@ -255,7 +255,7 @@
             "docker") start_docker ;;
             "all")
               start_postgres
-              start_redis  
+              start_redis
               start_nginx
               start_docker
               ;;
@@ -312,9 +312,9 @@
       echo "🐳 Container Manager"
       echo "==================="
       echo ""
-      
+
       action="''${1:-list}"
-      
+
       case "$action" in
         "list")
           echo "📋 Running Containers:"
@@ -425,10 +425,10 @@
         # Create server directories
         mkdir -p /usr/local/var/log 2>/dev/null || true
         mkdir -p /usr/local/var/run 2>/dev/null || true
-    
+
         # Set up log rotation (basic)
         mkdir -p ~/.local/bin 2>/dev/null || true
-    
+
         # Create server management shortcuts
         cat > ~/.local/bin/server-quick-start << 'EOF'
     #!/bin/bash
@@ -437,7 +437,7 @@
     echo "✅ Development server stack started"
     EOF
         chmod +x ~/.local/bin/server-quick-start || true
-    
+
         echo "Server environment configured"
   '';
 
@@ -457,39 +457,39 @@
       alias logs="server-logs"
       alias services="dev-server status"
       alias containers="container-manager list"
-      
+
       # Quick navigation
       alias logs-dir="cd /usr/local/var/log"
       alias proj="cd ~/Projects"
       alias srv="cd ~/Server"
-      
+
       # Development shortcuts
       alias pg="psql -U postgres"
       alias redis-cli="redis-cli"
       alias mongo="mongosh"
-      
+
       # Docker shortcuts
       alias dps="docker ps"
       alias dimg="docker images"
       alias dlogs="docker logs"
       alias dexec="docker exec -it"
       alias dprune="docker system prune -f"
-      
+
       # System monitoring
       alias top="htop"
       alias ports="lsof -i -P | grep LISTEN"
       alias network="netstat -rn"
-      
+
       # Git server shortcuts
       alias gst="git status"
       alias glog="git log --oneline --graph"
       alias gdiff="git diff"
-      
+
       # Server utilities
       alias serve-dir="python3 -m http.server 8000"
       alias tunnel="ngrok http"
       alias cert-local="mkcert localhost 127.0.0.1"
-      
+
       echo "🖥️  nix-darwin Server Environment Ready!"
       echo "🚀 Run 'server-status' for system overview"
       echo "⚡ Run 'dev-server start all' to start development services"

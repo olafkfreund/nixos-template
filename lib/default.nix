@@ -7,7 +7,7 @@ rec {
   # Helper to enable/disable features based on conditions
   mkIf = condition: config: lib.mkIf condition config;
 
-  # Helper to merge configurations conditionally  
+  # Helper to merge configurations conditionally
   mkMerge = lib.mkMerge;
 
   # Helper for creating users with home-manager

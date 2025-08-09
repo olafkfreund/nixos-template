@@ -427,9 +427,9 @@ services.udisks2.enable = lib.mkForce false;
 
 ### Getting Help
 
-- **NixOS Manual:** https://nixos.org/manual/nixos/stable/
-- **Installation Guide:** https://nixos.org/manual/nixos/stable/#ch-installation
-- **Community:** https://discourse.nixos.org/
+- **NixOS Manual:** <https://nixos.org/manual/nixos/stable/>
+- **Installation Guide:** <https://nixos.org/manual/nixos/stable/#ch-installation>
+- **Community:** <https://discourse.nixos.org/>
 - **Matrix/Discord:** NixOS community channels
 
 ## Advanced Usage

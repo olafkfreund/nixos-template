@@ -1,4 +1,4 @@
-# test-vm Home Configuration  
+# test-vm Home Configuration
 # Generated using: just new-host test-vm vm-guest
 { ... }:
 

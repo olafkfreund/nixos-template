@@ -298,7 +298,7 @@ in
         # No need for firmware updates in VMs
         fwupd.enable = mkForce false;
 
-        # Disable hardware monitoring  
+        # Disable hardware monitoring
         smartd.enable = mkDefault false;
 
         # VM-optimized journal settings

@@ -1,145 +1,98 @@
 { config, pkgs, ... }:
 
 {
-  # Home Manager configuration for VM user
+  # Import shared Home Manager profiles
+  imports = [
+    ../../home/profiles/base.nix # Base configuration with git, bash, etc.
+    ../../home/profiles/desktop.nix # Desktop applications and GUI tools
+    ../../home/profiles/development.nix # Development tools and environments
+  ];
 
-  # Basic user info
+  # Host-specific user info (overrides base profile defaults)
   home = {
     username = "vm-user";
     homeDirectory = "/home/vm-user";
-    stateVersion = "25.05";
   };
 
   # Let Home Manager manage itself
   programs.home-manager.enable = true;
 
-  # Git configuration for development
+  # Override git configuration with host-specific details
   programs.git = {
-    enable = true;
     userName = "VM User";
     userEmail = "vm-user@example.com";
-
-    extraConfig = {
-      init.defaultBranch = "main";
-      pull.rebase = true;
-      push.autoSetupRemote = true;
-    };
   };
 
-  # Shell configuration optimized for VMs
-  programs.bash = {
-    enable = true;
+  # VM-specific shell customizations (extends base profile)
+  programs.bash.shellAliases = {
+    # VM-specific aliases (added to base aliases)
+    "vm-info" = "echo 'VM: ${config.home.username}@'$(hostname) && uname -a";
+    "net-info" = "ip addr show && ip route show";
 
-    shellAliases = {
-      # Use eza instead of ls for better file listing
-      ls = "eza";
-      ll = "eza -l";
-      la = "eza -la";
-      tree = "eza --tree";
-      l = "ls -CF";
-      ".." = "cd ..";
-      "..." = "cd ../..";
+    # NixOS rebuild shortcuts
+    rebuild = "sudo nixos-rebuild switch --flake ~/nixos-config";
+    rebuild-test = "sudo nixos-rebuild test --flake ~/nixos-config";
 
-      # VM-specific aliases
-      "vm-info" = "echo 'VM: ${config.home.username}@'$(hostname) && uname -a";
-      "net-info" = "ip addr show && ip route show";
+    # Use eza for better file listing (overrides base ls aliases)
+    ls = "eza";
+    ll = "eza -l";
+    la = "eza -la";
+    tree = "eza --tree";
+  };
 
-      # NixOS specific aliases
-      rebuild = "sudo nixos-rebuild switch --flake ~/nixos-config";
-      rebuild-test = "sudo nixos-rebuild test --flake ~/nixos-config";
-    };
+  programs.bash.bashrcExtra = ''
+    # VM-friendly prompt with hostname
+    export PS1="\[\e[36m\][\[\e[m\]\[\e[32m\]\u\[\e[m\]\[\e[36m\]@\[\e[m\]\[\e[34m\]\h\[\e[m\]\[\e[36m\]]\[\e[m\] \[\e[33m\]\w\[\e[m\]\$ "
 
-    bashrcExtra = ''
-      # VM-friendly prompt with hostname
-      export PS1="\[\e[36m\][\[\e[m\]\[\e[32m\]\u\[\e[m\]\[\e[36m\]@\[\e[m\]\[\e[34m\]\h\[\e[m\]\[\e[36m\]]\[\e[m\] \[\e[33m\]\w\[\e[m\]\$ "
-      
-      # Show VM info on login
-      echo "🖥️  VM Environment: $(hostname)"
-      echo "📍 IP: $(hostname -I | awk '{print $1}')"
+    # Show VM info on login
+    echo "🖥️  VM Environment: $(hostname)"
+    echo "📍 IP: $(hostname -I | awk '{print $1}')"
+  '';
+
+  # VM-specific program overrides (profiles provide base configs)
+  programs = {
+    # Enable additional tools for VM environment
+    eza.enable = true;
+    bat.enable = true;
+    zoxide.enable = true;
+
+    # VM-optimized tmux configuration (overrides server profile defaults)
+    tmux.extraConfig = ''
+      # VM-friendly tmux configuration
+      set -g mouse on
+      set -g history-limit 10000
+      set -g prefix C-a
+      set -g mode-keys vi
+
+      # VM-specific status bar
+      set -g status-bg blue
+      set -g status-fg white
+      set -g status-left '[VM:#{host_short}] '
+      set -g status-right '%Y-%m-%d %H:%M'
     '';
   };
 
-  # Essential terminal applications for VMs
-  programs = {
-    # Better file listing
-    eza = {
-      enable = true;
-    };
-
-    # Better cat
-    bat.enable = true;
-
-    # System monitoring
-    htop.enable = true;
-
-    # Directory navigation
-    zoxide.enable = true;
-
-    # Terminal multiplexer for persistent sessions
-    tmux = {
-      enable = true;
-      terminal = "screen-256color";
-      prefix = "C-a";
-      keyMode = "vi";
-
-      extraConfig = ''
-        # VM-friendly tmux configuration
-        set -g mouse on
-        set -g history-limit 10000
-        
-        # Status bar
-        set -g status-bg blue
-        set -g status-fg white
-        set -g status-left '[VM:#{host_short}] '
-        set -g status-right '%Y-%m-%d %H:%M'
-      '';
-    };
-  };
-
-  # VM-focused packages
+  # VM-specific packages (additional to profiles)
   home.packages = with pkgs; [
-    # Network tools
-    curl
-    wget
-    netcat
-    socat
-    nmap
-
-    # File transfer
-    rsync
-    openssh # includes scp
-
-    # System utilities
-    tree
-    file
-    which
-    lsof
-    strace
-
-    # Text processing
-    jq
-    yq
-
-    # VM management tools
+    # VM-specific tools
     qemu-utils
 
-    # Development tools (lightweight)
-    git
-    nano
-    vim
+    # Network diagnostics for VMs
+    nmap
+    socat
+
+    # System analysis
+    lsof
+    strace
   ];
 
-  # XDG directories (minimal for VMs)
-  xdg = {
-    enable = true;
-
-    userDirs = {
-      enable = true;
-      createDirectories = true;
-      desktop = "${config.home.homeDirectory}/Desktop";
-      documents = "${config.home.homeDirectory}/Documents";
-      download = "${config.home.homeDirectory}/Downloads";
-    };
+  # XDG directories (base profile provides defaults, VM needs minimal set)
+  xdg.userDirs = {
+    createDirectories = true;
+    # Standard VM directories
+    desktop = "${config.home.homeDirectory}/Desktop";
+    documents = "${config.home.homeDirectory}/Documents";
+    download = "${config.home.homeDirectory}/Downloads";
   };
 
   # SSH configuration for VM access
@@ -152,7 +105,7 @@
         ServerAliveInterval 60
         ServerAliveCountMax 3
         TCPKeepAlive yes
-        
+
       # Common VM access patterns
       Host host hypervisor
         HostName 10.0.2.2
@@ -161,10 +114,10 @@
     '';
   };
 
-  # Environment variables for VMs
+  # VM-specific environment variables (extends base profile)
   home.sessionVariables = {
+    # Override base profile editor for VM simplicity
     EDITOR = "nano";
-    PAGER = "less";
 
     # VM identification
     VM_ENVIRONMENT = "true";

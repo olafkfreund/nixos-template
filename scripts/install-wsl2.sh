@@ -180,25 +180,25 @@ copy_template_configuration() {
   # Set up the configuration
   wsl.exe -d "$WSL_DISTRO_NAME" -- /bin/bash -c "
         set -e
-        
+
         # Backup original configuration if it exists
         if [ -f /etc/nixos/configuration.nix ]; then
             cp /etc/nixos/configuration.nix /etc/nixos/configuration.nix.backup
         fi
-        
+
         # Copy WSL2 template configuration
         cp -r /tmp/nixos-template/hosts/wsl2-template/* /etc/nixos/ || true
         cp /tmp/nixos-template/hosts/wsl2-template/configuration.nix /etc/nixos/
-        
+
         # Ensure hardware configuration exists
         if [ ! -f /etc/nixos/hardware-configuration.nix ]; then
             nixos-generate-config --show-hardware-config > /etc/nixos/hardware-configuration.nix
         fi
-        
+
         # Set up flake configuration
         cp /tmp/nixos-template/flake.nix /etc/nixos/ || echo 'Flake not copied'
         cp /tmp/nixos-template/flake.lock /etc/nixos/ || echo 'Flake lock not copied'
-        
+
         echo 'Template configuration copied successfully'
     "
 
@@ -212,14 +212,14 @@ apply_nixos_configuration() {
   # Apply the configuration
   wsl.exe -d "$WSL_DISTRO_NAME" -- /bin/bash -c "
         set -e
-        
+
         # Switch to new configuration
         echo 'Switching to new NixOS configuration...'
         nixos-rebuild switch --flake /etc/nixos#wsl2-template || {
             echo 'Flake build failed, trying without flake...'
             nixos-rebuild switch
         }
-        
+
         echo 'NixOS configuration applied successfully'
     " || {
     log_warning "Configuration switch failed, but installation can continue"
@@ -242,21 +242,21 @@ setup_user_account() {
 
   wsl.exe -d "$WSL_DISTRO_NAME" -- /bin/bash -c "
         set -e
-        
+
         # Create user if it doesn't exist
         if ! id '$username' >/dev/null 2>&1; then
             useradd -m -G wheel -s /bin/bash '$username'
         fi
-        
+
         # Set password
         echo '$username:$password' | chpasswd
-        
+
         # Ensure user is in wheel group
         usermod -a -G wheel '$username'
-        
+
         # Set up sudo without password
         echo '$username ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/$username
-        
+
         echo 'User account setup completed'
     "
 
@@ -276,7 +276,7 @@ setup_user_account() {
 create_desktop_shortcut() {
   log_info "Creating desktop shortcut..."
 
-# Note: Using direct path construction instead of PowerShell query for reliability
+  # Note: Using direct path construction instead of PowerShell query for reliability
 
   local shortcut_content="[Desktop Entry]
 Name=NixOS WSL
@@ -382,46 +382,46 @@ main() {
 
 # Handle script arguments
 case "${1:-}" in
---help | -h)
-  echo "NixOS on WSL2 Installation Script"
-  echo
-  echo "Usage: $0 [options]"
-  echo
-  echo "Options:"
-  echo "  --help, -h     Show this help message"
-  echo "  --check        Check prerequisites only"
-  echo "  --uninstall    Uninstall NixOS WSL"
-  echo
-  echo "This script installs NixOS using NixOS-WSL with the template configuration."
-  echo "It requires Windows 10/11 with WSL 2 installed."
-  echo
-  exit 0
-  ;;
---check)
-  log_info "Checking prerequisites only..."
-  check_windows
-  check_wsl_version
-  check_prerequisites
-  log_success "Prerequisites check completed"
-  exit 0
-  ;;
---uninstall)
-  log_info "Uninstalling NixOS WSL..."
-  if wsl.exe --list --quiet | grep -q "$WSL_DISTRO_NAME"; then
-    wsl.exe --unregister "$WSL_DISTRO_NAME"
-    log_success "NixOS WSL uninstalled successfully"
-  else
-    log_warning "NixOS WSL distro '$WSL_DISTRO_NAME' not found"
-  fi
-  exit 0
-  ;;
-"")
-  # No arguments, run main installation
-  main
-  ;;
-*)
-  log_error "Unknown argument: $1"
-  echo "Use --help for usage information"
-  exit 1
-  ;;
+  --help | -h)
+    echo "NixOS on WSL2 Installation Script"
+    echo
+    echo "Usage: $0 [options]"
+    echo
+    echo "Options:"
+    echo "  --help, -h     Show this help message"
+    echo "  --check        Check prerequisites only"
+    echo "  --uninstall    Uninstall NixOS WSL"
+    echo
+    echo "This script installs NixOS using NixOS-WSL with the template configuration."
+    echo "It requires Windows 10/11 with WSL 2 installed."
+    echo
+    exit 0
+    ;;
+  --check)
+    log_info "Checking prerequisites only..."
+    check_windows
+    check_wsl_version
+    check_prerequisites
+    log_success "Prerequisites check completed"
+    exit 0
+    ;;
+  --uninstall)
+    log_info "Uninstalling NixOS WSL..."
+    if wsl.exe --list --quiet | grep -q "$WSL_DISTRO_NAME"; then
+      wsl.exe --unregister "$WSL_DISTRO_NAME"
+      log_success "NixOS WSL uninstalled successfully"
+    else
+      log_warning "NixOS WSL distro '$WSL_DISTRO_NAME' not found"
+    fi
+    exit 0
+    ;;
+  "")
+    # No arguments, run main installation
+    main
+    ;;
+  *)
+    log_error "Unknown argument: $1"
+    echo "Use --help for usage information"
+    exit 1
+    ;;
 esac
