@@ -66,6 +66,19 @@
     };
   };
 
+  # Zero-configuration hardware optimization (outside modules section)
+  hardware.autoOptimization = {
+    enable = true;
+    debug = true; # Enable hardware detection info commands
+    detection = {
+      enableMemoryOptimization = true;
+      enableCpuOptimization = true;
+      enableGpuOptimization = true;
+      enableStorageOptimization = true;
+      enablePlatformOptimization = true;
+    };
+  };
+
   # Network configuration
   networking = {
     networkmanager.enable = true;

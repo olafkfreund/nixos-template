@@ -2,15 +2,16 @@
 
 A modular NixOS configuration template using flakes, featuring:
 
+- **🔍 Zero-Configuration Hardware Optimization** - Automatically detects and optimizes for your specific hardware
 - **VM Testing Ready** - Full desktop environment testing in VMs (works on any Linux distro)
 - **Custom ISO Creation** - Build installer ISOs with preconfigured templates
 - **Interactive Installers** - Template selection and automated deployment
 - **Multi-Platform Support** - Works on any Linux distribution
-- **Modular Architecture** - Organized, reusable modules
-- **Home Manager Integration** - Declarative user environments
+- **Modular Architecture** - Organized, reusable modules with profile system
+- **Home Manager Integration** - Declarative user environments with shared profiles
 - **SOPS Secrets Management** - Encrypted secrets in Git
 - **Multiple Host Support** - Desktop, laptop, server, VM configurations
-- **GPU Support** - Manual configuration for AMD, NVIDIA, Intel with gaming/AI optimizations
+- **GPU Support** - Automatic driver detection and installation for AMD, NVIDIA, Intel
 - **AI/Compute Ready** - CUDA, ROCm, OneAPI for machine learning
 - **Development Tools** - Scripts and utilities for easy management
 - **Custom Packages & Overlays** - Extend and customize packages
@@ -29,6 +30,7 @@ A modular NixOS configuration template using flakes, featuring:
 ## Table of Contents
 
 1. [Quick Start](#quick-start)
+   - [Zero-Configuration Hardware Optimization](#zero-configuration-hardware-optimization)
    - [Non-NixOS Users (Try NixOS in VMs)](#non-nixos-users-try-nixos-in-vms)
    - [Custom NixOS Installer ISOs](#custom-nixos-installer-isos)
    - [New NixOS Users (Automated Setup)](#new-nixos-users-automated-setup)
@@ -49,6 +51,40 @@ A modular NixOS configuration template using flakes, featuring:
 1. [Troubleshooting](#troubleshooting)
 
 ## Quick Start
+
+> **🎯 New! Zero-Configuration Hardware Optimization** - This template now automatically detects and optimizes your hardware without manual configuration. Simply enable `hardware.autoOptimization.enable = true;` in any configuration. **[Learn More →](docs/ZERO-CONFIGURATION.md)**
+
+### Zero-Configuration Hardware Optimization
+
+**Enable automatic hardware detection and optimization with a single line:**
+
+```nix
+# Add to any configuration file
+hardware.autoOptimization.enable = true;
+```
+
+**What it automatically detects and optimizes:**
+- 💾 **Memory**: RAM-based ZRAM, swap, and kernel parameter tuning
+- 🏗️ **CPU**: Governor selection, kernel choice, and build parallelism  
+- 🖥️ **GPU**: Automatic driver installation (NVIDIA, AMD, Intel)
+- 💿 **Storage**: SSD vs HDD optimizations and I/O scheduler selection
+- 🔋 **Platform**: Laptop vs desktop power management differences
+
+**Hardware-specific examples:**
+- **Gaming Rig** (32GB, RTX GPU): Performance governor, NVIDIA drivers, low-latency memory
+- **Laptop** (16GB, Intel GPU): Power-saving governor, TLP, thermal management  
+- **Server** (8GB, no GPU): Ondemand governor, hardened kernel, server optimizations
+
+**Debug and verify:**
+```bash
+# Quick hardware summary
+hw-info
+
+# Detailed detection results (with debug = true)
+hardware-detection-info
+```
+
+**[Complete Zero-Configuration Guide →](docs/ZERO-CONFIGURATION.md)**
 
 ### Non-NixOS Users (Try NixOS in VMs)
 
