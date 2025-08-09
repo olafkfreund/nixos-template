@@ -238,7 +238,7 @@ Excludes build artifacts, secrets, and local configuration files.
 
 ## Recent Improvements
 
-### 🎉 NixOS 25.05 Compatibility (Latest Update)
+### NixOS 25.05 Compatibility (Latest Update)
 
 **All deprecation warnings resolved:**
 

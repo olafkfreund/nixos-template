@@ -6,6 +6,13 @@ All notable changes to this NixOS configuration template will be documented in t
 
 ### Added
 
+- **Deployment Factory Architecture** - Unified deployment image generation system
+  - Centralized configuration in `lib/deployment-images.nix`
+  - Reduced code duplication by ~400 lines
+  - Consistent security and optimization across all deployment targets
+  - New lightweight `development-minimal` image for resource-constrained environments
+  - Docker VM builder image for cross-platform NixOS VM creation
+
 - **Windows VM Builder** - Docker-based NixOS VM builder for Windows users
   - Pre-built VM images available via GitHub releases
   - 5 specialized templates: Desktop, Server, Gaming, Minimal, Development
@@ -15,6 +22,25 @@ All notable changes to this NixOS configuration template will be documented in t
   - No local Nix installation required for Windows users
 
 ### Changed
+
+- **Major Architecture Refactor**: Profile-based system eliminating massive code duplication
+  - Flake.nix reduced from 1057 to 496 lines (53% reduction)
+  - Host configurations reduced by 50-80% through profile system
+  - Darwin configuration generator for multi-architecture support
+  - Deployment images factory pattern replacing repetitive configurations
+
+- **NixOS 25.05+ Compatibility**: Fixed all deprecation warnings and modernized
+  configurations
+  - Updated `isoImage.isoName` to `image.fileName` in macOS ISOs
+  - Resolved user password precedence conflicts
+  - Fixed option conflicts in deployment images
+  - Removed deprecated `environment.noXlibs` option
+
+- **Disk Space Optimizations**: Aggressive space-saving measures for deployment images
+  - Development images optimized with aggressive garbage collection
+  - Documentation disabled in deployment images to reduce size
+  - Minimal journaling configuration (50-100MB limits)
+  - Automatic Nix store optimization enabled
 
 - Updated README.md to include Windows VM builder section
 - Enhanced project structure documentation with Docker components

@@ -2,7 +2,7 @@
 
 {
   # Server administration focused Home Manager configuration
-  
+
   # Import server-admin role for all server tools
   imports = [
     ../roles/server-admin.nix
@@ -248,8 +248,8 @@
 
   # Additional user-specific packages (not in server-admin role)
   home.packages = with pkgs; [
-    # NOTE: Core server tools (htop, iotop, nethogs, iftop, ncdu, lsof, 
-    # tcpdump, nmap, dig, whois, rsync, borgbackup, tmux, screen, 
+    # NOTE: Core server tools (htop, iotop, nethogs, iftop, ncdu, lsof,
+    # tcpdump, nmap, dig, whois, rsync, borgbackup, tmux, screen,
     # perf-tools, sysstat) are provided by roles/server-admin.nix
 
     # Additional system monitoring

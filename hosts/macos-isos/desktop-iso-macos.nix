@@ -10,8 +10,7 @@
 
   # ISO-specific configuration for macOS users
   isoImage = {
-    # ISO metadata
-    isoName = lib.mkForce "nixos-desktop-macos-installer"; # Deprecated, keeping for compatibility
+    # ISO metadata - using new format
     volumeID = lib.mkForce "NIXOS_DESKTOP_MACOS";
 
     # Boot configuration optimized for macOS VMs
@@ -23,6 +22,9 @@
     # Compression for smaller ISO size
     squashfsCompression = "zstd";
   };
+
+  # Use new image.fileName option instead of deprecated isoImage.isoName
+  image.fileName = lib.mkForce "nixos-desktop-macos-installer.iso";
 
   # Kernel configuration for macOS VM compatibility
   boot = {
@@ -108,19 +110,25 @@
     users.nixos = {
       isNormalUser = true;
       extraGroups = [ "wheel" "networkmanager" ];
-      password = "nixos"; # Default password for installer
+      # Use password (highest precedence) to override deployment image initialPassword
+      password = lib.mkForce "nixos"; # Force override any conflicts
+      # Clear other password options to prevent warnings
+      initialPassword = lib.mkOverride 200 null; # Lower priority, gets overridden
+      hashedPassword = lib.mkOverride 200 null;
+      initialHashedPassword = lib.mkOverride 200 null;
+      hashedPasswordFile = lib.mkOverride 200 null;
       shell = pkgs.zsh;
     };
     # Override root password for macOS ISO installer convenience
     users.root = {
-      # Use initialPassword to override the locked password from core/users.nix
-      initialPassword = lib.mkOverride 40 "root"; # Higher priority than base installer
-      # Aggressively clear ALL other password options to prevent conflicts
-      hashedPassword = lib.mkOverride 60 null;
-      password = lib.mkOverride 60 null;
+      # Use initialPassword with highest priority to override core/users.nix
+      initialPassword = lib.mkOverride 10 "root"; # Higher priority than mkForce (50)
+      # Clear ALL other password options to prevent conflicts
+      hashedPassword = lib.mkOverride 200 null;
+      password = lib.mkOverride 200 null;
       # Force initialHashedPassword to null to override any system defaults
-      initialHashedPassword = lib.mkOverride 60 null;
-      hashedPasswordFile = lib.mkOverride 60 null;
+      initialHashedPassword = lib.mkOverride 200 null;
+      hashedPasswordFile = lib.mkOverride 200 null;
     };
   };
 

@@ -55,7 +55,7 @@ docker run --rm -v "${PWD}:/workspace" ghcr.io/olafkfreund/nixos-vm-builder:late
 docker run --rm -v "${PWD}:/workspace" ghcr.io/olafkfreund/nixos-vm-builder:latest all --template desktop
 ```
 
-## 🔧 First Steps in NixOS
+## First Steps in NixOS
 
 ```bash
 # Change password (IMPORTANT!)
@@ -71,7 +71,7 @@ nix search firefox
 nixos-version
 ```
 
-## 🆘 Troubleshooting
+## Troubleshooting
 
 | Problem          | Solution                      |
 | ---------------- | ----------------------------- |
@@ -80,13 +80,13 @@ nixos-version
 | No internet      | Use NAT networking            |
 | Graphics issues  | Install VM guest tools        |
 
-## 📖 Documentation
+## Documentation
 
 - **Complete Guide**: [docs/WINDOWS-HOWTO.md](WINDOWS-HOWTO.md)
 - **Docker Details**: [docs/WINDOWS-VM-BUILDER.md](WINDOWS-VM-BUILDER.md)
 - **Technical Docs**: [docker/README.md](../docker/README.md)
 
-## 💡 Tips
+## Tips
 
 - **Performance**: Allocate 4GB+ RAM for desktop VMs
 - **Security**: Change default password immediately

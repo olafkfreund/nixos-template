@@ -1,10 +1,11 @@
 # Home Manager Configuration Structure
 
-This directory contains a modular Home Manager configuration system that eliminates duplication and provides clear separation between common and host-specific settings.
+This directory contains a modular Home Manager configuration system that eliminates duplication
+and provides clear separation between common and host-specific settings.
 
 ## Directory Structure
 
-```
+```text
 home/
 ├── common/                    # Shared configurations used by all roles
 │   ├── base.nix              # Universal settings (shell, XDG, basic programs)
@@ -203,14 +204,15 @@ GUI applications for desktop environments:
 
 ## Legacy Support
 
-The old `home/users/*.nix` files are still present for backward compatibility but are deprecated. New configurations should use the role/profile system.
+The old `home/users/*.nix` files are still present for backward compatibility but are
+deprecated. New configurations should use the role/profile system.
 
 ## BuildEnv Collision Prevention
 
 To prevent `pkgs.buildEnv warning: colliding subpath` errors, the template now properly structures package imports:
 
 - **No Package Duplication**: Packages are defined once in appropriate common/packages files
-- **Role-based Imports**: User files import roles instead of duplicating package lists  
+- **Role-based Imports**: User files import roles instead of duplicating package lists
 - **Profile Separation**: Only import one desktop profile (GNOME, KDE, Hyprland, or Niri)
 - **Fixed Duplicates**: Resolved conflicts like `yq-go` (essential vs development) and gaming packages
 

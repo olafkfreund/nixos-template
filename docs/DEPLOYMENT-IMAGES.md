@@ -1,6 +1,6 @@
 # Deployment Images Guide
 
-This NixOS template includes comprehensive deployment image generation using **nixos-generators**, providing ready-to-deploy images for various platforms and use cases.
+This NixOS template includes comprehensive deployment image generation using our **deployment factory**, providing ready-to-deploy images for various platforms and use cases through a modular, unified system.
 
 ## Quick Start
 
@@ -8,130 +8,123 @@ This NixOS template includes comprehensive deployment image generation using **n
 
 ```bash
 # Cloud deployment images
-nix build .#aws-ami          # Amazon EC2 AMI
-nix build .#azure-vhd        # Microsoft Azure VHD
-nix build .#gce-image        # Google Compute Engine
-nix build .#do-image         # Digital Ocean
+nix build .#aws              # Amazon EC2 AMI
+nix build .#azure            # Microsoft Azure VHD
+nix build .#digitalocean     # Digital Ocean Droplet
 
 # Virtualization images
-nix build .#vmware-image     # VMware VM
-nix build .#virtualbox-ova   # VirtualBox OVA
-nix build .#qemu-qcow2       # QEMU/KVM QCOW2
+nix build .#vmware           # VMware VM
+nix build .#virtualbox-desktop # VirtualBox OVA with desktop
+nix build .#qemu             # QEMU/KVM QCOW2
 
 # Container images
-nix build .#lxc-template     # LXC container
+nix build .#lxc              # LXC container
 
 # Installation media
-nix build .#live-iso         # Bootable live ISO
-
-# ARM/Embedded
-nix build .#rpi4-sd-image    # Raspberry Pi 4 SD card
+nix build .#iso              # Bootable live ISO
 
 # Specialized images
-nix build .#development-vm   # Development environment
-nix build .#production-server # Production server
+nix build .#development-vm      # Full development environment
+nix build .#development-minimal # Lightweight development VM
+nix build .#production-server   # Hardened production server
+nix build .#nixos-vm-builder-docker # Docker image for VM building
 ```
 
 ### List all available images
 
 ```bash
-nix flake show | grep "packages.*-image\|packages.*-ami\|packages.*-iso"
+nix flake show | grep "packages"
 ```
 
 ## Available Deployment Images
 
 ### Cloud Platforms
 
-#### **AWS AMI** (`aws-ami`)
+#### **AWS AMI** (`aws`)
 
 - **Format**: Amazon Machine Image
 - **Use Case**: EC2 instance deployment
-- **Features**: EC2 metadata service, EBS-optimized, cloud-init
+- **Features**: EC2 metadata service, EBS-optimized, automatic hardware optimization
 - **Deploy**: Upload to AWS AMI and launch EC2 instances
 
-#### **Azure VHD** (`azure-vhd`)
+#### **Azure VHD** (`azure`)
 
 - **Format**: Virtual Hard Disk
 - **Use Case**: Azure Virtual Machine deployment
-- **Features**: Azure agent, cloud-init, optimized for Azure
+- **Features**: Azure agent, automatic hardware detection, optimized for Azure
 - **Deploy**: Upload to Azure storage and create VM
 
-#### **Google Cloud Image** (`gce-image`)
-
-- **Format**: GCE-compatible image
-- **Use Case**: Google Compute Engine deployment
-- **Features**: GCE metadata service, automatic updates
-- **Deploy**: Upload to GCP and create instances
-
-#### **Digital Ocean Image** (`do-image`)
+#### **Digital Ocean Image** (`digitalocean`)
 
 - **Format**: Digital Ocean compatible
 - **Use Case**: Digital Ocean Droplet deployment
-- **Features**: DO agent, optimized networking
+- **Features**: DO agent, optimized networking, automatic scaling
 - **Deploy**: Upload as custom image
 
 ### Virtualization
 
-#### **VMware Image** (`vmware-image`)
+#### **VMware Image** (`vmware`)
 
 - **Format**: VMware VMDK
 - **Use Case**: VMware Workstation/vSphere
-- **Features**: VMware Tools, paravirtualized drivers
+- **Features**: VMware Tools, paravirtualized drivers, automatic optimization
 - **Deploy**: Import into VMware environment
 
-#### **VirtualBox OVA** (`virtualbox-ova`)
+#### **VirtualBox Desktop** (`virtualbox-desktop`)
 
-- **Format**: Open Virtualization Appliance
-- **Use Case**: VirtualBox deployment
-- **Features**: Guest additions, shared folders support
+- **Format**: Open Virtualization Appliance with GNOME desktop
+- **Use Case**: VirtualBox deployment with GUI
+- **Features**: Guest additions, shared folders, full desktop environment
 - **Deploy**: Import OVA file into VirtualBox
 
-#### **QEMU QCOW2** (`qemu-qcow2`)
+#### **QEMU QCOW2** (`qemu`)
 
 - **Format**: QCOW2 disk image
 - **Use Case**: QEMU/KVM, Proxmox, OpenStack
-- **Features**: Virtio drivers, SPICE support
+- **Features**: Virtio drivers, SPICE support, KVM optimization
 - **Deploy**: Use with QEMU/KVM hypervisors
 
 ### Containers
 
-#### **LXC Template** (`lxc-template`)
+#### **LXC Container** (`lxc`)
 
 - **Format**: LXC container template
 - **Use Case**: LXC/LXD containers, Proxmox CT
-- **Features**: Container-optimized, minimal overhead
+- **Features**: Container-optimized, minimal overhead, security hardening
 - **Deploy**: Import into LXC/LXD or Proxmox
 
 ### Installation Media
 
-#### **Live ISO** (`live-iso`)
+#### **Live ISO** (`iso`)
 
 - **Format**: Bootable ISO image
 - **Use Case**: Installation, recovery, testing
-- **Features**: UEFI/BIOS boot, persistent storage
+- **Features**: UEFI/BIOS boot, automatic hardware detection
 - **Deploy**: Burn to USB/DVD or boot from ISO
-
-### ARM/Embedded
-
-#### **Raspberry Pi 4 SD Image** (`rpi4-sd-image`)
-
-- **Format**: SD card image for RPi4
-- **Use Case**: Raspberry Pi 4 deployment
-- **Features**: ARM64 kernel, RPi4 optimizations
-- **Deploy**: Flash to SD card (8GB minimum)
 
 ### Specialized Images
 
 #### **Development VM** (`development-vm`)
 
-- **Format**: QCOW2 with development tools
-- **Use Case**: Local development, testing
+- **Format**: QCOW2 with comprehensive development tools
+- **Use Case**: Full-featured local development, testing
 - **Features**:
-  - Full development stack (Node.js, Python, Rust)
-  - Docker and Kubernetes tools
-  - Monitoring enabled
-  - VSCode and editors
+  - Development stack (Node.js, Python, Docker)
+  - Virtualization support (libvirtd enabled)
+  - GUI applications and code editors
+  - Aggressive disk space optimization
 - **Deploy**: Run locally with QEMU/KVM
+
+#### **Development Minimal** (`development-minimal`)
+
+- **Format**: Lightweight QCOW2 development environment
+- **Use Case**: Resource-constrained development, quick testing
+- **Features**:
+  - Essential development tools only (Node.js, Python)
+  - No GUI/desktop environment for minimal footprint
+  - Maximum space optimization with aggressive cleanup
+  - Docker support enabled
+- **Deploy**: Run locally with QEMU/KVM (minimal resources)
 
 #### **Production Server** (`production-server`)
 
@@ -139,10 +132,52 @@ nix flake show | grep "packages.*-image\|packages.*-ami\|packages.*-iso"
 - **Use Case**: Production server deployment
 - **Features**:
   - Security hardening (AppArmor, fail2ban, audit)
-  - Comprehensive monitoring
-  - Server packages (nginx, PostgreSQL)
-  - Firewall configuration
+  - Server packages (nginx, PostgreSQL, borgbackup)
+  - Firewall configuration and monitoring
+  - Optimized for server workloads
 - **Deploy**: Deploy to production hypervisors
+
+#### **VM Builder Docker** (`nixos-vm-builder-docker`)
+
+- **Format**: Docker container image
+- **Use Case**: Building NixOS VMs on any system (especially Windows)
+- **Features**:
+  - Complete Nix toolchain for VM building
+  - QEMU and libvirt tools included
+  - Cross-platform VM generation
+- **Deploy**: Use with Docker on any OS
+
+## Deployment Factory Architecture
+
+This template uses a **deployment factory** system (located in `lib/deployment-images.nix`) that
+provides:
+
+### Benefits
+
+- **Unified Configuration**: All images share a common base with platform-specific optimizations
+- **Consistent Security**: Locked root accounts, SSH configuration, firewall settings
+- **Automatic Optimization**: Hardware detection, Nix store optimization, garbage collection
+- **Space Efficiency**: Documentation disabled, aggressive cleanup, optimized journaling
+- **Modular Design**: Easy to add new image types or modify existing ones
+
+### Factory Features
+
+All images automatically include:
+
+- **Base Security**: Root account locked, SSH keys recommended, firewall enabled
+- **Hardware Optimization**: Automatic detection and optimization for target platform
+- **Nix Optimization**: Store optimization, garbage collection, binary cache usage
+- **Essential Tools**: git, vim, curl, wget, htop, tree for all images
+- **Network Management**: NetworkManager enabled, DHCP configuration
+
+### Platform-Specific Optimizations
+
+Each image type includes platform-specific features:
+
+- **Cloud images**: Metadata services, cloud-init, auto-scaling preparation
+- **VM images**: Guest tools, paravirtualized drivers, display optimization
+- **Container images**: Container-specific networking, minimal overhead
+- **Development images**: Development tools, Docker support, monitoring
 
 ## Advanced Configuration
 
@@ -262,7 +297,7 @@ Typical image sizes:
 
 ```bash
 # Build AMI
-nix build .#aws-ami
+nix build .#aws
 
 # Upload to AWS (requires AWS CLI)
 aws ec2 import-image --description "NixOS Template" --disk-containers "Description=NixOS,Format=vmdk,UserBucket={S3Bucket=my-bucket,S3Key=nixos.vmdk}"
@@ -272,20 +307,23 @@ aws ec2 import-image --description "NixOS Template" --disk-containers "Descripti
 
 ```bash
 # Build QCOW2 image
-nix build .#qemu-qcow2
+nix build .#qemu
 
 # Run with QEMU
 qemu-system-x86_64 -hda ./result/nixos.qcow2 -m 2G -enable-kvm
 ```
 
-### Raspberry Pi Deployment
+### Development Environment Testing
 
 ```bash
-# Build SD image
-nix build .#rpi4-sd-image
+# Build full development VM
+nix build .#development-vm
 
-# Flash to SD card (Linux)
-sudo dd if=./result/sd-image/nixos-sd-image-*.img of=/dev/sdX bs=4M status=progress
+# Build lightweight development VM
+nix build .#development-minimal
+
+# Run development VM
+qemu-system-x86_64 -hda ./result/nixos.qcow2 -m 4G -enable-kvm -display gtk
 ```
 
 ## Security Considerations

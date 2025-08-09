@@ -1,5 +1,5 @@
-# Desktop Configuration Template
-# Optimized for high-performance desktop computing
+# Desktop Configuration Template - Simplified
+# Uses the profile system instead of duplicating packages
 { config, lib, pkgs, ... }:
 
 {
@@ -11,6 +11,7 @@
     ../../modules/hardware/power-management.nix
     ../../modules/gaming
     ../../modules/development
+    ../../modules/profiles/workstation.nix # Contains all the packages and common configs
   ];
 
   # System identification
@@ -28,23 +29,19 @@
     hardware.power-management = {
       enable = true;
       profile = "desktop";
-      cpuGovernor = "ondemand"; # Balance between performance and power
+      cpuGovernor = "ondemand";
       enableThermalManagement = true;
 
       desktop = {
         enablePerformanceMode = true;
-        disableUsbAutosuspend = true; # Better for gaming peripherals
+        disableUsbAutosuspend = true;
       };
     };
 
     # Full-featured desktop environment
     desktop = {
       audio.enable = true;
-
-      gnome = {
-        enable = true;
-        # Keep all applications for full desktop experience
-      };
+      gnome.enable = true;
     };
 
     # Gaming support
@@ -66,10 +63,10 @@
     };
   };
 
-  # Zero-configuration hardware optimization (outside modules section)
+  # Zero-configuration hardware optimization
   hardware.autoOptimization = {
     enable = true;
-    debug = true; # Enable hardware detection info commands
+    debug = true;
     detection = {
       enableMemoryOptimization = true;
       enableCpuOptimization = true;
@@ -82,380 +79,41 @@
   # Network configuration
   networking = {
     networkmanager.enable = true;
-
     firewall = {
       enable = true;
-      allowedTCPPorts = [
-        22 # SSH
-        80 # HTTP
-        443 # HTTPS
-        8080 # Development servers
-      ];
-      allowedUDPPorts = [
-        # Add any UDP ports you need
-      ];
+      allowedTCPPorts = [ 22 80 443 8080 ];
     };
-
-    # Enable Wake-on-LAN for remote access
     interfaces.enp0s31f6.wakeOnLan.enable = true;
   };
 
-  # Services optimized for desktop use
+  # Services - only host-specific configurations
   services = {
-    # Disable PulseAudio in favor of PipeWire (handled by modules.desktop.audio)
-    pulseaudio.enable = false;
-    # OpenSSH for remote access
+    pulseaudio.enable = false; # Using PipeWire from desktop module
     openssh = {
       enable = true;
       settings = {
         PasswordAuthentication = false;
         PermitRootLogin = "no";
-        X11Forwarding = lib.mkForce true; # Enable for desktop development
+        X11Forwarding = lib.mkForce true;
       };
     };
-
-    # Auto-login for convenience (disable if shared computer)
-    displayManager.autoLogin = {
-      enable = false; # Set to true if desired
-      user = "user";
-    };
-
-    # Hardware sensors monitoring
-    # Hardware monitoring
-    # lm_sensors.enable = true;  # This service doesn't exist, enable via hardware
-
-    # Automatic time sync
+    displayManager.autoLogin.enable = false;
     ntp.enable = true;
-
-    # Flatpak for additional software
-    flatpak.enable = true;
-
-    # Printing and scanning
-    printing = {
-      enable = true;
-      drivers = with pkgs; [
-        gutenprint
-        gutenprintBin
-        hplip
-        epson-escpr
-        canon-cups-ufr2
-      ];
-    };
-
-    # CUPS for printer discovery
-    avahi = {
-      enable = true;
-      nssmdns4 = true;
-      openFirewall = true;
-    };
-
-    # Samba for file sharing
-    samba = {
-      enable = true;
-      openFirewall = true;
-    };
   };
 
-  # Hardware configuration for desktop
-  hardware = {
-    # Full graphics acceleration
-    graphics = {
-      enable = true;
-      enable32Bit = true; # For games and legacy applications
+  # Use latest kernel for best hardware support
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
-      extraPackages = with pkgs; [
-        mesa
-        libvdpau-va-gl
-        vaapiVdpau
-      ];
-    };
-
-    # Audio with all features (pulseaudio is configured via services.pulseaudio)
-    # pulseaudio.enable moved to services.pulseaudio in modules
-
-    # Enable all CPU microcode updates
-    cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-    cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-
-    # Bluetooth with full feature set
-    bluetooth = {
-      enable = true;
-      powerOnBoot = true;
-      settings = {
-        General = {
-          Enable = "Source,Sink,Media,Socket";
-          Experimental = true; # Enable experimental features
-        };
-      };
-    };
-  };
-
-  # Sound with PipeWire (professional audio support)
-  # Note: rtkit auto-enabled by PipeWire
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    jack.enable = true; # Professional audio
-    wireplumber.enable = true;
-
-    # Low-latency configuration for audio work
-    extraConfig.pipewire."92-low-latency" = {
-      context.properties = {
-        default = {
-          clock = {
-            rate = 48000;
-            quantum = 32;
-            min-quantum = 32;
-            max-quantum = 32;
-          };
-        };
-      };
-    };
-  };
-
-  # Kernel configuration for desktop performance
-  boot = {
-    kernelModules = [
-      "kvm-intel"
-      "kvm-amd"
-    ];
-
-    kernelParams = [
-      # Enable full CPU performance
-      "intel_pstate=active"
-      "amd_pstate=active"
-
-      # Optimize for desktop responsiveness
-      "preempt=voluntary"
-
-      # Enable all CPU features
-      "mitigations=auto"
-    ];
-
-    # Use latest kernel for best hardware support
-    kernelPackages = pkgs.linuxPackages_latest;
-
-    # Plymouth for smooth boot
-    plymouth = {
-      enable = true;
-      theme = "breeze";
-    };
-
-    # Faster boot
-    loader = {
-      systemd-boot.enable = true;
-      efi.canTouchEfiVariables = true;
-      timeout = 3;
-    };
-  };
-
-  # Desktop-optimized file systems
-  fileSystems."/" = {
-    options = [
-      "noatime"
-      "discard" # SSD TRIM support
-    ];
-  };
-
-  # Swap configuration for desktop (hibernation support)
-  swapDevices = [ ];
-
-  # Enable hibernation support
-  boot.resumeDevice = "/dev/disk/by-label/nixos";
-
-  # Large tmpfs for better performance
-  boot.tmp = {
-    useTmpfs = true;
-    tmpfsSize = "50%"; # Use half of RAM for /tmp
-  };
-
-  # Environment optimized for desktop productivity
-  environment = {
-    variables = {
-      # Hardware acceleration
-      VDPAU_DRIVER = lib.mkIf config.hardware.graphics.enable "va_gl";
-      LIBVA_DRIVER_NAME = "iHD";
-
-      # Qt/GTK scaling
-      QT_AUTO_SCREEN_SCALE_FACTOR = "1";
-      GDK_SCALE = "1";
-
-      # Development
-      EDITOR = "code";
-      BROWSER = "firefox";
-
-      # Gaming
-      DXVK_HUD = "compiler";
-      RADV_PERFTEST = "gpl";
-    };
-
-    systemPackages = with pkgs; [
-      # Desktop applications
-      firefox
-      chromium
-      thunderbird
-      libreoffice
-      gimp
-      inkscape
-      blender
-      obs-studio
-      vlc
-
-      # Development tools
-      vscode
-      jetbrains.idea-community
-      docker-compose
-      postman
-
-      # System utilities
-      htop
-      iotop
-      nethogs
-      lm_sensors
-      smartmontools
-      gparted
-
-      # Gaming utilities
-      lutris
-      heroic
-      discord
-
-      # Multimedia
-      audacity
-      handbrake
-      kdePackages.kdenlive
-
-      # Network tools
-      wireshark
-      nmap
-      tcpdump
-
-      # Archive tools
-      p7zip
-      unrar
-
-      # Backup and sync
-      rsync
-      rclone
-      borgbackup
-    ];
-  };
-
-  # Virtualization support
-  virtualisation = {
-    libvirtd = {
-      enable = true;
-      qemu = {
-        package = pkgs.qemu_kvm;
-        runAsRoot = false;
-        swtpm.enable = true;
-        ovmf = {
-          enable = true;
-          packages = [ pkgs.OVMFFull.fd ];
-        };
-      };
-    };
-
-    # Docker for development
-    docker = {
-      enable = true;
-      autoPrune.enable = true;
-    };
-  };
-
-  # User configuration
-  users.users.user = {
-    isNormalUser = true;
-    description = "Desktop User";
-    extraGroups = [
-      "wheel"
-      "networkmanager"
-      "audio"
-      "video"
-      "docker"
-      "libvirtd"
-      "plugdev" # For hardware access
-    ];
-    openssh.authorizedKeys.keys = [
-      # Add your SSH public keys here
-    ];
-  };
-
-  # Security configuration
-  security = {
-    sudo = {
-      enable = true;
-      extraRules = [
-        {
-          users = [ "user" ];
-          commands = [
-            {
-              command = "ALL";
-              options = [ "SETENV" ]; # Secure default: require password but allow environment
-            }
-          ];
-        }
-      ];
-    };
-
-    # Enable PAM
-    pam.services.login.enableGnomeKeyring = true;
-
-    # Polkit for GUI privilege escalation
-    polkit.enable = true;
-  };
-
-  # XDG portals for sandboxed applications
-  xdg.portal = {
-    enable = true;
-    extraPortals = with pkgs; [
-      xdg-desktop-portal-gtk
-      xdg-desktop-portal-gnome
-    ];
-  };
-
-  # Fonts for desktop use
-  fonts = {
-    enableDefaultPackages = true;
-    packages = with pkgs; [
-      noto-fonts
-      noto-fonts-cjk-sans
-      noto-fonts-emoji
-      liberation_ttf
-      fira-code
-      fira-code-symbols
-      jetbrains-mono
-      source-code-pro
-      ubuntu_font_family
-
-      # Microsoft fonts for compatibility
-      corefonts
-      vistafonts
-    ];
-
-    fontconfig = {
-      enable = true;
-      defaultFonts = {
-        serif = [ "Noto Serif" ];
-        sansSerif = [ "Noto Sans" ];
-        monospace = [ "JetBrains Mono" ];
-      };
-    };
-  };
-
-  # Home Manager integration
+  # Home Manager integration - simplified
   home-manager.users.user = import ./home.nix;
 
   # System maintenance
   system = {
     autoUpgrade = {
       enable = true;
-      allowReboot = false; # Don't auto-reboot desktop
+      allowReboot = false;
       dates = "weekly";
     };
-
     stateVersion = "25.05";
   };
 }

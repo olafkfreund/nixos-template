@@ -121,7 +121,7 @@
 
   # Additional user-specific packages (not in gamer role)
   home.packages = with pkgs; [
-    # NOTE: Core gaming packages (steam, lutris, heroic, bottles, obs-studio, 
+    # NOTE: Core gaming packages (steam, lutris, heroic, bottles, obs-studio,
     # mangohud, goverlay, gamemode, discord) are provided by roles/gamer.nix
 
     # Wine and Windows Compatibility (additional tools)

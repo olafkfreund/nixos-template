@@ -4,7 +4,8 @@ The NixOS template includes a standardized system identification module that pro
 
 ## Overview
 
-Instead of manually setting `networking.hostName` and other system identifiers, use the `systemId` module for:
+Instead of manually setting `networking.hostName` and other system identifiers, use the
+`systemId` module for:
 
 - **Consistent naming patterns** across different system types
 - **Automatic profile detection** based on hostname
@@ -138,7 +139,7 @@ Platform:
   Kernel: 6.1.55
   NixOS State Version: 25.05
 
-🔧 Flake Metadata:
+Flake Metadata:
   Build Date: build-1699123456
   Flake Rev: a1b2c3d
   Nixpkgs Rev: 4e5f6a7
