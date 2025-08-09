@@ -2,6 +2,11 @@
 
 {
   # Server administration focused Home Manager configuration
+  
+  # Import server-admin role for all server tools
+  imports = [
+    ../roles/server-admin.nix
+  ];
 
   # User information
   home = {
@@ -241,41 +246,24 @@
     };
   };
 
-  # Server administration packages
+  # Additional user-specific packages (not in server-admin role)
   home.packages = with pkgs; [
-    # System Monitoring
-    htop
-    btop
-    iotop
-    nethogs # Network usage per process
-    iftop # Network bandwidth usage
-    ncdu # Disk usage analyzer
-    lsof # Open files
-    strace # System call tracer
-    tcpdump # Network packet analyzer
+    # NOTE: Core server tools (htop, iotop, nethogs, iftop, ncdu, lsof, 
+    # tcpdump, nmap, dig, whois, rsync, borgbackup, tmux, screen, 
+    # perf-tools, sysstat) are provided by roles/server-admin.nix
 
-    # Network Tools
-    nmap
+    # Additional system monitoring
+    btop
+    strace # System call tracer
+
+    # Additional network tools (nmap, dig, whois, rsync in server-admin role)
     netcat-gnu
     socat
-    dig
-    whois
     traceroute
     mtr # Network diagnostic tool
-    curl
-    wget
-    rsync
 
-    # File Management
-    file
-    tree
+    # Additional file management (file, tree in essential.nix)
     p7zip
-    unzip
-    zip
-
-    # Text Processing
-    jq # JSON processor
-    yq # YAML processor
     xmlstarlet # XML processor
 
     # System Administration
@@ -283,16 +271,14 @@
     procps # ps, top, kill
     util-linux # Various utilities
 
-    # Log Analysis
+    # Log Analysis (multitail in server-admin role)
     logrotate
-    multitail # Multi-file tail
 
     # Security Tools
     gnupg
     openssl
 
-    # Backup Tools
-    borgbackup
+    # Backup Tools (borgbackup in server-admin role)
     rclone
     duplicity
 
@@ -318,14 +304,11 @@
     # terraform
     # ansible
 
-    # Development/Automation
-    git
-    tmux
-    screen
+    # Development/Automation (git, tmux, screen in server-admin role)
+    # Additional development tools can go here
 
-    # Performance Analysis
-    perf-tools
-    sysstat # sar, iostat, mpstat
+    # Performance Analysis (perf-tools, sysstat in server-admin role)
+    # Additional performance tools can go here
 
     # System Information
     lshw
@@ -334,9 +317,8 @@
     dmidecode
     smartmontools # Hard drive health
 
-    # Text Editors
-    vim
-    nano
+    # Text Editors (vim, nano in essential.nix)
+    # Additional editors can go here
 
     # Miscellaneous
     man-pages

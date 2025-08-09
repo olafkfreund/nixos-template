@@ -28,9 +28,8 @@
     wf-recorder
 
     # Media and viewers
-    imv # Image viewer
-    mpv # Video player
-    zathura # PDF viewer
+    # NOTE: imv, mpv, zathura also in hyprland.nix - avoid duplicates
+    # Users should import only one Wayland WM profile to prevent collisions
 
     # System utilities
     brightnessctl

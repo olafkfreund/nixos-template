@@ -44,6 +44,6 @@
 
     # JSON/YAML tools
     fx # JSON viewer
-    yq-go # YAML processor
+    # yq-go is provided by essential.nix
   ];
 }

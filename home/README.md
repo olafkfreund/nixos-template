@@ -204,3 +204,14 @@ GUI applications for desktop environments:
 ## Legacy Support
 
 The old `home/users/*.nix` files are still present for backward compatibility but are deprecated. New configurations should use the role/profile system.
+
+## BuildEnv Collision Prevention
+
+To prevent `pkgs.buildEnv warning: colliding subpath` errors, the template now properly structures package imports:
+
+- **No Package Duplication**: Packages are defined once in appropriate common/packages files
+- **Role-based Imports**: User files import roles instead of duplicating package lists  
+- **Profile Separation**: Only import one desktop profile (GNOME, KDE, Hyprland, or Niri)
+- **Fixed Duplicates**: Resolved conflicts like `yq-go` (essential vs development) and gaming packages
+
+If you encounter buildEnv warnings, check that you're not importing conflicting packages or multiple desktop profiles.

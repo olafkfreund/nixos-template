@@ -3,12 +3,9 @@
 {
   # Gaming-focused Home Manager configuration
 
-  # Import desktop profile (KDE or GNOME recommended for gaming)
+  # Import gaming role (includes all gaming packages and desktop profile)
   imports = [
-    # Recommended for gaming
-    ../profiles/kde.nix # KDE has excellent gaming features
-    # ../profiles/gnome.nix   # GNOME also works well
-    # ../profiles/hyprland.nix  # Advanced users only
+    ../roles/gamer.nix # Gaming role includes desktop profile and gaming packages
   ];
 
   # User information
@@ -122,20 +119,12 @@
     };
   };
 
-  # Gaming applications and tools
+  # Additional user-specific packages (not in gamer role)
   home.packages = with pkgs; [
-    # Gaming Platforms
-    steam
-    lutris
-    heroic # Epic Games launcher
-    bottles # Wine bottle manager
+    # NOTE: Core gaming packages (steam, lutris, heroic, bottles, obs-studio, 
+    # mangohud, goverlay, gamemode, discord) are provided by roles/gamer.nix
 
-    # Game Development (optional)
-    # godot_4
-    # blender
-    # aseprite
-
-    # Wine and Windows Compatibility
+    # Wine and Windows Compatibility (additional tools)
     wine
     winetricks
     protontricks # Proton management
@@ -144,27 +133,20 @@
     moonlight-qt # NVIDIA GameStream client
     parsec-bin # Game streaming
 
-    # Communication
-    discord
+    # Additional Communication (beyond Discord from role)
     teamspeak_client
     mumble
     element-desktop # Matrix client for gaming communities
 
-    # Media and Entertainment
-    vlc
-    mpv
+    # Media and Entertainment (additional to role packages)
     spotify
-    obs-studio # Streaming and recording
 
-    # System Tools
-    htop
-    btop
+    # System Tools (additional monitoring)
     nvtop # GPU monitoring
     lm_sensors # Temperature monitoring
 
-    # File Management
+    # File Management (user-specific)
     filelight # Disk usage analyzer (KDE)
-    # baobab            # Disk usage analyzer (GNOME)
     p7zip
     unrar
 
@@ -172,14 +154,8 @@
     speedtest-cli
     iperf3
 
-    # Gaming Utilities
-    gamemode # Gaming performance optimization
-    mangohud # Gaming overlay
-    goverlay # MangoHud configuration GUI
-
     # Input Devices
     antimicrox # Controller mapping
-    # sc-controller     # Steam Controller support
 
     # Emulation (uncomment as needed)
     # retroarch
@@ -194,9 +170,6 @@
     lshw
     pciutils
     usbutils
-
-    # Web Browser
-    firefox
     # chromium
 
     # Basic Tools
