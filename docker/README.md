@@ -1,5 +1,7 @@
 # NixOS VM Builder Docker Image
 
+🐳 **Now available on Docker Hub: [`olafkfreund/nixos-vm-builder`](https://hub.docker.com/r/olafkfreund/nixos-vm-builder)**
+
 A Docker-based solution for building NixOS virtual machines without installing Nix locally. Perfect for Windows users who want to try NixOS.
 
 ## Quick Start
