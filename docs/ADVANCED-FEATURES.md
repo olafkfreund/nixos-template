@@ -15,7 +15,7 @@ The template now includes several advanced modules that provide enterprise-grade
 
 ## Features
 
-### 🔍 Hardware Detection (`modules.hardware.detection`)
+### Hardware Detection (`modules.hardware.detection`)
 
 Automatically detects and optimizes for your hardware configuration:
 
@@ -48,7 +48,7 @@ modules.hardware.detection = {
 - Virtualization-specific settings
 - Graphics drivers and acceleration
 
-### 📊 Performance Monitoring (`modules.services.monitoring`)
+### Performance Monitoring (`modules.services.monitoring`)
 
 Enterprise-grade monitoring with Prometheus ecosystem:
 
@@ -96,7 +96,7 @@ modules.services.monitoring = {
 - Log aggregation with Loki (optional)
 - Notification system (webhook/email)
 
-### ⚡ Nix Optimization (`modules.core.nixOptimization`)
+### Nix Optimization (`modules.core.nixOptimization`)
 
 Advanced Nix store and build optimization:
 
@@ -184,7 +184,7 @@ nix build .#checks.x86_64-linux.security-check
 - Security validation
 - Performance benchmarking
 
-### 📝 Advanced Module Template
+### Advanced Module Template
 
 Production-ready module development pattern with comprehensive validation:
 

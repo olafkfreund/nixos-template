@@ -6,11 +6,11 @@ This template now provides **zero-configuration hardware optimization** that aut
 
 The NixOS template includes intelligent systems that eliminate manual configuration:
 
-- 🔍 **Hardware Auto-Detection** - Automatically detects memory, CPU, GPU, storage, and platform
-- ⚙️ **Smart Optimization** - Applies optimal settings based on detected hardware
-- 🏗️ **Build Optimization** - Optimizes Nix builds for your hardware capabilities
-- 🔋 **Power Management** - Laptop vs desktop optimizations automatically applied
-- 🛠️ **Debug Tools** - Commands to verify detection and troubleshoot issues
+- **Hardware Auto-Detection** - Automatically detects memory, CPU, GPU, storage, and platform
+- **Smart Optimization** - Applies optimal settings based on detected hardware
+- **Build Optimization** - Optimizes Nix builds for your hardware capabilities
+- **Power Management** - Laptop vs desktop optimizations automatically applied
+- **Debug Tools** - Commands to verify detection and troubleshoot issues
 
 ## Quick Start
 
@@ -24,12 +24,12 @@ hardware.autoOptimization.enable = true;
 
 That's it! Your system will automatically:
 
-✅ Detect hardware capabilities
-✅ Optimize memory management (ZRAM, swap)
-✅ Configure CPU governor and kernel selection
-✅ Install appropriate GPU drivers
-✅ Apply storage-specific optimizations
-✅ Enable platform-appropriate power management
+- Detect hardware capabilities
+- Optimize memory management (ZRAM, swap)
+- Configure CPU governor and kernel selection
+- Install appropriate GPU drivers
+- Apply storage-specific optimizations
+- Enable platform-appropriate power management
 
 ### Verify It's Working
 
@@ -290,15 +290,15 @@ hardware.autoOptimization.enable = true;
 
 ## Benefits Summary
 
-✅ **Zero Configuration** - Works out of the box with optimal settings
-✅ **Hardware Agnostic** - Same configuration works on different hardware
-✅ **Performance Optimized** - Automatically tuned for your specific hardware
-✅ **Power Efficient** - Laptop systems get battery-optimized configurations
-✅ **Build Performance** - Nix builds optimized for your CPU and memory
-✅ **Storage Aware** - Different optimizations for SSD vs HDD systems
-✅ **Override Capable** - Can override detection when needed
-✅ **Debug Friendly** - Tools to verify and troubleshoot detection
-✅ **Module Compatible** - Works with all existing template modules
+- **Zero Configuration** - Works out of the box with optimal settings
+- **Hardware Agnostic** - Same configuration works on different hardware
+- **Performance Optimized** - Automatically tuned for your specific hardware
+- **Power Efficient** - Laptop systems get battery-optimized configurations
+- **Build Performance** - Nix builds optimized for your CPU and memory
+- **Storage Aware** - Different optimizations for SSD vs HDD systems
+- **Override Capable** - Can override detection when needed
+- **Debug Friendly** - Tools to verify and troubleshoot detection
+- **Module Compatible** - Works with all existing template modules
 
 The zero-configuration approach makes NixOS accessible to users without deep hardware knowledge while maintaining the flexibility that power users expect.
 

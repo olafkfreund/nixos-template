@@ -120,10 +120,10 @@ The system identification module provides useful commands:
 
 ```bash
 $ system-id
-🏗️  System Identification
+System Identification
 ========================
 
-📋 Basic Information:
+Basic Information:
   Hostname: nixos-vm-development
   Profile: development
   Type: vm
@@ -131,9 +131,9 @@ $ system-id
   Location: Home Lab
   Description: Development VM for testing
 
-🏷️  Tags: gpu-enabled, development, testing
+Tags: gpu-enabled, development, testing
 
-🖥️  Platform:
+Platform:
   Architecture: x86_64
   Kernel: 6.1.55
   NixOS State Version: 25.05
@@ -143,7 +143,7 @@ $ system-id
   Flake Rev: a1b2c3d
   Nixpkgs Rev: 4e5f6a7
 
-⚙️  Configuration:
+Configuration:
   Config Path: /etc/nixos
   System Type Prefix: enabled
   Flake Integration: enabled
@@ -153,7 +153,7 @@ $ system-id
 
 ```bash
 $ system-tags
-🏷️  System Tags Management
+System Tags Management
 =========================
 
 Current tags: gpu-enabled, development, testing

@@ -2,8 +2,8 @@
 
 A modular NixOS configuration template using flakes, featuring:
 
-- **🔍 Zero-Configuration Hardware Optimization** - Automatically detects and optimizes for your specific hardware
-- **🪟 Windows VM Builder** - Docker-based NixOS VM builder for Windows users (no Nix installation required)
+- **Zero-Configuration Hardware Optimization** - Automatically detects and optimizes for your specific hardware
+- **Windows VM Builder** - Docker-based NixOS VM builder for Windows users (no Nix installation required)
 - **VM Testing Ready** - Full desktop environment testing in VMs (works on any OS)
 - **Custom ISO Creation** - Build installer ISOs with preconfigured templates
 - **Interactive Installers** - Template selection and automated deployment
@@ -54,7 +54,7 @@ A modular NixOS configuration template using flakes, featuring:
 
 ## Quick Start
 
-> **🎯 New! Zero-Configuration Hardware Optimization** - This template now automatically detects and optimizes your hardware without manual configuration. Simply enable `hardware.autoOptimization.enable = true;` in any configuration. **[Learn More →](docs/ZERO-CONFIGURATION.md)**
+> **New! Zero-Configuration Hardware Optimization** - This template now automatically detects and optimizes your hardware without manual configuration. Simply enable `hardware.autoOptimization.enable = true;` in any configuration. **[Learn More →](docs/ZERO-CONFIGURATION.md)**
 
 ### Zero-Configuration Hardware Optimization
 
@@ -67,11 +67,11 @@ hardware.autoOptimization.enable = true;
 
 **What it automatically detects and optimizes:**
 
-- 💾 **Memory**: RAM-based ZRAM, swap, and kernel parameter tuning
-- 🏗️ **CPU**: Governor selection, kernel choice, and build parallelism
-- 🖥️ **GPU**: Automatic driver installation (NVIDIA, AMD, Intel)
-- 💿 **Storage**: SSD vs HDD optimizations and I/O scheduler selection
-- 🔋 **Platform**: Laptop vs desktop power management differences
+- **Memory**: RAM-based ZRAM, swap, and kernel parameter tuning
+- **CPU**: Governor selection, kernel choice, and build parallelism
+- **GPU**: Automatic driver installation (NVIDIA, AMD, Intel)
+- **Storage**: SSD vs HDD optimizations and I/O scheduler selection
+- **Platform**: Laptop vs desktop power management differences
 
 **Hardware-specific examples:**
 
@@ -93,7 +93,7 @@ hardware-detection-info
 
 ### Windows Users (Try NixOS VMs)
 
-**🪟 Windows users can now try NixOS without installing Nix!** Download pre-built virtual machines or use Docker to build custom VMs:
+**Windows users can now try NixOS without installing Nix!** Download pre-built virtual machines or use Docker to build custom VMs:
 
 #### Option 1: Download Pre-built VMs (Easiest)
 

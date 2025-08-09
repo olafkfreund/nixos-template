@@ -16,7 +16,7 @@ This step-by-step guide shows Windows users how to run NixOS virtual machines wi
 
 #### Option A: VirtualBox (Recommended for Beginners)
 
-**✅ Best for**: First-time users, free option, works on all Windows versions
+**Best for**: First-time users, free option, works on all Windows versions
 
 1. **Download VirtualBox**: Visit [virtualbox.org](https://www.virtualbox.org/wiki/Downloads)
 1. **Install VirtualBox**: Run the installer with default settings
@@ -24,14 +24,14 @@ This step-by-step guide shows Windows users how to run NixOS virtual machines wi
 
 #### Option B: VMware Workstation (Professional Users)
 
-**✅ Best for**: Better performance, professional use
+**Best for**: Better performance, professional use
 
 1. **Download VMware**: [VMware Workstation Pro](https://www.vmware.com/products/workstation-pro.html)
 1. **30-day trial** available for testing
 
 #### Option C: Hyper-V (Windows Pro/Enterprise)
 
-**✅ Best for**: Windows Pro users, native Microsoft virtualization
+**Best for**: Windows Pro users, native Microsoft virtualization
 
 1. **Enable Hyper-V**: Open PowerShell as Administrator:
 
@@ -94,7 +94,7 @@ This step-by-step guide shows Windows users how to run NixOS virtual machines wi
 1. **Default credentials**:
    - **Username**: `nixos`
    - **Password**: `nixos`
-1. **⚠️ IMPORTANT**: Change password immediately:
+1. **IMPORTANT**: Change password immediately:
 
    ```bash
    passwd
@@ -179,7 +179,7 @@ docker run --rm ghcr.io/olafkfreund/nixos-vm-builder:latest --help
 
 ## What's Included in Each Template
 
-### 🖥️ Desktop Template
+### Desktop Template
 
 **Perfect for**: First-time NixOS users, general desktop use
 
@@ -197,7 +197,7 @@ docker run --rm ghcr.io/olafkfreund/nixos-vm-builder:latest --help
 
 **System specs**: 20GB disk, 4GB RAM
 
-### 🎮 Gaming Template
+### Gaming Template
 
 **Perfect for**: Gamers wanting to try Linux gaming
 
@@ -214,7 +214,7 @@ docker run --rm ghcr.io/olafkfreund/nixos-vm-builder:latest --help
 
 **System specs**: 80GB disk, 8GB RAM
 
-### 💻 Development Template
+### Development Template
 
 **Perfect for**: Programmers and developers
 
@@ -230,7 +230,7 @@ docker run --rm ghcr.io/olafkfreund/nixos-vm-builder:latest --help
 
 **System specs**: 60GB disk, 6GB RAM
 
-### 🖧 Server Template
+### Server Template
 
 **Perfect for**: Learning Linux server administration
 
@@ -246,7 +246,7 @@ docker run --rm ghcr.io/olafkfreund/nixos-vm-builder:latest --help
 
 **System specs**: 40GB disk, 2GB RAM
 
-### ⚡ Minimal Template
+### Minimal Template
 
 **Perfect for**: Learning NixOS basics, low-resource systems
 
@@ -478,4 +478,4 @@ docker run --rm ghcr.io/olafkfreund/nixos-vm-builder:latest --help
 
 **Need help?** Join the NixOS community or create an issue in this repository.
 
-Built with ❄️ NixOS - Welcome to the future of Linux! 🚀
+Built with NixOS - Welcome to the future of Linux!

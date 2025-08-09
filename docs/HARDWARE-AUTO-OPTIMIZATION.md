@@ -270,7 +270,7 @@ modules = {
 
 ```bash
 $ hw-info
-🔍 Quick Hardware Info
+Quick Hardware Info
 ====================
 Memory: 16GB | CPU: 8 cores | Desktop | SSD
 ```
@@ -279,25 +279,25 @@ Memory: 16GB | CPU: 8 cores | Desktop | SSD
 
 ```bash
 $ hardware-detection-info
-🔍 Hardware Detection Results
+Hardware Detection Results
 ============================
 
-💾 Memory: 16 GB
-🏗️  CPU Cores: 8
-💻 Is Laptop: No
-🖥️  Has NVIDIA GPU: Yes
-🖥️  Has AMD GPU: No
-🖥️  Has Intel GPU: No
-💿 Has SSD: Yes
+Memory: 16 GB
+CPU Cores: 8
+Is Laptop: No
+Has NVIDIA GPU: Yes
+Has AMD GPU: No
+Has Intel GPU: No
+Has SSD: Yes
 
-⚙️  Applied Optimizations:
+Applied Optimizations:
   ZRAM: 25% of RAM
   CPU Governor: performance
   Build Cores: 8
   Build Jobs: auto
   Kernel Package: linuxPackages_latest
 
-📋 Hardware Info File: /etc/hardware-optimization-info
+Hardware Info File: /etc/hardware-optimization-info
 ```
 
 ### Hardware Detection Debug Data
@@ -433,12 +433,12 @@ modules.hardware.autoOptimization = {
 
 ## Benefits
 
-✅ **Zero Configuration** - Works out of the box with sensible defaults
-✅ **Automatic Optimization** - Detects hardware and applies best practices
-✅ **Performance Tuning** - Optimizes for detected hardware capabilities
-✅ **Power Efficiency** - Laptop systems get battery-optimized settings
-✅ **Build Performance** - Optimizes Nix build parallelism for hardware
-✅ **Storage Optimization** - SSD vs HDD aware configurations
-✅ **Debug Support** - Tools to verify detection and troubleshoot issues
+- **Zero Configuration** - Works out of the box with sensible defaults
+- **Automatic Optimization** - Detects hardware and applies best practices
+- **Performance Tuning** - Optimizes for detected hardware capabilities
+- **Power Efficiency** - Laptop systems get battery-optimized settings
+- **Build Performance** - Optimizes Nix build parallelism for hardware
+- **Storage Optimization** - SSD vs HDD aware configurations
+- **Debug Support** - Tools to verify detection and troubleshoot issues
 
 The auto-optimization module makes NixOS installations more user-friendly by eliminating the need for manual hardware-specific tuning while still allowing overrides when needed.

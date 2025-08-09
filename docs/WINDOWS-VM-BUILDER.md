@@ -6,11 +6,11 @@ This guide helps Windows users create NixOS virtual machines without installing 
 
 The NixOS VM Builder provides:
 
-- 🐳 **Docker-based Building** - No need to install Nix on Windows
-- 🎯 **Multiple VM Templates** - Desktop, server, gaming, minimal, and development configurations
-- 🖥️ **Multi-Platform Support** - VirtualBox, Hyper-V, VMware, and QEMU formats
-- ⚡ **Automated Builds** - Pre-built images available via GitHub releases
-- 🔧 **Customizable** - Modify templates for your specific needs
+- **Docker-based Building** - No need to install Nix on Windows
+- **Multiple VM Templates** - Desktop, server, gaming, minimal, and development configurations
+- **Multi-Platform Support** - VirtualBox, Hyper-V, VMware, and QEMU formats
+- **Automated Builds** - Pre-built images available via GitHub releases
+- **Customizable** - Modify templates for your specific needs
 
 ## Quick Start (Pre-built Images)
 
@@ -420,4 +420,4 @@ docker run --rm -v "${PWD}:/workspace" ghcr.io/your-repo/nixos-vm-builder:latest
 - Ask questions in [Discussions](https://github.com/your-repo/nixos-template/discussions)
 - Join the NixOS community Discord
 
-Built with ❄️ NixOS and 🐳 Docker
+Built with NixOS and Docker

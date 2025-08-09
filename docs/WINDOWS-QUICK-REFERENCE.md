@@ -2,7 +2,7 @@
 
 Quick reference for Windows users wanting to try NixOS virtual machines.
 
-## 🚀 Quick Start (2 Minutes)
+## Quick Start (2 Minutes)
 
 ### Method 1: Pre-built VMs (Easiest)
 
@@ -23,7 +23,7 @@ cd C:\NixOS-VMs
 docker run --rm -v "${PWD}:/workspace" ghcr.io/olafkfreund/nixos-vm-builder:latest virtualbox --template desktop
 ```
 
-## 📋 VM Templates
+## VM Templates
 
 | Template        | Size | Description   | Best For    |
 | --------------- | ---- | ------------- | ----------- |
@@ -33,7 +33,7 @@ docker run --rm -v "${PWD}:/workspace" ghcr.io/olafkfreund/nixos-vm-builder:late
 | **Server**      | 40GB | CLI only      | Servers     |
 | **Minimal**     | 10GB | Basic system  | Learning    |
 
-## 🖥️ VM Platform Support
+## VM Platform Support
 
 | Platform       | File Format | Windows Version |
 | -------------- | ----------- | --------------- |
@@ -42,7 +42,7 @@ docker run --rm -v "${PWD}:/workspace" ghcr.io/olafkfreund/nixos-vm-builder:late
 | **VMware**     | `.vmdk`     | All Windows     |
 | **QEMU**       | `.qcow2`    | Advanced users  |
 
-## ⚡ Common Commands
+## Common Commands
 
 ```powershell
 # List available templates
