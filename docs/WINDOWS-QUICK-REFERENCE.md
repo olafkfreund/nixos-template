@@ -20,7 +20,7 @@ Quick reference for Windows users wanting to try NixOS virtual machines.
 # 2. Build VM
 mkdir C:\NixOS-VMs
 cd C:\NixOS-VMs
-docker run --rm -v "${PWD}:/workspace" ghcr.io/olafkfreund/nixos-vm-builder:latest virtualbox --template desktop
+docker run --rm -v "${PWD}:/workspace" olafkfreund/nixos-vm-builder:latest virtualbox --template desktop
 ```
 
 ## VM Templates
@@ -46,13 +46,13 @@ docker run --rm -v "${PWD}:/workspace" ghcr.io/olafkfreund/nixos-vm-builder:late
 
 ```powershell
 # List available templates
-docker run --rm ghcr.io/olafkfreund/nixos-vm-builder:latest --list-templates
+docker run --rm olafkfreund/nixos-vm-builder:latest --list-templates
 
 # Build specific template
-docker run --rm -v "${PWD}:/workspace" ghcr.io/olafkfreund/nixos-vm-builder:latest [FORMAT] --template [TEMPLATE]
+docker run --rm -v "${PWD}:/workspace" olafkfreund/nixos-vm-builder:latest [FORMAT] --template [TEMPLATE]
 
 # Build all formats
-docker run --rm -v "${PWD}:/workspace" ghcr.io/olafkfreund/nixos-vm-builder:latest all --template desktop
+docker run --rm -v "${PWD}:/workspace" olafkfreund/nixos-vm-builder:latest all --template desktop
 ```
 
 ## First Steps in NixOS

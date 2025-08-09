@@ -148,13 +148,13 @@ This step-by-step guide shows Windows users how to run NixOS virtual machines wi
 1. **Pull the VM builder**:
 
    ```powershell
-   docker pull ghcr.io/olafkfreund/nixos-vm-builder:latest
+   docker pull olafkfreund/nixos-vm-builder:latest
    ```
 
 1. **Build a desktop VM**:
 
    ```powershell
-   docker run --rm -v "${PWD}:/workspace" ghcr.io/olafkfreund/nixos-vm-builder:latest virtualbox --template desktop
+   docker run --rm -v "${PWD}:/workspace" olafkfreund/nixos-vm-builder:latest virtualbox --template desktop
    ```
 
 1. **Wait for build** (30-60 minutes depending on template)
@@ -165,16 +165,16 @@ This step-by-step guide shows Windows users how to run NixOS virtual machines wi
 
 ```powershell
 # Build for Hyper-V with custom specs
-docker run --rm -v "${PWD}:/workspace" ghcr.io/olafkfreund/nixos-vm-builder:latest hyperv --template server --disk-size 40960 --memory 4096
+docker run --rm -v "${PWD}:/workspace" olafkfreund/nixos-vm-builder:latest hyperv --template server --disk-size 40960 --memory 4096
 
 # Build gaming VM for VMware
-docker run --rm -v "${PWD}:/workspace" ghcr.io/olafkfreund/nixos-vm-builder:latest vmware --template gaming
+docker run --rm -v "${PWD}:/workspace" olafkfreund/nixos-vm-builder:latest vmware --template gaming
 
 # Build development environment
-docker run --rm -v "${PWD}:/workspace" ghcr.io/olafkfreund/nixos-vm-builder:latest virtualbox --template development
+docker run --rm -v "${PWD}:/workspace" olafkfreund/nixos-vm-builder:latest virtualbox --template development
 
 # See all options
-docker run --rm ghcr.io/olafkfreund/nixos-vm-builder:latest --help
+docker run --rm olafkfreund/nixos-vm-builder:latest --help
 ```
 
 ## What's Included in Each Template

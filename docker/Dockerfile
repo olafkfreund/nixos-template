@@ -14,7 +14,9 @@ RUN mkdir -p $NIX_CONF_DIR && \
 
 # Install nixos-generators and required tools
 RUN nix profile install github:nix-community/nixos-generators/${NIXOS_GENERATORS_VERSION} && \
-    nix profile install nixpkgs#jq nixpkgs#curl nixpkgs#git
+    nix profile install nixpkgs#jq --priority 4 && \
+    nix profile install nixpkgs#git --priority 4 && \
+    nix profile install nixpkgs#curl --priority 4
 
 # Create directories
 RUN mkdir -p /scripts /workspace /templates /output

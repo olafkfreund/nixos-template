@@ -117,10 +117,10 @@ mkdir C:\NixOS-VMs
 cd C:\NixOS-VMs
 
 # Build desktop VM
-docker run --rm -v "${PWD}:/workspace" ghcr.io/olafkfreund/nixos-vm-builder:latest virtualbox --template desktop
+docker run --rm -v "${PWD}:/workspace" olafkfreund/nixos-vm-builder:latest virtualbox --template desktop
 
 # Build for Hyper-V
-docker run --rm -v "${PWD}:/workspace" ghcr.io/olafkfreund/nixos-vm-builder:latest hyperv --template server
+docker run --rm -v "${PWD}:/workspace" olafkfreund/nixos-vm-builder:latest hyperv --template server
 ```
 
 **[Complete Windows How-To Guide →](docs/WINDOWS-HOWTO.md)**

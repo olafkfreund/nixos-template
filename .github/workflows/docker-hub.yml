@@ -1,0 +1,204 @@
+name: Build and Push to Docker Hub
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docker/**"
+      - ".github/workflows/docker-hub.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "docker/**"
+      - ".github/workflows/docker-hub.yml"
+  schedule:
+    # Build weekly on Sundays at 03:00 UTC (after GHCR build)
+    - cron: "0 3 * * 0"
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: "Publish to Docker Hub"
+        required: false
+        default: "true"
+        type: boolean
+
+env:
+  DOCKER_HUB_IMAGE: olafkfreund/nixos-vm-builder
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.DOCKER_HUB_IMAGE }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=schedule,pattern=weekly-{{date 'YYYYMMDD'}}
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value={{date 'YYYY.MM.DD'}},enable={{is_default_branch}}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./docker
+          platforms: linux/amd64,linux/arm64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Create Docker Hub README
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: |
+          # Create README for Docker Hub
+          cat > docker-hub-readme.md << 'EOF'
+          # NixOS VM Builder for Windows Users
+
+          🐳 **Docker image for building NixOS VMs without installing Nix locally**
+
+          Perfect for Windows users who want to try NixOS without the complexity of local Nix installation.
+
+          ## Quick Start
+
+          ```bash
+          # Pull the latest image
+          docker pull olafkfreund/nixos-vm-builder:latest
+
+          # Build a VirtualBox VM with desktop template
+          docker run --rm -v "${PWD}:/workspace" \
+            olafkfreund/nixos-vm-builder:latest \
+            virtualbox -t desktop
+
+          # Build all formats with minimal template
+          docker run --rm -v "${PWD}:/workspace" \
+            olafkfreund/nixos-vm-builder:latest \
+            all -t minimal
+          ```
+
+          ## Supported VM Formats
+
+          - **VirtualBox** (.ova) - Import with File → Import Appliance
+          - **Hyper-V** (.vhdx) - Use as virtual hard disk in new VM
+          - **VMware** (.vmdk) - Use as virtual disk in new VM
+          - **QEMU** (.qcow2) - Run with qemu-system-x86_64
+
+          ## Available Templates
+
+          | Template | Description | Use Case |
+          |----------|-------------|----------|
+          | `desktop` | Full GNOME desktop environment | General desktop use |
+          | `server` | Headless server configuration | Server deployments |
+          | `gaming` | Steam + gaming optimizations | Gaming desktop |
+          | `minimal` | Minimal CLI-only system | Lightweight testing |
+          | `development` | Programming tools & Docker | Development work |
+
+          ## Usage Examples
+
+          ### Windows PowerShell
+          ```powershell
+          # Build VirtualBox desktop VM
+          docker run --rm -v "${PWD}:/workspace" olafkfreund/nixos-vm-builder:latest virtualbox -t desktop
+
+          # Build Hyper-V server VM with custom specs
+          docker run --rm -v "${PWD}:/workspace" olafkfreund/nixos-vm-builder:latest hyperv -t server -s 40960 -m 8192
+          ```
+
+          ### Windows Command Prompt
+          ```cmd
+          REM Build VMware gaming VM
+          docker run --rm -v "%CD%:/workspace" olafkfreund/nixos-vm-builder:latest vmware -t gaming
+
+          REM List all available templates
+          docker run --rm olafkfreund/nixos-vm-builder:latest --list-templates
+          ```
+
+          ## Default Credentials
+
+          All VMs are created with:
+          - **Username**: `nixos`
+          - **Password**: `nixos`
+
+          ⚠️ **Change the default password immediately after first login!**
+
+          ## Custom Configuration
+
+          You can provide your own NixOS configuration:
+
+          ```bash
+          # Place your configuration.nix in current directory
+          docker run --rm -v "${PWD}:/workspace" \
+            olafkfreund/nixos-vm-builder:latest \
+            virtualbox -c /workspace/configuration.nix
+          ```
+
+          ## Output Files
+
+          VMs are saved to the current directory with naming pattern:
+          `nixos-{vm-name}-{format}.{extension}`
+
+          ## System Requirements
+
+          - **Docker Desktop** (Windows/Mac/Linux)
+          - **4GB+ RAM** for building VMs
+          - **10GB+ disk space** per VM format
+          - **Virtualization support** for running the VMs
+
+          ## Source Code
+
+          This Docker image is built from: [nixos-template repository](https://github.com/olafkfreund/nixos-template)
+
+          ## Support
+
+          - 📖 [Full Documentation](https://github.com/olafkfreund/nixos-template/blob/main/docs/WINDOWS-HOWTO.md)
+          - 🐛 [Report Issues](https://github.com/olafkfreund/nixos-template/issues)
+          - 💬 [Discussions](https://github.com/olafkfreund/nixos-template/discussions)
+
+          ---
+
+          **Built with ❄️ NixOS | Ready for 🪟 Windows**
+          EOF
+
+      - name: Update Docker Hub description
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+          repository: ${{ env.DOCKER_HUB_IMAGE }}
+          readme-filepath: ./docker-hub-readme.md
+
+      - name: Test built image
+        if: success()
+        run: |
+          echo "Testing Docker image functionality..."
+
+          # Test help command
+          docker run --rm ${{ env.DOCKER_HUB_IMAGE }}:latest --help
+
+          # Test template listing
+          docker run --rm ${{ env.DOCKER_HUB_IMAGE }}:latest --list-templates
+
+          # Test validation mode
+          docker run --rm ${{ env.DOCKER_HUB_IMAGE }}:latest virtualbox -t minimal --validate-only
+
+          echo "✅ All tests passed!"

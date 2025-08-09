@@ -49,13 +49,13 @@ The NixOS VM Builder provides:
 1. **Pull the builder image**:
 
    ```powershell
-   docker pull ghcr.io/your-repo/nixos-vm-builder:latest
+   docker pull olafkfreund/nixos-vm-builder:latest
    ```
 
 1. **Build a desktop VM**:
 
    ```powershell
-   docker run --rm -v "${PWD}:/workspace" ghcr.io/your-repo/nixos-vm-builder:latest virtualbox --template desktop
+   docker run --rm -v "${PWD}:/workspace" olafkfreund/nixos-vm-builder:latest virtualbox --template desktop
    ```
 
 1. **Find your VM**: Check the `output/` directory for the generated `.ova` file
@@ -204,32 +204,32 @@ qemu-system-x86_64 -m 4096 -hda nixos-desktop.qcow2 -enable-kvm
 
 ```powershell
 # Build specific template and format
-docker run --rm -v "${PWD}:/workspace" ghcr.io/your-repo/nixos-vm-builder:latest <FORMAT> --template <TEMPLATE>
+docker run --rm -v "${PWD}:/workspace" olafkfreund/nixos-vm-builder:latest <FORMAT> --template <TEMPLATE>
 
 # Examples:
-docker run --rm -v "${PWD}:/workspace" ghcr.io/your-repo/nixos-vm-builder:latest virtualbox --template desktop
-docker run --rm -v "${PWD}:/workspace" ghcr.io/your-repo/nixos-vm-builder:latest hyperv --template server
-docker run --rm -v "${PWD}:/workspace" ghcr.io/your-repo/nixos-vm-builder:latest vmware --template gaming
+docker run --rm -v "${PWD}:/workspace" olafkfreund/nixos-vm-builder:latest virtualbox --template desktop
+docker run --rm -v "${PWD}:/workspace" olafkfreund/nixos-vm-builder:latest hyperv --template server
+docker run --rm -v "${PWD}:/workspace" olafkfreund/nixos-vm-builder:latest vmware --template gaming
 ```
 
 ### Advanced Build Options
 
 ```powershell
 # Custom VM specifications
-docker run --rm -v "${PWD}:/workspace" ghcr.io/your-repo/nixos-vm-builder:latest virtualbox `
+docker run --rm -v "${PWD}:/workspace" olafkfreund/nixos-vm-builder:latest virtualbox `
   --template desktop `
   --disk-size 40960 `
   --memory 8192 `
   --vm-name my-custom-desktop
 
 # Build all formats at once
-docker run --rm -v "${PWD}:/workspace" ghcr.io/your-repo/nixos-vm-builder:latest all --template development
+docker run --rm -v "${PWD}:/workspace" olafkfreund/nixos-vm-builder:latest all --template development
 
 # List available templates
-docker run --rm ghcr.io/your-repo/nixos-vm-builder:latest --list-templates
+docker run --rm olafkfreund/nixos-vm-builder:latest --list-templates
 
 # Validate configuration only
-docker run --rm -v "${PWD}:/workspace" ghcr.io/your-repo/nixos-vm-builder:latest --validate-only --template server
+docker run --rm -v "${PWD}:/workspace" olafkfreund/nixos-vm-builder:latest --validate-only --template server
 ```
 
 ### Custom Configuration Files
@@ -256,7 +256,7 @@ docker run --rm -v "${PWD}:/workspace" ghcr.io/your-repo/nixos-vm-builder:latest
 1. **Build with custom config**:
 
    ```powershell
-   docker run --rm -v "${PWD}:/workspace" ghcr.io/your-repo/nixos-vm-builder:latest virtualbox `
+   docker run --rm -v "${PWD}:/workspace" olafkfreund/nixos-vm-builder:latest virtualbox `
      --config /workspace/custom-config.nix
    ```
 
