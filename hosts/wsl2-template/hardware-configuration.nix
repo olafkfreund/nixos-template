@@ -67,12 +67,14 @@
 
   # Power management not applicable in WSL2
   powerManagement.enable = false;
-  services.thermald.enable = false;
-  services.auto-cpufreq.enable = false;
-
-  # Location services not available
-  services.geoclue2.enable = false;
-
-  # No real time clock in WSL2
-  services.timesyncd.enable = true;
+  
+  # WSL2-specific service configuration
+  services = {
+    thermald.enable = false;
+    auto-cpufreq.enable = false;
+    # Location services not available
+    geoclue2.enable = false;
+    # No real time clock in WSL2
+    timesyncd.enable = true;
+  };
 }

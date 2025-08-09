@@ -6,30 +6,30 @@ with lib;
 
 let
   cfg = config.packages.darwin;
-  
+
   # Common Homebrew configuration shared across all profiles
   baseHomebrew = {
     enable = true;
-    
+
     global = {
       brewfile = true;
       lockfiles = true;
     };
-    
+
     onActivation = {
       autoUpdate = true;
       upgrade = true;
       cleanup = "zap";
     };
-    
+
     # Base taps needed across all profiles
     taps = [
       "homebrew/cask"
-      "homebrew/cask-fonts" 
+      "homebrew/cask-fonts"
       "homebrew/services"
       "homebrew/cask-versions"
     ];
-    
+
     # Environment configuration
     extraConfig = ''
       export HOMEBREW_NO_ANALYTICS=1
@@ -38,7 +38,8 @@ let
     '';
   };
 
-in {
+in
+{
   options.packages.darwin = {
     profiles = {
       essential = {
@@ -62,8 +63,8 @@ in {
       development = {
         enable = mkEnableOption "Development packages and tools";
         languages = mkOption {
-          type = types.listOf (types.enum ["node" "python" "go" "rust" "java" "php" "ruby"]);
-          default = ["node" "python"];
+          type = types.listOf (types.enum [ "node" "python" "go" "rust" "java" "php" "ruby" ]);
+          default = [ "node" "python" ];
           description = "Programming languages to include";
         };
         databases = mkOption {
@@ -81,8 +82,8 @@ in {
       server = {
         enable = mkEnableOption "Server administration packages";
         cloud = mkOption {
-          type = types.listOf (types.enum ["aws" "gcp" "azure" "digitalocean"]);
-          default = ["aws"];
+          type = types.listOf (types.enum [ "aws" "gcp" "azure" "digitalocean" ]);
+          default = [ "aws" ];
           description = "Cloud provider tools to include";
         };
       };
@@ -103,7 +104,7 @@ in {
         default = false;
         description = "Enable additional security-focused Homebrew packages";
       };
-      
+
       enableGameDevelopment = mkOption {
         type = types.bool;
         default = false;
@@ -124,32 +125,32 @@ in {
         gawk
         curl
         wget
-        
+
         # Archive and compression
         unzip
         p7zip
-        
+
         # Text processing
         ripgrep
         fd
         bat
         jq
-        
+
         # System monitoring
         htop
         tree
-        
+
         # Network tools
         nmap
-        
+
         # Git (always essential)
         git
         gh
-        
+
         # Shell and terminal
         zsh
         tmux
-        
+
         # Essential macOS utilities
         (writeShellScriptBin "mac-info" ''
           echo "🍎 macOS System Information"
@@ -186,12 +187,12 @@ in {
           # Browsers
           "firefox"
           "google-chrome"
-          
+
           # System utilities
           "the-unarchiver"
           "raycast"
           "rectangle"
-          
+
           # Communication
           "slack"
           "telegram"
@@ -211,14 +212,14 @@ in {
         # Media and graphics
         imagemagick
         ffmpeg
-        
+
         # Office and productivity (CLI tools)
         pandoc
         texlive.combined.scheme-medium
-        
+
         # Desktop-specific utilities
         neofetch
-        
+
         (writeShellScriptBin "desktop-setup" ''
           echo "🖥️  Desktop Environment Setup"
           echo "============================="
@@ -261,7 +262,7 @@ in {
           "visual-studio-code"
           "github-desktop"
           "postman"
-          
+
           # Design and creativity
           "figma"
           "canva"
@@ -276,11 +277,11 @@ in {
           "Keynote" = 409183694;
           "Numbers" = 409203825;
           "Pages" = 409201541;
-          
+
           # Development
           "Xcode" = 497799835;
           "TestFlight" = 899247664;
-          
+
           # Design
           "Pixelmator Pro" = 1289583905;
         } // optionalAttrs cfg.profiles.desktop.includeCreative {
@@ -314,11 +315,11 @@ in {
         # Version control
         git-lfs
         lazygit
-        
+
         # Text editors
         vim
         neovim
-        
+
         # Development utilities
         (writeShellScriptBin "dev-env-setup" ''
           echo "🚀 Development Environment Setup"
@@ -340,7 +341,7 @@ in {
           echo "✅ Development environment ready!"
           echo "📁 Development directories created in ~/Development/"
         '')
-      ] 
+      ]
       # Programming languages
       ++ optionals (elem "node" cfg.profiles.development.languages) [
         nodejs_20
@@ -400,12 +401,12 @@ in {
           "jetbrains-toolbox"
           "github-desktop"
           "sourcetree"
-          
+
           # API and database tools
           "postman"
           "tableplus"
           "redis-insight"
-          
+
           # Containerization
         ] ++ optionals cfg.profiles.development.docker [
           "docker"
@@ -429,33 +430,33 @@ in {
         nethogs
         iftop
         ncdu
-        
+
         # Network tools
         netcat
         socat
         traceroute
         tcpdump
-        
+
         # Log analysis
         multitail
-        
+
         # Security
         nftables
         fail2ban
-        
+
         # Performance monitoring
         sysstat
-        
+
         # Text processing for server management
         yq
-        
+
         # Backup tools
         restic
         borgbackup
-        
+
         # Process management
         tmux
-        
+
         # Server management utilities
         (writeShellScriptBin "server-status" ''
           echo "🖥️  Server Status Report"
@@ -545,7 +546,7 @@ in {
           
           echo "✅ Laptop optimization complete!"
         '')
-        
+
         (writeShellScriptBin "battery-info" ''
           echo "🔋 Battery Detailed Information"
           echo "==============================="
@@ -576,7 +577,7 @@ in {
           # Battery management tools
           "coconutbattery"
           "aldente"
-          
+
           # Lightweight alternatives
           "rectangle" # Instead of heavier window managers
         ];
@@ -587,7 +588,7 @@ in {
     (mkIf cfg.homebrew.enableExtraSecurityTools {
       homebrew.casks = [
         "1password"
-        "malwarebytes" 
+        "malwarebytes"
         "protonvpn"
         "lulu" # Network monitor
       ];
@@ -600,7 +601,7 @@ in {
         "blender"
         "godot"
       ];
-      
+
       homebrew.masApps = {
         "Logic Pro" = 634148309; # Audio for games
       };
@@ -613,11 +614,11 @@ in {
         HOMEBREW_PREFIX = if pkgs.stdenv.hostPlatform.isAarch64 then "/opt/homebrew" else "/usr/local";
         HOMEBREW_CELLAR = if pkgs.stdenv.hostPlatform.isAarch64 then "/opt/homebrew/Cellar" else "/usr/local/Cellar";
         HOMEBREW_REPOSITORY = if pkgs.stdenv.hostPlatform.isAarch64 then "/opt/homebrew" else "/usr/local/Homebrew";
-        
+
         # Privacy settings
         HOMEBREW_NO_ANALYTICS = "1";
         HOMEBREW_NO_INSECURE_REDIRECT = "1";
-        
+
         # Performance settings
         HOMEBREW_INSTALL_CLEANUP = "1";
         HOMEBREW_BUNDLE_FILE_GLOBAL = "$HOME/.config/Brewfile";
@@ -649,7 +650,7 @@ in {
           
           echo "✅ Homebrew maintenance complete!"
         '')
-        
+
         (writeShellScriptBin "package-audit" ''
           echo "🔍 System Package Audit"
           echo "======================="

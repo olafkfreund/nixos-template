@@ -24,13 +24,13 @@
       };
       development = {
         enable = true;
-        languages = ["node" "python" "go" "rust"];
+        languages = [ "node" "python" "go" "rust" ];
         databases = true;
         docker = true;
       };
       server = {
         enable = true; # Desktop users often need server tools
-        cloud = ["aws"];
+        cloud = [ "aws" ];
       };
     };
   };

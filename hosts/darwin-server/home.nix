@@ -22,10 +22,93 @@
         homeDirectory = lib.mkDefault "/Users/admin";
       };
 
-      # Override git configuration for Darwin server administration
-      programs.git = {
-        userName = "Darwin Server Admin";
-        userEmail = "admin@darwin-server.local";
+      # Darwin server-specific program configurations
+      programs = {
+        # Override git configuration for Darwin server administration
+        git = {
+          userName = "Darwin Server Admin";
+          userEmail = "admin@darwin-server.local";
+        };
+
+        # Darwin server-specific zsh configuration
+        zsh = {
+          # Darwin server-specific shell aliases (extends server profile)
+          shellAliases = {
+            # Service management (Homebrew on Darwin)
+            services = "brew services list";
+            start-pg = "brew services start postgresql";
+            stop-pg = "brew services stop postgresql";
+            start-redis = "brew services start redis";
+            stop-redis = "brew services stop redis";
+
+            # Database connections
+            pg = "psql -U postgres";
+            redis = "redis-cli";
+            mongo = "mongosh";
+
+            # Network and connectivity (Darwin-specific)
+            ip = "curl -s ifconfig.me && echo";
+            ping-test = "ping -c 3 8.8.8.8";
+            dns-flush = "sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder";
+
+            # Darwin system monitoring
+            mem = "vm_stat";
+            ports = "lsof -i -P | grep LISTEN";
+
+            # Log monitoring (Darwin-specific)
+            logs-sys = "log stream --level=info";
+            logs-tail = "tail -f /usr/local/var/log/nginx/access.log";
+
+            # Darwin cleanup
+            cleanup = "brew cleanup && docker system prune -f && nix-collect-garbage -d";
+          };
+
+          # Darwin server-specific zsh enhancements
+          initExtra = ''
+            # Darwin server environment setup
+            export SERVER_TYPE="darwin"
+            export HOMEBREW_NO_AUTO_UPDATE=1
+
+            # Darwin-specific monitoring function
+            server_status() {
+              echo "🖥️  Darwin Server Status"
+              echo "======================"
+              echo "System Load: $(uptime | awk '{print $10 $11 $12}')"
+              echo "Memory: $(vm_stat | head -1)"
+              echo "Disk Usage: $(df -h / | tail -1 | awk '{print $5}')"
+              echo "Docker Status: $(docker info >/dev/null 2>&1 && echo 'Running' || echo 'Stopped')"
+              echo ""
+              echo "Active Services:"
+              brew services list | grep started
+              echo ""
+              echo "Network Connections:"
+              lsof -i -P | grep LISTEN | head -10
+            }
+
+            # Darwin-specific aliases for server management
+            alias server-status='server_status'
+            alias server-logs='tail -f /usr/local/var/log/*.log'
+            alias server-restart='sudo shutdown -r now'
+          '';
+        };
+
+        # Darwin server-specific tmux configuration
+        tmux.extraConfig = ''
+          # Darwin server-specific tmux settings
+          set-option -g status-bg colour235
+          set-option -g status-fg colour144
+          set-option -g status-left '#[fg=colour148,bg=colour235,bold] 🖥️  Darwin Server #[fg=colour144,bg=colour235,nobold,noitalics,nounderscore]⮀'
+          set-option -g status-right '#[fg=colour144,bg=colour235,nobold,noitalics,nounderscore]⮂#[fg=colour144,bg=colour235] %Y-%m-%d ⮃ %H:%M #[fg=colour148,bg=colour235,nobold,noitalics,nounderscore]⮂#[fg=colour232,bg=colour148,bold] #h '
+
+          # Server-specific panes
+          bind-key S new-window -n "Server" \; \
+            split-window -h \; \
+            send-keys 'server-status && sleep 5' C-m \; \
+            split-window -v \; \
+            send-keys 'tail -f /usr/local/var/log/nginx/error.log' C-m \; \
+            select-pane -t 0 \; \
+            send-keys 'htop' C-m
+        '';
       };
 
       # Darwin server-specific environment variables
@@ -78,199 +161,5 @@
         borgbackup
       ];
 
-      # Darwin server-specific shell aliases (extends server profile)
-      programs.zsh.shellAliases = {
-        # Service management (Homebrew on Darwin)
-        services = "brew services list";
-        start-pg = "brew services start postgresql";
-        stop-pg = "brew services stop postgresql";
-        start-redis = "brew services start redis";
-        stop-redis = "brew services stop redis";
-
-        # Database connections
-        pg = "psql -U postgres";
-        redis = "redis-cli";
-        mongo = "mongosh";
-
-        # Network and connectivity (Darwin-specific)
-        ip = "curl -s ifconfig.me && echo";
-        ping-test = "ping -c 3 8.8.8.8";
-        dns-flush = "sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder";
-
-        # Darwin system monitoring
-        mem = "vm_stat";
-        ports = "lsof -i -P | grep LISTEN";
-
-        # Log monitoring (Darwin-specific)
-        logs-sys = "log stream --level=info";
-        logs-tail = "tail -f /usr/local/var/log/nginx/access.log";
-
-        # Darwin cleanup
-        cleanup = "brew cleanup && docker system prune -f && nix-collect-garbage -d";
-      };
-
-      # Darwin server-specific zsh enhancements
-      programs.zsh.initExtra = ''
-        # Darwin server environment setup
-
-        # Custom functions for Darwin server management
-
-        # Function to show Darwin server resource usage
-        darwin-server-resources() {
-          echo "🖥️  Darwin Server Resource Usage"
-          echo "================================="
-          echo ""
-          echo "💾 Memory:"
-          vm_stat | awk 'NR==1{next} {gsub(/[^0-9]/, "", $3); sum+=$3} END {printf "  Used: %.1f GB\n", sum*4096/1024/1024/1024}'
-          echo ""
-          echo "💿 Disk:"
-          df -h / | awk 'NR==2 {print "  Root: " $3 " used of " $2 " (" $5 ")"}'
-          echo ""
-          echo "🔥 CPU Load:"
-          uptime | sed 's/.*load average: /  Load: /'
-        }
-
-        # Function to check Darwin service health
-        darwin-health-check() {
-          echo "🏥 Darwin Service Health Check"
-          echo "============================="
-          echo ""
-
-          services=("postgresql" "redis" "nginx" "docker")
-          for service in "''${services[@]}"; do
-            if pgrep -f "$service" > /dev/null; then
-              echo "✅ $service: Running"
-              case "$service" in
-                "postgresql")
-                  pg_isready -q && echo "  ↳ Database: Accepting connections" || echo "  ↳ Database: Not accepting connections"
-                  ;;
-                "redis")
-                  redis-cli ping | grep -q PONG && echo "  ↳ Redis: Responding to ping" || echo "  ↳ Redis: Not responding"
-                  ;;
-                "docker")
-                  docker info > /dev/null 2>&1 && echo "  ↳ Docker daemon: Healthy" || echo "  ↳ Docker daemon: Unhealthy"
-                  ;;
-              esac
-            else
-              echo "❌ $service: Not running"
-            fi
-          done
-        }
-
-        # Darwin-specific welcome message
-        echo "🍎 Darwin Server Environment: $(scutil --get ComputerName)"
-        echo "⚡ Darwin utilities: darwin-server-resources, darwin-health-check"
-      '';
-
-      # Enhanced tmux configuration for Darwin server (extends server profile)
-      programs.tmux.extraConfig = ''
-        # Darwin server-specific tmux enhancements
-        set -g status-left '[DARWIN:#{host_short}] '
-
-        # Darwin server monitoring windows
-        bind-key D neww -n 'darwin-stats' 'watch -n 2 "darwin-server-resources"'
-        bind-key H neww -n 'health' 'watch -n 5 "darwin-health-check"'
-      '';
-
-      # Darwin server configuration files
-      home.file = {
-        # Darwin server monitoring script
-        ".local/bin/darwin-server-monitor".text = ''
-          #!/bin/bash
-          # Continuous Darwin server monitoring
-
-          while true; do
-            clear
-            echo "🍎 Darwin Server Monitor - $(date)"
-            echo "================================="
-            echo ""
-
-            # System load
-            echo "📊 System Load:"
-            uptime | sed 's/^/  /'
-            echo ""
-
-            # Memory usage
-            echo "💾 Memory Usage:"
-            vm_stat | grep -E "(free|active|inactive|wired)" | sed 's/^/  /'
-            echo ""
-
-            # Disk usage
-            echo "💿 Disk Usage:"
-            df -h / | tail -1 | sed 's/^/  /'
-            echo ""
-
-            # Top processes
-            echo "🏃 Top Processes:"
-            ps aux | sort -nr -k 3 | head -5 | awk '{print "  " $2 " " $3 "% " $11}'
-            echo ""
-
-            # Network connections
-            echo "🌐 Active Connections:"
-            netstat -an | grep LISTEN | wc -l | sed 's/^/  Listening ports: /'
-
-            sleep 5
-          done
-        '';
-
-        # Darwin-specific Docker compose template
-        "Projects/darwin-docker-compose.template.yml".text = ''
-          version: '3.8'
-
-          services:
-            web:
-              image: nginx:alpine
-              ports:
-                - "80:80"
-                - "443:443"
-              volumes:
-                - ./nginx.conf:/etc/nginx/nginx.conf:ro
-                - ./html:/usr/share/nginx/html:ro
-              restart: unless-stopped
-
-            db:
-              image: postgres:15-alpine
-              environment:
-                POSTGRES_DB: darwinapp
-                POSTGRES_USER: admin
-                POSTGRES_PASSWORD: password
-              volumes:
-                - postgres_data:/var/lib/postgresql/data
-              ports:
-                - "5432:5432"
-              restart: unless-stopped
-
-            redis:
-              image: redis:7-alpine
-              ports:
-                - "6379:6379"
-              restart: unless-stopped
-
-          volumes:
-            postgres_data:
-        '';
-      };
-
-      # Make Darwin scripts executable
-      home.activation = {
-        makeDarwinScriptsExecutable = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-          chmod +x "$HOME/.local/bin/darwin-server-monitor" 2>/dev/null || true
-        '';
-
-        # Create Darwin server directory structure
-        createDarwinServerDirs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-          mkdir -p "$HOME/Server/configs"
-          mkdir -p "$HOME/Server/scripts"
-          mkdir -p "$HOME/Server/backups"
-          mkdir -p "$HOME/Server/logs"
-          mkdir -p "$HOME/Projects/darwin-servers"
-          mkdir -p "$HOME/.config/server"
-          mkdir -p "$HOME/.local/bin"
-
-          echo "Darwin server directory structure created"
-        '';
-      };
-    };
   };
-}
 }

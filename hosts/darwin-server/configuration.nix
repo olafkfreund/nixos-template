@@ -20,16 +20,16 @@
       essential = true;
       development = {
         enable = true;
-        languages = ["node" "python" "go" "rust" "java"];
+        languages = [ "node" "python" "go" "rust" "java" ];
         databases = true;
         docker = true;
       };
       server = {
         enable = true;
-        cloud = ["aws" "gcp" "azure"];
+        cloud = [ "aws" "gcp" "azure" ];
       };
     };
-    
+
     homebrew = {
       enableExtraSecurityTools = true; # Servers need security tools
     };
@@ -305,20 +305,20 @@
   # Additional server-specific Homebrew packages
   homebrew = {
     brews = [
-      "postgresql"     # Often better managed via Homebrew
-      "redis" 
+      "postgresql" # Often better managed via Homebrew
+      "redis"
       "nginx"
       "mongodb/brew/mongodb-community"
       "grafana"
       "prometheus"
     ];
-    
+
     taps = [
       "mongodb/brew"
     ];
 
     casks = [
-      "pgadmin4"       # Database management GUI
+      "pgadmin4" # Database management GUI
       "mongodb-compass" # MongoDB GUI
     ];
   };

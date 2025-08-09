@@ -6,7 +6,7 @@ with lib;
 
 let
   cfg = config.darwin.packages;
-  
+
   # Common package collections
   essentialPackages = with pkgs; [
     # Core system utilities
@@ -17,28 +17,28 @@ let
     gawk
     curl
     wget
-    
+
     # Archive and compression
     unzip
     p7zip
-    
+
     # Text processing
     ripgrep
     fd
     bat
     jq
-    
+
     # System monitoring
     htop
     tree
-    
+
     # Network tools
     nmap
-    
+
     # Git (always essential)
     git
     gh
-    
+
     # Shell and terminal
     zsh
     tmux
@@ -48,11 +48,11 @@ let
     # Media and graphics
     imagemagick
     ffmpeg
-    
+
     # Office and productivity (CLI tools)
     pandoc
     texlive.combined.scheme-medium
-    
+
     # Desktop-specific utilities
     neofetch
   ];
@@ -61,7 +61,7 @@ let
     # Version control
     git-lfs
     lazygit
-    
+
     # Text editors
     vim
     neovim
@@ -74,23 +74,23 @@ let
     nethogs
     iftop
     ncdu
-    
+
     # Network tools
     netcat
     socat
     traceroute
     tcpdump
-    
+
     # Log analysis
     multitail
-    
+
     # Text processing for server management
     yq
-    
+
     # Backup tools
     restic
     borgbackup
-    
+
     # Process management
     tmux
   ];
@@ -119,7 +119,8 @@ let
   gcpPackages = with pkgs; [ google-cloud-sdk ];
   azurePackages = with pkgs; [ azure-cli ];
 
-in {
+in
+{
   options.darwin.packages = {
     profiles = {
       essential = mkEnableOption "Essential Darwin packages for all systems";
@@ -136,8 +137,8 @@ in {
       development = {
         enable = mkEnableOption "Development packages and tools";
         languages = mkOption {
-          type = types.listOf (types.enum ["node" "python" "go" "rust" "java" "php" "ruby"]);
-          default = ["node" "python"];
+          type = types.listOf (types.enum [ "node" "python" "go" "rust" "java" "php" "ruby" ]);
+          default = [ "node" "python" ];
           description = "Programming languages to include";
         };
         databases = mkOption {
@@ -155,8 +156,8 @@ in {
       server = {
         enable = mkEnableOption "Server administration packages";
         cloud = mkOption {
-          type = types.listOf (types.enum ["aws" "gcp" "azure" "digitalocean"]);
-          default = ["aws"];
+          type = types.listOf (types.enum [ "aws" "gcp" "azure" "digitalocean" ]);
+          default = [ "aws" ];
           description = "Cloud provider tools to include";
         };
       };
@@ -357,7 +358,7 @@ in {
           df -h / | tail -1 | awk '{print "  Root: " $4 " available of " $2 " (" $5 " used)"}'
           echo "  Nix Store: $(du -sh /nix/store 2>/dev/null | cut -f1 || echo 'Unknown')"
         '')
-        
+
         (writeShellScriptBin "brew-maintenance" ''
           echo "🍺 Homebrew Maintenance"
           echo "======================="
@@ -382,7 +383,7 @@ in {
           
           echo "✅ Homebrew maintenance complete!"
         '')
-        
+
         (writeShellScriptBin "package-audit" ''
           echo "🔍 System Package Audit"
           echo "======================="

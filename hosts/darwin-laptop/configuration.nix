@@ -10,9 +10,11 @@
   ];
 
   # System identification
-  networking.hostName = lib.mkForce "nix-darwin-laptop";
-  networking.localHostName = lib.mkForce "nix-darwin-laptop";
-  networking.computerName = lib.mkForce "nix-darwin Laptop";
+  networking = {
+    hostName = lib.mkForce "nix-darwin-laptop";
+    localHostName = lib.mkForce "nix-darwin-laptop";
+    computerName = lib.mkForce "nix-darwin Laptop";
+  };
 
   # Enable Darwin package collections optimized for laptop use
   darwin.packages = {
@@ -20,7 +22,7 @@
       essential = true;
       development = {
         enable = true;
-        languages = ["node" "python"]; # Minimal for battery life
+        languages = [ "node" "python" ]; # Minimal for battery life
         databases = false; # Disable to save resources
         docker = false; # Heavy on battery
       };

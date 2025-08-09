@@ -285,7 +285,7 @@
           # Base configuration for all generated images
           baseConfig = {
             inherit system;
-            specialArgs = { inherit inputs outputs; };
+            specialArgs = { inherit inputs outputs; flakeMeta = null; };
             modules = [
               ./hosts/common.nix
               ({ lib, pkgs, ... }: {
