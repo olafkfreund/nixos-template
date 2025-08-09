@@ -224,32 +224,32 @@ in
           echo "🖥️  Desktop Environment Setup"
           echo "============================="
           echo ""
-          
+
           # Create standard directories
           mkdir -p ~/Development ~/Projects ~/Screenshots
-          
+
           # Configure screenshot location
           defaults write com.apple.screencapture location ~/Screenshots
           defaults write com.apple.screencapture type png
           defaults write com.apple.screencapture disable-shadow -bool true
-          
+
           # Configure Dock for desktop use
           defaults write com.apple.dock tilesize -int 64
           defaults write com.apple.dock show-recents -bool false
-          
+
           # Enable dark mode
           defaults write NSGlobalDomain AppleInterfaceStyle -string "Dark"
-          
+
           # Finder settings
           defaults write com.apple.finder AppleShowAllFiles -bool true
           defaults write com.apple.finder ShowPathbar -bool true
           defaults write com.apple.finder ShowStatusBar -bool true
-          
+
           # Restart affected applications
           killall Dock 2>/dev/null || true
           killall Finder 2>/dev/null || true
           killall SystemUIServer 2>/dev/null || true
-          
+
           echo "✅ Desktop setup complete!"
           echo "📁 Created directories: ~/Development, ~/Projects, ~/Screenshots"
           echo "🖼️  Screenshots will be saved to ~/Screenshots"
@@ -325,19 +325,19 @@ in
           echo "🚀 Development Environment Setup"
           echo "==============================="
           echo ""
-          
+
           # Create development directories
           mkdir -p ~/Development/{projects,experiments,scripts,tools}
-          
+
           # Git global configuration
           echo "⚙️  Configuring Git..."
           git config --global init.defaultBranch main
           git config --global pull.rebase true
           git config --global push.autoSetupRemote true
-          
+
           # Development aliases
           echo "Creating development aliases..."
-          
+
           echo "✅ Development environment ready!"
           echo "📁 Development directories created in ~/Development/"
         '')
@@ -462,23 +462,23 @@ in
           echo "🖥️  Server Status Report"
           echo "======================="
           echo ""
-          
+
           echo "📊 System Load:"
           uptime | sed 's/^/  /'
           echo ""
-          
+
           echo "💾 Memory Usage:"
           vm_stat | perl -ne '/page size of (\d+)/ and $size=$1; /Pages\s+([^:]+):\s+(\d+)/ and printf("  %-16s: %6.2f MB\n", $1, $2 * $size / 1048576);' | head -5
           echo ""
-          
+
           echo "💿 Disk Usage:"
           df -h / | tail -1 | awk '{print "  Root: " $3 " used of " $2 " (" $5 " full)"}'
           echo ""
-          
+
           echo "🌐 Network:"
           netstat -rn | grep default | head -1 | awk '{print "  Default Gateway: " $2}' || echo "  No default gateway found"
           echo ""
-          
+
           echo "🔧 Running Services (sample):"
           ps aux | grep -E "(httpd|nginx|mysqld|postgres)" | grep -v grep | awk '{print "  " $11}' | sort | uniq || echo "  No common services detected"
         '')
@@ -510,40 +510,40 @@ in
           echo "💻 Laptop Optimization"
           echo "======================"
           echo ""
-          
+
           echo "⚡ Current Power Source:"
           pmset -g ps | head -1 | sed 's/^/  /'
           echo ""
-          
+
           echo "🔋 Battery Information:"
           pmset -g batt | grep -E "([0-9]+%)" | sed 's/^/  /'
           echo ""
-          
+
           echo "⚙️  Optimizing power settings..."
-          
+
           # Battery power optimization
           sudo pmset -b displaysleep 5
           sudo pmset -b disksleep 10
           sudo pmset -b sleep 15
           sudo pmset -b hibernatemode 3
-          
+
           # AC power settings
           sudo pmset -c displaysleep 15
           sudo pmset -c disksleep 30
           sudo pmset -c sleep 60
           sudo pmset -c hibernatemode 0
-          
+
           # Enable GPU switching for battery life
           sudo pmset -a gpuswitch 2 2>/dev/null || true
-          
+
           echo "  Power settings optimized"
           echo ""
-          
+
           echo "🧹 Cleaning system cache..."
           sudo purge
           echo "  Memory purged"
           echo ""
-          
+
           echo "✅ Laptop optimization complete!"
         '')
 
@@ -551,21 +551,21 @@ in
           echo "🔋 Battery Detailed Information"
           echo "==============================="
           echo ""
-          
+
           # Battery status and health
           pmset -g batt | sed 's/^/  /'
           echo ""
-          
+
           # Power adapter information
           echo "🔌 Power Adapter:"
           system_profiler SPPowerDataType | grep -A 5 "Power Adapter" | sed 's/^/  /' || echo "  Not connected"
           echo ""
-          
+
           # Thermal state
           echo "🌡️  Thermal State:"
           pmset -g therm | sed 's/^/  /'
           echo ""
-          
+
           # Power assertions
           echo "💡 Power Assertions:"
           pmset -g assertions | grep -E "(PreventUserIdleSystemSleep|PreventSystemSleep)" | sed 's/^/  /' || echo "  None active"
@@ -630,24 +630,24 @@ in
           echo "🍺 Homebrew Maintenance"
           echo "======================="
           echo ""
-          
+
           echo "📦 Updating Homebrew..."
           brew update
           echo ""
-          
+
           echo "⬆️  Upgrading packages..."
           brew upgrade
           echo ""
-          
+
           echo "🧹 Cleaning up..."
           brew cleanup
           brew autoremove
           echo ""
-          
+
           echo "🏥 Running doctor..."
           brew doctor
           echo ""
-          
+
           echo "✅ Homebrew maintenance complete!"
         '')
 
@@ -655,20 +655,20 @@ in
           echo "🔍 System Package Audit"
           echo "======================="
           echo ""
-          
+
           echo "📦 Nix Packages:"
           nix-env -q | wc -l | awk '{print "  Installed: " $1 " packages"}'
           echo ""
-          
+
           echo "🍺 Homebrew Packages:"
           brew list | wc -l | awk '{print "  CLI tools: " $1 " packages"}'
           brew list --cask | wc -l | awk '{print "  GUI apps: " $1 " casks"}'
           echo ""
-          
+
           echo "📱 Mac App Store:"
           mas list | wc -l | awk '{print "  MAS apps: " $1 " applications"}'
           echo ""
-          
+
           echo "💾 Storage Usage:"
           echo "  Nix Store: $(du -sh /nix/store 2>/dev/null | cut -f1 || echo 'Unknown')"
           echo "  Homebrew: $(du -sh $(brew --prefix)/Cellar 2>/dev/null | cut -f1 || echo 'Unknown')"

@@ -9,7 +9,7 @@ A modular NixOS configuration template using flakes, featuring:
 - **Multi-Platform Support** - Works on any Linux distribution
 - **Modular Architecture** - Organized, reusable modules with profile system
 - **Home Manager Integration** - Declarative user environments with shared profiles
-- **SOPS Secrets Management** - Encrypted secrets in Git
+- **Agenix Secrets Management** - Age-encrypted secrets with declarative configuration
 - **Multiple Host Support** - Desktop, laptop, server, VM configurations
 - **GPU Support** - Automatic driver detection and installation for AMD, NVIDIA, Intel
 - **AI/Compute Ready** - CUDA, ROCm, OneAPI for machine learning
@@ -1190,20 +1190,20 @@ sudo nixos-generate-config --show-hardware-config > hosts/new-host/hardware-conf
 
 ## Secrets Management
 
-This template includes SOPS for encrypted secrets management.
+This template uses **Agenix** for encrypted secrets management with age encryption.
 
 ### Setup
 
-1. Generate a key: `ssh-keygen -t ed25519 -f ~/.config/sops/age/keys.txt`
-1. Configure `.sops.yaml` in the repository root
-1. Create encrypted files: `sops secrets/example.yaml`
+1. Generate a key: `age-keygen > ~/.config/age/key.txt`
+1. Configure `secrets/secrets.nix` with your public keys  
+1. Create encrypted files: `agenix -e my-secret.age`
 
 ### Using Secrets
 
 ```nix
 # In your configuration
-sops.secrets."my-secret" = {
-  sopsFile = ../secrets/secrets.yaml;
+age.secrets."my-secret" = {
+  file = ../secrets/my-secret.age;
   owner = "user";
 };
 ```
@@ -1251,7 +1251,7 @@ The development environment provides:
 
 - **Nix LSP tools** - Language server support for editors
 - **System utilities** - Git, just, direnv, and essential tools
-- **Secrets management** - SOPS/agenix integration
+- **Secrets management** - Agenix integration with age encryption
 - **Documentation tools** - Markdown processing and validation
 
 ### Development Workflow

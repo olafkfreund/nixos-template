@@ -67,7 +67,7 @@
 
   # Power management not applicable in WSL2
   powerManagement.enable = false;
-  
+
   # WSL2-specific service configuration
   services = {
     thermald.enable = false;

@@ -363,24 +363,24 @@ in
           echo "🍺 Homebrew Maintenance"
           echo "======================="
           echo ""
-          
+
           echo "📦 Updating Homebrew..."
           brew update
           echo ""
-          
+
           echo "⬆️  Upgrading packages..."
           brew upgrade
           echo ""
-          
+
           echo "🧹 Cleaning up..."
           brew cleanup
           brew autoremove
           echo ""
-          
+
           echo "🏥 Running doctor..."
           brew doctor
           echo ""
-          
+
           echo "✅ Homebrew maintenance complete!"
         '')
 
@@ -388,20 +388,20 @@ in
           echo "🔍 System Package Audit"
           echo "======================="
           echo ""
-          
+
           echo "📦 Nix Packages:"
           nix-env -q | wc -l | awk '{print "  Installed: " $1 " packages"}'
           echo ""
-          
+
           echo "🍺 Homebrew Packages:"
           brew list | wc -l | awk '{print "  CLI tools: " $1 " packages"}'
           brew list --cask | wc -l | awk '{print "  GUI apps: " $1 " casks"}'
           echo ""
-          
+
           echo "📱 Mac App Store:"
           mas list | wc -l | awk '{print "  MAS apps: " $1 " applications"}'
           echo ""
-          
+
           echo "💾 Storage Usage:"
           echo "  Nix Store: $(du -sh /nix/store 2>/dev/null | cut -f1 || echo 'Unknown')"
           echo "  Homebrew: $(du -sh $(brew --prefix)/Cellar 2>/dev/null | cut -f1 || echo 'Unknown')"

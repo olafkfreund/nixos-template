@@ -2,8 +2,9 @@
 
 {
   imports = [
-    # ./sops.nix  # Temporarily disabled for testing - requires sops-nix
+    ./agenix.nix    # Standardized on agenix for secrets management
     ./firewall.nix
-    # ./agenix.nix  # Deprecated - use sops.nix instead
+    ./hardening.nix  # Advanced security hardening
+    # ./sops.nix   # Legacy - migrated to agenix
   ];
 }

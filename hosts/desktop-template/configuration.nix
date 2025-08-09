@@ -393,7 +393,7 @@
           commands = [
             {
               command = "ALL";
-              options = [ "NOPASSWD" ]; # Remove this for better security
+              options = [ "SETENV" ]; # Secure default: require password but allow environment
             }
           ];
         }

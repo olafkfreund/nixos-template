@@ -1,5 +1,7 @@
-# SOPS-based Secrets Management
-# Provides centralized, declarative secret management using sops-nix
+# SOPS-based Secrets Management (DEPRECATED)
+# This module is deprecated in favor of agenix
+# Please migrate to agenix for new configurations
+# See docs/AGENIX-SECRETS.md for migration guide
 
 { config, lib, pkgs, options, ... }:
 
