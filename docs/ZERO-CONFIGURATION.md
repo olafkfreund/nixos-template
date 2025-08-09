@@ -235,7 +235,7 @@ modules = {
    hardware-detection-info
    ```
 
-2. **Override incorrect detection**:
+1. **Override incorrect detection**:
 
    ```nix
    hardware.autoOptimization.override.hasNvidiaGPU = true;

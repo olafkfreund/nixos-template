@@ -233,10 +233,10 @@ journalctl -u agenix-*
 ## Security Considerations
 
 1. **Key Storage**: Store age keys securely, never commit to git
-2. **File Permissions**: Secrets are created with mode 400 by default
-3. **User Access**: Only specified users can read decrypted secrets
-4. **Rotation**: Regularly rotate keys and secrets
-5. **Backup**: Securely backup age private keys
+1. **File Permissions**: Secrets are created with mode 400 by default
+1. **User Access**: Only specified users can read decrypted secrets
+1. **Rotation**: Regularly rotate keys and secrets
+1. **Backup**: Securely backup age private keys
 
 ## Examples
 

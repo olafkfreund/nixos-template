@@ -1,0 +1,249 @@
+name: Build NixOS VM Images
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docker/**"
+      - ".github/workflows/build-vm-images.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "docker/**"
+      - ".github/workflows/build-vm-images.yml"
+  schedule:
+    # Build weekly on Sundays at 02:00 UTC
+    - cron: "0 2 * * 0"
+  workflow_dispatch:
+    inputs:
+      templates:
+        description: "VM templates to build (comma-separated: desktop,server,gaming,minimal,development,all)"
+        required: false
+        default: "all"
+      formats:
+        description: "VM formats to build (comma-separated: virtualbox,hyperv,vmware,qemu,all)"
+        required: false
+        default: "all"
+      publish:
+        description: "Publish images to releases"
+        required: false
+        default: "false"
+        type: boolean
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/nixos-vm-builder
+jobs:
+  build-docker-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image-digest: ${{ steps.build.outputs.digest }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=schedule,pattern=weekly-{{date 'YYYYMMDD'}}
+            type=raw,value=latest,enable={{is_default_branch}}
+      - name: Build and push Docker image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: ./docker
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64
+  build-vm-matrix:
+    needs: build-docker-image
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        template: [desktop, server, gaming, minimal, development]
+        format: [virtualbox, hyperv, vmware, qemu]
+        exclude:
+          # Skip resource-intensive combinations on PR
+          - template: gaming
+            format: vmware
+          - template: gaming
+            format: hyperv
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create workspace directory
+        run: mkdir -p workspace/output
+      - name: Build VM Image
+        id: build-vm
+        run: "# Calculate build timeout based on template and format\ncase \"${{ matrix.template }}\" in\n  minimal) TIMEOUT=\"30m\" ;;\n  server) TIMEOUT=\"45m\" ;;\n  desktop) TIMEOUT=\"60m\" ;;\n  development) TIMEOUT=\"75m\" ;;\n  gaming) TIMEOUT=\"90m\" ;;\n  *) TIMEOUT=\"60m\" ;;\nesac\n\necho \"Building ${{ matrix.template }}-${{ matrix.format }} with timeout: $TIMEOUT\"\n\n# Run the build with timeout\ntimeout $TIMEOUT docker run --rm \\\n  -v \"$(pwd)/workspace:/workspace\" \\\n  ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \\\n  ${{ matrix.format }} \\\n  --template ${{ matrix.template }} \\\n  --vm-name \"nixos-${{ matrix.template }}-$(date +%Y%m%d)\" \\\n  --output /workspace/output\n  \n# Get build info\nBUILD_TIME=$(date -u +\"%Y-%m-%dT%H:%M:%SZ\")\nVM_NAME=\"nixos-${{ matrix.template }}-$(date +%Y%m%d)\"\n\necho \"build-time=$BUILD_TIME\" >> $GITHUB_OUTPUT\necho \"vm-name=$VM_NAME\" >> $GITHUB_OUTPUT\n\n# List generated files\necho \"Generated files:\"\nfind workspace/output -name \"*${{ matrix.template }}*${{ matrix.format }}*\" -type f -exec ls -lh {} \\;\n"
+      - name: Compress VM Image
+        if: success()
+        run: "cd workspace/output\n\n# Find the VM file\nVM_FILE=$(find . -name \"*${{ matrix.template }}*${{ matrix.format }}*\" -type f -not -name \"*.json\" | head -1)\n\nif [ -n \"$VM_FILE\" ]; then\n  echo \"Compressing: $VM_FILE\"\n  \n  # Compress based on format\n  case \"${{ matrix.format }}\" in\n    virtualbox)\n      # OVA files are already compressed\n      echo \"OVA file, skipping compression\"\n      ;;\n    *)\n      # Compress other formats\n      gzip -9 \"$VM_FILE\"\n      echo \"Compressed to: ${VM_FILE}.gz\"\n      ;;\n  esac\nelse\n  echo \"No VM file found to compress\"\n  exit 1\nfi\n"
+      - name: Upload VM Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: nixos-${{ matrix.template }}-${{ matrix.format }}-vm
+          path: workspace/output/*
+          retention-days: 7
+      - name: Calculate checksums
+        id: checksums
+        if: success()
+        run: |
+          cd workspace/output
+
+          # Calculate checksums for all files
+          find . -type f -exec sha256sum {} \; > checksums-${{ matrix.template }}-${{ matrix.format }}.txt
+
+          echo "Checksums:"
+          cat checksums-${{ matrix.template }}-${{ matrix.format }}.txt
+      - name: Upload checksums
+        uses: actions/upload-artifact@v3
+        with:
+          name: checksums-${{ matrix.template }}-${{ matrix.format }}
+          path: workspace/output/checksums-*.txt
+          retention-days: 7
+  create-release:
+    needs: [build-docker-image, build-vm-matrix]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish == 'true')
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: release-assets
+      - name: Prepare release assets
+        run: |
+          # Create release directory structure
+          mkdir -p release/{virtualbox,hyperv,vmware,qemu}
+
+          # Organize assets by format
+          find release-assets -name "*.ova" -exec mv {} release/virtualbox/ \;
+          find release-assets -name "*.vhdx*" -exec mv {} release/hyperv/ \;
+          find release-assets -name "*.vmdk*" -exec mv {} release/vmware/ \;
+          find release-assets -name "*.qcow2*" -exec mv {} release/qemu/ \;
+          find release-assets -name "*.json" -exec mv {} release/ \;
+          find release-assets -name "checksums-*.txt" -exec mv {} release/ \;
+
+          # Create combined checksums
+          cat release/checksums-*.txt > release/SHA256SUMS
+
+          # Create README for release
+          cat > release/README.md << 'EOF'
+          # NixOS VM Images
+
+          Pre-built NixOS virtual machine images for Windows users.
+
+          ## Available Images
+
+          - **Desktop**: Full desktop environment with GUI applications
+          - **Server**: Headless server configuration with essential tools
+          - **Gaming**: Gaming-optimized system with Steam and performance tweaks
+          - **Minimal**: Lightweight installation with basic tools only
+          - **Development**: Full development environment with programming tools
+
+          ## Supported Formats
+
+          - **VirtualBox** (`.ova`): Import using File → Import Appliance
+          - **Hyper-V** (`.vhdx`): Create new VM and use as virtual hard disk
+          - **VMware** (`.vmdk`): Create new VM and use as virtual disk
+          - **QEMU** (`.qcow2`): Run with qemu-system-x86_64
+
+          ## Default Credentials
+
+          - **Username**: nixos
+          - **Password**: nixos
+
+          **⚠️ Change the default password after first login!**
+
+          ## Verification
+
+          Verify image integrity using SHA256 checksums:
+          ```bash
+          sha256sum -c SHA256SUMS
+          ```
+
+          ## Usage
+
+          1. Download the appropriate image for your virtualization platform
+          2. Import/create VM using your virtualization software
+          3. Start the VM and login with default credentials
+          4. Change the password: `passwd nixos`
+          5. Update the system: `sudo nixos-rebuild switch --upgrade`
+
+          Built with ❄️ NixOS
+          EOF
+
+          # List release contents
+          echo "Release contents:"
+          find release -type f -exec ls -lh {} \;
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: nixos-vm-${{ github.run_number }}
+          name: NixOS VM Images - Build ${{ github.run_number }}
+          body: |
+            # NixOS Virtual Machine Images
+
+            Automated build of NixOS VM images for Windows users who want to try NixOS without installing Nix locally.
+
+            ## What's Included
+
+            - **5 VM Templates**: Desktop, Server, Gaming, Minimal, Development
+            - **4 Virtualization Formats**: VirtualBox, Hyper-V, VMware, QEMU
+            - **SHA256 Checksums**: For integrity verification
+            - **Usage Instructions**: See README.md in assets
+
+            ## Quick Start
+
+            1. Download the image for your preferred virtualization platform
+            2. Import into your VM software (VirtualBox, Hyper-V, VMware, etc.)
+            3. Login with username: `nixos`, password: `nixos`
+            4. Change the default password immediately
+
+            Built on: ${{ steps.build-vm.outputs.build-time }}
+
+            **⚠️ These are test images with default passwords. Change credentials before use!**
+          artifacts: "release/**"
+          draft: false
+          prerelease: false
+          generateReleaseNotes: true
+  update-documentation:
+    needs: [build-docker-image, build-vm-matrix]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Update build status badge
+        run: "# Update build status in documentation\nBUILD_DATE=$(date -u +\"%Y-%m-%d %H:%M UTC\")\nBUILD_NUMBER=\"${{ github.run_number }}\"\n\n# Create or update build status file\nmkdir -p docs\ncat > docs/BUILD-STATUS.md << EOF\n# Build Status\n\nLast successful build: $BUILD_DATE  \nBuild number: #$BUILD_NUMBER  \nDocker image: \\`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest\\`\n\n## Available Images\n\nAll VM templates built successfully for the following formats:\n- VirtualBox (.ova)\n- Hyper-V (.vhdx) \n- VMware (.vmdk)\n- QEMU (.qcow2)\n\nTemplates: Desktop, Server, Gaming, Minimal, Development\nEOF\n\n# Commit if there are changes\nif git diff --quiet docs/BUILD-STATUS.md; then\n  echo \"No changes to commit\"\nelse\n  git config user.name \"GitHub Actions\"\n  git config user.email \"actions@github.com\"\n  git add docs/BUILD-STATUS.md\n  git commit -m \"Update build status badge [skip ci]\"\n  git push\nfi\n"

@@ -213,7 +213,7 @@ EOF
 
   # Clean up bootstrap directory safely with explicit path validation
   bootstrap_dir="/tmp/nix-darwin-bootstrap"
-  if [[ -d "$bootstrap_dir" && "$bootstrap_dir" == "/tmp/nix-darwin-bootstrap" ]]; then
+  if [[ -d $bootstrap_dir && $bootstrap_dir == "/tmp/nix-darwin-bootstrap" ]]; then
     log_info "Cleaning up bootstrap directory: $bootstrap_dir"
     rm -rf "$bootstrap_dir"
   fi
@@ -265,7 +265,7 @@ if ! echo "$PATH" | grep -q "/run/current-system/sw/bin"; then
           echo ''
           echo '# nix-darwin'
           echo 'if [ -e /run/current-system/sw/bin ]; then'
-          echo "  export PATH=\"/run/current-system/sw/bin:\$PATH\""
+          echo '  export PATH="/run/current-system/sw/bin:$PATH"'
           echo 'fi'
         } >>"$shell_profile"
         log_info "Updated $shell_profile"
@@ -334,7 +334,7 @@ if ! echo "$PATH" | grep -q "$HOME/.local/bin"; then
         {
           echo ''
           echo '# Local binaries'
-          echo "export PATH=\"\$HOME/.local/bin:\$PATH\""
+          echo 'export PATH="$HOME/.local/bin:$PATH"'
         } >>"$shell_profile"
         break
       fi

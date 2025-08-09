@@ -3,10 +3,11 @@
 A modular NixOS configuration template using flakes, featuring:
 
 - **🔍 Zero-Configuration Hardware Optimization** - Automatically detects and optimizes for your specific hardware
-- **VM Testing Ready** - Full desktop environment testing in VMs (works on any Linux distro)
+- **🪟 Windows VM Builder** - Docker-based NixOS VM builder for Windows users (no Nix installation required)
+- **VM Testing Ready** - Full desktop environment testing in VMs (works on any OS)
 - **Custom ISO Creation** - Build installer ISOs with preconfigured templates
 - **Interactive Installers** - Template selection and automated deployment
-- **Multi-Platform Support** - Works on any Linux distribution
+- **Multi-Platform Support** - Works on Windows, Linux, and macOS
 - **Modular Architecture** - Organized, reusable modules with profile system
 - **Home Manager Integration** - Declarative user environments with shared profiles
 - **Agenix Secrets Management** - Age-encrypted secrets with declarative configuration
@@ -31,7 +32,8 @@ A modular NixOS configuration template using flakes, featuring:
 
 1. [Quick Start](#quick-start)
    - [Zero-Configuration Hardware Optimization](#zero-configuration-hardware-optimization)
-   - [Non-NixOS Users (Try NixOS in VMs)](#non-nixos-users-try-nixos-in-vms)
+   - [Windows Users (Try NixOS VMs)](#windows-users-try-nixos-vms)
+   - [Non-NixOS Linux Users (Try NixOS in VMs)](#non-nixos-linux-users-try-nixos-in-vms)
    - [Custom NixOS Installer ISOs](#custom-nixos-installer-isos)
    - [New NixOS Users (Automated Setup)](#new-nixos-users-automated-setup)
    - [Advanced Users (Manual Setup)](#advanced-users-manual-setup)
@@ -89,10 +91,43 @@ hardware-detection-info
 
 **[Complete Zero-Configuration Guide →](docs/ZERO-CONFIGURATION.md)**
 
-### Non-NixOS Users (Try NixOS in VMs)
+### Windows Users (Try NixOS VMs)
 
-**Want to try NixOS without installing it?** You can test this entire configuration on Ubuntu,
-Fedora, Arch, or any Linux distribution:
+**🪟 Windows users can now try NixOS without installing Nix!** Download pre-built virtual machines or use Docker to build custom VMs:
+
+#### Option 1: Download Pre-built VMs (Easiest)
+
+1. **Download**: Visit [GitHub Releases](https://github.com/olafkfreund/nixos-template/releases)
+1. **Choose Template**:
+   - `nixos-desktop-virtualbox.ova` - Full desktop environment
+   - `nixos-gaming-virtualbox.ova` - Gaming with Steam
+   - `nixos-development-virtualbox.ova` - Programming environment
+   - `nixos-server-virtualbox.ova` - Headless server
+1. **Import**: Use VirtualBox, VMware, or Hyper-V
+1. **Login**: Default credentials: `nixos` / `nixos`
+
+#### Option 2: Build Custom VMs with Docker
+
+```powershell
+# Install Docker Desktop for Windows
+# Then build your custom VM:
+
+# Create workspace
+mkdir C:\NixOS-VMs
+cd C:\NixOS-VMs
+
+# Build desktop VM
+docker run --rm -v "${PWD}:/workspace" ghcr.io/olafkfreund/nixos-vm-builder:latest virtualbox --template desktop
+
+# Build for Hyper-V
+docker run --rm -v "${PWD}:/workspace" ghcr.io/olafkfreund/nixos-vm-builder:latest hyperv --template server
+```
+
+**[Complete Windows How-To Guide →](docs/WINDOWS-HOWTO.md)**
+
+### Non-NixOS Linux Users (Try NixOS in VMs)
+
+**Want to try NixOS on Linux?** You can test this entire configuration on Ubuntu, Fedora, Arch, or any Linux distribution:
 
 ```bash
 # Install Nix package manager (works on any Linux)
@@ -255,6 +290,17 @@ nixos-config/
 ├── overlays/              # Package overlays
 ├── pkgs/                  # Custom packages
 ├── secrets/               # Encrypted secrets
+├── docker/                # Docker-based VM builder for Windows users
+│   ├── Dockerfile         # NixOS VM builder container
+│   ├── README.md          # Docker-specific documentation
+│   ├── scripts/
+│   │   └── build-vm.sh    # Multi-platform VM build script
+│   └── templates/         # VM-specific NixOS templates
+│       ├── desktop-template.nix    # Full desktop environment
+│       ├── server-template.nix     # Headless server configuration
+│       ├── gaming-template.nix     # Gaming optimized with Steam
+│       ├── minimal-template.nix    # Lightweight installation
+│       └── development-template.nix # Development environment
 ├── scripts/               # Management and setup scripts
 │   ├── nixos-setup.sh     # Full interactive setup wizard
 │   ├── quick-setup.sh     # Quick setup with smart defaults
@@ -265,6 +311,8 @@ nixos-config/
 │   └── rebuild.sh         # Rebuild script
 ├── docs/                   # Documentation
 │   ├── SETUP.md           # Comprehensive setup guide
+│   ├── WINDOWS-HOWTO.md   # Complete Windows user guide
+│   ├── WINDOWS-VM-BUILDER.md # Docker VM builder documentation
 │   ├── NON-NIXOS-USAGE.md # Guide for non-NixOS users
 │   ├── ISO-CREATION.md    # Custom installer ISO guide
 │   ├── FEATURES-OVERVIEW.md # Complete features documentation
@@ -302,6 +350,12 @@ just init-vm myhost qemu           # Initialize VM configuration
 just list-vms                      # Show available VM configurations
 just list-desktops                 # Show available desktop environments
 just test-vm myhost                # Test VM configuration
+
+# Windows VM Builder Commands (using Docker)
+just build-windows-vm desktop      # Build VirtualBox desktop VM for Windows
+just build-windows-vm-hyperv server # Build Hyper-V server VM
+just build-all-windows-vms gaming  # Build gaming VM for all Windows formats
+just windows-vm-help               # Show Windows VM builder help
 
 #  ISO Creation Commands
 just list-isos                     # List available ISO types with features

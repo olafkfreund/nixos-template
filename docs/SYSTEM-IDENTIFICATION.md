@@ -323,10 +323,10 @@ The system identification module integrates with other template modules:
 ## Best Practices
 
 1. **Use descriptive base names**: `web-server-01` instead of `server1`
-2. **Tag consistently**: Use standardized tag categories
-3. **Set appropriate environments**: Match your deployment pipeline
-4. **Include location for physical systems**: Helps with remote management
-5. **Use profiles that match hardware**: `laptop` for mobile, `server` for headless
-6. **Keep descriptions concise but informative**: One sentence explaining purpose
+1. **Tag consistently**: Use standardized tag categories
+1. **Set appropriate environments**: Match your deployment pipeline
+1. **Include location for physical systems**: Helps with remote management
+1. **Use profiles that match hardware**: `laptop` for mobile, `server` for headless
+1. **Keep descriptions concise but informative**: One sentence explaining purpose
 
 This standardized approach ensures consistent system identification across your entire NixOS infrastructure.

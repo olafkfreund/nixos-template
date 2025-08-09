@@ -188,8 +188,8 @@ in {
 All template functions work seamlessly with the Home Manager profile system:
 
 1. **Automatic Profile Application** - Templates automatically apply appropriate Home Manager profiles
-2. **Host-Specific Overrides** - Individual hosts can override profile settings
-3. **Consistent Configuration** - Shared profiles ensure consistent tool availability
-4. **Easy Maintenance** - Update profiles to affect all systems using them
+1. **Host-Specific Overrides** - Individual hosts can override profile settings
+1. **Consistent Configuration** - Shared profiles ensure consistent tool availability
+1. **Easy Maintenance** - Update profiles to affect all systems using them
 
 For more information about the profile system, see [CLAUDE.md](../CLAUDE.md).

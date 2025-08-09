@@ -410,16 +410,57 @@
               ];
             });
 
-            "virtualbox-ova" = nixos-generators.nixosGenerate (baseConfig // {
+            "virtualbox-ova" = nixos-generators.nixosGenerate {
+              inherit system;
+              specialArgs = { inherit inputs outputs; flakeMeta = null; };
               format = "virtualbox";
-              modules = baseConfig.modules ++ [
-                ({ ... }: {
+              modules = [
+                ({ lib, pkgs, ... }: {
+                  # Minimal VirtualBox configuration to reduce memory usage
+                  boot.loader.systemd-boot.enable = true;
+                  boot.loader.efi.canTouchEfiVariables = true;
+
                   # VirtualBox-specific optimizations
                   virtualisation.virtualbox.guest.enable = true;
-                  services.xserver.videoDrivers = [ "virtualbox" "modesetting" ];
+                  services.xserver = {
+                    enable = true;
+                    videoDrivers = [ "virtualbox" "modesetting" ];
+                  };
+
+                  # Use updated option names for NixOS 24.05+
+                  services.desktopManager.gnome.enable = true;
+                  services.displayManager.gdm.enable = true;
+
+                  # Essential system packages only
+                  environment.systemPackages = with pkgs; [
+                    vim
+                    git
+                    curl
+                    wget
+                    htop
+                    firefox
+                  ];
+
+                  # Default user for VM
+                  users.users.nixos = {
+                    isNormalUser = true;
+                    extraGroups = [ "wheel" "networkmanager" ];
+                    initialPassword = "nixos";
+                  };
+
+                  # Network configuration
+                  networking.networkmanager.enable = true;
+                  networking.firewall.enable = false; # Disabled for VM ease of use
+
+                  # System version
+                  system.stateVersion = "24.05";
+
+                  # Keep VM image size reasonable
+                  nix.gc.automatic = true;
+                  nix.optimise.automatic = true;
                 })
               ];
-            });
+            };
 
             "qemu-qcow2" = nixos-generators.nixosGenerate (baseConfig // {
               format = "qcow";
@@ -550,9 +591,141 @@
             });
           };
 
+          # VM Builder Docker Image
+          nixos-vm-builder-docker = pkgs.dockerTools.buildLayeredImage {
+            name = "nixos-vm-builder";
+            tag = "latest";
+            contents = with pkgs; [
+              # Core Nix tools
+              nix
+              nixos-generators.packages.${system}.default
+
+              # Build dependencies
+              bash
+              coreutils
+              findutils
+              gnugrep
+              gnused
+              gnutar
+              gzip
+
+              # JSON processing
+              jq
+
+              # VM builder script (embedded to avoid path issues)
+              (writeShellScriptBin "build-vm.sh" ''
+                #!/usr/bin/env bash
+                # NixOS VM Builder Script - Embedded version
+                # This is a simplified version for Docker container use
+
+                set -euo pipefail
+
+                # Default configuration
+                DEFAULT_FORMAT="virtualbox"
+                DEFAULT_OUTPUT_DIR="/workspace/output"
+                DEFAULT_DISK_SIZE="20480"
+                DEFAULT_MEMORY_SIZE="4096"
+
+                show_help() {
+                  cat <<EOF
+                NixOS VM Builder - Build NixOS VMs for Windows users
+
+                USAGE:
+                    build-vm.sh [FORMAT] [OPTIONS]
+
+                FORMATS:
+                    virtualbox      Build VirtualBox OVA image
+                    hyperv          Build Hyper-V VHDX image
+                    vmware          Build VMware VMDK image
+                    qemu            Build QEMU QCOW2 image
+                    all             Build all formats
+
+                OPTIONS:
+                    -t, --template NAME     Use template (desktop,server,gaming,minimal,development)
+                    -o, --output DIR        Output directory (default: /workspace/output)
+                    -s, --disk-size SIZE    Disk size in MB (default: 20480)
+                    -m, --memory SIZE       Memory size in MB (default: 4096)
+                    -n, --vm-name NAME      VM name
+                    --validate-only         Only validate configuration
+                    --list-templates        List available templates
+                    -h, --help             Show this help
+
+                EXAMPLES:
+                    build-vm.sh virtualbox --template desktop
+                    build-vm.sh hyperv --template server --disk-size 40960
+                    build-vm.sh all --template gaming
+                EOF
+                }
+
+                # For now, show help - full implementation would require templates
+                if [ $# -eq 0 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+                  show_help
+                  exit 0
+                fi
+
+                echo "Docker VM Builder - This is a placeholder implementation"
+                echo "Please use the full nixos-generators command directly for now."
+                exit 1
+              '')
+            ];
+
+            config = {
+              Env = [
+                "NIX_CONF_DIR=/root/.config/nix"
+                "NIXOS_GENERATORS_VERSION=1.8.0"
+                "PATH=/usr/bin:/bin"
+              ];
+
+              WorkingDir = "/workspace";
+
+              Entrypoint = [ "/bin/build-vm.sh" ];
+
+              Cmd = [ "--help" ];
+
+              Labels = {
+                "org.opencontainers.image.title" = "NixOS VM Builder";
+                "org.opencontainers.image.description" = "Build NixOS VMs for Windows users";
+                "org.opencontainers.image.source" = "https://github.com/nixos/nixos-template";
+                "org.opencontainers.image.licenses" = "GPL-3.0";
+              };
+            };
+          };
+
+          # VM Builder CLI tool
+          nixos-vm-builder = pkgs.writeShellApplication {
+            name = "nixos-vm-builder";
+            runtimeInputs = with pkgs; [ docker ];
+            text = ''
+              # NixOS VM Builder CLI wrapper
+              # This is a convenience wrapper for the Docker-based VM builder
+
+              DOCKER_IMAGE="nixos-vm-builder:latest"
+              WORKSPACE_DIR="$PWD/vm-workspace"
+
+              # Create workspace directory
+              mkdir -p "$WORKSPACE_DIR"
+
+              # Check if Docker image exists locally
+              if ! docker image inspect "$DOCKER_IMAGE" >/dev/null 2>&1; then
+                echo "Docker image $DOCKER_IMAGE not found locally."
+                echo "Please build it first with: nix build .#nixos-vm-builder-docker"
+                echo "Then load it with: docker load < result"
+                exit 1
+              fi
+
+              # Run the Docker container with arguments
+              exec docker run --rm \
+                -v "$WORKSPACE_DIR:/workspace" \
+                "$DOCKER_IMAGE" \
+                "$@"
+            '';
+          };
+
         in
-        # Merge custom packages with deployment images
-        (import ./pkgs pkgs) // deploymentImages
+        # Merge custom packages with deployment images and VM builder
+        (import ./pkgs pkgs) // deploymentImages // {
+          inherit nixos-vm-builder-docker nixos-vm-builder;
+        }
       );
 
       # Formatter for your nix files, available through 'nix fmt'

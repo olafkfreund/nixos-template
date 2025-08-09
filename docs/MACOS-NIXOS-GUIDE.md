@@ -844,6 +844,7 @@ podman-compose up
 **UTM Shared Folders**:
 
 1. Enable in UTM VM settings
+
 1. Mount in NixOS:
 
    ```nix

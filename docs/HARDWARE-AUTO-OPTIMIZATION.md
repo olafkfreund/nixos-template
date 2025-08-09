@@ -355,7 +355,7 @@ $ cat /etc/hardware-optimization-info
    modules.hardware.autoOptimization.debug = true;
    ```
 
-2. **Use overrides** to force correct detection:
+1. **Use overrides** to force correct detection:
 
    ```nix
    modules.hardware.autoOptimization.override = {
@@ -375,7 +375,7 @@ If auto-optimization conflicts with manual settings:
    };
    ```
 
-2. **Check priority** - manual settings in your configuration take precedence over auto-optimization defaults.
+1. **Check priority** - manual settings in your configuration take precedence over auto-optimization defaults.
 
 ### Performance Issues
 
@@ -390,7 +390,7 @@ For performance-critical systems, consider:
    };
    ```
 
-2. **Disable conservative optimizations:**
+1. **Disable conservative optimizations:**
 
    ```nix
    modules.hardware.autoOptimization.detection = {

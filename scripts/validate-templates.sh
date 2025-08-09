@@ -329,14 +329,14 @@ EOF
   if cd "$temp_dir" && nix build --no-link --impure '.#nixosConfigurations.test-vm.config.system.build.vm'; then
     print_success "VM build successful for: $template"
     # Clean up safely with explicit path validation
-    if [[ -d "$temp_dir" && "$temp_dir" =~ ^/tmp/ ]]; then
+    if [[ -d $temp_dir && $temp_dir =~ ^/tmp/ ]]; then
       rm -rf "$temp_dir"
     fi
     return 0
   else
     print_error "VM build failed for: $template"
     # Clean up safely with explicit path validation
-    if [[ -d "$temp_dir" && "$temp_dir" =~ ^/tmp/ ]]; then
+    if [[ -d $temp_dir && $temp_dir =~ ^/tmp/ ]]; then
       rm -rf "$temp_dir"
     fi
     return 1
