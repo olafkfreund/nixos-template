@@ -325,6 +325,17 @@ nixos-config/
 
 ## Available Commands
 
+### Interactive Menu (TUI)
+
+```bash
+just                 # Interactive menu with fzf preview (default) ✨ NEW
+just menu            # Same as above (explicit alias)
+just m               # Quick shortcut for interactive menu
+```
+
+The interactive menu provides a classy Terminal User Interface using `fzf` with live command preview - just type
+`just` and select commands with arrow keys!
+
 ### Using just (Recommended)
 
 ```bash
@@ -339,6 +350,7 @@ just clean           # Clean old generations and result symlinks
 just clean-results   # Remove result symlinks (from nix build commands)
 just shell           # Enter development shell
 just info            # Show system information
+just list            # Show all available recipes (traditional view)
 
 # Host-specific commands
 just switch desktop-template   # Switch configuration for 'desktop-template' host

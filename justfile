@@ -1,12 +1,30 @@
 # NixOS Configuration Justfile
 # Provides convenient commands for managing the configuration
+#
+# Quick Start:
+#   just          - Interactive menu (fzf chooser with preview)
+#   just menu     - Same as above (explicit alias)
+#   just list     - Show all available recipes
+#   just switch   - Build and apply configuration
 
 # Default hostname (can be overridden)
 hostname := `hostname`
 
-# Default recipe
+# Default recipe - Interactive chooser with enhanced fzf preview
 default:
+    @export JUST_CHOOSER="fzf --preview='just --show {}' --reverse --height=50%" && just --choose
+
+# Interactive menu with enhanced fzf (alias for default)
+menu:
+    @export JUST_CHOOSER="fzf --preview='just --show {}' --reverse --height=50%" && just --choose
+
+# Show all available recipes (traditional list view)
+list:
     @just --list
+
+# Quick alias for the interactive menu
+m:
+    @export JUST_CHOOSER="fzf --preview='just --show {}' --reverse --height=50%" && just --choose
 
 # Build and switch to new configuration
 switch host=hostname:
