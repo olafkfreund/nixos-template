@@ -1,6 +1,8 @@
 # NixOS VM Builder for Windows Users
 
-This guide helps Windows users create NixOS virtual machines without installing Nix locally. Using Docker, you can build customized NixOS VMs that work with popular virtualization platforms on Windows.
+This guide helps Windows users create NixOS virtual machines without installing Nix locally.
+Using Docker, you can build customized NixOS VMs that work with popular virtualization
+platforms on Windows.
 
 ## Overview
 
@@ -16,7 +18,7 @@ The NixOS VM Builder provides:
 
 ### Option 1: Download Pre-built VMs
 
-1. **Visit Releases**: Go to [GitHub Releases](https://github.com/your-repo/nixos-template/releases)
+1. **Visit Releases**: Go to [GitHub Releases](https://github.com/olafkfreund/nixos-template/releases)
 
 1. **Choose Template**: Download your preferred VM template:
    - `nixos-desktop-virtualbox.ova` - Full desktop environment
@@ -406,7 +408,8 @@ docker run --rm -v "${PWD}:/workspace" olafkfreund/nixos-vm-builder:latest --val
 
 ### Q: Is this secure for production use?
 
-**A**: The VMs use default passwords and are configured for ease of use. For production, change all passwords, configure SSH keys, and apply security hardening.
+**A**: The VMs use default passwords and are configured for ease of use.
+For production, change all passwords, configure SSH keys, and apply security hardening.
 
 ### Q: Can I run multiple VMs?
 
@@ -416,8 +419,8 @@ docker run --rm -v "${PWD}:/workspace" olafkfreund/nixos-vm-builder:latest --val
 
 **Need Help?**
 
-- Check the [Issues](https://github.com/your-repo/nixos-template/issues) page
-- Ask questions in [Discussions](https://github.com/your-repo/nixos-template/discussions)
+- Check the [Issues](https://github.com/olafkfreund/nixos-template/issues) page
+- Ask questions in [Discussions](https://github.com/olafkfreund/nixos-template/discussions)
 - Join the NixOS community Discord
 
 Built with NixOS and Docker

@@ -205,7 +205,7 @@ jobs:
 
       - name: Update Docker Hub description
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        uses: peter-evans/dockerhub-description@v4
+        uses: peter-evans/dockerhub-description@v4.0.0
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
@@ -217,17 +217,27 @@ jobs:
         run: |
           echo "Testing Docker image functionality..."
 
-          # The image should be loaded locally due to load: true
-          IMAGE_TAG="${{ env.DOCKER_HUB_IMAGE }}:latest"
-          echo "Testing image: $IMAGE_TAG"
+          # Use the first tag from metadata (main branch gets 'latest' tag)
+          FIRST_TAG=$(echo '${{ steps.meta.outputs.tags }}' | head -n 1)
+          echo "Testing image: $FIRST_TAG"
+
+          # Verify image exists locally
+          docker images | grep '${{ env.DOCKER_HUB_IMAGE }}' || {
+            echo "❌ Image not found locally"
+            docker images
+            exit 1
+          }
 
           # Test help command
-          docker run --rm "$IMAGE_TAG" --help
+          echo "Testing --help command..."
+          docker run --rm "$FIRST_TAG" --help
 
           # Test template listing
-          docker run --rm "$IMAGE_TAG" --list-templates
+          echo "Testing --list-templates command..."
+          docker run --rm "$FIRST_TAG" --list-templates
 
           # Test validation mode
-          docker run --rm "$IMAGE_TAG" virtualbox -t minimal --validate-only
+          echo "Testing validation mode..."
+          docker run --rm "$FIRST_TAG" virtualbox -t minimal --validate-only
 
           echo "✅ All tests passed!"

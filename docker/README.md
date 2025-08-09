@@ -1,8 +1,10 @@
 # NixOS VM Builder Docker Image
 
-🐳 **Now available on Docker Hub: [`olafkfreund/nixos-vm-builder`](https://hub.docker.com/r/olafkfreund/nixos-vm-builder)**
+🐳 **Now available on Docker Hub:**
+[`olafkfreund/nixos-vm-builder`](https://hub.docker.com/r/olafkfreund/nixos-vm-builder)
 
-A Docker-based solution for building NixOS virtual machines without installing Nix locally. Perfect for Windows users who want to try NixOS.
+A Docker-based solution for building NixOS virtual machines without installing Nix locally.
+Perfect for Windows users who want to try NixOS.
 
 ## Quick Start
 
@@ -10,20 +12,20 @@ A Docker-based solution for building NixOS virtual machines without installing N
 
 ```bash
 # Pull the image
-docker pull ghcr.io/your-repo/nixos-vm-builder:latest
+docker pull olafkfreund/nixos-vm-builder:latest
 
 # Build a desktop VM
-docker run --rm -v "$(pwd):/workspace" ghcr.io/your-repo/nixos-vm-builder:latest virtualbox --template desktop
+docker run --rm -v "$(pwd):/workspace" olafkfreund/nixos-vm-builder:latest virtualbox --template desktop
 
 # Build a server VM for Hyper-V
-docker run --rm -v "$(pwd):/workspace" ghcr.io/your-repo/nixos-vm-builder:latest hyperv --template server
+docker run --rm -v "$(pwd):/workspace" olafkfreund/nixos-vm-builder:latest hyperv --template server
 ```
 
 ### Building the Image Locally
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-repo/nixos-template
+git clone https://github.com/olafkfreund/nixos-template
 cd nixos-template/docker
 
 # Build the Docker image
@@ -58,33 +60,33 @@ docker run --rm -v "$(pwd):/workspace" nixos-vm-builder virtualbox --template de
 
 ```bash
 # Build specific template and format
-docker run --rm -v "$(pwd):/workspace" nixos-vm-builder [FORMAT] [OPTIONS]
+docker run --rm -v "$(pwd):/workspace" olafkfreund/nixos-vm-builder:latest [FORMAT] [OPTIONS]
 
 # Show help
-docker run --rm nixos-vm-builder --help
+docker run --rm olafkfreund/nixos-vm-builder:latest --help
 
 # List available templates
-docker run --rm nixos-vm-builder --list-templates
+docker run --rm olafkfreund/nixos-vm-builder:latest --list-templates
 ```
 
 ### Build Examples
 
 ```bash
 # Build VirtualBox desktop VM
-docker run --rm -v "$(pwd):/workspace" nixos-vm-builder virtualbox --template desktop
+docker run --rm -v "$(pwd):/workspace" olafkfreund/nixos-vm-builder:latest virtualbox --template desktop
 
 # Build Hyper-V server VM with custom specs
-docker run --rm -v "$(pwd):/workspace" nixos-vm-builder hyperv \
+docker run --rm -v "$(pwd):/workspace" olafkfreund/nixos-vm-builder:latest hyperv \
   --template server \
   --disk-size 81920 \
   --memory 4096 \
   --vm-name my-server
 
 # Build all formats for gaming template
-docker run --rm -v "$(pwd):/workspace" nixos-vm-builder all --template gaming
+docker run --rm -v "$(pwd):/workspace" olafkfreund/nixos-vm-builder:latest all --template gaming
 
 # Build with custom configuration
-docker run --rm -v "$(pwd):/workspace" nixos-vm-builder virtualbox \
+docker run --rm -v "$(pwd):/workspace" olafkfreund/nixos-vm-builder:latest virtualbox \
   --config /workspace/my-config.nix
 ```
 
@@ -102,7 +104,7 @@ docker run --rm -v "$(pwd):/workspace" nixos-vm-builder virtualbox \
 
 ## Directory Structure
 
-```
+```text
 docker/
 ├── Dockerfile              # Main Docker image definition
 ├── README.md               # This file
@@ -171,7 +173,7 @@ docker/
 1. **Build with custom template**:
 
    ```bash
-   docker run --rm -v "$(pwd):/workspace" nixos-vm-builder virtualbox \
+   docker run --rm -v "$(pwd):/workspace" olafkfreund/nixos-vm-builder:latest virtualbox \
      --config /workspace/my-template.nix
    ```
 
@@ -203,7 +205,7 @@ docker/
 | Gaming      | 45-90 min  | 15-25 GB    | 6GB RAM      |
 | Development | 40-75 min  | 12-20 GB    | 5GB RAM      |
 
-_Build times depend on internet speed and system performance_
+**Note**: Build times depend on internet speed and system performance
 
 ## Troubleshooting
 
@@ -247,12 +249,12 @@ docker system prune -f
 
 ```bash
 # Enable debug output
-docker run --rm -v "$(pwd):/workspace" nixos-vm-builder virtualbox \
+docker run --rm -v "$(pwd):/workspace" olafkfreund/nixos-vm-builder:latest virtualbox \
   --template desktop \
   --debug
 
 # Interactive shell in container
-docker run -it --rm -v "$(pwd):/workspace" nixos-vm-builder bash
+docker run -it --rm -v "$(pwd):/workspace" olafkfreund/nixos-vm-builder:latest bash
 ```
 
 ## Development
