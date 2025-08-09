@@ -26,33 +26,30 @@ jobs:
             connect-timeout = 60
             stalled-download-timeout = 300
       - name: Setup Cachix
-        if: secrets.CACHIX_AUTH_TOKEN != ''
+        id: cachix
+        continue-on-error: true
         uses: cachix/cachix-action@v14
         with:
           name: nix-community
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
           skipPush: true
 
-      - name: Setup basic substituters (fallback)
-        if: secrets.CACHIX_AUTH_TOKEN == ''
+      - name: Configure Nix for CI
         run: |
-          echo "⚠️ No Cachix auth token - using basic substituters only"
+          # Always configure basic substituters
           echo "extra-substituters = https://cache.nixos.org" | sudo tee -a /etc/nix/nix.conf
           echo "extra-trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" | sudo tee -a /etc/nix/nix.conf
-      - name: Configure Nix for CI (with Cachix)
-        if: secrets.CACHIX_AUTH_TOKEN != ''
-        run: |
-          # Configure Nix for better CI performance with Cachix
-          echo "extra-substituters = https://cache.nixos.org https://nix-community.cachix.org" | sudo tee -a /etc/nix/nix.conf
-          echo "extra-trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=" | sudo tee -a /etc/nix/nix.conf
-          echo "max-jobs = 4" | sudo tee -a /etc/nix/nix.conf
-          echo "cores = 2" | sudo tee -a /etc/nix/nix.conf
-          sudo systemctl restart nix-daemon
 
-      - name: Configure Nix for CI (basic)
-        if: secrets.CACHIX_AUTH_TOKEN == ''
-        run: |
-          # Configure Nix for CI without Cachix
+          # Add Cachix if it was set up successfully
+          if [ "${{ steps.cachix.outcome }}" = "success" ]; then
+            echo "✅ Cachix configured successfully"
+            echo "extra-substituters = https://cache.nixos.org https://nix-community.cachix.org" | sudo tee -a /etc/nix/nix.conf
+            echo "extra-trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=" | sudo tee -a /etc/nix/nix.conf
+          else
+            echo "⚠️ Using basic substituters only (Cachix unavailable)"
+          fi
+
+          # Configure performance settings
           echo "max-jobs = 4" | sudo tee -a /etc/nix/nix.conf
           echo "cores = 2" | sudo tee -a /etc/nix/nix.conf
           sudo systemctl restart nix-daemon
