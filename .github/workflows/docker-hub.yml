@@ -28,6 +28,7 @@ env:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     permissions:
       contents: read
     steps:
@@ -56,16 +57,40 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
             type=raw,value={{date 'YYYY.MM.DD'}},enable={{is_default_branch}}
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+      - name: Debug build context
+        run: |
+          echo "Build context contents:"
+          ls -la ./docker/
+          echo "Dockerfile exists:"
+          test -f ./docker/Dockerfile && echo "✅ Yes" || echo "❌ No"
+
+      - name: Build Docker image
+        id: build
+        uses: docker/build-push-action@v6
         with:
           context: ./docker
-          platforms: linux/amd64,linux/arm64
-          push: ${{ github.event_name != 'pull_request' }}
+          file: ./docker/Dockerfile
+          platforms: linux/amd64
+          push: false
+          load: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          pull: true
+
+      - name: Push Docker image to Docker Hub
+        if: github.event_name != 'pull_request'
+        uses: docker/build-push-action@v6
+        with:
+          context: ./docker
+          file: ./docker/Dockerfile
+          platforms: linux/amd64
+          push: true
+          load: false
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
 
       - name: Create Docker Hub README
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
@@ -192,13 +217,17 @@ jobs:
         run: |
           echo "Testing Docker image functionality..."
 
+          # The image should be loaded locally due to load: true
+          IMAGE_TAG="${{ env.DOCKER_HUB_IMAGE }}:latest"
+          echo "Testing image: $IMAGE_TAG"
+
           # Test help command
-          docker run --rm ${{ env.DOCKER_HUB_IMAGE }}:latest --help
+          docker run --rm "$IMAGE_TAG" --help
 
           # Test template listing
-          docker run --rm ${{ env.DOCKER_HUB_IMAGE }}:latest --list-templates
+          docker run --rm "$IMAGE_TAG" --list-templates
 
           # Test validation mode
-          docker run --rm ${{ env.DOCKER_HUB_IMAGE }}:latest virtualbox -t minimal --validate-only
+          docker run --rm "$IMAGE_TAG" virtualbox -t minimal --validate-only
 
           echo "✅ All tests passed!"
