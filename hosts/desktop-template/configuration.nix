@@ -14,7 +14,13 @@
   ];
 
   # System identification
-  networking.hostName = "desktop-template";
+  systemId = {
+    baseName = "desktop-template";
+    profile = "workstation";
+    description = "Desktop template for workstation environments";
+    environment = "development";
+    tags = [ "template" "desktop" ];
+  };
 
   # Module configuration
   modules = {

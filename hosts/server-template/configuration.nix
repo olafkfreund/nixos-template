@@ -10,7 +10,13 @@
   ];
 
   # System identification
-  networking.hostName = "server-template";
+  systemId = {
+    baseName = "server-template";
+    profile = "server";
+    description = "Server template for production services";
+    environment = "production";
+    tags = [ "template" "server" "headless" ];
+  };
 
   # Hardware profile for server
   modules.hardware.power-management = {

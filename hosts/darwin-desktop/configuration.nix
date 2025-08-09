@@ -14,72 +14,31 @@
   networking.localHostName = lib.mkForce "nix-darwin-desktop";
   networking.computerName = lib.mkForce "nix-darwin Desktop";
 
-  # Desktop-specific system packages
+  # Enable Darwin package collections
+  darwin.packages = {
+    profiles = {
+      essential = true;
+      desktop = {
+        enable = true;
+        includeCreative = true; # Include creative tools for desktop
+      };
+      development = {
+        enable = true;
+        languages = ["node" "python" "go" "rust"];
+        databases = true;
+        docker = true;
+      };
+      server = {
+        enable = true; # Desktop users often need server tools
+        cloud = ["aws"];
+      };
+    };
+  };
+
+  # Additional desktop-specific packages not covered by collections
   environment.systemPackages = with pkgs; [
-    # Development environments
-    nodejs_20
-    python311
-    go
-    rustc
-    cargo
-
-    # Development tools
-    docker
-    docker-compose
-    kubernetes
-    kubectl
-    helm
-
-    # Databases and services
-    postgresql_15
-    redis
-
-    # Text editors and IDEs (CLI versions)
-    vim
-    neovim
-    emacs
-
-    # Media and graphics tools
-    imagemagick
-    ffmpeg
-    gimp
-
-    # System utilities
-    htop
-    btop
-    iftop
-    tree
-    fd
-    ripgrep
-    bat
-    eza
-    zoxide
-    fzf
-
-    # Archive and compression
-    unzip
-    p7zip
-
-    # Network tools
-    curl
-    wget
-    httpie
-    nmap
-
-    # Git and version control
-    git
-    gh
-    git-lfs
-    lazygit
-
-    # Cloud tools
-    awscli2
-    terraform
-    ansible
-
-    # Desktop productivity (CLI tools)
-    pandoc
-    texlive.combined.scheme-medium
+    # Desktop-specific packages that aren't in the collections
+    gimp # Specific to this host
 
     # Desktop-specific utilities
     (writeShellScriptBin "desktop-info" ''
@@ -209,59 +168,15 @@
     '')
   ];
 
-  # Desktop-specific Homebrew applications
-  homebrew = {
-    # Additional casks for desktop use
-    casks = [
-      # Design and creativity
-      "sketch"
-      "adobe-creative-cloud"
-      "canva"
-
-      # Communication and collaboration
-      "zoom"
-      "microsoft-teams"
-      "slack"
-      "discord"
-
-      # Development tools
-      "visual-studio-code"
-      "jetbrains-toolbox"
-      "github-desktop"
-      "tower"
-      "postman"
-
-      # Productivity
-      "notion"
-      "obsidian"
-      "todoist"
-      "calendly"
-
-      # Media
-      "spotify"
-      "vlc"
-      "handbrake"
-
-      # Utilities
-      "raycast"
-      "rectangle"
-      "bartender-4"
-      "cleanmymac"
-      "the-unarchiver"
-    ];
-
-    # Additional Mac App Store apps for desktop
-    masApps = {
-      "Xcode" = 497799835;
-      "Final Cut Pro" = 424389933;
-      "Logic Pro" = 634148309;
-      "Pixelmator Pro" = 1289583905;
-      "Keynote" = 409183694;
-      "Numbers" = 409203825;
-      "Pages" = 409201541;
-      "TestFlight" = 899247664;
-    };
-  };
+  # Additional desktop-specific Homebrew packages not in collections
+  homebrew.casks = [
+    # Host-specific applications
+    "tower" # Alternative Git GUI
+    "todoist" # Task management
+    "calendly" # Scheduling
+    "handbrake" # Video encoding
+    "microsoft-teams" # Enterprise communication
+  ];
 
   # Desktop-specific system settings
   system.defaults = {

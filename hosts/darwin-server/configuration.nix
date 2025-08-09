@@ -14,93 +14,42 @@
   networking.localHostName = lib.mkForce "nix-darwin-server";
   networking.computerName = lib.mkForce "nix-darwin Server";
 
-  # Server-specific system packages
+  # Enable Darwin package collections for server use
+  darwin.packages = {
+    profiles = {
+      essential = true;
+      development = {
+        enable = true;
+        languages = ["node" "python" "go" "rust" "java"];
+        databases = true;
+        docker = true;
+      };
+      server = {
+        enable = true;
+        cloud = ["aws" "gcp" "azure"];
+      };
+    };
+    
+    homebrew = {
+      enableExtraSecurityTools = true; # Servers need security tools
+    };
+  };
+
+  # Server-specific packages not covered by collections
   environment.systemPackages = with pkgs; [
-    # Server development tools
-    nodejs_20
-    python311
-    go
-    rustc
-    cargo
-    java
-
-    # Databases
-    postgresql_15
-    redis
+    # Server-specific tools not in the collections
     mongodb
-    sqlite
-
-    # Web servers and reverse proxies
     nginx
     caddy
-
-    # Container and orchestration tools
-    docker
-    docker-compose
-    kubernetes
-    kubectl
-    helm
-    podman
-
-    # Cloud and infrastructure tools
-    terraform
-    ansible
-    awscli2
-    gcloud
-    azure-cli
-
-    # Monitoring and observability
     prometheus
     grafana
-
-    # Development servers and tools
     ngrok
     mkcert
-
-    # System utilities for servers
-    htop
-    btop
-    iotop
-    tree
-    fd
-    ripgrep
-    bat
-    eza
-    jq
-    yq
-
-    # Network tools
-    curl
-    wget
-    httpie
-    nmap
-    tcpdump
     wireshark
-    netcat
-
-    # Archive and compression
-    unzip
-    p7zip
-    tar
-    gzip
-
-    # Text processing
-    vim
-    neovim
-    emacs
-
-    # Version control
-    git
-    gh
-    git-lfs
-
-    # Security tools
+    podman
     gnupg
     age
     sops
-
-    # Process management
-    tmux
     screen
 
     # Server-specific utilities
@@ -353,32 +302,25 @@
     '')
   ];
 
-  # Server-specific Homebrew packages
+  # Additional server-specific Homebrew packages
   homebrew = {
-    # Server-focused brews
     brews = [
-      "postgresql"
-      "redis"
+      "postgresql"     # Often better managed via Homebrew
+      "redis" 
       "nginx"
       "mongodb/brew/mongodb-community"
       "grafana"
       "prometheus"
     ];
-
-    # Minimal GUI apps for server management
-    casks = [
-      "docker"
-      "pgadmin4"
-      "redis-insight"
-      "mongodb-compass"
-      "postman"
-      "visual-studio-code" # For remote editing
+    
+    taps = [
+      "mongodb/brew"
     ];
 
-    # Essential server management from Mac App Store
-    masApps = {
-      "Xcode" = 497799835; # For development tools
-    };
+    casks = [
+      "pgadmin4"       # Database management GUI
+      "mongodb-compass" # MongoDB GUI
+    ];
   };
 
   # Server-optimized system settings (minimal GUI)

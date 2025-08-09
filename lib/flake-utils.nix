@@ -244,10 +244,100 @@ let
     };
   };
 
+  # Host Template Functions
+  # Simplified builders for common host types
+  mkWorkstation = { hostname, system ? "x86_64-linux", extraModules ? [] }:
+    mkSystem {
+      inherit hostname system extraModules;
+      profile = "workstation";
+    };
+
+  mkServer = { hostname, system ? "x86_64-linux", extraModules ? [] }:
+    mkSystem {
+      inherit hostname system extraModules;
+      profile = "server";
+    };
+
+  mkDevelopment = { hostname, system ? "x86_64-linux", extraModules ? [] }:
+    mkSystem {
+      inherit hostname system extraModules;
+      profile = "development";
+    };
+
+  mkGaming = { hostname, system ? "x86_64-linux", extraModules ? [] }:
+    mkSystem {
+      inherit hostname system extraModules;
+      profile = "gaming";
+    };
+
+  mkLaptop = { hostname, system ? "x86_64-linux", extraModules ? [] }:
+    mkSystem {
+      inherit hostname system extraModules;
+      profile = "laptop";
+    };
+
+  mkVM = { hostname, system ? "x86_64-linux", profile ? "workstation", extraModules ? [] }:
+    mkSystem {
+      inherit hostname system profile;
+      extraModules = [
+        ../modules/virtualization/vm-guest.nix
+      ] ++ extraModules;
+    };
+
+  mkContainer = { hostname, system ? "x86_64-linux", profile ? "server", extraModules ? [] }:
+    mkSystem {
+      inherit hostname system profile;
+      extraModules = [
+        ../modules/virtualization/guest-optimizations.nix
+        { boot.isContainer = true; }
+      ] ++ extraModules;
+    };
+
+  mkMinimal = { hostname, system ? "x86_64-linux", extraModules ? [] }:
+    mkSystem {
+      inherit hostname system extraModules;
+      profile = "minimal";
+    };
+
+  # Host creation helpers with Home Manager profiles
+  mkDesktopHost = { hostname, system ? "x86_64-linux", homeProfile ? "desktop", extraModules ? [] }:
+    mkWorkstation {
+      inherit hostname system;
+      extraModules = [
+        ({ lib, ... }: {
+          home-manager.users.user = {
+            imports = [ 
+              (inputs.self + "/home/profiles/base.nix")
+              (inputs.self + ("/home/profiles/" + homeProfile + ".nix"))
+            ];
+          };
+        })
+      ] ++ extraModules;
+    };
+
+  mkServerHost = { hostname, system ? "x86_64-linux", homeProfile ? "server", extraModules ? [] }:
+    mkServer {
+      inherit hostname system;
+      extraModules = [
+        ({ lib, ... }: {
+          home-manager.users.root = {
+            imports = [
+              (inputs.self + "/home/profiles/base.nix")
+              (inputs.self + ("/home/profiles/" + homeProfile + ".nix"))
+            ];
+          };
+        })
+      ] ++ extraModules;
+    };
+
 in
 {
   # Export all builders
   inherit mkSystem mkWSLSystem mkInstaller mkMacOSInstaller;
+  
+  # Export host template functions
+  inherit mkWorkstation mkServer mkDevelopment mkGaming mkLaptop
+          mkVM mkContainer mkMinimal mkDesktopHost mkServerHost;
 
   # Export pre-built configuration sets
   templates = mkTemplates;

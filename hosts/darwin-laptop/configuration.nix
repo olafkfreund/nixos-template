@@ -14,32 +14,25 @@
   networking.localHostName = lib.mkForce "nix-darwin-laptop";
   networking.computerName = lib.mkForce "nix-darwin Laptop";
 
-  # Laptop-specific system packages
+  # Enable Darwin package collections optimized for laptop use
+  darwin.packages = {
+    profiles = {
+      essential = true;
+      development = {
+        enable = true;
+        languages = ["node" "python"]; # Minimal for battery life
+        databases = false; # Disable to save resources
+        docker = false; # Heavy on battery
+      };
+      laptop = {
+        enable = true;
+        batteryOptimized = true;
+      };
+    };
+  };
+
+  # Laptop-specific packages not covered by collections
   environment.systemPackages = with pkgs; [
-    # Essential development tools (minimal for battery life)
-    nodejs_20
-    python311
-    git
-
-    # Lightweight editors
-    vim
-    neovim
-
-    # System utilities optimized for mobile use
-    htop
-    tree
-    fd
-    ripgrep
-    bat
-    eza
-
-    # Network tools for mobile connectivity
-    curl
-    wget
-    nmap
-
-    # Archive tools
-    unzip
 
     # Battery and power management utilities
     (writeShellScriptBin "battery-status" ''
@@ -204,43 +197,11 @@
     '')
   ];
 
-  # Laptop-specific Homebrew applications (essential only)
-  homebrew = {
-    casks = [
-      # Essential development
-      "visual-studio-code"
-      "github-desktop"
-
-      # Communication (mobile-friendly)
-      "slack"
-      "zoom"
-      "telegram"
-
-      # Productivity
-      "notion"
-      "obsidian"
-
-      # System utilities for laptops
-      "rectangle"
-      "raycast"
-      "the-unarchiver"
-
-      # Battery management
-      "coconutbattery"
-      "aldente"
-
-      # Network tools
-      "wifi-explorer-lite"
-    ];
-
-    # Essential Mac App Store apps
-    masApps = {
-      "Xcode" = 497799835;
-      "TestFlight" = 899247664;
-      "Amphetamine" = 937984704; # Keep Mac awake
-      "Magnet" = 441258766; # Window management
-    };
-  };
+  # Additional laptop-specific Homebrew packages
+  homebrew.casks = [
+    # Laptop-specific tools not in collections
+    "wifi-explorer-lite" # Network diagnostics for mobile use
+  ];
 
   # Laptop-optimized system settings
   system.defaults = {

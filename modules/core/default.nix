@@ -8,6 +8,7 @@
     ./nix.nix
     ./nix-optimization.nix
     ./security.nix
+    ./system-identification.nix
     ./users.nix
   ];
 }

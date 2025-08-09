@@ -15,8 +15,15 @@
     inputs.nixos-hardware.nixosModules.common-pc-ssd
   ];
 
-  # Hostname
-  networking.hostName = "example-desktop";
+  # System identification
+  systemId = {
+    baseName = "example-desktop";
+    profile = "workstation";
+    description = "Example desktop workstation with GPU acceleration";
+    environment = "production";
+    location = "Home Office";
+    tags = [ "example" "desktop" "gpu-enabled" ];
+  };
 
   # Enable desktop modules
   modules = {

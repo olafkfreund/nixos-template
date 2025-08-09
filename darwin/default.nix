@@ -9,6 +9,7 @@
     ./homebrew.nix
     ./networking.nix
     ./security.nix
+    ./packages.nix
   ];
 
   # System identification
