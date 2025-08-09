@@ -36,7 +36,8 @@ All notable changes to this NixOS configuration template will be documented in t
   - Fixed option conflicts in deployment images
   - Removed deprecated `environment.noXlibs` option
 
-- **Disk Space Optimizations**: Aggressive space-saving measures for deployment images
+- **Disk Space Optimizations**: Aggressive space-saving measures for deployment
+  images
   - Development images optimized with aggressive garbage collection
   - Documentation disabled in deployment images to reduce size
   - Minimal journaling configuration (50-100MB limits)
@@ -80,6 +81,7 @@ All notable changes to this NixOS configuration template will be documented in t
 
 ---
 
-**Note**: This template provides cutting-edge NixOS features while maintaining stability and security. All changes are validated through comprehensive CI/CD testing.
+**Note**: This template provides cutting-edge NixOS features while maintaining stability and
+security. All changes are validated through comprehensive CI/CD testing.
 
 For detailed information about any feature, see the corresponding documentation in the `docs/` directory.

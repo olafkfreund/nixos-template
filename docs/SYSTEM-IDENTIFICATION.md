@@ -1,6 +1,7 @@
 # System Identification Guide
 
-The NixOS template includes a standardized system identification module that provides consistent hostname patterns, profile management, and system metadata across all configurations.
+The NixOS template includes a standardized system identification module that provides consistent
+hostname patterns, profile management, and system metadata across all configurations.
 
 ## Overview
 

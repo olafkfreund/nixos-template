@@ -1,6 +1,8 @@
 # Deployment Images Guide
 
-This NixOS template includes comprehensive deployment image generation using our **deployment factory**, providing ready-to-deploy images for various platforms and use cases through a modular, unified system.
+This NixOS template includes comprehensive deployment image generation using our
+**deployment factory**, providing ready-to-deploy images for various platforms and use cases
+through a modular, unified system.
 
 ## Quick Start
 
