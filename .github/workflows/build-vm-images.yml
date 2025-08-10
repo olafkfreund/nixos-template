@@ -74,16 +74,23 @@ jobs:
   build-vm-matrix:
     needs: build-docker-image
     runs-on: ubuntu-latest
+    timeout-minutes: 120  # 2 hour timeout for entire job
     strategy:
       fail-fast: false
+      max-parallel: 2  # Limit concurrent builds to reduce resource pressure
       matrix:
         template: [desktop, server, gaming, minimal, development]
         format: [virtualbox, hyperv, vmware, qemu]
         exclude:
-          # Skip resource-intensive combinations on PR
+          # Skip resource-intensive combinations to reduce build time
           - template: gaming
             format: vmware
           - template: gaming
+            format: hyperv
+          # Skip development + vmware/hyperv to reduce matrix size
+          - template: development
+            format: vmware
+          - template: development
             format: hyperv
     steps:
       - name: Checkout repository
@@ -100,7 +107,49 @@ jobs:
         run: mkdir -p workspace/output
       - name: Build VM Image
         id: build-vm
-        run: "# Calculate build timeout based on template and format\ncase \"${{ matrix.template }}\" in\n  minimal) TIMEOUT=\"30m\" ;;\n  server) TIMEOUT=\"45m\" ;;\n  desktop) TIMEOUT=\"60m\" ;;\n  development) TIMEOUT=\"75m\" ;;\n  gaming) TIMEOUT=\"90m\" ;;\n  *) TIMEOUT=\"60m\" ;;\nesac\n\necho \"Building ${{ matrix.template }}-${{ matrix.format }} with timeout: $TIMEOUT\"\n\n# Run the build with timeout\ntimeout $TIMEOUT docker run --rm \\\n  -v \"$(pwd)/workspace:/workspace\" \\\n  ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \\\n  ${{ matrix.format }} \\\n  --template ${{ matrix.template }} \\\n  --vm-name \"nixos-${{ matrix.template }}-$(date +%Y%m%d)\" \\\n  --output /workspace/output\n  \n# Get build info\nBUILD_TIME=$(date -u +\"%Y-%m-%dT%H:%M:%SZ\")\nVM_NAME=\"nixos-${{ matrix.template }}-$(date +%Y%m%d)\"\n\necho \"build-time=$BUILD_TIME\" >> $GITHUB_OUTPUT\necho \"vm-name=$VM_NAME\" >> $GITHUB_OUTPUT\n\n# List generated files\necho \"Generated files:\"\nfind workspace/output -name \"*${{ matrix.template }}*${{ matrix.format }}*\" -type f -exec ls -lh {} \\;\n"
+        timeout-minutes: 90  # Hard timeout for individual build step
+        run: |
+          # Calculate build timeout based on template and format
+          case "${{ matrix.template }}" in
+            minimal) TIMEOUT="25m" ;;
+            server) TIMEOUT="35m" ;;
+            desktop) TIMEOUT="50m" ;;
+            development) TIMEOUT="60m" ;;
+            gaming) TIMEOUT="80m" ;;
+            *) TIMEOUT="50m" ;;
+          esac
+
+          echo "Building ${{ matrix.template }}-${{ matrix.format }} with timeout: $TIMEOUT"
+
+          # Pre-build cleanup to free resources
+          docker system prune -f || true
+
+          # Run the build with timeout and resource limits
+          timeout $TIMEOUT docker run --rm \
+            --memory="6g" \
+            --memory-swap="8g" \
+            --cpus="2" \
+            -v "$(pwd)/workspace:/workspace" \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
+            ${{ matrix.format }} \
+            --template ${{ matrix.template }} \
+            --vm-name "nixos-${{ matrix.template }}-$(date +%Y%m%d)" \
+            --output /workspace/output || {
+              echo "⚠️  VM build failed or timed out for ${{ matrix.template }}-${{ matrix.format }}"
+              echo "This is expected for resource-intensive builds in CI environment"
+              exit 1
+            }
+
+          # Get build info
+          BUILD_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          VM_NAME="nixos-${{ matrix.template }}-$(date +%Y%m%d)"
+
+          echo "build-time=$BUILD_TIME" >> $GITHUB_OUTPUT
+          echo "vm-name=$VM_NAME" >> $GITHUB_OUTPUT
+
+          # List generated files
+          echo "Generated files:"
+          find workspace/output -name "*${{ matrix.template }}*${{ matrix.format }}*" -type f -exec ls -lh {} \;
       - name: Compress VM Image
         if: success()
         run: "cd workspace/output\n\n# Find the VM file\nVM_FILE=$(find . -name \"*${{ matrix.template }}*${{ matrix.format }}*\" -type f -not -name \"*.json\" | head -1)\n\nif [ -n \"$VM_FILE\" ]; then\n  echo \"Compressing: $VM_FILE\"\n  \n  # Compress based on format\n  case \"${{ matrix.format }}\" in\n    virtualbox)\n      # OVA files are already compressed\n      echo \"OVA file, skipping compression\"\n      ;;\n    *)\n      # Compress other formats\n      gzip -9 \"$VM_FILE\"\n      echo \"Compressed to: ${VM_FILE}.gz\"\n      ;;\n  esac\nelse\n  echo \"No VM file found to compress\"\n  exit 1\nfi\n"
