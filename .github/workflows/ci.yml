@@ -86,23 +86,23 @@ jobs:
           
           # Test critical files first to ensure core functionality
           echo "Testing critical files..."
-          critical_files=(
-            "./flake.nix"
-            "./lib/flake-utils.nix"
-            "./modules/core/default.nix"
-            "./home/profiles/base.nix"
-            "./modules/packages/core-system.nix"
-          )
           
-          for file in "${critical_files[@]}"; do
-            if [ -f "$file" ]; then
-              echo -n "Checking critical file: $file ... "
-              if nix-instantiate --parse "$file" >/dev/null 2>&1; then
+          # Test each critical file individually (more shell-compatible)
+          for critical_file in \
+            "./flake.nix" \
+            "./lib/flake-utils.nix" \
+            "./modules/core/default.nix" \
+            "./home/profiles/base.nix" \
+            "./modules/packages/core-system.nix"; do
+            
+            if [ -f "$critical_file" ]; then
+              echo -n "Checking critical file: $critical_file ... "
+              if nix-instantiate --parse "$critical_file" >/dev/null 2>&1; then
                 echo "OK"
               else
                 echo "FAILED"
-                echo "❌ Critical file $file failed to parse:"
-                nix-instantiate --parse "$file" 2>&1 | head -5
+                echo "❌ Critical file $critical_file failed to parse:"
+                nix-instantiate --parse "$critical_file" 2>&1 | head -5
                 exit 1
               fi
             fi
@@ -114,18 +114,12 @@ jobs:
           MAX_SAMPLES=150
           
           for file in $(find . -name "*.nix" -type f | sort); do
-            # Skip files we already tested
-            skip=false
-            for critical in "${critical_files[@]}"; do
-              if [ "$file" = "$critical" ]; then
-                skip=true
-                break
-              fi
-            done
-            
-            if [ "$skip" = true ]; then
-              continue
-            fi
+            # Skip files we already tested (simple string matching)
+            case "$file" in
+              "./flake.nix"|"./lib/flake-utils.nix"|"./modules/core/default.nix"|"./home/profiles/base.nix"|"./modules/packages/core-system.nix")
+                continue
+                ;;
+            esac
             
             SAMPLE_COUNT=$((SAMPLE_COUNT + 1))
             
