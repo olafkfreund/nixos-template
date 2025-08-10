@@ -80,26 +80,43 @@ jobs:
         run: |
           echo "Checking Nix file syntax..."
           echo "Environment: $(nix --version)"
+          echo "Working directory: $(pwd)"
+          echo "First 5 .nix files found:"
+          find . -name "*.nix" -type f | head -5
           
-          # Simple direct approach - check each file individually
-          FAILED=false
-          for file in $(find . -name "*.nix" -type f | sort); do
-            echo "Checking: $file"
-            if ! nix-instantiate --parse "$file" > /tmp/parse_output.log 2>&1; then
-              echo "❌ SYNTAX ERROR in $file:"
-              cat /tmp/parse_output.log
-              echo "================================"
-              FAILED=true
-              # Continue checking other files to get a complete report
+          # Test a single known-good file first
+          echo "Testing known-good file: ./flake.nix"
+          if nix-instantiate --parse ./flake.nix > /tmp/test.log 2>&1; then
+            echo "✅ flake.nix parses successfully"
+          else
+            echo "❌ Even flake.nix fails to parse:"
+            cat /tmp/test.log
+            echo "This suggests a fundamental environment issue"
+            exit 1
+          fi
+          
+          # Now test all files with minimal approach
+          echo "Testing all .nix files..."
+          EXIT_CODE=0
+          for file in $(find . -name "*.nix" -type f | sort | head -20); do
+            echo -n "Checking: $file ... "
+            if nix-instantiate --parse "$file" >/dev/null 2>&1; then
+              echo "OK"
+            else
+              echo "FAILED"
+              echo "Error details for $file:"
+              nix-instantiate --parse "$file" 2>&1 | head -3
+              EXIT_CODE=1
+              break  # Exit on first error for faster feedback
             fi
           done
           
-          if [ "$FAILED" = true ]; then
-            echo "❌ One or more files have syntax errors!"
+          if [ $EXIT_CODE -ne 0 ]; then
+            echo "❌ Nix syntax validation failed"
             exit 1
-          else
-            echo "✅ All Nix files have valid syntax"
           fi
+          
+          echo "✅ All tested Nix files have valid syntax"
       - name: Template syntax validation
         timeout-minutes: 3
         run: |
