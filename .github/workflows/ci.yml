@@ -84,39 +84,70 @@ jobs:
           echo "First 5 .nix files found:"
           find . -name "*.nix" -type f | head -5
           
-          # Test a single known-good file first
-          echo "Testing known-good file: ./flake.nix"
-          if nix-instantiate --parse ./flake.nix > /tmp/test.log 2>&1; then
-            echo "✅ flake.nix parses successfully"
-          else
-            echo "❌ Even flake.nix fails to parse:"
-            cat /tmp/test.log
-            echo "This suggests a fundamental environment issue"
-            exit 1
-          fi
+          # Test critical files first to ensure core functionality
+          echo "Testing critical files..."
+          critical_files=(
+            "./flake.nix"
+            "./lib/flake-utils.nix"
+            "./modules/core/default.nix"
+            "./home/profiles/base.nix"
+            "./modules/packages/core-system.nix"
+          )
           
-          # Now test all files with minimal approach
-          echo "Testing all .nix files..."
-          EXIT_CODE=0
-          for file in $(find . -name "*.nix" -type f | sort | head -62); do
-            echo -n "Checking: $file ... "
-            if nix-instantiate --parse "$file" >/dev/null 2>&1; then
-              echo "OK"
-            else
-              echo "FAILED"
-              echo "Error details for $file:"
-              nix-instantiate --parse "$file" 2>&1 | head -3
-              EXIT_CODE=1
-              break  # Exit on first error for faster feedback
+          for file in "${critical_files[@]}"; do
+            if [ -f "$file" ]; then
+              echo -n "Checking critical file: $file ... "
+              if nix-instantiate --parse "$file" >/dev/null 2>&1; then
+                echo "OK"
+              else
+                echo "FAILED"
+                echo "❌ Critical file $file failed to parse:"
+                nix-instantiate --parse "$file" 2>&1 | head -5
+                exit 1
+              fi
             fi
           done
           
-          if [ $EXIT_CODE -ne 0 ]; then
-            echo "❌ Nix syntax validation failed"
-            exit 1
-          fi
+          # Sample test of other files (due to CI resource limitations)
+          echo "Testing sample of remaining files..."
+          SAMPLE_COUNT=0
+          MAX_SAMPLES=150
           
-          echo "✅ All tested Nix files have valid syntax"
+          for file in $(find . -name "*.nix" -type f | sort); do
+            # Skip files we already tested
+            skip=false
+            for critical in "${critical_files[@]}"; do
+              if [ "$file" = "$critical" ]; then
+                skip=true
+                break
+              fi
+            done
+            
+            if [ "$skip" = true ]; then
+              continue
+            fi
+            
+            SAMPLE_COUNT=$((SAMPLE_COUNT + 1))
+            
+            if [ $SAMPLE_COUNT -le $MAX_SAMPLES ]; then
+              echo -n "Checking: $file ... "
+              if nix-instantiate --parse "$file" >/dev/null 2>&1; then
+                echo "OK"
+              else
+                echo "FAILED"
+                echo "❌ Syntax error in $file:"
+                nix-instantiate --parse "$file" 2>&1 | head -3
+                exit 1
+              fi
+            else
+              # Reached sample limit due to CI constraints
+              echo "✅ Tested $MAX_SAMPLES sample files successfully"
+              echo "ℹ️ Remaining files skipped due to CI resource limitations"
+              break
+            fi
+          done
+          
+          echo "✅ Nix syntax validation completed successfully"
       - name: Template syntax validation
         timeout-minutes: 3
         run: |
