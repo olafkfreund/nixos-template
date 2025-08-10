@@ -80,10 +80,23 @@ jobs:
         run: |
           echo "Checking Nix file syntax..."
           # Check all .nix files for syntax errors
-          find . -name "*.nix" -type f | while read -r file; do
+          set -e  # Exit on any error
+          
+          # Create a temporary file list to avoid subshell issues
+          find . -name "*.nix" -type f > /tmp/nix_files.txt
+          
+          # Check each file
+          while IFS= read -r file; do
             echo "Checking: $file"
-            nix-instantiate --parse "$file" > /dev/null
-          done
+            if ! nix-instantiate --parse "$file" > /dev/null 2>&1; then
+              echo "❌ SYNTAX ERROR in $file:"
+              nix-instantiate --parse "$file" 2>&1 | head -10
+              echo "---"
+              exit 1
+            fi
+          done < /tmp/nix_files.txt
+          
+          echo "✅ All Nix files have valid syntax"
       - name: Template syntax validation
         timeout-minutes: 3
         run: |
