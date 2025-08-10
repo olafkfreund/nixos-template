@@ -98,7 +98,7 @@ jobs:
           # Now test all files with minimal approach
           echo "Testing all .nix files..."
           EXIT_CODE=0
-          for file in $(find . -name "*.nix" -type f | sort | head -50); do
+          for file in $(find . -name "*.nix" -type f | sort | head -100); do
             echo -n "Checking: $file ... "
             if nix-instantiate --parse "$file" >/dev/null 2>&1; then
               echo "OK"
