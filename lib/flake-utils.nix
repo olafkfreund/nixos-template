@@ -10,9 +10,10 @@ let
     # Set timezone for templates
     time.timeZone = "Europe/London";
     # Location for geoclue2 (needed by laptop template)
+    # REPLACE WITH YOUR COORDINATES - do not commit real location to git
     location = {
-      latitude = 51.5074;
-      longitude = -0.1278;
+      latitude = 0.0;  # Replace with your latitude
+      longitude = 0.0; # Replace with your longitude
     };
     # Allow unfree packages for template validation
     nixpkgs.config.allowUnfree = true;
@@ -45,9 +46,9 @@ let
         # Add comprehensive flake metadata
         flakeMeta = {
           inherit hostname profile system;
-          # Build information
-          buildTime = self.lastModified or 0;
-          buildDate = "build-${toString (self.lastModified or 0)}";
+          # Build information (reproducible)
+          buildTime = 0; # Static to ensure reproducibility
+          buildDate = "reproducible-build";
           flakeRev = self.rev or "dirty";
           flakeShortRev =
             if (self.rev or null) != null

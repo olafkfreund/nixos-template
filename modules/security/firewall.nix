@@ -364,32 +364,5 @@ in
     };
   };
 
-  # Usage examples in comments:
-  /*
-    # Example configuration:
-    modules.security.firewall = {
-    enable = true;
-    profile = "server";
-
-    protection = {
-      enableDDoSProtection = true;
-      enableBruteForceProtection = true;
-      maxConnections = 25;
-    };
-
-    allowedPorts = {
-      tcp = [ 8080 9000 ];  # Custom application ports
-      udp = [ 51820 ];      # WireGuard
-    };
-
-    trustedNetworks = [
-      "10.0.0.0/8"
-      "192.168.0.0/16"
-    ];
-
-    customRules.input = [
-      "tcp dport 8443 ip saddr 10.0.0.0/8 accept"  # Internal HTTPS
-    ];
-    };
-  */
+  # For usage examples, see: examples/expert-improvements-usage.nix
 }

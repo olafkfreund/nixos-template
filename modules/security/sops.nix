@@ -167,12 +167,7 @@ in
         cfg.templates;
     };
 
-    # Ensure sops user exists
-    users.users.sops-nix = {
-      isSystemUser = true;
-      group = "sops-nix";
-    };
-    users.groups.sops-nix = { };
+    # SOPS-nix manages users automatically - no manual user creation needed
 
     # Development tools for secrets management
     environment.systemPackages = with pkgs; [
@@ -206,39 +201,5 @@ in
     };
   };
 
-  # Usage examples in comments:
-  /*
-    # Example configuration:
-    modules.security.sops = {
-    enable = true;
-    defaultSopsFile = ./secrets/secrets.yaml;
-
-    secrets = {
-      "database/password" = {
-        owner = "postgresql";
-        group = "postgresql";
-        mode = "0440";
-        restartUnits = [ "postgresql.service" ];
-      };
-
-      "api/keys/github" = {
-        path = "/run/secrets/github-token";
-        owner = "git";
-        mode = "0400";
-      };
-    };
-
-    templates = {
-      "app-config" = {
-        content = ''
-          database_url=postgresql://user:${config.sops.placeholder."database/password"}@localhost/db
-          github_token=${config.sops.placeholder."api/keys/github"}
-        '';
-        path = "/run/secrets/app.env";
-        owner = "app";
-        mode = "0440";
-      };
-    };
-    };
-  */
+  # For usage examples, see: examples/expert-improvements-usage.nix
 }
