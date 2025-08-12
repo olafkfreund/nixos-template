@@ -92,12 +92,11 @@ in
       # Enable all firmware (including WiFi)
       enableAllFirmware = lib.mkDefault true;
 
-      # CPU microcode updates
-      cpu.intel.updateMicrocode = lib.mkDefault true;
-      cpu.amd.updateMicrocode = lib.mkDefault true;
+      # CPU microcode updates (NixOS will auto-detect CPU type)
+      # Removed redundant mkDefault - NixOS handles this automatically
 
-      # Graphics acceleration
-      graphics.enable = lib.mkDefault true;
+      # Graphics acceleration (let NixOS enable based on display manager detection)
+      # graphics.enable = lib.mkDefault true; # Removed - let NixOS auto-detect
 
       # Bluetooth
       bluetooth = {
