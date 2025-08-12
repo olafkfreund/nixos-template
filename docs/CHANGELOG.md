@@ -44,7 +44,9 @@ All notable changes to this NixOS configuration template will be documented in t
   - Automatic Nix store optimization enabled
 
 - Updated README.md to include Windows VM builder section
+
 - Enhanced project structure documentation with Docker components
+
 - Added Windows-specific quick start instructions
 
 ### Documentation

@@ -12,7 +12,7 @@ let
     # Location for geoclue2 (needed by laptop template)
     # REPLACE WITH YOUR COORDINATES - do not commit real location to git
     location = {
-      latitude = 0.0;  # Replace with your latitude
+      latitude = 0.0; # Replace with your latitude
       longitude = 0.0; # Replace with your longitude
     };
     # Allow unfree packages for template validation

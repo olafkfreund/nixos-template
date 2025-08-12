@@ -74,10 +74,10 @@ jobs:
   build-vm-matrix:
     needs: build-docker-image
     runs-on: ubuntu-latest
-    timeout-minutes: 120  # 2 hour timeout for entire job
+    timeout-minutes: 120 # 2 hour timeout for entire job
     strategy:
       fail-fast: false
-      max-parallel: 2  # Limit concurrent builds to reduce resource pressure
+      max-parallel: 2 # Limit concurrent builds to reduce resource pressure
       matrix:
         template: [desktop, server, gaming, minimal, development]
         format: [virtualbox, hyperv, vmware, qemu]
@@ -107,7 +107,7 @@ jobs:
         run: mkdir -p workspace/output
       - name: Build VM Image
         id: build-vm
-        timeout-minutes: 90  # Hard timeout for individual build step
+        timeout-minutes: 90 # Hard timeout for individual build step
         run: |
           # Calculate build timeout based on template and format
           case "${{ matrix.template }}" in

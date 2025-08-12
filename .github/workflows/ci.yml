@@ -33,7 +33,6 @@ jobs:
           name: nix-community
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
           skipPush: true
-
       - name: Configure Nix for CI
         run: |
           # Always configure basic substituters
@@ -80,23 +79,23 @@ jobs:
         run: |
           echo "Checking Nix file syntax..."
           echo "Environment: $(nix --version)"
-          
+
           # Simple approach that we know works - test core files only
           echo "Testing core system files for syntax errors..."
-          
+
           # Test the most important files
           echo "Checking flake.nix..."
           nix-instantiate --parse ./flake.nix > /dev/null
-          
+
           echo "Checking lib/flake-utils.nix..."
           nix-instantiate --parse ./lib/flake-utils.nix > /dev/null
-          
+
           echo "Checking modules/core/default.nix..."
           nix-instantiate --parse ./modules/core/default.nix > /dev/null
-          
+
           echo "Checking base profile..."
           nix-instantiate --parse ./home/profiles/base.nix > /dev/null
-          
+
           # Test a representative sample of other files
           echo "Testing sample of configuration files..."
           test_files="
@@ -106,14 +105,14 @@ jobs:
           ./hosts/server-template/configuration.nix
           ./darwin/default.nix
           "
-          
+
           for file in $test_files; do
             if [ -f "$file" ]; then
               echo "Checking $file..."
               nix-instantiate --parse "$file" > /dev/null
             fi
           done
-          
+
           echo "✅ Core Nix syntax validation passed"
       - name: Template syntax validation
         timeout-minutes: 3

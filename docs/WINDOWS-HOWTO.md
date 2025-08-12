@@ -91,9 +91,11 @@ This step-by-step guide shows Windows users how to run NixOS virtual machines wi
 ### Step 4: First Login
 
 1. **VM will boot to login screen**
+
 1. **Default credentials**:
    - **Username**: `nixos`
    - **Password**: `nixos`
+
 1. **IMPORTANT**: Change password immediately:
 
    ```bash
@@ -126,8 +128,11 @@ This step-by-step guide shows Windows users how to run NixOS virtual machines wi
 ### Step 1: Install Docker Desktop
 
 1. **Download**: [Docker Desktop for Windows](https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe)
+
 1. **Install** with default settings
+
 1. **Start Docker Desktop**
+
 1. **Verify installation**: Open PowerShell and run:
 
    ```powershell

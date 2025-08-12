@@ -52,31 +52,31 @@ detect_virtualization() {
     product_name=$(cat /sys/class/dmi/id/product_name 2>/dev/null || echo "")
 
     case "$product_name" in
-      *"VirtualBox"*)
-        vm_type="virtualbox"
-        confidence="high"
-        details="DMI Product Name: $product_name"
-        ;;
-      *"VMware"*)
-        vm_type="vmware"
-        confidence="high"
-        details="DMI Product Name: $product_name"
-        ;;
-      *"QEMU"*)
-        vm_type="qemu"
-        confidence="high"
-        details="DMI Product Name: $product_name"
-        ;;
-      *"Microsoft Corporation"*)
-        vm_type="hyperv"
-        confidence="medium"
-        details="DMI Product Name: $product_name"
-        ;;
-      *"Xen"*)
-        vm_type="xen"
-        confidence="high"
-        details="DMI Product Name: $product_name"
-        ;;
+    *"VirtualBox"*)
+      vm_type="virtualbox"
+      confidence="high"
+      details="DMI Product Name: $product_name"
+      ;;
+    *"VMware"*)
+      vm_type="vmware"
+      confidence="high"
+      details="DMI Product Name: $product_name"
+      ;;
+    *"QEMU"*)
+      vm_type="qemu"
+      confidence="high"
+      details="DMI Product Name: $product_name"
+      ;;
+    *"Microsoft Corporation"*)
+      vm_type="hyperv"
+      confidence="medium"
+      details="DMI Product Name: $product_name"
+      ;;
+    *"Xen"*)
+      vm_type="xen"
+      confidence="high"
+      details="DMI Product Name: $product_name"
+      ;;
     esac
   fi
 
@@ -86,31 +86,31 @@ detect_virtualization() {
     sys_vendor=$(cat /sys/class/dmi/id/sys_vendor 2>/dev/null || echo "")
 
     case "$sys_vendor" in
-      *"innotek"* | *"Oracle"*)
-        vm_type="virtualbox"
-        confidence="high"
-        details="DMI System Vendor: $sys_vendor"
-        ;;
-      *"VMware"*)
-        vm_type="vmware"
-        confidence="high"
-        details="DMI System Vendor: $sys_vendor"
-        ;;
-      *"QEMU"*)
-        vm_type="qemu"
-        confidence="high"
-        details="DMI System Vendor: $sys_vendor"
-        ;;
-      *"Microsoft"*)
-        vm_type="hyperv"
-        confidence="medium"
-        details="DMI System Vendor: $sys_vendor"
-        ;;
-      *"Xen"*)
-        vm_type="xen"
-        confidence="high"
-        details="DMI System Vendor: $sys_vendor"
-        ;;
+    *"innotek"* | *"Oracle"*)
+      vm_type="virtualbox"
+      confidence="high"
+      details="DMI System Vendor: $sys_vendor"
+      ;;
+    *"VMware"*)
+      vm_type="vmware"
+      confidence="high"
+      details="DMI System Vendor: $sys_vendor"
+      ;;
+    *"QEMU"*)
+      vm_type="qemu"
+      confidence="high"
+      details="DMI System Vendor: $sys_vendor"
+      ;;
+    *"Microsoft"*)
+      vm_type="hyperv"
+      confidence="medium"
+      details="DMI System Vendor: $sys_vendor"
+      ;;
+    *"Xen"*)
+      vm_type="xen"
+      confidence="high"
+      details="DMI System Vendor: $sys_vendor"
+      ;;
     esac
   fi
 
@@ -168,61 +168,61 @@ get_vm_recommendations() {
   local vm_type="$1"
 
   case "$vm_type" in
-    qemu)
-      cat <<EOF
+  qemu)
+    cat <<EOF
 QEMU/KVM VM detected. Recommended configuration:
 - Use VirtIO drivers for best performance
 - Enable SPICE guest agent for clipboard sharing
 - Consider virtio-gpu for graphics acceleration
 - Use virtio-blk or virtio-scsi for storage
 EOF
-      ;;
-    virtualbox)
-      cat <<EOF
+    ;;
+  virtualbox)
+    cat <<EOF
 VirtualBox VM detected. Recommended configuration:
 - Install VirtualBox Guest Additions
 - Enable bidirectional clipboard sharing
 - Configure shared folders if needed
 - Use VMSVGA or VBoxVGA graphics adapter
 EOF
-      ;;
-    vmware)
-      cat <<EOF
+    ;;
+  vmware)
+    cat <<EOF
 VMware VM detected. Recommended configuration:
 - Install VMware Tools (open-vm-tools)
 - Enable shared folders and clipboard
 - Use VMXNET3 network adapter for best performance
 - Consider enabling 3D acceleration
 EOF
-      ;;
-    hyperv)
-      cat <<EOF
+    ;;
+  hyperv)
+    cat <<EOF
 Hyper-V VM detected. Recommended configuration:
 - Use synthetic devices for best performance
 - Enable integration services
 - Consider Generation 2 VMs for UEFI support
 - Use Hyper-V specific network adapters
 EOF
-      ;;
-    xen)
-      cat <<EOF
+    ;;
+  xen)
+    cat <<EOF
 Xen VM detected. Recommended configuration:
 - Use paravirtualized drivers where possible
 - Enable Xen guest utilities
 - Consider both PV and HVM modes
 EOF
-      ;;
-    unknown)
-      cat <<EOF
+    ;;
+  unknown)
+    cat <<EOF
 Unknown virtualization detected. Generic recommendations:
 - Check for guest additions/tools for your hypervisor
 - Use paravirtualized drivers when available
 - Enable clipboard and folder sharing if supported
 EOF
-      ;;
-    none)
-      echo "Physical hardware detected. VM optimizations not needed."
-      ;;
+    ;;
+  none)
+    echo "Physical hardware detected. VM optimizations not needed."
+    ;;
   esac
 }
 
@@ -307,8 +307,8 @@ modules.virtualization.vm-guest = {
 EOF
 
   case "$vm_type" in
-    qemu)
-      cat <<EOF
+  qemu)
+    cat <<EOF
 
 # QEMU/KVM specific additions:
 services.spice-vdagentd.enable = true;
@@ -320,9 +320,9 @@ hardware.graphics.extraPackages = with pkgs; [
   mesa
 ];
 EOF
-      ;;
-    virtualbox)
-      cat <<EOF
+    ;;
+  virtualbox)
+    cat <<EOF
 
 # VirtualBox specific additions:
 virtualisation.virtualbox.guest.enable = true;
@@ -331,9 +331,9 @@ virtualisation.virtualbox.guest.x11 = true;
 # For shared folders:
 users.users.yourusername.extraGroups = [ "vboxsf" ];
 EOF
-      ;;
-    vmware)
-      cat <<EOF
+    ;;
+  vmware)
+    cat <<EOF
 
 # VMware specific additions:
 virtualisation.vmware.guest.enable = true;
@@ -341,7 +341,7 @@ virtualisation.vmware.guest.enable = true;
 # For shared folders and better integration:
 services.vmwareGuest.enable = true;
 EOF
-      ;;
+    ;;
   esac
 }
 
@@ -366,15 +366,15 @@ main() {
     exit 0
   else
     case "$confidence" in
-      high)
-        print_success "Virtual machine detected: $vm_type (high confidence)"
-        ;;
-      medium)
-        print_warning "Virtual machine possibly detected: $vm_type (medium confidence)"
-        ;;
-      low)
-        print_warning "Virtualization suspected: $vm_type (low confidence)"
-        ;;
+    high)
+      print_success "Virtual machine detected: $vm_type (high confidence)"
+      ;;
+    medium)
+      print_warning "Virtual machine possibly detected: $vm_type (medium confidence)"
+      ;;
+    low)
+      print_warning "Virtualization suspected: $vm_type (low confidence)"
+      ;;
     esac
 
     if [ -n "$details" ]; then
