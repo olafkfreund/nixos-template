@@ -396,3 +396,575 @@ Following these guidelines ensures NixOS configurations that are:
 - **Trustworthy** with proper disclosure of AI assistance
 
 These patterns help both human developers and AI systems create better NixOS code that the community can rely on and build upon.
+
+---
+
+## **Extended Comprehensive Anti-Patterns Reference**
+
+> **Source**: Research compilation from @docs/researched-antipatterns.md and community best practices
+
+### **🔍 Nix Language Anti-Patterns**
+
+#### **Unquoted URLs (Deprecated)**
+```nix
+# ❌ BAD - RFC 45 deprecated this due to parsing ambiguities
+fetchurl {
+  url = https://example.com/file.tar.gz;  # Causes static analysis issues
+  sha256 = "...";
+}
+
+# ✅ GOOD - Always quote URLs
+fetchurl {
+  url = "https://example.com/file.tar.gz";
+  sha256 = "...";
+}
+```
+
+#### **Path Division Confusion**
+```nix
+# ❌ BAD - Nix interprets 6/3 as path "./6/3"
+result = 6/3;
+
+# ✅ GOOD - Use spacing for arithmetic
+result = 6 / 3;  # Returns 2
+# OR explicit function
+result = builtins.div 6 3;
+```
+
+#### **Type Coercion in String Interpolation**
+```nix
+# ❌ BAD - Cannot coerce these types
+let
+  number = 42;
+  boolean = true;
+in {
+  badNumber = "${number}";    # Error: cannot coerce integer
+  badBoolean = "${boolean}";  # Error: cannot coerce boolean
+}
+
+# ✅ GOOD - Explicit conversion
+{
+  goodNumber = "${toString number}";    # "42"
+  goodBoolean = "${toString boolean}";  # "1" or ""
+}
+```
+
+#### **Excessive `with` Usage**
+```nix
+# ❌ BAD - Unclear variable origins, breaks static analysis
+with (import <nixpkgs> {});
+with lib;
+with stdenv;
+
+mkDerivation {
+  name = "example";
+  buildInputs = [ curl jq ];  # Where do these come from?
+}
+
+# ✅ GOOD - Explicit imports with limited scope
+let
+  pkgs = import <nixpkgs> {};
+  inherit (pkgs) lib stdenv;
+in
+stdenv.mkDerivation {
+  name = "example";
+  buildInputs = with pkgs; [ curl jq ];  # Clear, limited scope
+}
+```
+
+#### **Manual Assignment Instead of `inherit`**
+```nix
+# ❌ BAD - Verbose and error-prone
+let pkgs = import <nixpkgs> {};
+in {
+  curl = pkgs.curl;
+  jq = pkgs.jq;
+  git = pkgs.git;
+}
+
+# ✅ GOOD - Use inherit for cleaner syntax
+let pkgs = import <nixpkgs> {};
+in {
+  inherit (pkgs) curl jq git;
+}
+```
+
+### **🚨 Dangerous Builtins Usage**
+
+#### **Import From Derivation (IFD) - Critical**
+```nix
+# ❌ BAD - Forces sequential evaluation, blocks parallelism
+let
+  generatedConfig = pkgs.runCommand "config" {} ''
+    echo "some_value = 42" > $out
+  '';
+  configValue = builtins.readFile generatedConfig;  # Forces build during eval!
+in
+pkgs.writeText "app-config" configValue
+
+# ✅ GOOD - Keep evaluation and building separate
+let
+  generatedConfig = pkgs.runCommand "config" {} ''
+    echo "some_value = 42" > $out
+  '';
+in
+pkgs.runCommand "app-config" { inherit generatedConfig; } ''
+  cp $generatedConfig $out
+''
+```
+
+**Performance Impact**: Can increase evaluation time from seconds to hours for complex projects.
+
+#### **Reading Secrets During Evaluation - Security Critical**
+```nix
+# ❌ BAD - Exposes password in world-readable Nix store
+services.myservice = {
+  password = builtins.readFile "/secrets/password";  # MAJOR SECURITY ISSUE!
+}
+
+# ✅ GOOD - Reference paths for runtime loading
+services.myservice = {
+  passwordFile = "/secrets/password";  # Read at runtime only
+}
+
+# ✅ BETTER - Use proper secret management
+age.secrets.myservice-password.file = ../secrets/password.age;
+services.myservice.passwordFile = config.age.secrets.myservice-password.path;
+```
+
+### **🏗️ System Configuration Anti-Patterns**
+
+#### **Using `nix-env` for System Packages**
+```bash
+# ❌ BAD - Breaks declarative configuration and reproducibility
+nix-env -i firefox vim git
+# Packages persist across rebuilds, aren't tracked in config
+```
+
+```nix
+# ✅ GOOD - Declarative in configuration.nix
+environment.systemPackages = with pkgs; [
+  firefox vim git
+];
+```
+
+**Why Problematic**: `nix-env` packages aren't tracked in configuration, persist across rebuilds unexpectedly, and make rollbacks incomplete.
+
+#### **Misusing `environment.systemPackages`**
+```nix
+# ❌ BAD - Installing user-specific packages system-wide
+environment.systemPackages = with pkgs; [
+  firefox      # Should be user-specific
+  vscode       # Development tool for individual users
+  spotify      # Personal application
+];
+
+# ✅ GOOD - Proper separation of concerns
+environment.systemPackages = with pkgs; [
+  wget curl git vim  # System essentials only
+];
+
+users.users.alice.packages = with pkgs; [
+  firefox vscode spotify  # User-specific applications
+];
+```
+
+#### **Running Services as Root Unnecessarily**
+```nix
+# ❌ BAD - Violates principle of least privilege
+systemd.services.myservice = {
+  serviceConfig = {
+    ExecStart = "${pkgs.myapp}/bin/myapp";
+    # No User specified - runs as root with full privileges!
+  };
+};
+
+# ✅ GOOD - Dedicated user with comprehensive hardening
+users.users.myservice = {
+  isSystemUser = true;
+  group = "myservice";
+};
+users.groups.myservice = {};
+
+systemd.services.myservice = {
+  serviceConfig = {
+    ExecStart = "${pkgs.myapp}/bin/myapp";
+    User = "myservice";
+    Group = "myservice";
+    
+    # Process isolation
+    DynamicUser = true;
+    PrivateTmp = true;
+    ProtectSystem = "strict";
+    ProtectHome = true;
+    
+    # Capabilities restrictions
+    NoNewPrivileges = true;
+    ProtectKernelTunables = true;
+    ProtectKernelModules = true;
+    
+    # Memory protections
+    MemoryDenyWriteExecute = true;
+    RestrictRealtime = true;
+    LockPersonality = true;
+  };
+};
+```
+
+#### **Poor Firewall Configuration**
+```nix
+# ❌ BAD - Security nightmare
+networking.firewall.enable = false;  # Completely exposed!
+# OR
+networking.firewall.allowedTCPPorts = [ 1-65535 ];  # Everything open!
+
+# ✅ GOOD - Minimal, targeted port opening
+networking.firewall = {
+  enable = true;
+  allowedTCPPorts = [ 80 443 ];  # Only what's actually needed
+  
+  # Interface-specific rules for internal services
+  interfaces."enp3s0" = {
+    allowedTCPPorts = [ 5432 ];  # PostgreSQL on internal network only
+  };
+};
+```
+
+#### **Monolithic Configuration File**
+```nix
+# ❌ BAD - Everything in one massive configuration.nix (500+ lines)
+{ config, pkgs, ... }: {
+  boot.loader.grub.enable = true;
+  networking.hostName = "myhost";
+  services.nginx.enable = true;
+  services.postgresql.enable = true;
+  # ... hundreds more lines making maintenance impossible
+}
+```
+
+```
+# ✅ GOOD - Modular structure for maintainability
+/etc/nixos/
+├── configuration.nix        # Main entry point (imports only)
+├── hardware-configuration.nix
+├── modules/
+│   ├── networking.nix
+│   ├── security.nix
+│   └── users.nix
+└── services/
+    ├── nginx.nix
+    └── postgresql.nix
+```
+
+### **📦 Package Management Anti-Patterns**
+
+#### **Incorrect `final` vs `prev` Usage in Overlays**
+```nix
+# ❌ BAD - Causes infinite recursion
+final: prev: {
+  hello = final.hello.overrideAttrs (oldAttrs: {
+    postPatch = "...";
+  });  # Refers to itself - infinite loop!
+}
+
+# ✅ GOOD - Use prev for the base package
+final: prev: {
+  hello = prev.hello.overrideAttrs (oldAttrs: {
+    postPatch = "...";
+  });
+}
+```
+
+#### **Using `rec` in Overlays**
+```nix
+# ❌ BAD - Breaks composability and prevents later overrides
+final: prev: rec {
+  pkg-a = prev.callPackage ./a { };
+  pkg-b = prev.callPackage ./b { dependency-a = pkg-a; }  # Fixed reference
+}
+
+# ✅ GOOD - Reference through final for composability
+final: prev: {
+  pkg-a = prev.callPackage ./a { };
+  pkg-b = prev.callPackage ./b { dependency-a = final.pkg-a; };  # Overrideable
+}
+```
+
+#### **Impure Derivations**
+```nix
+# ❌ BAD - Network access during build breaks reproducibility
+stdenv.mkDerivation {
+  name = "impure-build";
+  buildPhase = ''
+    curl -O https://example.com/dependency.tar.gz  # Non-deterministic!
+  '';
+}
+
+# ✅ GOOD - Pure build with fixed-output derivation
+stdenv.mkDerivation {
+  name = "pure-build";
+  src = fetchurl {
+    url = "https://example.com/dependency.tar.gz";
+    sha256 = "...";  # Fixed output hash ensures reproducibility
+  };
+}
+```
+
+#### **Missing Phase Hooks**
+```nix
+# ❌ BAD - Breaks extensibility by not calling hooks
+installPhase = ''
+  mkdir -p $out/bin
+  cp myprogram $out/bin/
+'';
+
+# ✅ GOOD - Include hooks for extensibility
+installPhase = ''
+  runHook preInstall
+  mkdir -p $out/bin
+  cp myprogram $out/bin/
+  runHook postInstall
+'';
+```
+
+#### **Wrong Dependency Types**
+```nix
+# ❌ BAD - Confusing build-time and runtime dependencies
+stdenv.mkDerivation {
+  buildInputs = [ gcc cmake ];  # Build tools should be nativeBuildInputs!
+}
+
+# ✅ GOOD - Correct categorization for cross-compilation
+stdenv.mkDerivation {
+  nativeBuildInputs = [ gcc cmake ];           # Build tools (host→target)
+  buildInputs = [ openssl zlib ];              # Runtime libraries
+  propagatedBuildInputs = [ essential-lib ];   # Propagated to consumers
+}
+```
+
+### **🚀 Performance Anti-Patterns**
+
+#### **Never Running Garbage Collection**
+```nix
+# ❌ BAD - Store grows unbounded (can reach 100GB+)
+# No garbage collection configuration
+
+# ✅ GOOD - Automated store management
+nix.gc = {
+  automatic = true;
+  dates = "weekly";
+  options = "--delete-older-than 30d";
+};
+
+nix.optimise = {
+  automatic = true;
+  dates = [ "03:45" ];  # Run during low-usage hours
+};
+```
+
+#### **Poor Binary Cache Configuration**
+```nix
+# ❌ BAD - Wrong public keys break substitution entirely
+nix.settings = {
+  substituters = [ "https://cache.example.org" ];
+  trusted-public-keys = [ "wrong-key" ];  # Everything rebuilds from source!
+};
+
+# ✅ GOOD - Proper cache setup with verified keys
+nix.settings = {
+  substituters = [
+    "https://cache.nixos.org/"
+    "https://nix-community.cachix.org"
+  ];
+  trusted-public-keys = [
+    "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+    "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+  ];
+};
+```
+
+#### **Unsafe System Updates**
+```bash
+# ❌ BAD - Direct production updates without testing
+nixos-rebuild switch --upgrade  # Risky on production systems!
+
+# ✅ GOOD - Safe testing workflow
+nixos-rebuild build       # Build without applying
+nixos-rebuild test        # Test without permanent changes
+nixos-rebuild build-vm    # Test in isolated VM
+nixos-rebuild switch      # Apply only when confident
+```
+
+### **🏠 Home Manager Anti-Patterns**
+
+#### **Missing stateVersion - Most Common Error**
+```nix
+# ❌ BAD - Causes "option 'home.stateVersion' is used but not defined"
+{
+  programs.git.enable = true;
+  # Error: The option 'home.stateVersion' is used but not defined
+}
+
+# ✅ GOOD - Always set stateVersion (set once, never change)
+{
+  home.stateVersion = "24.05";  # Use version when you started
+  programs.git.enable = true;
+}
+```
+
+#### **Duplicate Package Management**
+```nix
+# ❌ BAD - Same packages in both system and Home Manager
+# /etc/nixos/configuration.nix
+environment.systemPackages = with pkgs; [ neovim git ];
+
+# ~/.config/home-manager/home.nix  
+home.packages = with pkgs; [ neovim git ];  # Conflict and waste!
+
+# ✅ GOOD - Clear separation of responsibilities
+# System: system-wide essentials only
+# Home Manager: user-specific packages and configurations
+```
+
+#### **Improper mkOutOfStoreSymlink Usage**
+```nix
+# ❌ BAD - Breaks flake purity and portability
+home.file.".vimrc".source = 
+  config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/.vimrc";
+
+# ✅ GOOD - Pure configuration that works everywhere
+home.file.".vimrc".text = ''
+  " Vim configuration
+  set number
+  set expandtab
+  set tabstop=2
+'';
+```
+
+### **🔧 Development Environment Anti-Patterns**
+
+#### **Everything in flake.nix - Rightward Drift**
+```nix
+# ❌ BAD - Creates unmaintainable complexity
+{
+  outputs = { self, nixpkgs }: {
+    packages.x86_64-linux.default = nixpkgs.legacyPackages.x86_64-linux.stdenv.mkDerivation {
+      # 100+ lines of derivation code making flake.nix huge
+    };
+  };
+}
+
+# ✅ GOOD - Modular structure with separation of concerns
+{
+  outputs = { self, nixpkgs }: {
+    packages.x86_64-linux.default = 
+      nixpkgs.legacyPackages.x86_64-linux.callPackage ./package.nix { };
+  };
+}
+```
+
+#### **Blocking direnv Operations**
+```bash
+# ❌ BAD - Slow .envrc freezes shells and editors for 5+ seconds
+nix-shell --run 'direnv dump > .envrc.cache'
+
+# ✅ GOOD - Use nix-direnv for instant activation
+use flake  # With nix-direnv installed - executes in <500ms
+```
+
+**Rule**: `.envrc` should execute in under 500ms for good developer experience.
+
+### **🛠️ Detection and Prevention Tools**
+
+#### **Automated Anti-Pattern Detection**
+```bash
+# Language linting and formatting
+statix check           # Detects 20+ anti-patterns automatically
+statix fix             # Auto-fixes many problems
+nixfmt .              # Consistent formatting
+alejandra .           # Alternative formatter
+
+# Package analysis
+nixpkgs-hammering      # Detects packaging anti-patterns
+nixpkgs-review pr 123  # Tests package changes safely
+
+# System security analysis
+systemd-analyze security service-name    # Service security audit
+lynis                                   # Comprehensive system security scan
+```
+
+#### **Performance Analysis Tools**
+```bash
+# Evaluation performance
+NIX_SHOW_STATS=1 nix build    # Shows evaluation statistics
+nix path-info -S              # Check closure sizes
+nix-tree                      # Visualize dependency graphs
+
+# Store management
+nix-du                        # Analyze store usage
+nix store optimise            # Deduplicate store paths
+```
+
+### **✅ Final Checklist for Quality Assurance**
+
+Before any configuration change, verify:
+
+#### **Language & Evaluation**
+- [ ] URLs are quoted (no bare URLs)
+- [ ] Minimal `with` usage (explicit imports preferred)
+- [ ] No IFD in critical evaluation paths
+- [ ] Secrets not read during evaluation
+- [ ] Minimal `rec` usage (prefer explicit references)
+- [ ] No type coercion errors in string interpolation
+
+#### **System Configuration**
+- [ ] No `nix-env` usage for system packages
+- [ ] Proper package separation (system vs user scope)
+- [ ] Services run with minimal privileges and hardening
+- [ ] Firewall enabled with minimal necessary ports
+- [ ] Modular configuration structure for maintainability
+
+#### **Package Management**
+- [ ] Correct `final` vs `prev` usage in overlays
+- [ ] No `rec` in overlays (breaks composability)
+- [ ] Pure derivations only (no network access during build)
+- [ ] Proper dependency categorization (native vs build vs propagated)
+- [ ] Phase hooks included for extensibility
+
+#### **Performance & Maintenance**
+- [ ] Garbage collection automated with reasonable retention
+- [ ] Binary caches configured with correct public keys
+- [ ] Store optimization enabled
+- [ ] Safe update procedures documented and followed
+- [ ] No unnecessary IFD blocking evaluation
+
+#### **Home Manager Integration**
+- [ ] `stateVersion` set correctly (and never changed)
+- [ ] No duplicate packages between system and user
+- [ ] Gradual config migration strategy
+- [ ] Pure configuration (no impure symlinks)
+- [ ] Clear system/user separation of responsibilities
+
+### **🎯 Key Success Principles**
+
+1. **Evaluation vs Build Phase**: Keep them completely separate to enable parallelism
+2. **Declarative Philosophy**: Everything in configuration files, no imperative changes
+3. **Proper Scoping**: Right tool for the right scope (system vs user vs build-time)
+4. **Security by Default**: Principle of least privilege everywhere
+5. **Performance Awareness**: Understand evaluation costs and caching strategies
+6. **Gradual Adoption**: Don't try to migrate everything at once
+7. **Community Standards**: Follow established patterns from nixpkgs
+
+**Remember**: Success with Nix/NixOS requires patience, understanding of the underlying model, and strict adherence to community best practices. Always test changes in safe environments before deploying to production systems.
+
+---
+
+## **References and Further Reading**
+
+- **Primary Anti-Patterns Guide**: @docs/researched-antipatterns.md (comprehensive reference)
+- **Repository-Specific Patterns**: @CLAUDE.md (development guidelines for this repo)
+- **Official Documentation**: [NixOS Manual](https://nixos.org/manual/nixos/stable/)
+- **Community Resources**: [NixOS Discourse](https://discourse.nixos.org/), [NixOS Matrix](https://matrix.to/#/#nixos:nixos.org)
+- **Code Quality Tools**: [statix](https://github.com/nerdypepper/statix), [nixpkgs-hammering](https://github.com/jtojnar/nixpkgs-hammering)
+
+This comprehensive guide ensures robust, maintainable, and community-standard NixOS configurations.
