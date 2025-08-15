@@ -267,8 +267,8 @@ in
         qemuGuest.enable = cfg.type == "qemu" || cfg.type == "auto";
 
         # Time synchronization
-        timesyncd.enable = mkIf cfg.guestTools.timeSync (mkDefault true);
-        ntp.enable = mkIf (!cfg.guestTools.timeSync && cfg.type != "qemu") (mkDefault true);
+        timesyncd.enable = mkDefault cfg.guestTools.timeSync;
+        ntp.enable = mkDefault (!cfg.guestTools.timeSync && cfg.type != "qemu");
 
         # VM-specific clipboard and integration services
         spice-vdagentd.enable = cfg.guestTools.clipboard && (cfg.type == "qemu" || cfg.type == "auto");

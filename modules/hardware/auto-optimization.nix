@@ -28,7 +28,7 @@ let
   };
 
   # Optimization configurations based on detected hardware
-  optimizations = rec {
+  optimizations = {
     # Memory-based configurations
     memory = {
       zramPercent =

@@ -289,10 +289,10 @@ Before submitting any NixOS configuration changes, verify:
 ## **When in Doubt - Decision Framework**
 
 1. **Check nixpkgs**: How do official modules handle similar functionality?
-2. **Ask the community**: NixOS Discourse or Matrix channels for guidance
-3. **Prefer explicit**: Make behavior obvious and discoverable, not magical
-4. **Trust the system**: NixOS modules handle most cases correctly without extra wrapping
-5. **Less is more**: Remove code and abstractions rather than adding unnecessary ones
+1. **Ask the community**: NixOS Discourse or Matrix channels for guidance
+1. **Prefer explicit**: Make behavior obvious and discoverable, not magical
+1. **Trust the system**: NixOS modules handle most cases correctly without extra wrapping
+1. **Less is more**: Remove code and abstractions rather than adding unnecessary ones
 
 ## **Real-World Example: Before and After**
 
