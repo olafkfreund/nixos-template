@@ -264,19 +264,14 @@ in
     services = mkMerge [
       {
         # Enable guest services based on VM type
-        qemuGuest.enable = mkIf (cfg.type == "qemu" || cfg.type == "auto") true;
+        qemuGuest.enable = cfg.type == "qemu" || cfg.type == "auto";
 
         # Time synchronization
         timesyncd.enable = mkIf cfg.guestTools.timeSync (mkDefault true);
         ntp.enable = mkIf (!cfg.guestTools.timeSync && cfg.type != "qemu") (mkDefault true);
 
         # VM-specific clipboard and integration services
-        spice-vdagentd.enable = mkIf
-          (
-            cfg.guestTools.clipboard &&
-            (cfg.type == "qemu" || cfg.type == "auto")
-          )
-          true;
+        spice-vdagentd.enable = cfg.guestTools.clipboard && (cfg.type == "qemu" || cfg.type == "auto");
 
         # SSH for remote access
         openssh = mkIf (cfg.type != "desktop") {

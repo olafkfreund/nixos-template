@@ -292,7 +292,7 @@ in
     # Profile-specific optimizations
     programs = {
       # Laptop-specific programs
-      light.enable = mkIf (cfg.profile == "laptop") true;
+      light.enable = cfg.profile == "laptop";
     };
 
     # ZRAM for memory-constrained systems

@@ -228,7 +228,7 @@ in
     };
 
     # GNOME specific integrations
-    programs.dconf.enable = mkIf cfg.applications.gnome-boxes true;
+    programs.dconf.enable = cfg.applications.gnome-boxes;
 
     services.gnome = mkIf (cfg.applications.gnome-boxes && config.services.xserver.desktopManager.gnome.enable) {
       gnome-initial-setup.enable = mkDefault true;
@@ -370,7 +370,7 @@ in
     # Enable required services
     services = {
       # SPICE guest agent service (for guests)
-      spice-vdagentd.enable = mkIf cfg.applications.virt-viewer true;
+      spice-vdagentd.enable = cfg.applications.virt-viewer;
 
       # Enable automatic login for single-user systems with VMs
       getty.autologinUser = mkIf cfg.applications.gnome-boxes null;

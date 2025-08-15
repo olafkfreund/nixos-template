@@ -2,6 +2,38 @@
 # Common configuration shared across all user environments
 { lib, pkgs, ... }:
 
+let
+  # Common shell aliases shared between bash and zsh
+  commonAliases = {
+    # System shortcuts
+    ll = "ls -alF";
+    la = "ls -A";
+    l = "ls -CF";
+    ".." = "cd ..";
+    "..." = "cd ../..";
+
+    # Git shortcuts
+    gs = "git status";
+    ga = "git add";
+    gc = "git commit";
+    gp = "git push";
+    gl = "git log --oneline";
+    gd = "git diff";
+
+    # System monitoring
+    psg = "ps aux | grep";
+    h = "history";
+    j = "jobs -l";
+
+    # Safety aliases
+    rm = "rm -i";
+    cp = "cp -i";
+    mv = "mv -i";
+
+    # Directory shortcuts
+    mkdir = "mkdir -pv";
+  };
+in
 {
   home.stateVersion = lib.mkDefault "25.05";
 
@@ -35,35 +67,7 @@
       historyFileSize = 20000;
       historyControl = [ "ignoredups" "ignorespace" ];
 
-      shellAliases = {
-        # System shortcuts
-        ll = "ls -alF";
-        la = "ls -A";
-        l = "ls -CF";
-        ".." = "cd ..";
-        "..." = "cd ../..";
-
-        # Git shortcuts
-        gs = "git status";
-        ga = "git add";
-        gc = "git commit";
-        gp = "git push";
-        gl = "git log --oneline";
-        gd = "git diff";
-
-        # System monitoring
-        psg = "ps aux | grep";
-        h = "history";
-        j = "jobs -l";
-
-        # Safety aliases
-        rm = "rm -i";
-        cp = "cp -i";
-        mv = "mv -i";
-
-        # Directory shortcuts
-        mkdir = "mkdir -pv";
-      };
+      shellAliases = commonAliases;
 
       bashrcExtra = ''
         # Enhanced bash history
@@ -92,20 +96,7 @@
       enableCompletion = lib.mkDefault true;
       autocd = lib.mkDefault true;
 
-      shellAliases = {
-        # Inherit bash aliases and add zsh-specific ones
-        ll = "ls -alF";
-        la = "ls -A";
-        l = "ls -CF";
-        ".." = "cd ..";
-        "..." = "cd ../..";
-        gs = "git status";
-        ga = "git add";
-        gc = "git commit";
-        gp = "git push";
-        gl = "git log --oneline";
-        gd = "git diff";
-      };
+      shellAliases = commonAliases;
 
       history = {
         size = 10000;

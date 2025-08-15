@@ -93,7 +93,7 @@ in
       };
 
       # Plasma 6 configuration (when available)
-      desktopManager.plasma6.enable = lib.mkIf (cfg.version == "plasma6") true;
+      desktopManager.plasma6.enable = cfg.version == "plasma6";
 
       # KDE services
       accounts-daemon.enable = true;

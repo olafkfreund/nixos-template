@@ -1,5 +1,7 @@
 # Modern NixOS Configuration Template
 
+> **⚠️ AI-Generated Content Notice**: This template was developed with AI assistance. While thoroughly tested and validated, please review configurations carefully before use, especially for production environments. Contributions and human oversight are welcome to improve the template.
+
 A modular NixOS configuration template using flakes, featuring:
 
 - **Zero-Configuration Hardware Optimization** - Automatically detects and optimizes for your specific hardware

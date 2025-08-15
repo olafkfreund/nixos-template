@@ -52,7 +52,7 @@ in
     };
 
     # SPICE guest tools for better desktop integration
-    services.spice-vdagentd.enable = lib.mkIf cfg.spiceSupport true;
+    services.spice-vdagentd.enable = cfg.spiceSupport;
 
     # QXL graphics driver
     services.xserver = lib.mkIf cfg.qxlSupport {

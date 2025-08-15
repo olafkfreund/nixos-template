@@ -340,7 +340,7 @@ in
     ];
 
     # Security configuration
-    security.unprivilegedUsernsClone = mkIf cfg.rootless.enable true;
+    security.unprivilegedUsernsClone = cfg.rootless.enable;
 
     # Firewall rules for container networking
     networking.firewall = mkIf cfg.networking.enable {
