@@ -1,6 +1,8 @@
 # Modern NixOS Configuration Template
 
 > **⚠️ AI-Generated Content Notice**: This template was developed with AI assistance. While thoroughly tested and validated, please review configurations carefully before use, especially for production environments. Contributions and human oversight are welcome to improve the template.
+>
+> **Community Contributions Welcome**: If you identify any anti-patterns, improvements, or have suggestions for better NixOS practices, please contribute to our [NixOS Anti-Patterns Guide](https://github.com/olafkfreund/nixos-template/blob/main/docs/NIXOS-ANTI-PATTERNS.md). Your expertise helps make this template better for the entire NixOS community.
 
 A modular NixOS configuration template using flakes, featuring:
 
