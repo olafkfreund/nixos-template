@@ -14,7 +14,7 @@
 
       # Binary cache configuration
       substituters = [
-        "https://cache.nixos.org/"
+        "https://cache.nixos.org"
         "https://nix-community.cachix.org"
       ];
       trusted-public-keys = [
@@ -30,11 +30,17 @@
       keep-outputs = true;
     };
 
-    # Automatic garbage collection
+    # Automatic garbage collection - optimized for templates
     gc = {
       automatic = true;
-      dates = "weekly";
-      options = "--delete-older-than 14d";
+      dates = "daily"; # More frequent for development/template systems
+      options = "--delete-older-than 7d --max-freed 1G"; # More aggressive cleanup with size limit
+    };
+
+    # Automatic store optimization
+    optimise = {
+      automatic = true;
+      dates = [ "03:45" ]; # Run during low-usage hours
     };
 
     # Registry for legacy nix commands

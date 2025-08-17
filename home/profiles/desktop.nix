@@ -12,40 +12,36 @@
     sessionVariables.TERMINAL = lib.mkDefault "alacritty";
 
     # Desktop applications
-    packages = with pkgs; [
+    packages = [
       # Browsers
-      firefox
-      chromium
+      pkgs.firefox
+      pkgs.chromium
 
       # Media
-      vlc
-      mpv
+      pkgs.vlc
+      pkgs.mpv
 
       # Graphics and design
-      gimp
-      inkscape
+      pkgs.gimp
+      pkgs.inkscape
 
       # Office suite
-      libreoffice
-
-      # Development
-      vscode
+      pkgs.libreoffice
 
       # Communication
-      discord
-      telegram-desktop
+      pkgs.discord
+      pkgs.telegram-desktop
 
       # Utilities
-      flameshot # Screenshots
-      copyq # Clipboard manager
+      pkgs.flameshot # Screenshots
+      pkgs.copyq # Clipboard manager
 
       # Archive tools
-      p7zip
-      unrar
+      pkgs.p7zip
+      pkgs.unrar
 
       # System monitoring
-      htop
-      neofetch
+      pkgs.neofetch
     ];
 
   };

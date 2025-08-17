@@ -1,6 +1,6 @@
 # Darwin Server Home Manager Configuration
 # Uses shared profiles optimized for server administration
-{ config, pkgs, lib, inputs, outputs, ... }:
+{ lib, ... }:
 
 {
   # Home Manager configuration
@@ -8,7 +8,7 @@
     useGlobalPkgs = true;
     useUserPackages = true;
 
-    users.admin = { config, pkgs, ... }: {
+    users.admin = { pkgs, ... }: {
       # Import shared Home Manager profiles
       imports = [
         ../../home/profiles/base.nix # Base configuration with git, bash, etc.
@@ -140,25 +140,25 @@
       };
 
       # Darwin-specific additional packages (extends server profile)
-      home.packages = with pkgs; [
+      home.packages = [
         # macOS-specific database clients
-        mongodb
+        pkgs.mongodb
 
         # Cloud tools for Darwin servers
-        awscli2
-        terraform
-        ansible
+        pkgs.awscli2
+        pkgs.terraform
+        pkgs.ansible
 
         # Container orchestration
-        kubernetes
-        kubectl
-        helm
+        pkgs.kubernetes
+        pkgs.kubectl
+        pkgs.helm
 
         # Security audit tools
-        lynis
+        pkgs.lynis
 
         # Backup solutions
-        borgbackup
+        pkgs.borgbackup
       ];
     }; # Close users.admin
   }; # Close home-manager

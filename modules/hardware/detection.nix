@@ -227,10 +227,7 @@ let
       hasMMC = builtins.any (dev: lib.hasPrefix "mmcblk" dev) devNames;
     in
     {
-      hasNVMe = hasNVMe;
-      hasSSD = hasSSD;
-      hasVirtIO = hasVirtIO;
-      hasMMC = hasMMC;
+      inherit hasNVMe hasSSD hasVirtIO hasMMC;
       primaryType =
         if hasNVMe then "nvme"
         else if hasSSD then "ssd"

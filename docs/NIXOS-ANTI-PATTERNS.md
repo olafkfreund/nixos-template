@@ -406,6 +406,7 @@ These patterns help both human developers and AI systems create better NixOS cod
 ### **🔍 Nix Language Anti-Patterns**
 
 #### **Unquoted URLs (Deprecated)**
+
 ```nix
 # ❌ BAD - RFC 45 deprecated this due to parsing ambiguities
 fetchurl {
@@ -421,6 +422,7 @@ fetchurl {
 ```
 
 #### **Path Division Confusion**
+
 ```nix
 # ❌ BAD - Nix interprets 6/3 as path "./6/3"
 result = 6/3;
@@ -432,6 +434,7 @@ result = builtins.div 6 3;
 ```
 
 #### **Type Coercion in String Interpolation**
+
 ```nix
 # ❌ BAD - Cannot coerce these types
 let
@@ -450,6 +453,7 @@ in {
 ```
 
 #### **Excessive `with` Usage**
+
 ```nix
 # ❌ BAD - Unclear variable origins, breaks static analysis
 with (import <nixpkgs> {});
@@ -473,6 +477,7 @@ stdenv.mkDerivation {
 ```
 
 #### **Manual Assignment Instead of `inherit`**
+
 ```nix
 # ❌ BAD - Verbose and error-prone
 let pkgs = import <nixpkgs> {};
@@ -492,6 +497,7 @@ in {
 ### **🚨 Dangerous Builtins Usage**
 
 #### **Import From Derivation (IFD) - Critical**
+
 ```nix
 # ❌ BAD - Forces sequential evaluation, blocks parallelism
 let
@@ -516,6 +522,7 @@ pkgs.runCommand "app-config" { inherit generatedConfig; } ''
 **Performance Impact**: Can increase evaluation time from seconds to hours for complex projects.
 
 #### **Reading Secrets During Evaluation - Security Critical**
+
 ```nix
 # ❌ BAD - Exposes password in world-readable Nix store
 services.myservice = {
@@ -535,6 +542,7 @@ services.myservice.passwordFile = config.age.secrets.myservice-password.path;
 ### **🏗️ System Configuration Anti-Patterns**
 
 #### **Using `nix-env` for System Packages**
+
 ```bash
 # ❌ BAD - Breaks declarative configuration and reproducibility
 nix-env -i firefox vim git
@@ -551,6 +559,7 @@ environment.systemPackages = with pkgs; [
 **Why Problematic**: `nix-env` packages aren't tracked in configuration, persist across rebuilds unexpectedly, and make rollbacks incomplete.
 
 #### **Misusing `environment.systemPackages`**
+
 ```nix
 # ❌ BAD - Installing user-specific packages system-wide
 environment.systemPackages = with pkgs; [
@@ -570,6 +579,7 @@ users.users.alice.packages = with pkgs; [
 ```
 
 #### **Running Services as Root Unnecessarily**
+
 ```nix
 # ❌ BAD - Violates principle of least privilege
 systemd.services.myservice = {
@@ -591,18 +601,18 @@ systemd.services.myservice = {
     ExecStart = "${pkgs.myapp}/bin/myapp";
     User = "myservice";
     Group = "myservice";
-    
+
     # Process isolation
     DynamicUser = true;
     PrivateTmp = true;
     ProtectSystem = "strict";
     ProtectHome = true;
-    
+
     # Capabilities restrictions
     NoNewPrivileges = true;
     ProtectKernelTunables = true;
     ProtectKernelModules = true;
-    
+
     # Memory protections
     MemoryDenyWriteExecute = true;
     RestrictRealtime = true;
@@ -612,6 +622,7 @@ systemd.services.myservice = {
 ```
 
 #### **Poor Firewall Configuration**
+
 ```nix
 # ❌ BAD - Security nightmare
 networking.firewall.enable = false;  # Completely exposed!
@@ -622,7 +633,7 @@ networking.firewall.allowedTCPPorts = [ 1-65535 ];  # Everything open!
 networking.firewall = {
   enable = true;
   allowedTCPPorts = [ 80 443 ];  # Only what's actually needed
-  
+
   # Interface-specific rules for internal services
   interfaces."enp3s0" = {
     allowedTCPPorts = [ 5432 ];  # PostgreSQL on internal network only
@@ -631,6 +642,7 @@ networking.firewall = {
 ```
 
 #### **Monolithic Configuration File**
+
 ```nix
 # ❌ BAD - Everything in one massive configuration.nix (500+ lines)
 { config, pkgs, ... }: {
@@ -659,6 +671,7 @@ networking.firewall = {
 ### **📦 Package Management Anti-Patterns**
 
 #### **Incorrect `final` vs `prev` Usage in Overlays**
+
 ```nix
 # ❌ BAD - Causes infinite recursion
 final: prev: {
@@ -676,6 +689,7 @@ final: prev: {
 ```
 
 #### **Using `rec` in Overlays**
+
 ```nix
 # ❌ BAD - Breaks composability and prevents later overrides
 final: prev: rec {
@@ -691,6 +705,7 @@ final: prev: {
 ```
 
 #### **Impure Derivations**
+
 ```nix
 # ❌ BAD - Network access during build breaks reproducibility
 stdenv.mkDerivation {
@@ -711,6 +726,7 @@ stdenv.mkDerivation {
 ```
 
 #### **Missing Phase Hooks**
+
 ```nix
 # ❌ BAD - Breaks extensibility by not calling hooks
 installPhase = ''
@@ -728,6 +744,7 @@ installPhase = ''
 ```
 
 #### **Wrong Dependency Types**
+
 ```nix
 # ❌ BAD - Confusing build-time and runtime dependencies
 stdenv.mkDerivation {
@@ -745,6 +762,7 @@ stdenv.mkDerivation {
 ### **🚀 Performance Anti-Patterns**
 
 #### **Never Running Garbage Collection**
+
 ```nix
 # ❌ BAD - Store grows unbounded (can reach 100GB+)
 # No garbage collection configuration
@@ -763,6 +781,7 @@ nix.optimise = {
 ```
 
 #### **Poor Binary Cache Configuration**
+
 ```nix
 # ❌ BAD - Wrong public keys break substitution entirely
 nix.settings = {
@@ -784,6 +803,7 @@ nix.settings = {
 ```
 
 #### **Unsafe System Updates**
+
 ```bash
 # ❌ BAD - Direct production updates without testing
 nixos-rebuild switch --upgrade  # Risky on production systems!
@@ -798,6 +818,7 @@ nixos-rebuild switch      # Apply only when confident
 ### **🏠 Home Manager Anti-Patterns**
 
 #### **Missing stateVersion - Most Common Error**
+
 ```nix
 # ❌ BAD - Causes "option 'home.stateVersion' is used but not defined"
 {
@@ -813,12 +834,13 @@ nixos-rebuild switch      # Apply only when confident
 ```
 
 #### **Duplicate Package Management**
+
 ```nix
 # ❌ BAD - Same packages in both system and Home Manager
 # /etc/nixos/configuration.nix
 environment.systemPackages = with pkgs; [ neovim git ];
 
-# ~/.config/home-manager/home.nix  
+# ~/.config/home-manager/home.nix
 home.packages = with pkgs; [ neovim git ];  # Conflict and waste!
 
 # ✅ GOOD - Clear separation of responsibilities
@@ -827,9 +849,10 @@ home.packages = with pkgs; [ neovim git ];  # Conflict and waste!
 ```
 
 #### **Improper mkOutOfStoreSymlink Usage**
+
 ```nix
 # ❌ BAD - Breaks flake purity and portability
-home.file.".vimrc".source = 
+home.file.".vimrc".source =
   config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/.vimrc";
 
 # ✅ GOOD - Pure configuration that works everywhere
@@ -844,6 +867,7 @@ home.file.".vimrc".text = ''
 ### **🔧 Development Environment Anti-Patterns**
 
 #### **Everything in flake.nix - Rightward Drift**
+
 ```nix
 # ❌ BAD - Creates unmaintainable complexity
 {
@@ -857,13 +881,14 @@ home.file.".vimrc".text = ''
 # ✅ GOOD - Modular structure with separation of concerns
 {
   outputs = { self, nixpkgs }: {
-    packages.x86_64-linux.default = 
+    packages.x86_64-linux.default =
       nixpkgs.legacyPackages.x86_64-linux.callPackage ./package.nix { };
   };
 }
 ```
 
 #### **Blocking direnv Operations**
+
 ```bash
 # ❌ BAD - Slow .envrc freezes shells and editors for 5+ seconds
 nix-shell --run 'direnv dump > .envrc.cache'
@@ -877,6 +902,7 @@ use flake  # With nix-direnv installed - executes in <500ms
 ### **🛠️ Detection and Prevention Tools**
 
 #### **Automated Anti-Pattern Detection**
+
 ```bash
 # Language linting and formatting
 statix check           # Detects 20+ anti-patterns automatically
@@ -894,6 +920,7 @@ lynis                                   # Comprehensive system security scan
 ```
 
 #### **Performance Analysis Tools**
+
 ```bash
 # Evaluation performance
 NIX_SHOW_STATS=1 nix build    # Shows evaluation statistics
@@ -910,6 +937,7 @@ nix store optimise            # Deduplicate store paths
 Before any configuration change, verify:
 
 #### **Language & Evaluation**
+
 - [ ] URLs are quoted (no bare URLs)
 - [ ] Minimal `with` usage (explicit imports preferred)
 - [ ] No IFD in critical evaluation paths
@@ -918,6 +946,7 @@ Before any configuration change, verify:
 - [ ] No type coercion errors in string interpolation
 
 #### **System Configuration**
+
 - [ ] No `nix-env` usage for system packages
 - [ ] Proper package separation (system vs user scope)
 - [ ] Services run with minimal privileges and hardening
@@ -925,6 +954,7 @@ Before any configuration change, verify:
 - [ ] Modular configuration structure for maintainability
 
 #### **Package Management**
+
 - [ ] Correct `final` vs `prev` usage in overlays
 - [ ] No `rec` in overlays (breaks composability)
 - [ ] Pure derivations only (no network access during build)
@@ -932,6 +962,7 @@ Before any configuration change, verify:
 - [ ] Phase hooks included for extensibility
 
 #### **Performance & Maintenance**
+
 - [ ] Garbage collection automated with reasonable retention
 - [ ] Binary caches configured with correct public keys
 - [ ] Store optimization enabled
@@ -939,6 +970,7 @@ Before any configuration change, verify:
 - [ ] No unnecessary IFD blocking evaluation
 
 #### **Home Manager Integration**
+
 - [ ] `stateVersion` set correctly (and never changed)
 - [ ] No duplicate packages between system and user
 - [ ] Gradual config migration strategy

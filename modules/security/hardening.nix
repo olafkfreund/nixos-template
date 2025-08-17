@@ -251,7 +251,9 @@ in
     # Security-focused package management
     nixpkgs.config = {
       # Security-conscious defaults
-      allowUnfree = false; # Only allow free software by default
+      # Note: This is a baseline security setting that can be overridden per-host
+      # when specific unfree packages are required (e.g., nvidia drivers, vscode)
+      allowUnfree = false; # Only allow free software by default (hosts can override)
 
       # Package vulnerability scanning
       permittedInsecurePackages = [

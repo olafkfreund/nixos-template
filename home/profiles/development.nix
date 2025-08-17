@@ -9,80 +9,79 @@
   # Home configuration
   home = {
     # Development packages
-    packages = with pkgs; [
+    packages = [
       # Version control
-      git-lfs
-      gh # GitHub CLI
-      gitui # TUI for git
+      pkgs.git-lfs
+      pkgs.gh # GitHub CLI
+      pkgs.gitui # TUI for git
 
       # Editors and IDEs
-      neovim
-      vscode
+      pkgs.neovim
+      pkgs.vscode
 
       # Language servers and tools
-      nixd # Nix LSP
-      nil # Alternative Nix LSP
+      pkgs.nixd # Nix LSP
+      pkgs.nil # Alternative Nix LSP
 
       # Programming languages
-      nodejs_20
-      python311
-      python311Packages.pip
-      python311Packages.virtualenv
-      go
-      rustc
-      cargo
+      pkgs.nodejs_20
+      pkgs.python311
+      pkgs.python311Packages.pip
+      pkgs.python311Packages.virtualenv
+      pkgs.go
+      pkgs.rustc
+      pkgs.cargo
 
       # Build tools
-      gnumake
-      cmake
-      gcc
-      clang
+      pkgs.gnumake
+      pkgs.cmake
+      pkgs.gcc
+      pkgs.clang
 
       # Database tools
-      postgresql_15
-      sqlite
+      pkgs.postgresql_15
+      pkgs.sqlite
 
       # API tools
-      curl
-      httpie
-      postman
+      pkgs.httpie
+      pkgs.postman
 
       # Containerization
-      docker
-      docker-compose
-      kubernetes
-      kubectl
-      k9s # Kubernetes TUI
+      pkgs.docker
+      pkgs.docker-compose
+      pkgs.kubernetes
+      pkgs.kubectl
+      pkgs.k9s # Kubernetes TUI
 
       # Cloud tools
-      awscli2
-      google-cloud-sdk
-      terraform
+      pkgs.awscli2
+      pkgs.google-cloud-sdk
+      pkgs.terraform
 
       # Documentation
-      pandoc
+      pkgs.pandoc
 
       # Debugging and profiling
-      gdb
-      valgrind
-      strace
+      pkgs.gdb
+      pkgs.valgrind
+      pkgs.strace
 
       # Network tools
-      wireshark
-      nmap
+      pkgs.wireshark
+      pkgs.nmap
 
       # Text processing
-      ripgrep
-      fd
-      jq
-      yq
+      pkgs.ripgrep
+      pkgs.fd
+      pkgs.jq
+      pkgs.yq
 
       # File synchronization
-      rsync
-      rclone
+      pkgs.rsync
+      pkgs.rclone
 
       # Performance monitoring
-      hyperfine # Benchmarking
+      pkgs.hyperfine # Benchmarking
     ];
 
     # Development path additions

@@ -10,76 +10,76 @@
   # Home configuration consolidated
   home = {
     # Server-focused packages
-    packages = with pkgs; [
+    packages = [
       # System monitoring
-      htop
-      iotop
-      nethogs
-      iftop
-      ncdu # Disk usage analyzer
+      pkgs.htop
+      pkgs.iotop
+      pkgs.nethogs
+      pkgs.iftop
+      pkgs.ncdu # Disk usage analyzer
 
       # Network tools
-      netcat
-      socat
-      nmap
-      traceroute
-      tcpdump
-      wireshark-cli # tshark
+      pkgs.netcat
+      pkgs.socat
+      pkgs.nmap
+      pkgs.traceroute
+      pkgs.tcpdump
+      pkgs.wireshark-cli # tshark
 
       # Text processing
-      ripgrep
-      fd
-      jq
-      yq
+      pkgs.ripgrep
+      pkgs.fd
+      pkgs.jq
+      pkgs.yq
 
       # File manipulation
-      rsync
-      rclone
+      pkgs.rsync
+      pkgs.rclone
 
       # Archive tools
-      p7zip
-      unrar
+      pkgs.p7zip
+      pkgs.unrar
 
       # Log analysis
-      logrotate
-      multitail
+      pkgs.logrotate
+      pkgs.multitail
 
       # Performance monitoring
-      sysstat # iostat, mpstat, etc.
+      pkgs.sysstat # iostat, mpstat, etc.
 
       # Security tools
-      nftables
-      fail2ban
+      pkgs.nftables
+      pkgs.fail2ban
 
       # Database clients
-      postgresql_15 # psql client
-      mysql80 # mysql client
-      sqlite
-      redis
+      pkgs.postgresql_15 # psql client
+      pkgs.mysql80 # mysql client
+      pkgs.sqlite
+      pkgs.redis
 
       # Container tools
-      docker
-      docker-compose
-      podman
+      pkgs.docker
+      pkgs.docker-compose
+      pkgs.podman
 
       # Cloud tools
-      awscli2
-      google-cloud-sdk
-      terraform
+      pkgs.awscli2
+      pkgs.google-cloud-sdk
+      pkgs.terraform
 
       # Backup tools
-      restic
-      borgbackup
+      pkgs.restic
+      pkgs.borgbackup
 
       # Configuration management
-      ansible
+      pkgs.ansible
 
       # API testing
-      curl
-      httpie
+      pkgs.curl
+      pkgs.httpie
 
       # Process management
-      # supervisor  # Package not available in current nixpkgs
+      # pkgs.supervisor  # Package not available in current nixpkgs
     ];
 
     # Server environment variables
