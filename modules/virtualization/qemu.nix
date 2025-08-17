@@ -21,8 +21,19 @@ in
       qemuGuest = true;
     };
 
-    # QEMU guest agent for host communication
-    services.qemuGuest.enable = true;
+    # Services configuration
+    services = {
+      # QEMU guest agent for host communication
+      qemuGuest.enable = true;
+
+      # SPICE guest tools for better desktop integration
+      spice-vdagentd.enable = cfg.spiceSupport;
+
+      # QXL graphics driver
+      xserver = lib.mkIf cfg.qxlSupport {
+        videoDrivers = [ "qxl" ];
+      };
+    };
 
     # VirtIO drivers for better performance
     boot = lib.mkIf cfg.virtioSupport {
@@ -49,14 +60,6 @@ in
         "vfio"
         "vfio_pci"
       ];
-    };
-
-    # SPICE guest tools for better desktop integration
-    services.spice-vdagentd.enable = cfg.spiceSupport;
-
-    # QXL graphics driver
-    services.xserver = lib.mkIf cfg.qxlSupport {
-      videoDrivers = [ "qxl" ];
     };
 
     # Optimize for QEMU/KVM

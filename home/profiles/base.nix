@@ -1,6 +1,6 @@
 # Base Home Manager profile
 # Common configuration shared across all user environments
-{ lib, pkgs, ... }:
+{ lib, ... }:
 
 let
   # Common shell aliases shared between bash and zsh

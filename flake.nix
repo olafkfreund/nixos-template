@@ -79,7 +79,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, agenix, treefmt-nix, git-hooks, nixos-wsl, nix-darwin, sops-nix, nixos-generators, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, agenix, treefmt-nix, git-hooks, nix-darwin, sops-nix, nixos-generators, ... }@inputs:
     let
       inherit (self) outputs;
       systems = [
@@ -158,20 +158,6 @@
           modules = [ ./hosts/${hostname}/home.nix ];
         };
 
-      # Common template validation config
-      templateConfig = {
-        # Set timezone for templates
-        time.timeZone = "Europe/London";
-        # Location for geoclue2 (needed by laptop template)
-        location = {
-          latitude = 51.5074;
-          longitude = -0.1278;
-        };
-        # Allow unfree packages for template validation
-        nixpkgs.config.allowUnfree = true;
-        # Allow insecure packages for template validation
-        nixpkgs.config.permittedInsecurePackages = [ "libsoup-2.74.3" ];
-      };
     in
     let
       # Import flake utilities to reduce duplication
@@ -391,7 +377,7 @@
         # VM Integration Tests (minimal configuration to avoid circular dependencies)
         vm-test-desktop = nixpkgs.legacyPackages.${system}.testers.runNixOSTest {
           name = "nixos-template-desktop-test";
-          nodes.machine = { config, lib, pkgs, ... }: {
+          nodes.machine = { pkgs, ... }: {
             # Minimal test configuration - no complex module imports
 
             # Basic system setup
@@ -440,7 +426,7 @@
 
         vm-test-server = nixpkgs.legacyPackages.${system}.testers.runNixOSTest {
           name = "nixos-template-server-test";
-          nodes.machine = { config, lib, pkgs, ... }: {
+          nodes.machine = { pkgs, ... }: {
             # Minimal server test configuration - no complex module imports
 
             # Basic system setup
@@ -448,9 +434,13 @@
             boot.loader.efi.canTouchEfiVariables = true;
 
             # Network and firewall
-            networking.hostName = "server-test";
-            networking.firewall.enable = true;
-            networking.firewall.allowedTCPPorts = [ 22 ];
+            networking = {
+              hostName = "server-test";
+              firewall = {
+                enable = true;
+                allowedTCPPorts = [ 22 ];
+              };
+            };
 
             # SSH service for server testing
             services.openssh = {

@@ -11,9 +11,6 @@
     ../../modules/hardware/power-management.nix
   ];
 
-  # System identification
-  networking.hostName = "laptop-template";
-
   # Hardware profile
   modules.hardware.power-management = {
     enable = true;
@@ -39,6 +36,9 @@
 
   # Network configuration for mobile use
   networking = {
+    # System identification
+    hostName = "laptop-template";
+
     networkmanager = {
       enable = true;
       wifi = {
