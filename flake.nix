@@ -192,7 +192,7 @@
     in
     {
       # Custom packages and modifications, exported as overlays
-      overlays = import ./overlays { inherit inputs; };
+      overlays = import ./overlays { };
 
       # Custom packages and deployment images; accessible through 'nix build', 'nix shell', etc
       packages = forAllSystems (system:

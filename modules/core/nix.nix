@@ -32,15 +32,15 @@
 
     # Automatic garbage collection - optimized for templates
     gc = {
-      automatic = true;
-      dates = "daily"; # More frequent for development/template systems
-      options = "--delete-older-than 7d --max-freed 1G"; # More aggressive cleanup with size limit
+      automatic = lib.mkDefault true;
+      dates = lib.mkDefault "daily"; # More frequent for development/template systems
+      options = lib.mkDefault "--delete-older-than 7d --max-freed 1G"; # More aggressive cleanup with size limit
     };
 
     # Automatic store optimization
     optimise = {
-      automatic = true;
-      dates = [ "03:45" ]; # Run during low-usage hours
+      automatic = lib.mkDefault true;
+      dates = lib.mkDefault [ "03:45" ]; # Run during low-usage hours
     };
 
     # Registry for legacy nix commands
