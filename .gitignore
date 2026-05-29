@@ -100,3 +100,10 @@ flake.lock.rej
 # hosts/local-*/
 # overlays/local/
 # pkgs/local/
+
+# Jekyll Pages site build artifacts and generated docs pages
+site/docs/
+site/_site/
+site/.jekyll-cache/
+site/.jekyll-metadata
+site/Gemfile.lock
