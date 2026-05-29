@@ -1,0 +1,46 @@
+title: "NixOS Template"
+description: "A comprehensive, flake-based NixOS configuration template with profile-based Home Manager, multi-host support, GPU auto-detection, VM testing, WSL2, nix-darwin, agenix secrets, and custom installer ISOs."
+tagline: "$ nixos-rebuild switch --flake .#your-machine"
+url: "https://olafkfreund.github.io"
+baseurl: "/nixos-template"
+
+author:
+  name: "olafkfreund"
+
+remote_theme: b2a3e8/jekyll-theme-console
+
+plugins:
+  - jekyll-remote-theme
+  - jekyll-seo-tag
+
+# jekyll-theme-console options
+style: dark
+show_excerpts: false
+
+# Navigation
+nav:
+  - title: "Home"
+    url: /
+  - title: "Getting Started"
+    url: /getting-started/
+  - title: "Features"
+    url: /features/
+
+# Source repository
+github_repo: "https://github.com/olafkfreund/nixos-template"
+
+# SEO
+twitter:
+  card: summary
+
+# Build settings
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules/
+  - vendor/

@@ -16,7 +16,7 @@
 
   # Copy this entire configuration template to the ISO
   environment.etc."nixos-template" = {
-    source = ../../..; # Root of this repository (from modules/installer/)
+    source = ../..; # Root of this repository (from modules/installer/)
     mode = "0755";
   };
 

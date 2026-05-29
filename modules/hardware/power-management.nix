@@ -177,7 +177,11 @@ in
 
       # Thermal management
       thermald = mkIf cfg.enableThermalManagement {
-        enable = mkDefault (cfg.profile == "laptop" || cfg.profile == "workstation");
+        # Priority 1250 sits between mkDefault (1000) and the nixpkgs option
+        # default (1500): the hardware auto-optimization module (mkDefault)
+        # wins when both are enabled, but this still overrides the upstream
+        # default when auto-optimization is off.
+        enable = mkOverride 1250 (cfg.profile == "laptop" || cfg.profile == "workstation");
       };
     };
 

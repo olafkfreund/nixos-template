@@ -96,27 +96,6 @@
       };
     };
 
-    # Desktop file associations
-    xdg.mimeApps = {
-      enable = true;
-
-      defaultApplications = {
-        "text/html" = "firefox.desktop";
-        "x-scheme-handler/http" = "firefox.desktop";
-        "x-scheme-handler/https" = "firefox.desktop";
-        "x-scheme-handler/about" = "firefox.desktop";
-        "x-scheme-handler/unknown" = "firefox.desktop";
-        "application/pdf" = "firefox.desktop";
-        "image/jpeg" = "gimp.desktop";
-        "image/png" = "gimp.desktop";
-        "image/gif" = "gimp.desktop";
-        "video/mp4" = "vlc.desktop";
-        "video/x-matroska" = "vlc.desktop";
-        "audio/mpeg" = "vlc.desktop";
-        "audio/flac" = "vlc.desktop";
-      };
-    };
-
     # Desktop-specific shell aliases
     bash.shellAliases = {
       # Screenshot utilities
@@ -167,6 +146,27 @@
       # Desktop-specific settings
       core.autocrlf = false;
       gui.recentrepo = true;
+    };
+  };
+
+  # Desktop file associations (top-level xdg, not under programs)
+  xdg.mimeApps = {
+    enable = true;
+
+    defaultApplications = {
+      "text/html" = "firefox.desktop";
+      "x-scheme-handler/http" = "firefox.desktop";
+      "x-scheme-handler/https" = "firefox.desktop";
+      "x-scheme-handler/about" = "firefox.desktop";
+      "x-scheme-handler/unknown" = "firefox.desktop";
+      "application/pdf" = "firefox.desktop";
+      "image/jpeg" = "gimp.desktop";
+      "image/png" = "gimp.desktop";
+      "image/gif" = "gimp.desktop";
+      "video/mp4" = "vlc.desktop";
+      "video/x-matroska" = "vlc.desktop";
+      "audio/mpeg" = "vlc.desktop";
+      "audio/flac" = "vlc.desktop";
     };
   };
 

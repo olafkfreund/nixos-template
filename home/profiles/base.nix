@@ -67,7 +67,8 @@ in
       historyFileSize = 20000;
       historyControl = [ "ignoredups" "ignorespace" ];
 
-      shellAliases = commonAliases;
+      # mkDefault so hosts can override individual aliases without conflicts
+      shellAliases = lib.mkDefault commonAliases;
 
       bashrcExtra = ''
         # Enhanced bash history
@@ -96,7 +97,8 @@ in
       enableCompletion = lib.mkDefault true;
       autocd = lib.mkDefault true;
 
-      shellAliases = commonAliases;
+      # mkDefault so hosts can override individual aliases without conflicts
+      shellAliases = lib.mkDefault commonAliases;
 
       history = {
         size = 10000;
@@ -134,15 +136,16 @@ in
   xdg = {
     enable = true;
 
+    # mkDefault so individual hosts can override any of these paths cleanly
     userDirs = {
       enable = true;
       createDirectories = true;
-      desktop = "$HOME/Desktop";
-      documents = "$HOME/Documents";
-      download = "$HOME/Downloads";
-      music = "$HOME/Music";
-      pictures = "$HOME/Pictures";
-      videos = "$HOME/Videos";
+      desktop = lib.mkDefault "$HOME/Desktop";
+      documents = lib.mkDefault "$HOME/Documents";
+      download = lib.mkDefault "$HOME/Downloads";
+      music = lib.mkDefault "$HOME/Music";
+      pictures = lib.mkDefault "$HOME/Pictures";
+      videos = lib.mkDefault "$HOME/Videos";
     };
   };
 }

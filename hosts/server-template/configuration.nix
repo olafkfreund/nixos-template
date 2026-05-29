@@ -37,7 +37,10 @@
   # modules.security.agenix can be enabled per host as needed
 
   # Container support for services
-  # Use NixOS built-in podman module instead of our custom one
+  # Use NixOS built-in podman module instead of our custom one.
+  # Disable docker (the workstation baseline enables it) since podman provides
+  # the docker CLI via dockerCompat — the two cannot coexist.
+  virtualisation.docker.enable = false;
   virtualisation.podman.enable = true;
   virtualisation.podman.dockerCompat = true;
   virtualisation.containers.enable = true;

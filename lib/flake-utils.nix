@@ -21,6 +21,42 @@ let
     nixpkgs.config.permittedInsecurePackages = [ "libsoup-2.74.3" ];
   };
 
+  # Home Manager profile paths (absolute from flake root) — shared by all builders
+  homeProfiles = {
+    base = self + "/home/profiles/base.nix";
+    desktop = self + "/home/profiles/desktop.nix";
+    development = self + "/home/profiles/development.nix";
+    server = self + "/home/profiles/server.nix";
+    gnome = self + "/home/profiles/gnome.nix";
+    kde = self + "/home/profiles/kde.nix";
+    hyprland = self + "/home/profiles/hyprland.nix";
+    niri = self + "/home/profiles/niri.nix";
+    headless = self + "/home/profiles/headless.nix";
+  };
+
+  # Comprehensive flake metadata — shared by all builders so every host
+  # (including WSL) can use modules/core/system-identification.nix.
+  mkFlakeMeta = { hostname, profile, system }: {
+    inherit hostname profile system;
+    # Build information (reproducible)
+    buildTime = 0; # Static to ensure reproducibility
+    buildDate = "reproducible-build";
+    flakeRev = self.rev or "dirty";
+    flakeShortRev =
+      if (self.rev or null) != null
+      then builtins.substring 0 7 self.rev
+      else "unknown";
+    # Nixpkgs information
+    nixpkgsRev = inputs.nixpkgs.rev or "unknown";
+    nixpkgsShortRev =
+      if (inputs.nixpkgs.rev or null) != null
+      then builtins.substring 0 7 inputs.nixpkgs.rev
+      else "unknown";
+    # System identification
+    configPath = toString ../.;
+    hostPath = toString (../. + "/hosts/${hostname}");
+  };
+
   # Core system builder - matches the existing mkSystem with full flakeMeta support
   mkSystem =
     { hostname
@@ -30,40 +66,8 @@ let
     }: nixpkgs.lib.nixosSystem {
       inherit system;
       specialArgs = {
-        inherit inputs outputs;
-        # Home Manager profile paths (absolute from flake root)
-        homeProfiles = {
-          base = self + "/home/profiles/base.nix";
-          desktop = self + "/home/profiles/desktop.nix";
-          development = self + "/home/profiles/development.nix";
-          server = self + "/home/profiles/server.nix";
-          gnome = self + "/home/profiles/gnome.nix";
-          kde = self + "/home/profiles/kde.nix";
-          hyprland = self + "/home/profiles/hyprland.nix";
-          niri = self + "/home/profiles/niri.nix";
-          headless = self + "/home/profiles/headless.nix";
-        };
-        # Add comprehensive flake metadata
-        flakeMeta = {
-          inherit hostname profile system;
-          # Build information (reproducible)
-          buildTime = 0; # Static to ensure reproducibility
-          buildDate = "reproducible-build";
-          flakeRev = self.rev or "dirty";
-          flakeShortRev =
-            if (self.rev or null) != null
-            then builtins.substring 0 7 self.rev
-            else "unknown";
-          # Nixpkgs information
-          nixpkgsRev = inputs.nixpkgs.rev or "unknown";
-          nixpkgsShortRev =
-            if (inputs.nixpkgs.rev or null) != null
-            then builtins.substring 0 7 inputs.nixpkgs.rev
-            else "unknown";
-          # System identification
-          configPath = toString ../.;
-          hostPath = toString (../. + "/hosts/${hostname}");
-        };
+        inherit inputs outputs homeProfiles;
+        flakeMeta = mkFlakeMeta { inherit hostname profile system; };
       };
       modules = [
         ../hosts/${hostname}/configuration.nix
@@ -129,10 +133,14 @@ let
   mkWSLSystem =
     { hostname
     , system ? "x86_64-linux"
+    , profile ? "workstation"
     , extraModules ? [ ]
     }: nixpkgs.lib.nixosSystem {
       inherit system;
-      specialArgs = { inherit inputs outputs; };
+      specialArgs = {
+        inherit inputs outputs homeProfiles;
+        flakeMeta = mkFlakeMeta { inherit hostname profile system; };
+      };
       modules = [
         ../hosts/${hostname}/configuration.nix
         inputs.nixos-wsl.nixosModules.wsl
