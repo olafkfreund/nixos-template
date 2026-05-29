@@ -48,15 +48,14 @@ for f in "$SRC"/*.md; do
     printf 'permalink: /docs/%s.html\n' "$base"
     printf -- '---\n'
     printf '{%% raw %%}\n'
-    # Rewrite links:
+    # Drop the first H1 (the layout already renders the title), then rewrite links:
     #  - ../PATH (escapes docs/) -> GitHub blob URL so it still resolves
     #  - between docs: (X.md) / (./X.md) / (docs/X.md) -> (X.html); keep #anchor
-    sed -E \
+    awk 'BEGIN{dropped=0} /^# /&&!dropped{dropped=1;next} {print}' "$f" | sed -E \
       -e 's@\]\(\.\./([A-Za-z0-9._/-]+)\)@](https://github.com/olafkfreund/nixos-template/blob/main/\1)@g' \
       -e 's@\]\(\./([A-Za-z0-9._-]+)\.md(#[^)]*)?\)@](\1.html\2)@g' \
       -e 's@\]\(docs/([A-Za-z0-9._-]+)\.md(#[^)]*)?\)@](\1.html\2)@g' \
-      -e 's@\]\(([A-Za-z0-9._-]+)\.md(#[^)]*)?\)@](\1.html\2)@g' \
-      "$f"
+      -e 's@\]\(([A-Za-z0-9._-]+)\.md(#[^)]*)?\)@](\1.html\2)@g'
     printf '\n{%% endraw %%}\n'
   } > "$out"
 
