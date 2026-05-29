@@ -294,8 +294,9 @@ in
         }
       ];
 
-      # Enable fail2ban-like functionality
-      failDelay = {
+      # Delay after a failed login (option lives under a specific PAM service,
+      # not directly under security.pam)
+      services.login.failDelay = {
         enable = true;
         delay = 4000000; # 4 second delay after failed login
       };

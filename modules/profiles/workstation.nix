@@ -5,10 +5,10 @@
 {
   # Hardware configuration for desktop workstation
   hardware = {
-    # Full graphics acceleration
+    # Full graphics acceleration (mkDefault so non-workstation hosts can disable)
     graphics = {
-      enable = true;
-      enable32Bit = true; # For games and legacy applications
+      enable = lib.mkDefault true;
+      enable32Bit = lib.mkDefault true; # For games and legacy applications
 
       extraPackages = with pkgs; [
         mesa
@@ -21,10 +21,10 @@
     cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
     cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
-    # Bluetooth with full feature set
+    # Bluetooth with full feature set (mkDefault so servers can disable)
     bluetooth = {
-      enable = true;
-      powerOnBoot = true;
+      enable = lib.mkDefault true;
+      powerOnBoot = lib.mkDefault true;
       settings = {
         General = {
           Enable = "Source,Sink,Media,Socket";
@@ -137,9 +137,9 @@
   # Virtualization support
   virtualisation = {
     libvirtd = {
-      enable = true;
+      enable = lib.mkDefault true;
       qemu = {
-        package = pkgs.qemu_kvm;
+        package = lib.mkDefault pkgs.qemu_kvm;
         runAsRoot = false;
         swtpm.enable = true;
         ovmf = {
@@ -149,9 +149,9 @@
       };
     };
 
-    # Docker for development
+    # Docker for development (mkDefault so hosts using podman+dockerCompat can disable)
     docker = {
-      enable = true;
+      enable = lib.mkDefault true;
       autoPrune.enable = true;
     };
   };
@@ -167,9 +167,9 @@
       QT_AUTO_SCREEN_SCALE_FACTOR = "1";
       GDK_SCALE = "1";
 
-      # Development
-      EDITOR = "code";
-      BROWSER = "firefox";
+      # Development (mkDefault so non-desktop hosts can override)
+      EDITOR = lib.mkDefault "code";
+      BROWSER = lib.mkDefault "firefox";
 
       # Gaming
       DXVK_HUD = "compiler";
@@ -232,7 +232,7 @@
   # User configuration for workstation
   users.users.user = {
     isNormalUser = true;
-    description = "Desktop User";
+    description = lib.mkDefault "Desktop User";
     extraGroups = [
       "wheel"
       "networkmanager"

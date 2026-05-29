@@ -1,6 +1,6 @@
 # WSL2 Template Home Manager Configuration
 # Uses shared profiles optimized for Windows Subsystem for Linux development
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   # Import shared Home Manager profiles
@@ -30,7 +30,9 @@
 
     # Development optimizations for WSL2
     EDITOR = "code"; # VS Code integration
-    BROWSER = "/mnt/c/Program Files/Mozilla Firefox/firefox.exe"; # Windows browser
+    # mkForce overrides the development profile's "firefox"; in WSL we launch
+    # the Windows-side browser instead.
+    BROWSER = lib.mkForce "/mnt/c/Program Files/Mozilla Firefox/firefox.exe"; # Windows browser
 
     # WSL2 performance
     WSLENV = "PATH/l"; # Environment variable passing

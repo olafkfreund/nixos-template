@@ -10,13 +10,13 @@
 # Default hostname (can be overridden)
 hostname := `hostname`
 
-# Default recipe - Interactive chooser with enhanced fzf preview
+# Default recipe - Interactive chooser with enhanced fzf preview (falls back to --list if fzf is absent)
 default:
-    @export JUST_CHOOSER="fzf --preview='just --show {}' --reverse --height=50%" && just --choose
+    @command -v fzf >/dev/null && (export JUST_CHOOSER="fzf --preview='just --show {}' --reverse --height=50%" && just --choose) || just --list
 
 # Interactive menu with enhanced fzf (alias for default)
 menu:
-    @export JUST_CHOOSER="fzf --preview='just --show {}' --reverse --height=50%" && just --choose
+    @command -v fzf >/dev/null && (export JUST_CHOOSER="fzf --preview='just --show {}' --reverse --height=50%" && just --choose) || just --list
 
 # Show all available recipes (traditional list view)
 list:
@@ -24,7 +24,7 @@ list:
 
 # Quick alias for the interactive menu
 m:
-    @export JUST_CHOOSER="fzf --preview='just --show {}' --reverse --height=50%" && just --choose
+    @command -v fzf >/dev/null && (export JUST_CHOOSER="fzf --preview='just --show {}' --reverse --height=50%" && just --choose) || just --list
 
 # Build and switch to new configuration
 switch host=hostname:

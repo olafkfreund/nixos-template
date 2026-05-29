@@ -38,8 +38,6 @@
     experimental-features = [
       "nix-command"
       "flakes"
-      "ca-derivations"
-      "recursive-nix"
     ];
   };
 
@@ -221,6 +219,7 @@
               # Development utilities
               git
               just
+              fzf
               jq
 
               # Hardware detection

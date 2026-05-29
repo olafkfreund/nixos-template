@@ -224,7 +224,8 @@
 
     # Development-focused Git configuration
     git = {
-      extraConfig = {
+      # mkDefault so host configs can override any individual git setting
+      extraConfig = lib.mkDefault {
         # Enhanced development workflow
         push.default = "current";
         pull.ff = "only";

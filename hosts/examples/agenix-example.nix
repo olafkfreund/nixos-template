@@ -279,7 +279,7 @@
   systemd.services.sshd.after = [ "agenix-ssh-host-key.service" ];
 
   # System configuration
-  system.stateVersion = "24.05";
+  system.stateVersion = "25.05";
 
   # Enable modules
   modules = {

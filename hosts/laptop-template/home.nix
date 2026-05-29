@@ -59,9 +59,9 @@
     syncthing
     rclone
 
-    # Lightweight alternatives
-    mousepad # Lightweight text editor
-    thunar # Lightweight file manager
+    # Lightweight alternatives (these live under the xfce package set)
+    xfce.mousepad # Lightweight text editor
+    xfce.thunar # Lightweight file manager
   ];
 
   # Laptop-optimized bash aliases (extends base profile)

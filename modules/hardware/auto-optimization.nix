@@ -299,18 +299,18 @@ in
           echo ""
           echo "💾 Memory: ${toString (cfg.override.memoryGB or hwDetection.memoryGB)} GB"
           echo "🏗️  CPU Cores: ${toString (cfg.override.cpuCores or hwDetection.cpuCores)}"
-          echo "💻 Is Laptop: ${if (cfg.override.isLaptop or hwDetection.isLaptop) then "Yes" else "No"}"
-          echo "🖥️  Has NVIDIA GPU: ${if (cfg.override.hasNvidiaGPU or hwDetection.hasNvidiaGPU) then "Yes" else "No"}"
-          echo "🖥️  Has AMD GPU: ${if hwDetection.hasAMDGPU then "Yes" else "No"}"
-          echo "🖥️  Has Intel GPU: ${if hwDetection.hasIntelGPU then "Yes" else "No"}"
-          echo "💿 Has SSD: ${if (cfg.override.hasSSD or hwDetection.hasSSD) then "Yes" else "No"}"
+          echo "💻 Is Laptop: ${if (cfg.override.isLaptop or hwDetection.isLaptop) == true then "Yes" else "No"}"
+          echo "🖥️  Has NVIDIA GPU: ${if (cfg.override.hasNvidiaGPU or hwDetection.hasNvidiaGPU) == true then "Yes" else "No"}"
+          echo "🖥️  Has AMD GPU: ${if (hwDetection.hasAMDGPU or false) == true then "Yes" else "No"}"
+          echo "🖥️  Has Intel GPU: ${if (hwDetection.hasIntelGPU or false) == true then "Yes" else "No"}"
+          echo "💿 Has SSD: ${if (cfg.override.hasSSD or hwDetection.hasSSD) == true then "Yes" else "No"}"
           echo ""
           echo "⚙️  Applied Optimizations:"
           echo "  ZRAM: ${toString optimizations.memory.zramPercent}% of RAM"
           echo "  CPU Governor: ${optimizations.cpu.governor}"
           echo "  Build Cores: ${toString optimizations.cpu.buildCores}"
           echo "  Build Jobs: ${toString optimizations.cpu.buildJobs}"
-          echo "  Kernel Package: ${optimizations.cpu.kernelPackage.name}"
+          echo "  Kernel Package: linux ${optimizations.cpu.kernelPackage.kernel.version}"
           echo ""
           echo "📋 Hardware Info File: /etc/hardware-optimization-info"
         '')
@@ -319,7 +319,15 @@ in
       # Detailed hardware information
       environment.etc."hardware-detection-debug.json".text = builtins.toJSON {
         detection = hwDetection;
-        optimizations = optimizations;
+        # Only serialize scalar optimization values — the raw `optimizations`
+        # set contains packages (e.g. kernelPackage) that cannot be JSON-encoded.
+        optimizations = {
+          memory = { inherit (optimizations.memory) zramPercent; };
+          cpu = {
+            inherit (optimizations.cpu) governor buildCores buildJobs;
+            kernelVersion = optimizations.cpu.kernelPackage.kernel.version;
+          };
+        };
         overrides = cfg.override;
       };
     })
@@ -330,7 +338,7 @@ in
         (writeShellScriptBin "hw-info" ''
           echo "🔍 Quick Hardware Info"
           echo "===================="
-          echo "Memory: ${toString (cfg.override.memoryGB or hwDetection.memoryGB)}GB | CPU: ${toString (cfg.override.cpuCores or hwDetection.cpuCores)} cores | ${if (cfg.override.isLaptop or hwDetection.isLaptop) then "Laptop" else "Desktop"} | ${if (cfg.override.hasSSD or hwDetection.hasSSD) then "SSD" else "HDD"}"
+          echo "Memory: ${toString (cfg.override.memoryGB or hwDetection.memoryGB)}GB | CPU: ${toString (cfg.override.cpuCores or hwDetection.cpuCores)} cores | ${if (cfg.override.isLaptop or hwDetection.isLaptop) == true then "Laptop" else "Desktop"} | ${if (cfg.override.hasSSD or hwDetection.hasSSD) == true then "SSD" else "HDD"}"
         '')
       ];
     }
