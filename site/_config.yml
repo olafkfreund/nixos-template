@@ -7,15 +7,10 @@ baseurl: "/nixos-template"
 author:
   name: "olafkfreund"
 
-remote_theme: b2a3e8/jekyll-theme-console
-
-plugins:
-  - jekyll-remote-theme
-  - jekyll-seo-tag
-
-# jekyll-theme-console options
-style: dark
-show_excerpts: false
+# Self-contained dark "console" layout with a left sidebar (site/_layouts +
+# site/assets/css/style.css). No remote theme — that one dumped every page into
+# a single centered top nav.
+plugins: []
 
 # Navigation
 nav:
