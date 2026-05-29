@@ -25,6 +25,8 @@ nav:
     url: /getting-started/
   - title: "Features"
     url: /features/
+  - title: "Documentation"
+    url: /documentation/
 
 # Source repository
 github_repo: "https://github.com/olafkfreund/nixos-template"
@@ -44,3 +46,4 @@ exclude:
   - Gemfile.lock
   - node_modules/
   - vendor/
+  - scripts/

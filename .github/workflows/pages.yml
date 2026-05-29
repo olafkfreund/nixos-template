@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "site/**"
+      - "docs/**"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -27,6 +28,9 @@ jobs:
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
+
+      - name: Import docs/ into the site
+        run: bash site/scripts/import-docs.sh docs site/docs
 
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
