@@ -306,4 +306,4 @@ The zero-configuration approach makes NixOS accessible to users without deep har
 
 - [Hardware Auto-Optimization Guide](./HARDWARE-AUTO-OPTIMIZATION.md) - Detailed technical documentation
 - [System Identification Guide](./SYSTEM-IDENTIFICATION.md) - System metadata and naming
-- [Profile System Guide](./PROFILE-SYSTEM.md) - Home Manager profile architecture
+- [Home Manager profiles](https://github.com/olafkfreund/nixos-template/tree/main/home/profiles) - Home Manager profile architecture
