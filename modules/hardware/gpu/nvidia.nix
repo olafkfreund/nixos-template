@@ -169,7 +169,7 @@ in
         nvtop # Terminal GPU monitor
 
         # Graphics utilities
-        glxinfo # OpenGL info
+        mesa-demos # OpenGL info
         vulkan-tools # Vulkan utilities
         nvidia-settings # NVIDIA control panel
       ] ++ lib.optionals (isDesktop && cfg.gaming.enable) [
