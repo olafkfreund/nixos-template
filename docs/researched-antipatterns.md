@@ -536,7 +536,7 @@ nix-shell --run 'direnv dump > .envrc.cache'
 use flake  # With nix-direnv installed
 ```
 
-**Rule:** `.envrc` should execute in <500ms.
+**Rule:** `.envrc` should execute in \<500ms.
 
 ### 4.3 CI/CD Anti-patterns
 
@@ -839,10 +839,10 @@ home.file.".vimrc".text = ''
 This reference guide covers the most critical anti-patterns encountered in real-world Nix and NixOS usage. The key to avoiding these issues is understanding:
 
 1. **Evaluation vs Build Phase**: Keep them separate, avoid IFD
-2. **Declarative Philosophy**: Everything in configuration files
-3. **Proper Scoping**: Use the right tool for the right scope
-4. **Security by Default**: Principle of least privilege
-5. **Performance Awareness**: Understand evaluation costs
-6. **Gradual Adoption**: Don't try to do everything at once
+1. **Declarative Philosophy**: Everything in configuration files
+1. **Proper Scoping**: Use the right tool for the right scope
+1. **Security by Default**: Principle of least privilege
+1. **Performance Awareness**: Understand evaluation costs
+1. **Gradual Adoption**: Don't try to do everything at once
 
 Success with Nix/NixOS requires patience, understanding of the underlying model, and adherence to community best practices. Use the detection tools, follow the patterns shown here, and always test changes in safe environments before deploying to production.

@@ -53,15 +53,22 @@ Not on NixOS yet? See [docs/NON-NIXOS-USAGE.md](docs/NON-NIXOS-USAGE.md) for Doc
 
 ## Common Commands
 
-| Command | What it does |
-|---|---|
-| `just` | Interactive menu of all available commands |
-| `just switch <host>` | Build and activate configuration |
-| `just test <host>` | Build and activate without adding a boot entry |
-| `just boot <host>` | Build and set as next boot, without switching now |
-| `just update` | Update all flake inputs |
-| `just fmt` | Format all Nix files |
-| `just check` | Run `nix flake check` |
+Running `just` with no arguments opens the **interactive menu** — a full control panel that groups all ~150 recipes into 9 categories, shows descriptions, previews the exact command, and asks for confirmation before running anything. No flags, no memorisation required.
+
+![Menu showcase](https://raw.githubusercontent.com/olafkfreund/nixos-template/main/site/assets/menu/showcase.gif)
+
+For the full guide see [docs/MENU.md](docs/MENU.md). Common recipes are also callable directly:
+
+| Command              | What it does                                      |
+| -------------------- | ------------------------------------------------- |
+| `just`               | Open the interactive menu (all ~150 recipes)      |
+| `just switch <host>` | Build and activate configuration                  |
+| `just test <host>`   | Build and activate without adding a boot entry    |
+| `just boot <host>`   | Build and set as next boot, without switching now |
+| `just update`        | Update all flake inputs                           |
+| `just fmt`           | Format all Nix files                              |
+| `just check`         | Run `nix flake check`                             |
+| `just list`          | Print every recipe (raw, no menu UI)              |
 
 ---
 
@@ -96,28 +103,33 @@ Tracks **nixpkgs `nixos-unstable`** by default. To pin to a stable release, chan
 Full documentation lives in [`docs/`](docs/). See [docs/README.md](docs/README.md) for the complete index. Quick links:
 
 **Getting started**
+
 - [docs/SETUP.md](docs/SETUP.md) — detailed first-time setup walkthrough
 - [docs/HOST-TEMPLATES.md](docs/HOST-TEMPLATES.md) — all host types and flake registration
 - [docs/USER-TEMPLATES.md](docs/USER-TEMPLATES.md) — Home Manager user profiles
 - [docs/NON-NIXOS-USAGE.md](docs/NON-NIXOS-USAGE.md) — using the template without NixOS
 
 **Platforms**
+
 - [docs/WINDOWS-HOWTO.md](docs/WINDOWS-HOWTO.md) — Windows + WSL2 setup
 - [docs/WSL2-CONFIGURATION.md](docs/WSL2-CONFIGURATION.md) — WSL2 NixOS configuration
 - [docs/MACOS-NIXOS-GUIDE.md](docs/MACOS-NIXOS-GUIDE.md) — macOS (nix-darwin) guide
 - [docs/NIX-DARWIN-GUIDE.md](docs/NIX-DARWIN-GUIDE.md) — nix-darwin reference
 
 **Hardware & GPU**
+
 - [docs/GPU-CONFIGURATION.md](docs/GPU-CONFIGURATION.md) — GPU driver setup (AMD/NVIDIA/Intel)
 - [docs/HARDWARE-AUTO-OPTIMIZATION.md](docs/HARDWARE-AUTO-OPTIMIZATION.md) — automatic hardware detection
 - [docs/ZERO-CONFIGURATION.md](docs/ZERO-CONFIGURATION.md) — zero-config hardware optimization
 
 **Advanced & Secrets**
+
 - [docs/AGENIX-SECRETS.md](docs/AGENIX-SECRETS.md) — age-encrypted secrets with agenix
 - [docs/DEPLOYMENT-IMAGES.md](docs/DEPLOYMENT-IMAGES.md) — cloud/VM image generation
 - [docs/ADVANCED-FEATURES.md](docs/ADVANCED-FEATURES.md) — overlays, custom packages, and more
 
 **Reference**
+
 - [docs/NIXOS-ANTI-PATTERNS.md](docs/NIXOS-ANTI-PATTERNS.md) — common mistakes and how to avoid them
 - [docs/CODE-QUALITY.md](docs/CODE-QUALITY.md) — linting and formatting tools
 - [docs/VALIDATION.md](docs/VALIDATION.md) — configuration validation
@@ -127,13 +139,14 @@ Full documentation lives in [`docs/`](docs/). See [docs/README.md](docs/README.m
 
 ## Troubleshooting
 
-| Problem | Fix |
-|---|---|
-| Build fails with evaluation error | Run `nix flake check` for details |
-| VM hangs at boot | Rebuild: `just test <host>` inside the VM config |
-| `permission denied` errors | Ensure your user is in the `wheel` group |
+| Problem                           | Fix                                              |
+| --------------------------------- | ------------------------------------------------ |
+| Build fails with evaluation error | Run `nix flake check` for details                |
+| VM hangs at boot                  | Rebuild: `just test <host>` inside the VM config |
+| `permission denied` errors        | Ensure your user is in the `wheel` group         |
 
 **Getting help:**
+
 - [NixOS Manual](https://nixos.org/manual/nixos/stable/)
 - [NixOS Options Search](https://search.nixos.org/options)
 - [NixOS Discourse](https://discourse.nixos.org/)

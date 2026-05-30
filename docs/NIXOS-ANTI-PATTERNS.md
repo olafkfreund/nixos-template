@@ -980,12 +980,12 @@ Before any configuration change, verify:
 ### **🎯 Key Success Principles**
 
 1. **Evaluation vs Build Phase**: Keep them completely separate to enable parallelism
-2. **Declarative Philosophy**: Everything in configuration files, no imperative changes
-3. **Proper Scoping**: Right tool for the right scope (system vs user vs build-time)
-4. **Security by Default**: Principle of least privilege everywhere
-5. **Performance Awareness**: Understand evaluation costs and caching strategies
-6. **Gradual Adoption**: Don't try to migrate everything at once
-7. **Community Standards**: Follow established patterns from nixpkgs
+1. **Declarative Philosophy**: Everything in configuration files, no imperative changes
+1. **Proper Scoping**: Right tool for the right scope (system vs user vs build-time)
+1. **Security by Default**: Principle of least privilege everywhere
+1. **Performance Awareness**: Understand evaluation costs and caching strategies
+1. **Gradual Adoption**: Don't try to migrate everything at once
+1. **Community Standards**: Follow established patterns from nixpkgs
 
 **Remember**: Success with Nix/NixOS requires patience, understanding of the underlying model, and strict adherence to community best practices. Always test changes in safe environments before deploying to production systems.
 
