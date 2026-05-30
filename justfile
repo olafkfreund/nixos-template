@@ -2,29 +2,29 @@
 # Provides convenient commands for managing the configuration
 #
 # Quick Start:
-#   just          - Interactive menu (fzf chooser with preview)
+#   just          - Open the guided menu (browse categories & pick an action)
 #   just menu     - Same as above (explicit alias)
-#   just list     - Show all available recipes
+#   just list     - Show all available recipes (raw)
 #   just switch   - Build and apply configuration
 
 # Default hostname (can be overridden)
 hostname := `hostname`
 
-# Default recipe - Interactive chooser with enhanced fzf preview (falls back to --list if fzf is absent)
+# Default recipe - friendly, menu-driven control panel (zero dependencies)
 default:
-    @command -v fzf >/dev/null && (export JUST_CHOOSER="fzf --preview='just --show {}' --reverse --height=50%" && just --choose) || just --list
+    @bash scripts/menu.sh
 
-# Interactive menu with enhanced fzf (alias for default)
+# Interactive menu (alias for the default)
 menu:
-    @command -v fzf >/dev/null && (export JUST_CHOOSER="fzf --preview='just --show {}' --reverse --height=50%" && just --choose) || just --list
+    @bash scripts/menu.sh
+
+# Quick alias for the interactive menu
+m:
+    @bash scripts/menu.sh
 
 # Show all available recipes (traditional list view)
 list:
     @just --list
-
-# Quick alias for the interactive menu
-m:
-    @command -v fzf >/dev/null && (export JUST_CHOOSER="fzf --preview='just --show {}' --reverse --height=50%" && just --choose) || just --list
 
 # Build and switch to new configuration
 switch host=hostname:
