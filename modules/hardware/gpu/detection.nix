@@ -32,7 +32,7 @@ in
     # Hardware detection script
     environment.systemPackages = with pkgs; [
       pciutils # lspci for GPU detection
-      glxinfo # GPU info
+      mesa-demos # GPU info
       clinfo # OpenCL info
       # GPU monitoring tools can be added per-host as needed
     ];

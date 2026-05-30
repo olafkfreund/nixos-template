@@ -107,7 +107,7 @@ in
         # Graphics utilities
         mesa-demos # OpenGL demos
         vulkan-tools # Vulkan utilities
-        glxinfo # OpenGL info
+        mesa-demos # OpenGL info
       ] ++ lib.optionals (isDesktop && cfg.gaming.enable) [
         # Gaming tools
         mangohud # Gaming overlay

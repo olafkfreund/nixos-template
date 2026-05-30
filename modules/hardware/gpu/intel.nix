@@ -116,7 +116,7 @@ in
         libva-utils # VA-API utilities (vainfo, etc.)
 
         # Graphics utilities
-        glxinfo # OpenGL info
+        mesa-demos # OpenGL info
         vulkan-tools # Vulkan utilities
         mesa-demos # OpenGL demos
       ] ++

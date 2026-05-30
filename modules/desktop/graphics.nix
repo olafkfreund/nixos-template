@@ -32,7 +32,7 @@ in
     # Graphics utilities
     environment.systemPackages = with pkgs; [
       # Graphics info tools
-      glxinfo
+      mesa-demos
       vulkan-tools
       libva-utils
 
