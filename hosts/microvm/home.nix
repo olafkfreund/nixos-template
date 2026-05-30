@@ -7,7 +7,7 @@
   home = {
     username = "micro";
     homeDirectory = "/home/micro";
-    stateVersion = "25.05";
+    stateVersion = "26.05";
   };
 
   # Let Home Manager manage itself

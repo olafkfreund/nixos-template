@@ -2,7 +2,7 @@
 
 This document explains the comprehensive validation system for NixOS template configurations, covering syntax validation, build evaluation, VM testing, and CI/CD integration.
 All validations are
-NixOS 25.05 compatible with zero deprecation warnings.
+NixOS 26.05 compatible with zero deprecation warnings.
 
 ## Current Status
 
@@ -15,7 +15,7 @@ NixOS 25.05 compatible with zero deprecation warnings.
 - **Management scripts** - All utilities working
 - **VM builds** - QEMU and MicroVM configurations build successfully
 - **GitHub Actions CI** - Complete pipeline validation
-- **NixOS 25.05** - No deprecation warnings, latest features
+- **NixOS 26.05** - No deprecation warnings, latest features
 
 ## Validation Levels
 
@@ -41,7 +41,7 @@ find . -name "*.nix" -exec nix-instantiate --parse {} \;
 - PASS Import resolution
 - PASS Function argument completeness
 - PASS Module structure and option definitions
-- PASS No deprecation warnings (NixOS 25.05 compatible)
+- PASS No deprecation warnings (NixOS 26.05 compatible)
 - PASS Flake metadata integrity
 
 **What it doesn't validate:**

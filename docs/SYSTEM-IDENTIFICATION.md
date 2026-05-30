@@ -138,7 +138,7 @@ Tags: gpu-enabled, development, testing
 Platform:
   Architecture: x86_64
   Kernel: 6.1.55
-  NixOS State Version: 25.05
+  NixOS State Version: 26.05
 
 Flake Metadata:
   Build Date: build-1699123456
@@ -204,7 +204,7 @@ systemId = {
 
 ```nix
 networking.hostName = "my-server";
-system.stateVersion = "25.05";
+system.stateVersion = "26.05";
 ```
 
 ### New Pattern

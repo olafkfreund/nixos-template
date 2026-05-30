@@ -10,7 +10,7 @@
   ];
 
   # System configuration
-  system.stateVersion = "24.05";
+  system.stateVersion = "26.05";
 
   # Boot configuration for VMs
   boot.loader = {

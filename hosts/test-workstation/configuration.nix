@@ -29,5 +29,5 @@
   # Timezone (adjust for your location)
   time.timeZone = "Europe/London";
 
-  system.stateVersion = "25.05";
+  system.stateVersion = "26.05";
 }

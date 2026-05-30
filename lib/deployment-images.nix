@@ -199,7 +199,7 @@ let
             # Keep VM image size reasonable
             nix.gc.automatic = true;
             nix.optimise.automatic = true;
-            system.stateVersion = "25.05";
+            system.stateVersion = "26.05";
           };
         };
 

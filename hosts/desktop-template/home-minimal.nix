@@ -16,7 +16,7 @@
   home = {
     username = "user";
     homeDirectory = lib.mkForce "/home/user";
-    stateVersion = "25.05";
+    stateVersion = "26.05";
 
     # Add only host-specific packages here
     packages = with pkgs; [

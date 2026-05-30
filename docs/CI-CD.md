@@ -1,7 +1,7 @@
 # CI/CD Documentation
 
 This NixOS template includes comprehensive CI/CD workflows for automated code validation, formatting, and release
-management. All workflows are fully functional and pass validation for NixOS 25.05 compatibility.
+management. All workflows are fully functional and pass validation for NixOS 26.05 compatibility.
 
 ## GitHub Actions Workflows
 
@@ -238,7 +238,7 @@ Excludes build artifacts, secrets, and local configuration files.
 
 ## Recent Improvements
 
-### NixOS 25.05 Compatibility (Latest Update)
+### NixOS 26.05 Compatibility (Latest Update)
 
 **All deprecation warnings resolved:**
 

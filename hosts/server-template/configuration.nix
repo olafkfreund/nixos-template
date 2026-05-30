@@ -565,7 +565,7 @@
     # Disable auto-upgrade for servers (manual control preferred)
     autoUpgrade.enable = false;
 
-    stateVersion = "25.05";
+    stateVersion = "26.05";
   };
 
   # Nix configuration for servers

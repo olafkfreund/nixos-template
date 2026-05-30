@@ -13,7 +13,7 @@
   home = {
     username = "nixos";
     homeDirectory = "/home/nixos";
-    stateVersion = "25.05";
+    stateVersion = "26.05";
   };
 
   # VM-specific packages

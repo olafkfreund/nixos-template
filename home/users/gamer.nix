@@ -12,7 +12,7 @@
   home = {
     username = "gamer";
     homeDirectory = "/home/gamer";
-    stateVersion = "25.05";
+    stateVersion = "26.05";
   };
 
   # Let Home Manager manage itself

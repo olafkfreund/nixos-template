@@ -110,5 +110,5 @@
   time.timeZone = lib.mkDefault "UTC";
 
   # System version (will be set by specific ISO configs)
-  system.stateVersion = "25.05";
+  system.stateVersion = "26.05";
 }

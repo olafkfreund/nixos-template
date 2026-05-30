@@ -29,7 +29,7 @@ All notable changes to this NixOS configuration template will be documented in t
   - Darwin configuration generator for multi-architecture support
   - Deployment images factory pattern replacing repetitive configurations
 
-- **NixOS 25.05+ Compatibility**: Fixed all deprecation warnings and modernized
+- **NixOS 26.05+ Compatibility**: Fixed all deprecation warnings and modernized
   configurations
   - Updated `isoImage.isoName` to `image.fileName` in macOS ISOs
   - Resolved user password precedence conflicts

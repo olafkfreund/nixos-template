@@ -13,7 +13,7 @@
   home = {
     username = "server-admin";
     homeDirectory = "/home/server-admin";
-    stateVersion = "25.05";
+    stateVersion = "26.05";
   };
 
   # VM-specific packages (minimal for server)
