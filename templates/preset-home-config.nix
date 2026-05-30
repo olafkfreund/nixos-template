@@ -11,7 +11,7 @@
   home = {
     username = "user";
     homeDirectory = "/home/user";
-    stateVersion = "25.05";
+    stateVersion = "26.05";
   };
 
   # Add any HOSTNAME-specific home-manager settings here

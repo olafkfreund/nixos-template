@@ -12,7 +12,7 @@
   home = {
     username = "server";
     homeDirectory = "/home/server";
-    stateVersion = "25.05";
+    stateVersion = "26.05";
   };
 
   # Program configurations

@@ -319,7 +319,7 @@
       home = {
         username = "laptop-user";
         homeDirectory = "/home/laptop-user";
-        stateVersion = "25.05";
+        stateVersion = "26.05";
       };
 
       programs.git = {
@@ -355,5 +355,5 @@
   };
 
   # System state version
-  system.stateVersion = "25.05";
+  system.stateVersion = "26.05";
 }

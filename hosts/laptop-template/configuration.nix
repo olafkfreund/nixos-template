@@ -261,6 +261,6 @@
       enable = false; # Don't auto-upgrade on laptops to preserve battery
     };
 
-    stateVersion = "25.05";
+    stateVersion = "26.05";
   };
 }

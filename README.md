@@ -87,7 +87,7 @@ nixos-template/
 
 ## Versioning
 
-Tracks **nixpkgs `nixos-unstable`** by default. To pin to a stable release, change the `nixpkgs` input URL in `flake.nix` (e.g. `github:NixOS/nixpkgs/nixos-25.05`). Host configurations use `system.stateVersion = "25.05"`.
+Tracks **nixpkgs `nixos-unstable`** by default. To pin to a stable release, change the `nixpkgs` input URL in `flake.nix` (e.g. `github:NixOS/nixpkgs/nixos-26.05`). Host configurations use `system.stateVersion = "26.05"`.
 
 ---
 

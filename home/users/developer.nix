@@ -16,7 +16,7 @@
   home = {
     username = "developer";
     homeDirectory = "/home/developer";
-    stateVersion = "25.05";
+    stateVersion = "26.05";
   };
 
   # Programs configuration

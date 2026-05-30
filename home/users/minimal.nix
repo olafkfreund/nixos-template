@@ -7,7 +7,7 @@
   home = {
     username = "minimal";
     homeDirectory = "/home/minimal";
-    stateVersion = "25.05";
+    stateVersion = "26.05";
   };
 
   # Program configurations

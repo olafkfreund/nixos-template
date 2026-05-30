@@ -263,7 +263,7 @@
       home = {
         username = "nixos";
         homeDirectory = "/home/nixos";
-        stateVersion = "25.05";
+        stateVersion = "26.05";
       };
 
       # Git configuration (users should change this)
@@ -282,5 +282,5 @@
   };
 
   # System state version
-  system.stateVersion = "25.05";
+  system.stateVersion = "26.05";
 }
