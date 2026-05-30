@@ -118,6 +118,7 @@
             global.excludes = [
               # Git and build artifacts
               ".git/**"
+              "site/**"
               "result*"
               "*.png"
               "*.jpg"
