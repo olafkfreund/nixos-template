@@ -1,6 +1,8 @@
 ---
-
-## layout: page title: "Getting Started" permalink: /getting-started/
+layout: page
+title: "Getting Started"
+permalink: /getting-started/
+---
 
 ```
 $ nix develop  # drop into the development shell
@@ -32,15 +34,15 @@ The dev shell provides: `nixpkgs-fmt`, `statix`, `deadnix`, `nix-tree`, `just`, 
 
 ## Step 2 — Choose a host template
 
-| Template                 | Use case                                            |
-| ------------------------ | --------------------------------------------------- |
-| `hosts/desktop-template` | Workstation with GNOME, full Home Manager profiles  |
-| `hosts/laptop-template`  | Same as desktop with power management               |
-| `hosts/server-template`  | Headless, SSH-hardened, server Home Manager profile |
-| `hosts/wsl2-template`    | NixOS inside Windows Subsystem for Linux 2          |
-| `hosts/darwin-desktop`   | macOS workstation via nix-darwin                    |
-| `hosts/darwin-laptop`    | macOS laptop via nix-darwin                         |
-| `hosts/darwin-server`    | macOS server via nix-darwin                         |
+| Template | Use case |
+|---|---|
+| `hosts/desktop-template` | Workstation with GNOME, full Home Manager profiles |
+| `hosts/laptop-template` | Same as desktop with power management |
+| `hosts/server-template` | Headless, SSH-hardened, server Home Manager profile |
+| `hosts/wsl2-template` | NixOS inside Windows Subsystem for Linux 2 |
+| `hosts/darwin-desktop` | macOS workstation via nix-darwin |
+| `hosts/darwin-laptop` | macOS laptop via nix-darwin |
+| `hosts/darwin-server` | macOS server via nix-darwin |
 
 ```bash
 cp -r hosts/desktop-template hosts/my-machine
@@ -108,23 +110,23 @@ just switch my-machine
 
 ## Common `just` commands
 
-| Command                     | What it does                                             |
-| --------------------------- | -------------------------------------------------------- |
-| `just switch [host]`        | Build and apply configuration                            |
-| `just test [host]`          | Test without making the change permanent                 |
-| `just build [host]`         | Build without switching                                  |
-| `just update`               | Update all flake inputs                                  |
-| `just update-switch [host]` | Update inputs then switch                                |
-| `just fmt`                  | Format all Nix files with `nixpkgs-fmt`                  |
-| `just lint`                 | Run `statix check`                                       |
-| `just validate`             | Full validation: check + lint + format-check + dead-code |
-| `just check`                | `nix flake check`                                        |
-| `just vm [host]`            | Build and run host as a QEMU VM                          |
-| `just build-wsl2-archive`   | Build WSL2 tarball                                       |
-| `just setup-secrets`        | Set up agenix secrets management                         |
-| `just edit-secret SECRET`   | Encrypt and edit a secret                                |
-| `just list-secrets`         | Show all age-encrypted secrets                           |
-| `just rekey-secrets`        | Re-encrypt after adding a new age key                    |
+| Command | What it does |
+|---|---|
+| `just switch [host]` | Build and apply configuration |
+| `just test [host]` | Test without making the change permanent |
+| `just build [host]` | Build without switching |
+| `just update` | Update all flake inputs |
+| `just update-switch [host]` | Update inputs then switch |
+| `just fmt` | Format all Nix files with `nixpkgs-fmt` |
+| `just lint` | Run `statix check` |
+| `just validate` | Full validation: check + lint + format-check + dead-code |
+| `just check` | `nix flake check` |
+| `just vm [host]` | Build and run host as a QEMU VM |
+| `just build-wsl2-archive` | Build WSL2 tarball |
+| `just setup-secrets` | Set up agenix secrets management |
+| `just edit-secret SECRET` | Encrypt and edit a secret |
+| `just list-secrets` | Show all age-encrypted secrets |
+| `just rekey-secrets` | Re-encrypt after adding a new age key |
 
 ---
 

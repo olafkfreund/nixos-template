@@ -1,6 +1,8 @@
 ---
-
-## layout: page title: "Documentation" permalink: /documentation/
+layout: page
+title: "Documentation"
+permalink: /documentation/
+---
 
 ```
 $ ls docs/
@@ -14,9 +16,8 @@ Source of truth lives in [`docs/`](https://github.com/olafkfreund/nixos-template
 **{{ doc_pages | size }} documents**
 
 {% for d in doc_pages %}
-
-- \[{{ d.title }}\]({{ d.url | relative_url }})
-  {% endfor %}
+- [{{ d.title }}]({{ d.url | relative_url }})
+{% endfor %}
 
 ---
 

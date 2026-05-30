@@ -1,20 +1,13 @@
 ---
-
-## layout: home title: "NixOS Template"
+layout: home
+title: "NixOS Template"
+---
 
 ```
 $ nixos-rebuild switch --flake github:olafkfreund/nixos-template#your-machine
 ```
 
 A production-ready, flake-based NixOS configuration template. Stop copy-pasting configs — inherit a curated foundation and override only what your machine needs.
-
----
-
-## See it in action
-
-!\[The just menu\]({{ '/assets/menu/showcase.gif' | relative_url }})
-
-A single `just` command opens a guided menu covering every workflow — build, test, secrets, VMs, ISOs, and more. \[Learn how it works.\]({{ '/usage/' | relative_url }})
 
 ---
 
