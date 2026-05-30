@@ -8,6 +8,10 @@
 # Launched by `just`, `just menu`, or `just m`. Run a recipe directly anytime
 # with `just <recipe>` — see `just list`.
 
+# Menu variables (h, p, t, de, a, f, d, s) are assigned dynamically by ask()
+# via `printf -v`, which shellcheck cannot trace.
+# shellcheck disable=SC2154
+
 set -uo pipefail
 
 # Run from the repo root (this script lives in scripts/).
@@ -54,7 +58,7 @@ choose() {
       printf "   ${G}%2d${R})  ${B}%-24s${R} ${D}%s${R}\n" "$i" "$label" "$desc"
       i=$((i + 1))
     done
-    printf "\n   ${D}[b]${R} back    ${D}[q]${R} quit\n\n"
+    printf "\n   %s[b]%s back    %s[q]%s quit\n\n" "$D" "$R" "$D" "$R"
     read -rp "  ❯ select: " ans || { echo; exit 0; }
     case "$ans" in
       q | Q) clear 2>/dev/null || true; exit 0 ;;
@@ -90,7 +94,7 @@ run() {
   esac
   echo
   just "$@"
-  printf "\n  ${D}— press Enter to return to the menu —${R}"
+  printf "\n  %s— press Enter to return to the menu —%s" "$D" "$R"
   read -r _ || true
 }
 
