@@ -6,8 +6,10 @@
     # NetworkManager for desktop systems (keep mkDefault - some may want systemd-networkd)
     networkmanager.enable = lib.mkDefault true;
 
-    # wpa_supplicant conflicts with NetworkManager (automatic)
-    wireless.enable = false;
+    # wpa_supplicant conflicts with NetworkManager; the template manages wifi
+    # via NetworkManager, so force the standalone service off. mkForce is needed
+    # because newer nixpkgs' networkmanager module defaults this to true.
+    wireless.enable = lib.mkForce false;
 
     # Fast DNS servers (opinionated choice for template)
     nameservers = [
