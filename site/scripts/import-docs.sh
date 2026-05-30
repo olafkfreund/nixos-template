@@ -51,10 +51,10 @@ for f in "$SRC"/*.md; do
     # Drop the first H1 (the layout already renders the title), then rewrite links
     # existence-aware (see rewrite-links.py): inter-doc .md -> .html when the doc
     # exists, otherwise -> GitHub source, so the site never has internal 404s.
-    awk 'BEGIN{dropped=0} /^# /&&!dropped{dropped=1;next} {print}' "$f" \
-      | DOCS_SRC="$SRC" python3 "$(dirname "$0")/rewrite-links.py"
+    awk 'BEGIN{dropped=0} /^# /&&!dropped{dropped=1;next} {print}' "$f" |
+      DOCS_SRC="$SRC" python3 "$(dirname "$0")/rewrite-links.py"
     printf '\n{%% endraw %%}\n'
-  } > "$out"
+  } >"$out"
 
   count=$((count + 1))
 done

@@ -20,11 +20,11 @@ cd "$ROOT" || exit 1
 
 # ----- colors (disabled when not a tty or NO_COLOR is set) -----
 if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
-  G=$'\e[38;5;114m'   # green accent
-  B=$'\e[1;37m'       # bright label
-  D=$'\e[2;37m'       # dim description
-  Y=$'\e[38;5;179m'   # yellow
-  R=$'\e[0m'          # reset
+  G=$'\e[38;5;114m' # green accent
+  B=$'\e[1;37m'     # bright label
+  D=$'\e[2;37m'     # dim description
+  Y=$'\e[38;5;179m' # yellow
+  R=$'\e[0m'        # reset
 else
   G="" B="" D="" Y="" R=""
 fi
@@ -47,28 +47,40 @@ EOF
 # 0 on pick, 255 on back/quit handled internally.
 REPLY_IDX=-1
 choose() {
-  local title="$1"; shift
+  local title="$1"
+  shift
   local entries=("$@") ans i label desc
   while true; do
     banner
     printf "  ${B}%s${R}\n\n" "$title"
     i=1
     for e in "${entries[@]}"; do
-      label="${e%%|*}"; desc="${e#*|}"
+      label="${e%%|*}"
+      desc="${e#*|}"
       printf "   ${G}%2d${R})  ${B}%-24s${R} ${D}%s${R}\n" "$i" "$label" "$desc"
       i=$((i + 1))
     done
     printf "\n   %s[b]%s back    %s[q]%s quit\n\n" "$D" "$R" "$D" "$R"
-    read -rp "  ❯ select: " ans || { echo; exit 0; }
+    read -rp "  ❯ select: " ans || {
+      echo
+      exit 0
+    }
     case "$ans" in
-      q | Q) clear 2>/dev/null || true; exit 0 ;;
-      b | B) REPLY_IDX=-1; return 1 ;;
-      '') continue ;;
-      *)
-        if [[ "$ans" =~ ^[0-9]+$ ]] && [ "$ans" -ge 1 ] && [ "$ans" -le "${#entries[@]}" ]; then
-          REPLY_IDX=$((ans - 1)); return 0
-        fi
-        ;;
+    q | Q)
+      clear 2>/dev/null || true
+      exit 0
+      ;;
+    b | B)
+      REPLY_IDX=-1
+      return 1
+      ;;
+    '') continue ;;
+    *)
+      if [[ $ans =~ ^[0-9]+$ ]] && [ "$ans" -ge 1 ] && [ "$ans" -le "${#entries[@]}" ]; then
+        REPLY_IDX=$((ans - 1))
+        return 0
+      fi
+      ;;
     esac
   done
 }
@@ -90,7 +102,7 @@ run() {
   local c
   read -rp "  ❯ run this? [${G}Y${R}/n] " c
   case "$c" in
-    n | N) return ;;
+  n | N) return ;;
   esac
   echo
   just "$@"
@@ -110,15 +122,36 @@ cat_build() {
     "update + switch|Update inputs, then rebuild & activate" \
     "rollback (list gens)|List system generations to roll back to"; do
     case "$REPLY_IDX" in
-      0) ask h "hostname" "$HOST"; run switch "$h" ;;
-      1) ask h "hostname" "$HOST"; run test "$h" ;;
-      2) ask h "hostname" "$HOST"; run boot "$h" ;;
-      3) ask h "hostname" "$HOST"; run build "$h" ;;
-      4) ask h "hostname" "$HOST"; run dry-run "$h" ;;
-      5) ask h "hostname" "$HOST"; run diff "$h" ;;
-      6) run update ;;
-      7) ask h "hostname" "$HOST"; run update-switch "$h" ;;
-      8) run list-generations ;;
+    0)
+      ask h "hostname" "$HOST"
+      run switch "$h"
+      ;;
+    1)
+      ask h "hostname" "$HOST"
+      run test "$h"
+      ;;
+    2)
+      ask h "hostname" "$HOST"
+      run boot "$h"
+      ;;
+    3)
+      ask h "hostname" "$HOST"
+      run build "$h"
+      ;;
+    4)
+      ask h "hostname" "$HOST"
+      run dry-run "$h"
+      ;;
+    5)
+      ask h "hostname" "$HOST"
+      run diff "$h"
+      ;;
+    6) run update ;;
+    7)
+      ask h "hostname" "$HOST"
+      run update-switch "$h"
+      ;;
+    8) run list-generations ;;
     esac
   done
 }
@@ -132,12 +165,27 @@ cat_create() {
     "list user templates|Show the available user/home templates" \
     "init user|Apply a user template to a host's home.nix"; do
     case "$REPLY_IDX" in
-      0) run list-presets ;;
-      1) ask h "new hostname" ""; ask p "preset (workstation/laptop/server/gaming/vm-guest)" "workstation"; [ -n "$h" ] && run new-host "$h" "$p" ;;
-      2) ask h "new hostname" ""; [ -n "$h" ] && run init-host "$h" ;;
-      3) ask h "new hostname" ""; ask t "vm type (auto/qemu/virtualbox/vmware/hyperv)" "auto"; [ -n "$h" ] && run init-vm "$h" "$t" ;;
-      4) run list-users ;;
-      5) ask h "hostname" "$HOST"; ask t "template (user/developer/gamer/minimal/server)" "developer"; run init-user "$h" "$t" ;;
+    0) run list-presets ;;
+    1)
+      ask h "new hostname" ""
+      ask p "preset (workstation/laptop/server/gaming/vm-guest)" "workstation"
+      [ -n "$h" ] && run new-host "$h" "$p"
+      ;;
+    2)
+      ask h "new hostname" ""
+      [ -n "$h" ] && run init-host "$h"
+      ;;
+    3)
+      ask h "new hostname" ""
+      ask t "vm type (auto/qemu/virtualbox/vmware/hyperv)" "auto"
+      [ -n "$h" ] && run init-vm "$h" "$t"
+      ;;
+    4) run list-users ;;
+    5)
+      ask h "hostname" "$HOST"
+      ask t "template (user/developer/gamer/minimal/server)" "developer"
+      run init-user "$h" "$t"
+      ;;
     esac
   done
 }
@@ -151,12 +199,18 @@ cat_vm() {
     "detect hardware|Detect hardware type (laptop/desktop/…)" \
     "test microvm|Validate the MicroVM configuration"; do
     case "$REPLY_IDX" in
-      0) run list-vms ;;
-      1) ask h "host" "desktop-test"; run build-vm-image "$h" ;;
-      2) ask h "host" "desktop-test"; run test-vm "$h" ;;
-      3) run detect-vm ;;
-      4) run detect-hardware ;;
-      5) run test-microvm ;;
+    0) run list-vms ;;
+    1)
+      ask h "host" "desktop-test"
+      run build-vm-image "$h"
+      ;;
+    2)
+      ask h "host" "desktop-test"
+      run test-vm "$h"
+      ;;
+    3) run detect-vm ;;
+    4) run detect-hardware ;;
+    5) run test-microvm ;;
     esac
   done
 }
@@ -171,13 +225,17 @@ cat_iso() {
     "ISO workflow help|Step-by-step ISO → USB → install guide" \
     "create bootable USB|Write a built ISO to a USB device (ERASES it)"; do
     case "$REPLY_IDX" in
-      0) run list-isos ;;
-      1) run build-iso-minimal ;;
-      2) run build-iso-desktop ;;
-      3) run build-iso-preconfigured ;;
-      4) run build-all-isos ;;
-      5) run iso-workflow ;;
-      6) ask f "iso filename (in result/iso/)" ""; ask d "device (e.g. /dev/sdX)" ""; [ -n "$f" ] && [ -n "$d" ] && run create-bootable-usb "$f" "$d" ;;
+    0) run list-isos ;;
+    1) run build-iso-minimal ;;
+    2) run build-iso-desktop ;;
+    3) run build-iso-preconfigured ;;
+    4) run build-all-isos ;;
+    5) run iso-workflow ;;
+    6)
+      ask f "iso filename (in result/iso/)" ""
+      ask d "device (e.g. /dev/sdX)" ""
+      [ -n "$f" ] && [ -n "$d" ] && run create-bootable-usb "$f" "$d"
+      ;;
     esac
   done
 }
@@ -188,9 +246,13 @@ cat_desktop() {
     "test desktop|Test-build a desktop config for a host" \
     "niri keybindings|Show the Niri keybinding reference"; do
     case "$REPLY_IDX" in
-      0) run list-desktops ;;
-      1) ask de "desktop (gnome/kde/hyprland/niri)" "gnome"; ask h "host" "$HOST"; run test-desktop "$de" "$h" ;;
-      2) run niri-keys ;;
+    0) run list-desktops ;;
+    1)
+      ask de "desktop (gnome/kde/hyprland/niri)" "gnome"
+      ask h "host" "$HOST"
+      run test-desktop "$de" "$h"
+      ;;
+    2) run niri-keys ;;
     esac
   done
 }
@@ -204,12 +266,16 @@ cat_platform() {
     "test WSL2|Validate the WSL2 configuration" \
     "WSL2 install help|Show WSL2 installation instructions"; do
     case "$REPLY_IDX" in
-      0) run list-macos ;;
-      1) ask t "type (desktop/laptop/server)" "desktop"; ask a "arch (aarch64/x86_64)" "aarch64"; run build-macos-vm "$t" "$a" ;;
-      2) run macos-help ;;
-      3) run build-wsl2-archive ;;
-      4) run test-wsl2 ;;
-      5) run wsl2-install-help ;;
+    0) run list-macos ;;
+    1)
+      ask t "type (desktop/laptop/server)" "desktop"
+      ask a "arch (aarch64/x86_64)" "aarch64"
+      run build-macos-vm "$t" "$a"
+      ;;
+    2) run macos-help ;;
+    3) run build-wsl2-archive ;;
+    4) run test-wsl2 ;;
+    5) run wsl2-install-help ;;
     esac
   done
 }
@@ -224,13 +290,13 @@ cat_quality() {
     "full quality suite|validate + security audit + outdated" \
     "run pre-commit hooks|Run all pre-commit hooks now"; do
     case "$REPLY_IDX" in
-      0) run check ;;
-      1) run validate ;;
-      2) run fmt ;;
-      3) run lint ;;
-      4) run dead-code-check ;;
-      5) run quality ;;
-      6) run run-hooks ;;
+    0) run check ;;
+    1) run validate ;;
+    2) run fmt ;;
+    3) run lint ;;
+    4) run dead-code-check ;;
+    5) run quality ;;
+    6) run run-hooks ;;
     esac
   done
 }
@@ -243,11 +309,14 @@ cat_secrets() {
     "check secrets|Validate secrets.nix" \
     "rekey secrets|Re-encrypt all secrets after key changes"; do
     case "$REPLY_IDX" in
-      0) run setup-secrets ;;
-      1) run list-secrets ;;
-      2) ask s "secret name (without .age)" ""; [ -n "$s" ] && run edit-secret "$s" ;;
-      3) run check-secrets ;;
-      4) run rekey-secrets ;;
+    0) run setup-secrets ;;
+    1) run list-secrets ;;
+    2)
+      ask s "secret name (without .age)" ""
+      [ -n "$s" ] && run edit-secret "$s"
+      ;;
+    3) run check-secrets ;;
+    4) run rekey-secrets ;;
     esac
   done
 }
@@ -263,14 +332,14 @@ cat_info() {
     "dev shell|Enter the development shell (nix develop)" \
     "all recipes (raw)|Full just --list output"; do
     case "$REPLY_IDX" in
-      0) run info ;;
-      1) run show-inputs ;;
-      2) run list-generations ;;
-      3) run clean ;;
-      4) run clean-old ;;
-      5) run clean-results ;;
-      6) run shell ;;
-      7) run list ;;
+    0) run info ;;
+    1) run show-inputs ;;
+    2) run list-generations ;;
+    3) run clean ;;
+    4) run clean-old ;;
+    5) run clean-results ;;
+    6) run shell ;;
+    7) run list ;;
     esac
   done
 }
@@ -291,15 +360,15 @@ main() {
     "Secrets|Manage agenix-encrypted secrets" \
     "Maintenance & Info|Clean store, show info, dev shell"; do
     case "$REPLY_IDX" in
-      0) cat_build ;;
-      1) cat_create ;;
-      2) cat_vm ;;
-      3) cat_iso ;;
-      4) cat_desktop ;;
-      5) cat_platform ;;
-      6) cat_quality ;;
-      7) cat_secrets ;;
-      8) cat_info ;;
+    0) cat_build ;;
+    1) cat_create ;;
+    2) cat_vm ;;
+    3) cat_iso ;;
+    4) cat_desktop ;;
+    5) cat_platform ;;
+    6) cat_quality ;;
+    7) cat_secrets ;;
+    8) cat_info ;;
     esac
   done
   clear 2>/dev/null || true

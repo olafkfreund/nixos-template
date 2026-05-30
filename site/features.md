@@ -1,8 +1,6 @@
 ---
-layout: page
-title: "Features"
-permalink: /features/
----
+
+## layout: page title: "Features" permalink: /features/
 
 ```
 $ nix flake show github:olafkfreund/nixos-template
@@ -132,12 +130,12 @@ Images inherit your full system configuration — same packages, services, and s
 
 Four composable profiles eliminate copy-paste between host configs:
 
-| Profile | Includes |
-|---|---|
-| `base.nix` | git, zsh/bash aliases, starship, common CLI tools |
-| `desktop.nix` | GUI apps, multimedia, browser, desktop environment support |
-| `development.nix` | Language toolchains, LSP servers, editors, dev tools |
-| `server.nix` | Server administration, monitoring, networking tools |
+| Profile           | Includes                                                   |
+| ----------------- | ---------------------------------------------------------- |
+| `base.nix`        | git, zsh/bash aliases, starship, common CLI tools          |
+| `desktop.nix`     | GUI apps, multimedia, browser, desktop environment support |
+| `development.nix` | Language toolchains, LSP servers, editors, dev tools       |
+| `server.nix`      | Server administration, monitoring, networking tools        |
 
 ```nix
 # Mix and match per host

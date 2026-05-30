@@ -3,39 +3,34 @@ description: "A comprehensive, flake-based NixOS configuration template with pro
 tagline: "$ nixos-rebuild switch --flake .#your-machine"
 url: "https://olafkfreund.github.io"
 baseurl: "/nixos-template"
-
 author:
   name: "olafkfreund"
-
 # Self-contained dark "console" layout with a left sidebar (site/_layouts +
 # site/assets/css/style.css). No remote theme — that one dumped every page into
 # a single centered top nav.
 plugins: []
-
 # Navigation
 nav:
   - title: "Home"
     url: /
   - title: "Getting Started"
     url: /getting-started/
+  - title: "Usage"
+    url: /usage/
   - title: "Features"
     url: /features/
   - title: "Documentation"
     url: /documentation/
-
 # Source repository
 github_repo: "https://github.com/olafkfreund/nixos-template"
-
 # SEO
 twitter:
   card: summary
-
 # Build settings
 markdown: kramdown
 kramdown:
   input: GFM
   syntax_highlighter: rouge
-
 exclude:
   - Gemfile
   - Gemfile.lock
