@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -16,13 +21,9 @@ in
         description = "QEMU package to use";
       };
 
-      ovmf = {
-        enable = mkOption {
-          type = types.bool;
-          default = true;
-          description = "Enable OVMF UEFI firmware for virtual machines";
-        };
-      };
+      # NOTE: the `ovmf` option was dropped — nixpkgs removed
+      # `virtualisation.libvirtd.qemu.ovmf` because every OVMF image shipped with
+      # QEMU is now available by default, so there is nothing left to toggle.
 
       swtpm = {
         enable = mkOption {
@@ -50,23 +51,25 @@ in
 
     storage = {
       pools = mkOption {
-        type = types.listOf (types.submodule {
-          options = {
-            name = mkOption {
-              type = types.str;
-              description = "Storage pool name";
+        type = types.listOf (
+          types.submodule {
+            options = {
+              name = mkOption {
+                type = types.str;
+                description = "Storage pool name";
+              };
+              type = mkOption {
+                type = types.str;
+                default = "dir";
+                description = "Storage pool type";
+              };
+              path = mkOption {
+                type = types.str;
+                description = "Storage pool path";
+              };
             };
-            type = mkOption {
-              type = types.str;
-              default = "dir";
-              description = "Storage pool type";
-            };
-            path = mkOption {
-              type = types.str;
-              description = "Storage pool path";
-            };
-          };
-        });
+          }
+        );
         default = [
           {
             name = "default";
@@ -109,13 +112,6 @@ in
           inherit (cfg.qemu) package;
           runAsRoot = false;
           swtpm.enable = cfg.qemu.swtpm.enable;
-          ovmf = mkIf cfg.qemu.ovmf.enable {
-            enable = true;
-            packages = with pkgs; [
-              OVMFFull.fd
-              pkgsCross.aarch64-multiplatform.OVMF.fd
-            ];
-          };
         };
 
         # Extra configuration
@@ -163,7 +159,7 @@ in
       virtio-win
       spice-gtk
       spice-protocol
-      win-virtio
+      virtio-win
 
       # USB redirection
       (mkIf cfg.spiceUSBRedirection spice-gtk)
@@ -177,10 +173,6 @@ in
       libguestfs
       guestfs-tools
 
-      # UEFI firmware (if enabled)
-      (mkIf cfg.qemu.ovmf.enable OVMF)
-      (mkIf cfg.qemu.ovmf.enable edk2)
-
       # TPM emulation (if enabled)
       (mkIf cfg.qemu.swtpm.enable swtpm)
     ];
@@ -189,14 +181,17 @@ in
     users.groups.libvirtd = { };
 
     # Add specified users to libvirtd group
-    users.users = listToAttrs (map
-      (user: {
+    users.users = listToAttrs (
+      map (user: {
         name = user;
         value = {
-          extraGroups = [ "libvirtd" "kvm" ];
+          extraGroups = [
+            "libvirtd"
+            "kvm"
+          ];
         };
-      })
-      cfg.users);
+      }) cfg.users
+    );
 
     # Boot configuration for virtualization
     boot = {
@@ -330,17 +325,32 @@ in
       # Firewall rules for virtualization
       firewall = {
         # Allow libvirt bridge traffic
-        trustedInterfaces = [ "virbr0" "br0" ];
+        trustedInterfaces = [
+          "virbr0"
+          "br0"
+        ];
 
         # Allow SPICE and VNC ports
-        allowedTCPPorts = [ 5900 5901 5902 5903 5904 5905 ];
+        allowedTCPPorts = [
+          5900
+          5901
+          5902
+          5903
+          5904
+          5905
+        ];
         allowedTCPPortRanges = [
-          { from = 5900; to = 5999; } # VNC
-          { from = 61000; to = 61999; } # SPICE
+          {
+            from = 5900;
+            to = 5999;
+          } # VNC
+          {
+            from = 61000;
+            to = 61999;
+          } # SPICE
         ];
       };
     };
-
 
     # Enable hugepages
     systemd.tmpfiles.rules = [

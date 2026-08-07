@@ -1,19 +1,30 @@
 # Deployment Images Factory
 # Generates deployment images for various cloud providers and platforms
-{ inputs, outputs, nixpkgs, nixos-generators }:
+{
+  inputs,
+  outputs,
+  nixpkgs,
+  nixos-generators,
+}:
 
 let
   inherit (nixpkgs) lib;
 
   # Factory function to create deployment images
-  mkDeploymentImages = { system ? "x86_64-linux" }:
+  mkDeploymentImages =
+    {
+      system ? "x86_64-linux",
+    }:
     let
       pkgs = nixpkgs.legacyPackages.${system};
 
       # Base configuration shared by all deployment images
       baseConfig = {
         inherit system;
-        specialArgs = { inherit inputs outputs; flakeMeta = null; };
+        specialArgs = {
+          inherit inputs outputs;
+          flakeMeta = null;
+        };
         modules = [
           ../hosts/common.nix
           ({ lib, pkgs, ... }: {
@@ -33,7 +44,10 @@ let
             # Default user for images
             users.users.nixos = {
               isNormalUser = true;
-              extraGroups = [ "wheel" "networkmanager" ];
+              extraGroups = [
+                "wheel"
+                "networkmanager"
+              ];
               initialPassword = "nixos";
             };
 
@@ -171,12 +185,11 @@ let
         virtualbox-desktop = {
           format = "virtualbox";
           extraConfig = {
-            # VirtualBox-specific optimizations
+            # VirtualBox-specific optimizations.
+            # The `virtualbox` video driver is deprecated upstream for kernel 7.0+,
+            # so we rely on the nixpkgs default (modesetting/fbdev) instead.
             virtualisation.virtualbox.guest.enable = true;
-            services.xserver = {
-              enable = true;
-              videoDrivers = [ "virtualbox" "modesetting" ];
-            };
+            services.xserver.enable = true;
 
             # Use updated option names for NixOS 24.05+
             services.desktopManager.gnome.enable = true;
@@ -268,7 +281,10 @@ let
               # Use minimal initrd
               initrd.compressor = "zstd";
               # Reduce kernel modules
-              kernelModules = lib.mkForce [ "kvm-intel" "kvm-amd" ];
+              kernelModules = lib.mkForce [
+                "kvm-intel"
+                "kvm-amd"
+              ];
             };
           };
         };
@@ -357,38 +373,48 @@ let
             # Firewall configuration
             networking.firewall = {
               enable = true;
-              allowedTCPPorts = [ 22 80 443 ];
+              allowedTCPPorts = [
+                22
+                80
+                443
+              ];
             };
           };
         };
       };
 
       # Generate standard platform images
-      standardImages = lib.mapAttrs
-        (name: config:
-          nixos-generators.nixosGenerate (baseConfig // {
-            format = config.format;
+      standardImages = lib.mapAttrs (
+        _name: config:
+        nixos-generators.nixosGenerate (
+          baseConfig
+          // {
+            inherit (config) format;
             modules = baseConfig.modules ++ [
-              ({ ... }: config.extraConfig)
+              (_: config.extraConfig)
             ];
-          })
+          }
         )
-        platformConfigs;
+      ) platformConfigs;
 
       # Generate specialized images
-      specialImages = lib.mapAttrs
-        (name: config:
-          nixos-generators.nixosGenerate (baseConfig // {
-            format = config.format;
+      specialImages = lib.mapAttrs (
+        _name: config:
+        nixos-generators.nixosGenerate (
+          baseConfig
+          // {
+            inherit (config) format;
             modules = baseConfig.modules ++ [
-              ({ lib, pkgs, ... }: config.extraConfig)
+              (_: config.extraConfig)
             ];
-          })
+          }
         )
-        specializedImages;
+      ) specializedImages;
 
     in
-    standardImages // specialImages // {
+    standardImages
+    // specialImages
+    // {
       # VM Builder Docker Image
       nixos-vm-builder-docker = pkgs.dockerTools.buildLayeredImage {
         name = "nixos-vm-builder";
@@ -420,6 +446,6 @@ in
   inherit mkDeploymentImages;
 
   # Pre-built images for common systems
-  forAllSystems = systems:
-    nixpkgs.lib.genAttrs systems (system: mkDeploymentImages { inherit system; });
+  forAllSystems =
+    systems: nixpkgs.lib.genAttrs systems (system: mkDeploymentImages { inherit system; });
 }

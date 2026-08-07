@@ -35,7 +35,7 @@ let
   };
 in
 {
-  home.stateVersion = lib.mkDefault "25.05";
+  home.stateVersion = lib.mkDefault "26.05";
 
   # Programs configuration consolidated
   programs = {
@@ -47,7 +47,7 @@ in
       userName = lib.mkDefault "User Name";
       userEmail = lib.mkDefault "user@example.com";
 
-      extraConfig = {
+      settings = {
         init.defaultBranch = "main";
         pull.rebase = true;
         push.autoSetupRemote = true;
@@ -65,7 +65,10 @@ in
       enableCompletion = true;
       historySize = 10000;
       historyFileSize = 20000;
-      historyControl = [ "ignoredups" "ignorespace" ];
+      historyControl = [
+        "ignoredups"
+        "ignorespace"
+      ];
 
       # mkDefault so hosts can override individual aliases without conflicts
       shellAliases = lib.mkDefault commonAliases;

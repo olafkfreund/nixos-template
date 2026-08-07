@@ -1,6 +1,11 @@
 # Desktop Configuration Template
 # Optimized for high-performance desktop computing
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   imports = [
@@ -19,7 +24,10 @@
     profile = "workstation";
     description = "Desktop template for workstation environments";
     environment = "development";
-    tags = [ "template" "desktop" ];
+    tags = [
+      "template"
+      "desktop"
+    ];
   };
 
   # Module configuration
@@ -166,7 +174,7 @@
       extraPackages = with pkgs; [
         mesa
         libvdpau-va-gl
-        vaapiVdpau
+        libva-vdpau-driver
       ];
     };
 
@@ -305,7 +313,7 @@
 
       # Development tools
       vscode
-      jetbrains.idea-community
+      jetbrains.idea
       docker-compose
       postman
 
@@ -351,10 +359,6 @@
         package = pkgs.qemu_kvm;
         runAsRoot = false;
         swtpm.enable = true;
-        ovmf = {
-          enable = true;
-          packages = [ pkgs.OVMFFull.fd ];
-        };
       };
     };
 
@@ -422,17 +426,17 @@
     packages = with pkgs; [
       noto-fonts
       noto-fonts-cjk-sans
-      noto-fonts-emoji
+      noto-fonts-color-emoji
       liberation_ttf
       fira-code
       fira-code-symbols
       jetbrains-mono
       source-code-pro
-      ubuntu_font_family
+      ubuntu-classic
 
       # Microsoft fonts for compatibility
       corefonts
-      vistafonts
+      vista-fonts
     ];
 
     fontconfig = {

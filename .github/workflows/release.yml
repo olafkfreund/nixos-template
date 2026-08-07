@@ -26,7 +26,7 @@ jobs:
           extra_nix_config: |
             experimental-features = nix-command flakes
       - name: Run full validation
-        run: "echo \"Running comprehensive validation for release...\"\n\n# Validate flake\nnix flake check --show-trace\n\n# Install quality tools\nnix profile install nixpkgs#nixpkgs-fmt\nnix profile install nixpkgs#statix  \nnix profile install nixpkgs#deadnix\n\n# Check formatting\nnixpkgs-fmt --check . || {\n  echo \"ERROR: Code is not properly formatted\"\n  exit 1\n}\n\n# Run linting\nstatix check .\n\n# Check for dead code\ndeadnix --fail .\n\necho \"✓ All validation checks passed\"\n"
+        run: "echo \"Running comprehensive validation for release...\"\n\n# Validate flake\nnix flake check --show-trace\n\n# Install quality tools\nnix profile install nixpkgs#statix  \nnix profile install nixpkgs#deadnix\n\n# Check formatting\nnix fmt -- --fail-on-change || {\n  echo \"ERROR: Code is not properly formatted\"\n  exit 1\n}\n\n# Run linting\nstatix check .\n\n# Check for dead code\ndeadnix --fail .\n\necho \"✓ All validation checks passed\"\n"
       - name: Test template functionality
         run: |
           echo "Testing template functionality..."

@@ -1,0 +1,8 @@
+# Shared shellcheck configuration, honoured by both the `shellcheck-check`
+# flake check and the pre-commit hook, so the two can never disagree.
+
+# SC1091: sourcing /etc/os-release, which only exists at runtime, not at lint time.
+disable=SC1091
+# SC2016: help text that intentionally prints a literal $USER for the reader
+# to copy and paste, so expansion is exactly what we do NOT want.
+disable=SC2016

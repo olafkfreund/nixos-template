@@ -1,6 +1,11 @@
 # Desktop applications package collection
 # GUI applications commonly used on desktop/workstation systems
-{ pkgs, lib, config, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 
 {
   options.modules.packages.desktop-apps = {
@@ -32,96 +37,102 @@
   };
 
   config = lib.mkIf config.modules.packages.desktop-apps.enable {
-    environment.systemPackages = with pkgs; [
-      # Web browsers
-      firefox
-      chromium
+    environment.systemPackages =
+      with pkgs;
+      [
+        # Web browsers
+        firefox
+        chromium
 
-      # Communication
-      discord
-      telegram-desktop
+        # Communication
+        discord
+        telegram-desktop
 
-      # File managers and utilities
-      dolphin # KDE file manager
-      thunar # XFCE file manager
-      file-roller # Archive manager
-      gparted # Partition manager
+        # File managers and utilities
+        dolphin # KDE file manager
+        thunar # XFCE file manager
+        file-roller # Archive manager
+        gparted # Partition manager
 
-      # Terminal emulators
-      alacritty
-      kitty
+        # Terminal emulators
+        alacritty
+        kitty
 
-      # Text editors
-      kate
-      gedit
+        # Text editors
+        kate
+        gedit
 
-      # System utilities
-      flameshot # Screenshots
-      copyq # Clipboard manager
-      keepassxc # Password manager
+        # System utilities
+        flameshot # Screenshots
+        copyq # Clipboard manager
+        keepassxc # Password manager
 
-      # Network tools
-      wireshark
+        # Network tools
+        wireshark
 
-    ] ++ lib.optionals config.modules.packages.desktop-apps.includeMultimedia [
-      # Media players
-      vlc
-      mpv
+      ]
+      ++ lib.optionals config.modules.packages.desktop-apps.includeMultimedia [
+        # Media players
+        vlc
+        mpv
 
-      # Audio
-      audacity
-      pavucontrol # PulseAudio volume control
+        # Audio
+        audacity
+        pavucontrol # PulseAudio volume control
 
-      # Video editing and conversion
-      kdenlive
-      handbrake
+        # Video editing and conversion
+        kdenlive
+        handbrake
 
-      # Streaming
-      obs-studio
+        # Streaming
+        obs-studio
 
-    ] ++ lib.optionals config.modules.packages.desktop-apps.includeGraphics [
-      # Graphics and design
-      gimp
-      inkscape
-      krita
-      blender
+      ]
+      ++ lib.optionals config.modules.packages.desktop-apps.includeGraphics [
+        # Graphics and design
+        gimp
+        inkscape
+        krita
+        blender
 
-      # Image viewers
-      gwenview # KDE image viewer
-      eog # GNOME image viewer
+        # Image viewers
+        gwenview # KDE image viewer
+        eog # GNOME image viewer
 
-      # CAD and 3D
-      freecad
+        # CAD and 3D
+        freecad
 
-    ] ++ lib.optionals config.modules.packages.desktop-apps.includeOffice [
-      # Office suite
-      libreoffice-fresh
+      ]
+      ++ lib.optionals config.modules.packages.desktop-apps.includeOffice [
+        # Office suite
+        libreoffice-fresh
 
-      # PDF viewers and tools
-      okular # KDE PDF viewer
-      evince # GNOME PDF viewer
+        # PDF viewers and tools
+        okular # KDE PDF viewer
+        evince # GNOME PDF viewer
 
-      # Email
-      thunderbird
+        # Email
+        thunderbird
 
-      # Note taking
-      obsidian
+        # Note taking
+        obsidian
 
-      # Productivity
-      calibre # E-book management
+        # Productivity
+        calibre # E-book management
 
-    ] ++ lib.optionals config.modules.packages.desktop-apps.includeGames [
-      # Gaming
-      steam
-      lutris
-      gamemode
+      ]
+      ++ lib.optionals config.modules.packages.desktop-apps.includeGames [
+        # Gaming
+        steam
+        lutris
+        gamemode
 
-      # Emulators
-      retroarch
+        # Emulators
+        retroarch
 
-      # Game tools
-      mangohud # Performance overlay
-    ];
+        # Game tools
+        mangohud # Performance overlay
+      ];
 
     # Desktop-specific system configuration
 
@@ -137,23 +148,34 @@
         # System fonts
         noto-fonts
         noto-fonts-cjk-sans
-        noto-fonts-emoji
+        noto-fonts-color-emoji
 
         # Popular fonts
         liberation_ttf
         dejavu_fonts
 
         # Icon fonts
-        (nerdfonts.override { fonts = [ "JetBrainsMono" "FiraCode" "DejaVuSansMono" ]; })
+        nerd-fonts.jetbrains-mono
+        nerd-fonts.fira-code
+        nerd-fonts.dejavu-sans-mono
       ];
 
       fontconfig = {
         enable = true;
 
         defaultFonts = {
-          serif = [ "DejaVu Serif" "Noto Serif" ];
-          sansSerif = [ "DejaVu Sans" "Noto Sans" ];
-          monospace = [ "JetBrains Mono" "DejaVu Sans Mono" ];
+          serif = [
+            "DejaVu Serif"
+            "Noto Serif"
+          ];
+          sansSerif = [
+            "DejaVu Sans"
+            "Noto Sans"
+          ];
+          monospace = [
+            "JetBrains Mono"
+            "DejaVu Sans Mono"
+          ];
           emoji = [ "Noto Color Emoji" ];
         };
       };
@@ -167,6 +189,10 @@
         xdg-desktop-portal-gtk
         xdg-desktop-portal-kde
       ];
+
+      # xdg-desktop-portal 1.17+ requires an explicit backend preference;
+      # without this it warns and falls back to lexicographical order.
+      config.common.default = lib.mkDefault [ "gtk" ];
     };
 
     # Common desktop services

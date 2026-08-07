@@ -1,6 +1,10 @@
 # Minimal Template for VM Builder
 # Lightweight NixOS installation with essential tools only
-{ config, pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   imports = [
@@ -76,7 +80,10 @@
   users.users.nixos = {
     isNormalUser = true;
     description = "NixOS Minimal User";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
     password = "nixos"; # Change this in production
   };
 
@@ -128,7 +135,10 @@
 
   # Enable flakes with conservative settings
   nix.settings = {
-    experimental-features = [ "nix-command" "flakes" ];
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
     # Conservative build settings for minimal resources
     max-jobs = 1;
     cores = 1;

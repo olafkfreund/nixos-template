@@ -1,7 +1,11 @@
 # NixOS on WSL2 Configuration Template
 # Optimized for Windows Subsystem for Linux development environment
 
-{ config, lib, pkgs, ... }:
+{
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   imports = [
@@ -89,15 +93,21 @@
 
   # Network configuration for WSL
   networking = {
-    # Use WSL's built-in networking
+    # WSL provides the network interface from Windows, so neither NetworkManager
+    # (enabled by default in modules/core/networking.nix) nor networkd should
+    # manage it. Leaving NetworkManager on also forces `useDHCP = false`, which
+    # conflicts with WSL's own DHCP handling.
+    networkmanager.enable = false;
     useNetworkd = false;
-    useDHCP = true;
 
     # Firewall disabled by default in WSL (Windows firewall handles this)
     firewall.enable = lib.mkForce false;
 
     # DNS configuration
-    nameservers = [ "8.8.8.8" "1.1.1.1" ];
+    nameservers = [
+      "8.8.8.8"
+      "1.1.1.1"
+    ];
   };
 
   # System services optimized for WSL
@@ -162,8 +172,8 @@
       htop
       lsof
 
-      # WSL-specific tools
-      wslu # WSL utilities
+      # NOTE: wslu was removed from nixpkgs (project discontinued, repo archived).
+      # WSL interop (wslpath, explorer.exe, etc.) works without it.
 
       # Development tools
       nodejs
@@ -235,7 +245,7 @@
     packages = with pkgs; [
       noto-fonts
       noto-fonts-cjk-sans
-      noto-fonts-emoji
+      noto-fonts-color-emoji
       font-awesome
       hack-font
       fira-code
@@ -312,7 +322,10 @@
   nix = {
     settings = {
       # Enable flakes
-      experimental-features = [ "nix-command" "flakes" ];
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
 
       # Optimize for WSL storage
       auto-optimise-store = true;
@@ -322,7 +335,10 @@
       cores = 0;
 
       # Trusted users
-      trusted-users = [ "root" "nixos" ];
+      trusted-users = [
+        "root"
+        "nixos"
+      ];
 
       # Substituters
       substituters = [

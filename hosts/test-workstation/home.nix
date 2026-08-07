@@ -23,7 +23,7 @@
   # Workstation-specific shell aliases
   programs.zsh = {
     shellAliases = {
-      workstation-info = "neofetch";
+      workstation-info = "fastfetch";
       dev-env = "cd ~/Development && code .";
     };
   };

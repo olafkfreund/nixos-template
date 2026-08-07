@@ -1,7 +1,12 @@
 # Advanced Nix Store and System State Optimization
 # Provides comprehensive system state management and Nix store optimization
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -132,7 +137,7 @@ in
         # Performance settings
         {
           max-jobs = cfg.performance.maxJobs;
-          cores = cfg.performance.cores;
+          inherit (cfg.performance) cores;
           keep-outputs = cfg.performance.keepOutputs;
           keep-derivations = cfg.performance.keepDerivations;
           use-cgroups = cfg.performance.useCgroups;
@@ -167,9 +172,9 @@ in
       # Advanced garbage collection
       gc = mkIf cfg.store.gc.automatic {
         automatic = true;
-        dates = cfg.store.gc.dates;
-        options = cfg.store.gc.options;
-        persistent = cfg.store.gc.persistent;
+        inherit (cfg.store.gc) dates;
+        inherit (cfg.store.gc) options;
+        inherit (cfg.store.gc) persistent;
       };
 
       # Store optimization service

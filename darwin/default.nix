@@ -1,7 +1,12 @@
 # nix-darwin Configuration
 # Main entry point for macOS system configuration
 
-{ config, pkgs, lib, outputs, ... }:
+{
+  pkgs,
+  lib,
+  outputs,
+  ...
+}:
 
 {
   imports = [
@@ -23,7 +28,10 @@
   nix = {
     # Enable flakes and new command
     settings = {
-      experimental-features = [ "nix-command" "flakes" ];
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
       trusted-users = [ "@admin" ];
 
       # Substituters and keys
@@ -103,7 +111,7 @@
     tree
 
     # Nix tools
-    nixpkgs-fmt
+    nixfmt
     statix
     deadnix
 
@@ -213,7 +221,11 @@
   };
 
   # Set up shells
-  environment.shells = with pkgs; [ bash zsh fish ];
+  environment.shells = with pkgs; [
+    bash
+    zsh
+    fish
+  ];
 
   # System settings
   system = {
@@ -243,7 +255,9 @@
   fonts = {
     packages = with pkgs; [
       # Programming fonts
-      (nerdfonts.override { fonts = [ "FiraCode" "JetBrainsMono" "Hack" ]; })
+      nerd-fonts.fira-code
+      nerd-fonts.jetbrains-mono
+      nerd-fonts.hack
 
       # System fonts
       inter

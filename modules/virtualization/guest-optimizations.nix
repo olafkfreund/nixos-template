@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.modules.virtualization.guest-optimizations;
@@ -9,9 +14,13 @@ in
 
     qemuGuest = lib.mkEnableOption "QEMU guest optimizations";
 
-    disableUnneededServices = lib.mkEnableOption "disable unneeded services for VMs" // { default = true; };
+    disableUnneededServices = lib.mkEnableOption "disable unneeded services for VMs" // {
+      default = true;
+    };
 
-    optimizeForSpeed = lib.mkEnableOption "optimize for VM speed over features" // { default = true; };
+    optimizeForSpeed = lib.mkEnableOption "optimize for VM speed over features" // {
+      default = true;
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -35,7 +44,8 @@ in
 
         # Memory optimizations
         "transparent_hugepage=never"
-      ] ++ lib.optionals cfg.optimizeForSpeed [
+      ]
+      ++ lib.optionals cfg.optimizeForSpeed [
         # Speed over security
         "mitigations=off"
         "spectre_v2=off"
@@ -117,7 +127,10 @@ in
     # Minimal filesystem optimizations
     fileSystems = lib.mkIf cfg.optimizeForSpeed {
       "/" = {
-        options = [ "noatime" "nodiratime" ];
+        options = [
+          "noatime"
+          "nodiratime"
+        ];
       };
     };
 

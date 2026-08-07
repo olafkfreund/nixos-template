@@ -26,7 +26,7 @@
 
     # Development tools
     just
-    nixpkgs-fmt
+    nixfmt
     statix
     deadnix
 

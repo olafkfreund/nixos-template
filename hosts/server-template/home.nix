@@ -1,6 +1,10 @@
 # Server Template Home Manager Configuration
 # Uses shared profiles optimized for headless server administration
-{ config, pkgs, inputs, ... }:
+{
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
   # Import shared Home Manager profiles using inputs.self

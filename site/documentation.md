@@ -5,7 +5,7 @@ permalink: /documentation/
 ---
 
 ```
-$ ls docs/
+ls docs/
 ```
 
 Every guide from the repository's `docs/` folder, rendered here as a page.
@@ -16,8 +16,9 @@ Source of truth lives in [`docs/`](https://github.com/olafkfreund/nixos-template
 **{{ doc_pages | size }} documents**
 
 {% for d in doc_pages %}
+
 - [{{ d.title }}]({{ d.url | relative_url }})
-{% endfor %}
+  {% endfor %}
 
 ---
 

@@ -1,6 +1,13 @@
 # Flake Configuration Utilities
 # Reduces duplication in flake.nix by providing reusable builders
-{ inputs, outputs, nixpkgs, self, home-manager, sops-nix }:
+{
+  inputs,
+  outputs,
+  nixpkgs,
+  self,
+  home-manager,
+  agenix,
+}:
 
 let
   inherit (nixpkgs) lib;
@@ -36,34 +43,40 @@ let
 
   # Comprehensive flake metadata — shared by all builders so every host
   # (including WSL) can use modules/core/system-identification.nix.
-  mkFlakeMeta = { hostname, profile, system }: {
-    inherit hostname profile system;
-    # Build information (reproducible)
-    buildTime = 0; # Static to ensure reproducibility
-    buildDate = "reproducible-build";
-    flakeRev = self.rev or "dirty";
-    flakeShortRev =
-      if (self.rev or null) != null
-      then builtins.substring 0 7 self.rev
-      else "unknown";
-    # Nixpkgs information
-    nixpkgsRev = inputs.nixpkgs.rev or "unknown";
-    nixpkgsShortRev =
-      if (inputs.nixpkgs.rev or null) != null
-      then builtins.substring 0 7 inputs.nixpkgs.rev
-      else "unknown";
-    # System identification
-    configPath = toString ../.;
-    hostPath = toString (../. + "/hosts/${hostname}");
-  };
+  mkFlakeMeta =
+    {
+      hostname,
+      profile,
+      system,
+    }:
+    {
+      inherit hostname profile system;
+      # Build information (reproducible)
+      buildTime = 0; # Static to ensure reproducibility
+      buildDate = "reproducible-build";
+      flakeRev = self.rev or "dirty";
+      flakeShortRev = if (self.rev or null) != null then builtins.substring 0 7 self.rev else "unknown";
+      # Nixpkgs information
+      nixpkgsRev = inputs.nixpkgs.rev or "unknown";
+      nixpkgsShortRev =
+        if (inputs.nixpkgs.rev or null) != null then
+          builtins.substring 0 7 inputs.nixpkgs.rev
+        else
+          "unknown";
+      # System identification
+      configPath = toString ../.;
+      hostPath = toString (../. + "/hosts/${hostname}");
+    };
 
   # Core system builder - matches the existing mkSystem with full flakeMeta support
   mkSystem =
-    { hostname
-    , system ? "x86_64-linux"
-    , profile ? "workstation"
-    , extraModules ? [ ]
-    }: nixpkgs.lib.nixosSystem {
+    {
+      hostname,
+      system ? "x86_64-linux",
+      profile ? "workstation",
+      extraModules ? [ ],
+    }:
+    nixpkgs.lib.nixosSystem {
       inherit system;
       specialArgs = {
         inherit inputs outputs homeProfiles;
@@ -72,7 +85,7 @@ let
       modules = [
         ../hosts/${hostname}/configuration.nix
         home-manager.nixosModules.home-manager
-        sops-nix.nixosModules.default # Use agenix (passed as sops-nix)
+        agenix.nixosModules.default
 
         # Add Home Manager base configuration
         ({ lib, ... }: {
@@ -124,18 +137,24 @@ let
           ];
 
           # Add to system description
-          system.nixos.tags = [ flakeMeta.profile flakeMeta.flakeShortRev ];
+          system.nixos.tags = [
+            flakeMeta.profile
+            flakeMeta.flakeShortRev
+          ];
         })
-      ] ++ extraModules;
+      ]
+      ++ extraModules;
     };
 
   # WSL2 system builder (special case without flakeMeta to match original)
   mkWSLSystem =
-    { hostname
-    , system ? "x86_64-linux"
-    , profile ? "workstation"
-    , extraModules ? [ ]
-    }: nixpkgs.lib.nixosSystem {
+    {
+      hostname,
+      system ? "x86_64-linux",
+      profile ? "workstation",
+      extraModules ? [ ],
+    }:
+    nixpkgs.lib.nixosSystem {
       inherit system;
       specialArgs = {
         inherit inputs outputs homeProfiles;
@@ -147,39 +166,47 @@ let
         home-manager.nixosModules.home-manager
         inputs.agenix.nixosModules.default
         templateConfig
-      ] ++ extraModules;
+      ]
+      ++ extraModules;
     };
 
   # Installer ISO builder (simpler, no flakeMeta like original)
   mkInstaller =
-    { name
-    , system ? "x86_64-linux"
-    , extraModules ? [ ]
-    }: nixpkgs.lib.nixosSystem {
+    {
+      name,
+      system ? "x86_64-linux",
+      extraModules ? [ ],
+    }:
+    nixpkgs.lib.nixosSystem {
       inherit system;
       specialArgs = { inherit inputs outputs; };
       modules = [
         ../hosts/installer-isos/${name}.nix
         templateConfig
-      ] ++ extraModules;
+      ]
+      ++ extraModules;
     };
 
   # macOS ISO builder (simpler, no flakeMeta like original)
   mkMacOSInstaller =
-    { name
-    , system ? "x86_64-linux"
-    , extraModules ? [ ]
-    }: nixpkgs.lib.nixosSystem {
+    {
+      name,
+      system ? "x86_64-linux",
+      extraModules ? [ ],
+    }:
+    nixpkgs.lib.nixosSystem {
       inherit system;
       specialArgs = { inherit inputs outputs; };
       modules = [
         ../hosts/macos-isos/${name}.nix
         templateConfig
-      ] ++ extraModules;
+      ]
+      ++ extraModules;
     };
 
   # Generate template configurations (laptop, desktop, server)
-  mkTemplates = lib.genAttrs [ "laptop-template" "desktop-template" "server-template" ] (name:
+  mkTemplates = lib.genAttrs [ "laptop-template" "desktop-template" "server-template" ] (
+    name:
     mkSystem {
       hostname = name;
       extraModules = [ templateConfig ];
@@ -187,20 +214,23 @@ let
   );
 
   # Generate VM test configurations
-  mkTestConfigs = lib.genAttrs [
-    "qemu-vm"
-    "microvm"
-    "desktop-test"
-    "test-workstation"
-    "test-gaming"
-    "test-server"
-  ]
-    (name:
-      mkSystem {
-        hostname = name;
-        extraModules = lib.optionals (lib.hasInfix "test" name) [ templateConfig ];
-      }
-    );
+  mkTestConfigs =
+    lib.genAttrs
+      [
+        "qemu-vm"
+        "microvm"
+        "desktop-test"
+        "test-workstation"
+        "test-gaming"
+        "test-server"
+      ]
+      (
+        name:
+        mkSystem {
+          hostname = name;
+          extraModules = lib.optionals (lib.hasInfix "test" name) [ templateConfig ];
+        }
+      );
 
   # Generate installer configurations for multiple architectures
   mkInstallers = {
@@ -227,24 +257,27 @@ let
   # Generate macOS VM configurations (both architectures)
   mkMacOSVMs =
     # Apple Silicon (aarch64) VMs
-    (lib.genAttrs [ "desktop-macos" "laptop-macos" "server-macos" ] (name:
+    (lib.genAttrs [ "desktop-macos" "laptop-macos" "server-macos" ] (
+      name:
       mkSystem {
         hostname = "macos-vms/${name}";
         system = "aarch64-linux";
         extraModules = [ templateConfig ];
       }
-    )) //
-    # Intel (x86_64) VMs - create separate entries with -intel suffix
-    (lib.genAttrs [ "desktop-macos-intel" "laptop-macos-intel" "server-macos-intel" ] (name:
-      let
-        baseName = lib.removeSuffix "-intel" name;
-      in
-      mkSystem {
-        hostname = "macos-vms/${baseName}";
-        system = "x86_64-linux";
-        extraModules = [ templateConfig ];
-      }
-    ));
+    ))
+    //
+      # Intel (x86_64) VMs - create separate entries with -intel suffix
+      (lib.genAttrs [ "desktop-macos-intel" "laptop-macos-intel" "server-macos-intel" ] (
+        name:
+        let
+          baseName = lib.removeSuffix "-intel" name;
+        in
+        mkSystem {
+          hostname = "macos-vms/${baseName}";
+          system = "x86_64-linux";
+          extraModules = [ templateConfig ];
+        }
+      ));
 
   # WSL2 configuration
   mkWSLConfigs = {
@@ -253,11 +286,15 @@ let
     };
   };
 
-
 in
 {
   # Export essential builders
-  inherit mkSystem mkWSLSystem mkInstaller mkMacOSInstaller;
+  inherit
+    mkSystem
+    mkWSLSystem
+    mkInstaller
+    mkMacOSInstaller
+    ;
 
   # Export pre-built configuration sets
   templates = mkTemplates;
@@ -267,10 +304,5 @@ in
   wslConfigs = mkWSLConfigs;
 
   # Utility function to merge all configurations
-  allConfigurations =
-    mkTemplates //
-    mkTestConfigs //
-    mkInstallers //
-    mkMacOSVMs //
-    mkWSLConfigs;
+  allConfigurations = mkTemplates // mkTestConfigs // mkInstallers // mkMacOSVMs // mkWSLConfigs;
 }

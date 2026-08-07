@@ -24,7 +24,7 @@
       pkgs.nil # Alternative Nix LSP
 
       # Programming languages
-      pkgs.nodejs_20
+      pkgs.nodejs_22
       pkgs.python311
       pkgs.python311Packages.pip
       pkgs.python311Packages.virtualenv
@@ -35,7 +35,10 @@
       # Build tools
       pkgs.gnumake
       pkgs.cmake
-      pkgs.gcc
+      # gcc and clang both ship bin/ld, bin/cc etc., which collide in the
+      # Home Manager profile's buildEnv. hiPrio makes gcc win those shared
+      # names deterministically while keeping clang/clang++/clangd available.
+      (lib.hiPrio pkgs.gcc)
       pkgs.clang
 
       # Database tools

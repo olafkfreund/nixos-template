@@ -10,7 +10,7 @@
   environment.systemPackages = with pkgs; [
     # Include template management tools
     just
-    nixpkgs-fmt
+    nixfmt
 
     # Additional desktop tools
     firefox

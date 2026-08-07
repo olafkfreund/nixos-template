@@ -71,16 +71,16 @@ validate:
     just dead-code-check
     @echo "✅ All validation checks passed"
 
-# Format Nix files
+# Format all files (Nix, shell, Markdown, YAML, JSON) via treefmt
 fmt:
-    @echo "🎨 Formatting Nix files..."
-    nixpkgs-fmt .
+    @echo "🎨 Formatting..."
+    nix fmt
     @echo "✅ Formatting complete"
 
 # Check if files are properly formatted (without modifying)
 format-check:
     @echo "🔍 Checking code formatting..."
-    @if nixpkgs-fmt --check .; then \
+    @if nix fmt -- --fail-on-change >/dev/null 2>&1; then \
         echo "✅ All files are properly formatted"; \
     else \
         echo "❌ Some files need formatting. Run 'just fmt' to fix."; \
@@ -152,7 +152,7 @@ quality:
 # Check specific file or directory
 check-path path:
     @echo "🔍 Checking {{path}}..."
-    nixpkgs-fmt --check {{path}}
+    nix fmt -- --fail-on-change {{path}}
     @if command -v statix >/dev/null 2>&1; then statix check {{path}}; fi
     @if command -v deadnix >/dev/null 2>&1; then deadnix --fail {{path}}; fi
     @echo "✅ {{path}} validation complete"
@@ -1083,7 +1083,7 @@ validate-user template:
     @echo "Validating user template: {{template}}"
     @if [ -f "home/users/{{template}}.nix" ]; then \
         echo "Checking syntax..."; \
-        nixpkgs-fmt --check "home/users/{{template}}.nix" && echo "✅ Formatting OK" || echo "❌ Needs formatting"; \
+        nix fmt -- --fail-on-change "home/users/{{template}}.nix" && echo "✅ Formatting OK" || echo "❌ Needs formatting"; \
         if command -v statix >/dev/null 2>&1; then \
             statix check "home/users/{{template}}.nix" && echo "✅ Linting OK" || echo "❌ Linting issues found"; \
         fi; \

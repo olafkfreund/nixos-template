@@ -1,10 +1,17 @@
-{ config, lib, inputs, ... }:
+{
+  lib,
+  inputs,
+  ...
+}:
 
 {
   nix = {
     settings = {
       # Enable flakes and new nix command
-      experimental-features = [ "nix-command" "flakes" ];
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
 
       # Optimise storage automatically
       auto-optimise-store = true;
@@ -51,7 +58,10 @@
   };
 
   # Allow users in the wheel group to use nix
-  nix.settings.trusted-users = [ "root" "@wheel" ];
+  nix.settings.trusted-users = [
+    "root"
+    "@wheel"
+  ];
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = lib.mkDefault true;

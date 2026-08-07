@@ -1,6 +1,10 @@
 # Server Template for VM Builder
 # Headless server environment optimized for VMs
-{ config, pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   imports = [
@@ -82,7 +86,11 @@
     networkmanager.enable = true;
     firewall = {
       enable = true;
-      allowedTCPPorts = [ 22 80 443 ];
+      allowedTCPPorts = [
+        22
+        80
+        443
+      ];
     };
   };
 
@@ -90,7 +98,11 @@
   users.users.nixos = {
     isNormalUser = true;
     description = "NixOS Server User";
-    extraGroups = [ "networkmanager" "wheel" "docker" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "docker"
+    ];
     password = "nixos"; # Change this in production
     openssh.authorizedKeys.keys = [
       # Add your SSH keys here in production
@@ -155,7 +167,10 @@
 
   # Enable flakes and new nix command
   nix.settings = {
-    experimental-features = [ "nix-command" "flakes" ];
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
     # Server build optimization
     max-jobs = "auto";
     cores = 0;

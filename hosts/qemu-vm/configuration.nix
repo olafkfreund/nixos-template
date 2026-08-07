@@ -49,7 +49,10 @@
   users.users.vm-user = {
     isNormalUser = true;
     description = "VM User";
-    extraGroups = [ "wheel" "networkmanager" ];
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+    ];
 
     # Set initial password (change after first login)
     initialPassword = "nixos";

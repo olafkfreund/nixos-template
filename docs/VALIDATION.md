@@ -161,7 +161,7 @@ git commit -m "update configuration"
 ```yaml
 # GitHub Actions automatically runs:
 - nix-validation: Flake check + individual file syntax
-- code-quality: nixpkgs-fmt, statix, deadnix linting
+- code-quality: nixfmt, statix, deadnix linting
 - shell-validation: shellcheck for all scripts
 - documentation: Markdown linting + link checking
 - template-validation: Structure + build evaluation

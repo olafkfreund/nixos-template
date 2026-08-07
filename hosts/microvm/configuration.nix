@@ -158,7 +158,10 @@
 
       # Aggressive compression
       compressor = "zstd";
-      compressorArgs = [ "-19" "-T0" ];
+      compressorArgs = [
+        "-19"
+        "-T0"
+      ];
     };
   };
 

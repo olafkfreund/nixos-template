@@ -91,37 +91,37 @@ echo ""
 read -r -p "Choose an option (1-7): " choice
 
 case $choice in
-1)
-  VM_TYPE="desktop"
-  ACTION="vm"
-  ;;
-2)
-  VM_TYPE="laptop"
-  ACTION="vm"
-  ;;
-3)
-  VM_TYPE="server"
-  ACTION="vm"
-  ;;
-4)
-  ISO_TYPE="desktop"
-  ACTION="iso"
-  ;;
-5)
-  ISO_TYPE="minimal"
-  ACTION="iso"
-  ;;
-6)
-  VM_TYPE="desktop"
-  ACTION="quick"
-  ;;
-7)
-  ACTION="help"
-  ;;
-*)
-  log_error "Invalid choice: $choice"
-  exit 1
-  ;;
+  1)
+    VM_TYPE="desktop"
+    ACTION="vm"
+    ;;
+  2)
+    VM_TYPE="laptop"
+    ACTION="vm"
+    ;;
+  3)
+    VM_TYPE="server"
+    ACTION="vm"
+    ;;
+  4)
+    ISO_TYPE="desktop"
+    ACTION="iso"
+    ;;
+  5)
+    ISO_TYPE="minimal"
+    ACTION="iso"
+    ;;
+  6)
+    VM_TYPE="desktop"
+    ACTION="quick"
+    ;;
+  7)
+    ACTION="help"
+    ;;
+  *)
+    log_error "Invalid choice: $choice"
+    exit 1
+    ;;
 esac
 
 if [[ $ACTION == "help" ]]; then
@@ -195,39 +195,39 @@ if [[ $ACTION == "vm" ]]; then
     echo ""
     echo "🔑 Default login credentials:"
     case $VM_TYPE in
-    desktop)
-      echo "   Username: nixos"
-      echo "   Password: nixos"
-      ;;
-    laptop)
-      echo "   Username: laptop-user"
-      echo "   Password: nixos"
-      ;;
-    server)
-      echo "   Username: server-admin"
-      echo "   Password: nixos"
-      echo "   SSH: ssh server-admin@<vm-ip>"
-      ;;
+      desktop)
+        echo "   Username: nixos"
+        echo "   Password: nixos"
+        ;;
+      laptop)
+        echo "   Username: laptop-user"
+        echo "   Password: nixos"
+        ;;
+      server)
+        echo "   Username: server-admin"
+        echo "   Password: nixos"
+        echo "   SSH: ssh server-admin@<vm-ip>"
+        ;;
     esac
     echo ""
     echo "💡 VM Features:"
     case $VM_TYPE in
-    desktop)
-      echo "   • Full GNOME desktop environment"
-      echo "   • Firefox, VS Code, development tools"
-      echo "   • Guest integration with clipboard sharing"
-      ;;
-    laptop)
-      echo "   • Laptop-optimized with power management"
-      echo "   • NetworkManager for WiFi simulation"
-      echo "   • Redshift for eye care"
-      ;;
-    server)
-      echo "   • Headless server (no GUI)"
-      echo "   • SSH server enabled"
-      echo "   • Podman containers, development servers"
-      echo "   • Access via terminal or SSH"
-      ;;
+      desktop)
+        echo "   • Full GNOME desktop environment"
+        echo "   • Firefox, VS Code, development tools"
+        echo "   • Guest integration with clipboard sharing"
+        ;;
+      laptop)
+        echo "   • Laptop-optimized with power management"
+        echo "   • NetworkManager for WiFi simulation"
+        echo "   • Redshift for eye care"
+        ;;
+      server)
+        echo "   • Headless server (no GUI)"
+        echo "   • SSH server enabled"
+        echo "   • Podman containers, development servers"
+        echo "   • Access via terminal or SSH"
+        ;;
     esac
   else
     log_error "Failed to build $VM_TYPE VM"

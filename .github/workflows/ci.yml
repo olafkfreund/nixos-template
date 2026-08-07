@@ -163,18 +163,17 @@ jobs:
             experimental-features = nix-command flakes
       - name: Install code quality tools
         run: |
-          nix profile install nixpkgs#nixpkgs-fmt
           nix profile install nixpkgs#statix
           nix profile install nixpkgs#deadnix
       - name: Check Nix formatting
         run: |
-          echo "Checking Nix code formatting..."
-          if ! nixpkgs-fmt --check .; then
+          echo "Checking formatting via treefmt (nixfmt + shfmt + mdformat + ...)"
+          if ! nix fmt -- --fail-on-change; then
             echo "ERROR: Code is not properly formatted"
-            echo "Run 'nixpkgs-fmt .' to fix formatting issues"
+            echo "Run 'nix fmt' (or 'just fmt') to fix formatting issues"
             exit 1
           fi
-          echo "✓ All Nix files are properly formatted"
+          echo "✓ All files are properly formatted"
       - name: Run statix linter
         run: |
           echo "Running statix linter..."
@@ -406,11 +405,10 @@ jobs:
       - name: Setup pre-commit environment
         run: |
           nix profile install nixpkgs#pre-commit
-          nix profile install nixpkgs#nixpkgs-fmt
           nix profile install nixpkgs#statix
           nix profile install nixpkgs#deadnix
       - name: Create pre-commit config
-        run: "cat > .pre-commit-config.yaml << 'EOF'\nrepos:\n- repo: local\n  hooks:\n  - id: nixpkgs-fmt\n    name: nixpkgs-fmt\n    entry: nixpkgs-fmt\n    language: system\n    files: '\\.nix$'\n    \n  - id: statix\n    name: statix\n    entry: statix check\n    language: system\n    files: '\\.nix$'\n    pass_filenames: false\n    \n  - id: deadnix\n    name: deadnix\n    entry: deadnix --fail\n    language: system\n    files: '\\.nix$'\n    pass_filenames: false\n    \n  - id: shellcheck\n    name: shellcheck\n    entry: shellcheck\n    language: system\n    files: '\\.sh$'\n    args: [-e, SC1091, -e, SC2016]\nEOF\n"
+        run: "cat > .pre-commit-config.yaml << 'EOF'\nrepos:\n- repo: local\n  hooks:\n  - id: nixfmt\n    name: nixfmt\n    entry: nixfmt\n    language: system\n    files: '\\.nix$'\n    \n  - id: statix\n    name: statix\n    entry: statix check\n    language: system\n    files: '\\.nix$'\n    pass_filenames: false\n    \n  - id: deadnix\n    name: deadnix\n    entry: deadnix --fail\n    language: system\n    files: '\\.nix$'\n    pass_filenames: false\n    \n  - id: shellcheck\n    name: shellcheck\n    entry: shellcheck\n    language: system\n    files: '\\.sh$'\n    args: [-e, SC1091, -e, SC2016]\nEOF\n"
       - name: Run pre-commit on all files
         run: |
           echo "Running pre-commit hooks on all files..."

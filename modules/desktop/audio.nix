@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.modules.desktop.audio;
@@ -6,7 +11,9 @@ in
 {
   options.modules.desktop.audio = {
     enable = lib.mkEnableOption "audio support";
-    pipewire = lib.mkEnableOption "PipeWire audio server" // { default = true; };
+    pipewire = lib.mkEnableOption "PipeWire audio server" // {
+      default = true;
+    };
     lowLatency = lib.mkEnableOption "low latency audio configuration";
   };
 

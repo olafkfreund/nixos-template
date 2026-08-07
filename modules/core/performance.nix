@@ -2,7 +2,11 @@
 # Implements expert-recommended system performance tuning
 # Based on NixOS performance best practices and hardware detection
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  ...
+}:
 
 with lib;
 
@@ -19,10 +23,14 @@ let
   storageClass = hwDetection.storage.primaryType;
 
   cpuClass =
-    if hwDetection.cpu.cores >= 16 then "high"
-    else if hwDetection.cpu.cores >= 8 then "medium"
-    else if hwDetection.cpu.cores >= 4 then "low"
-    else "minimal";
+    if hwDetection.cpu.cores >= 16 then
+      "high"
+    else if hwDetection.cpu.cores >= 8 then
+      "medium"
+    else if hwDetection.cpu.cores >= 4 then
+      "low"
+    else
+      "minimal";
 in
 {
   options.modules.core.performance = {
@@ -44,7 +52,13 @@ in
     };
 
     profile = mkOption {
-      type = types.enum [ "desktop" "server" "laptop" "gaming" "minimal" ];
+      type = types.enum [
+        "desktop"
+        "server"
+        "laptop"
+        "gaming"
+        "minimal"
+      ];
       default = "desktop";
       description = ''
         Performance optimization profile that adjusts system tuning parameters:
@@ -61,19 +75,21 @@ in
       example = "gaming";
     };
 
-    aggressiveOptimizations = mkEnableOption "aggressive performance optimizations (may reduce stability)" // {
-      description = ''
-        Enable aggressive performance optimizations that may impact system stability:
-        - Disable page clustering for SSDs (vm.page-cluster=0)
-        - More aggressive CPU scheduler tuning
-        - Reduced I/O delay for modern hardware
-        - More aggressive memory management settings
+    aggressiveOptimizations =
+      mkEnableOption "aggressive performance optimizations (may reduce stability)"
+      // {
+        description = ''
+          Enable aggressive performance optimizations that may impact system stability:
+          - Disable page clustering for SSDs (vm.page-cluster=0)
+          - More aggressive CPU scheduler tuning
+          - Reduced I/O delay for modern hardware
+          - More aggressive memory management settings
 
-        WARNING: These optimizations prioritize performance over stability and may
-        cause issues on some systems. Recommended only for gaming or high-performance
-        workloads where maximum performance is critical.
-      '';
-    };
+          WARNING: These optimizations prioritize performance over stability and may
+          cause issues on some systems. Recommended only for gaming or high-performance
+          workloads where maximum performance is critical.
+        '';
+      };
 
     networkOptimizations = mkEnableOption "network performance optimizations" // {
       description = ''
@@ -121,28 +137,41 @@ in
       {
         # Memory management optimizations
         "vm.swappiness" = mkDefault (
-          if memoryClass == "high" then 1
-          else if memoryClass == "medium" then 5
-          else if memoryClass == "low" then 10
-          else 20
+          if memoryClass == "high" then
+            1
+          else if memoryClass == "medium" then
+            5
+          else if memoryClass == "low" then
+            10
+          else
+            20
         );
 
         "vm.vfs_cache_pressure" = mkDefault (
-          if memoryClass == "high" then 10
-          else if memoryClass == "medium" then 25
-          else 50
+          if memoryClass == "high" then
+            10
+          else if memoryClass == "medium" then
+            25
+          else
+            50
         );
 
         "vm.dirty_ratio" = mkDefault (
-          if storageClass == "nvme" then 20
-          else if storageClass == "ssd" then 15
-          else 10
+          if storageClass == "nvme" then
+            20
+          else if storageClass == "ssd" then
+            15
+          else
+            10
         );
 
         "vm.dirty_background_ratio" = mkDefault (
-          if storageClass == "nvme" then 10
-          else if storageClass == "ssd" then 5
-          else 3
+          if storageClass == "nvme" then
+            10
+          else if storageClass == "ssd" then
+            5
+          else
+            3
         );
 
         # Reduce memory fragmentation
@@ -204,10 +233,14 @@ in
     nix.settings = mkIf cfg.buildOptimizations {
       # Parallel builds based on CPU cores
       max-jobs = mkDefault (
-        if cpuClass == "high" then 16
-        else if cpuClass == "medium" then 8
-        else if cpuClass == "low" then 4
-        else 2
+        if cpuClass == "high" then
+          16
+        else if cpuClass == "medium" then
+          8
+        else if cpuClass == "low" then
+          4
+        else
+          2
       );
 
       cores = 0; # Use all available cores for each job
@@ -218,9 +251,7 @@ in
       auto-optimise-store = true; # Deduplicate store paths
 
       # Download optimization
-      http-connections = mkDefault (
-        if cfg.networkOptimizations then 25 else 5
-      );
+      http-connections = mkDefault (if cfg.networkOptimizations then 25 else 5);
 
       # Cache optimization
       narinfo-cache-positive-ttl = 432000; # 5 days
@@ -315,10 +346,14 @@ in
     boot.tmp = {
       useTmpfs = mkDefault (memoryClass != "minimal");
       tmpfsSize = mkDefault (
-        if memoryClass == "high" then "50%"
-        else if memoryClass == "medium" then "25%"
-        else if memoryClass == "low" then "15%"
-        else "10%"
+        if memoryClass == "high" then
+          "50%"
+        else if memoryClass == "medium" then
+          "25%"
+        else if memoryClass == "low" then
+          "15%"
+        else
+          "10%"
       );
     };
 
@@ -326,9 +361,12 @@ in
     zramSwap = mkIf (memoryClass != "high") {
       enable = true;
       memoryPercent = mkDefault (
-        if memoryClass == "medium" then 25
-        else if memoryClass == "low" then 50
-        else 75
+        if memoryClass == "medium" then
+          25
+        else if memoryClass == "low" then
+          50
+        else
+          75
       );
       algorithm = "zstd"; # Better compression than lz4
       priority = 5; # Higher priority than disk swap
@@ -338,19 +376,25 @@ in
     powerManagement = {
       # CPU frequency scaling
       cpuFreqGovernor = mkDefault (
-        if cfg.profile == "gaming" then "performance"
-        else if cfg.profile == "server" then "performance"
-        else if cfg.profile == "laptop" then "powersave"
-        else "schedutil" # Adaptive for desktop
+        if cfg.profile == "gaming" then
+          "performance"
+        else if cfg.profile == "server" then
+          "performance"
+        else if cfg.profile == "laptop" then
+          "powersave"
+        else
+          "schedutil" # Adaptive for desktop
       );
     };
 
     # Warnings for potentially problematic settings
     warnings =
-      optional (cfg.aggressiveOptimizations && cfg.profile != "gaming")
-        "Aggressive optimizations enabled outside of gaming profile may cause instability" ++
-      optional (cfg.profile == "gaming" && elem "mitigations=off" config.boot.kernelParams)
-        "Security mitigations disabled for gaming performance - this reduces system security";
+      optional (
+        cfg.aggressiveOptimizations && cfg.profile != "gaming"
+      ) "Aggressive optimizations enabled outside of gaming profile may cause instability"
+      ++ optional (
+        cfg.profile == "gaming" && elem "mitigations=off" config.boot.kernelParams
+      ) "Security mitigations disabled for gaming performance - this reduces system security";
 
     assertions = [
       {

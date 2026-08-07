@@ -1,6 +1,11 @@
 # Gaming Preset
 # High-performance configuration optimized for gaming
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.modules.presets;
@@ -117,7 +122,11 @@ in
       kernelPackages = pkgs.linuxPackages_zen;
 
       # Load gaming-related modules (required for gaming hardware)
-      kernelModules = [ "uinput" "kvm-intel" "kvm-amd" ];
+      kernelModules = [
+        "uinput"
+        "kvm-intel"
+        "kvm-amd"
+      ];
     };
 
     # Hardware optimizations for gaming (opinionated preset configuration)
@@ -139,7 +148,6 @@ in
     environment.systemPackages = with pkgs; [
       # Gaming-specific tools only
       nvidia-system-monitor-qt
-      teamspeak_client
       chromium
 
       # Emulation

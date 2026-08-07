@@ -1,7 +1,12 @@
 # WSL2 Performance Optimizations
 # System optimizations specific to WSL2 environment
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 

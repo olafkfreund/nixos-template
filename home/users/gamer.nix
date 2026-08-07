@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   # Gaming-focused Home Manager configuration
@@ -24,7 +29,7 @@
     userName = "Gamer Name";
     userEmail = "gamer@example.com";
 
-    extraConfig = {
+    settings = {
       init.defaultBranch = "main";
       pull.rebase = true;
       push.autoSetupRemote = true;
@@ -134,7 +139,6 @@
     parsec-bin # Game streaming
 
     # Additional Communication (beyond Discord from role)
-    teamspeak_client
     mumble
     element-desktop # Matrix client for gaming communities
 
@@ -166,7 +170,7 @@
     # citra             # Nintendo 3DS
 
     # System Information
-    neofetch
+    fastfetch
     lshw
     pciutils
     usbutils

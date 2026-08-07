@@ -1,6 +1,10 @@
 # Development Template for VM Builder
 # Full development environment with programming tools and IDEs
-{ config, pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   imports = [
@@ -45,7 +49,7 @@
     emacs
 
     # Programming languages
-    nodejs_20
+    nodejs_22
     python311
     python311Packages.pip
     python311Packages.virtualenv
@@ -71,7 +75,7 @@
 
     # Database tools
     postgresql
-    mysql80
+    mysql84
     redis
     mongodb
     sqlite
@@ -107,7 +111,10 @@
     desktopManager.gnome.enable = true;
 
     # Development-optimized video drivers
-    videoDrivers = [ "vmware" "virtualbox" "qxl" ];
+    videoDrivers = [
+      "vmware"
+      "qxl"
+    ]; # virtualbox driver deprecated for kernel 7.0+
   };
 
   # Enable hardware acceleration
@@ -132,7 +139,16 @@
     networkmanager.enable = true;
     firewall = {
       enable = true;
-      allowedTCPPorts = [ 22 80 443 3000 5432 8080 8000 9000 ];
+      allowedTCPPorts = [
+        22
+        80
+        443
+        3000
+        5432
+        8080
+        8000
+        9000
+      ];
       allowedUDPPorts = [ ];
     };
   };
@@ -141,7 +157,13 @@
   users.users.nixos = {
     isNormalUser = true;
     description = "NixOS Development User";
-    extraGroups = [ "networkmanager" "wheel" "docker" "audio" "video" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "docker"
+      "audio"
+      "video"
+    ];
     password = "nixos"; # Change this in production
     shell = pkgs.zsh;
   };
@@ -197,7 +219,12 @@
       syntaxHighlighting.enable = true;
       ohMyZsh = {
         enable = true;
-        plugins = [ "git" "docker" "kubectl" "terraform" ];
+        plugins = [
+          "git"
+          "docker"
+          "kubectl"
+          "terraform"
+        ];
         theme = "robbyrussell";
       };
     };
@@ -246,7 +273,10 @@
 
   # Enable flakes and optimize for development
   nix.settings = {
-    experimental-features = [ "nix-command" "flakes" ];
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
     # Development build optimization
     max-jobs = "auto";
     cores = 0;
@@ -280,7 +310,7 @@
     liberation_ttf
     dejavu_fonts
     noto-fonts
-    noto-fonts-emoji
+    noto-fonts-color-emoji
   ];
 
   # XDG portal for development tools

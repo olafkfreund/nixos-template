@@ -1,7 +1,12 @@
 # Advanced System Performance Monitoring Module
 # Comprehensive monitoring with Prometheus exporters, alerting, and system health checks
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -9,12 +14,19 @@ let
   cfg = config.modules.services.monitoring;
 
   # Helper function to generate exporter configurations
-  mkExporterConfig = exporterCfg: {
-    enable = true;
-    port = exporterCfg.port;
-    listenAddress = exporterCfg.listenAddress or "127.0.0.1";
-    extraFlags = exporterCfg.extraFlags or [ ];
-  } // (removeAttrs exporterCfg [ "port" "listenAddress" "extraFlags" ]);
+  mkExporterConfig =
+    exporterCfg:
+    {
+      enable = true;
+      inherit (exporterCfg) port;
+      listenAddress = exporterCfg.listenAddress or "127.0.0.1";
+      extraFlags = exporterCfg.extraFlags or [ ];
+    }
+    // (removeAttrs exporterCfg [
+      "port"
+      "listenAddress"
+      "extraFlags"
+    ]);
 
   # Default exporter configurations
   defaultExporters = {
@@ -265,69 +277,75 @@ in
       };
 
       remoteWrite = mkOption {
-        type = types.listOf (types.submodule {
-          options = {
-            url = mkOption {
-              type = types.str;
-              description = "Remote write URL";
-            };
+        type = types.listOf (
+          types.submodule {
+            options = {
+              url = mkOption {
+                type = types.str;
+                description = "Remote write URL";
+              };
 
-            basicAuth = mkOption {
-              type = types.nullOr (types.submodule {
-                options = {
-                  username = mkOption {
-                    type = types.str;
-                    description = "Basic auth username";
-                  };
-                  password = mkOption {
-                    type = types.str;
-                    description = "Basic auth password";
-                  };
-                };
-              });
-              default = null;
-              description = "Basic authentication configuration";
+              basicAuth = mkOption {
+                type = types.nullOr (
+                  types.submodule {
+                    options = {
+                      username = mkOption {
+                        type = types.str;
+                        description = "Basic auth username";
+                      };
+                      password = mkOption {
+                        type = types.str;
+                        description = "Basic auth password";
+                      };
+                    };
+                  }
+                );
+                default = null;
+                description = "Basic authentication configuration";
+              };
             };
-          };
-        });
+          }
+        );
         default = [ ];
         description = "Remote write configurations";
       };
     };
 
     exporters = mkOption {
-      type = types.attrsOf (types.submodule {
-        options = {
-          enable = mkOption {
-            type = types.bool;
-            default = false;
-            description = "Enable this exporter";
-          };
+      type = types.attrsOf (
+        types.submodule {
+          options = {
+            enable = mkOption {
+              type = types.bool;
+              default = false;
+              description = "Enable this exporter";
+            };
 
-          port = mkOption {
-            type = types.port;
-            description = "Exporter port";
-          };
+            port = mkOption {
+              type = types.port;
+              description = "Exporter port";
+            };
 
-          listenAddress = mkOption {
-            type = types.str;
-            default = "127.0.0.1";
-            description = "Exporter listen address";
-          };
+            listenAddress = mkOption {
+              type = types.str;
+              default = "127.0.0.1";
+              description = "Exporter listen address";
+            };
 
-          extraFlags = mkOption {
-            type = types.listOf types.str;
-            default = [ ];
-            description = "Additional command line flags";
-          };
+            extraFlags = mkOption {
+              type = types.listOf types.str;
+              default = [ ];
+              description = "Additional command line flags";
+            };
 
-          extraConfig = mkOption {
-            type = types.attrs;
-            default = { };
-            description = "Additional exporter-specific configuration";
+            extraConfig = mkOption {
+              type = types.attrs;
+              default = { };
+              description = "Additional exporter-specific configuration";
+            };
           };
-        };
-      });
+        }
+      );
       default = { };
       description = "Prometheus exporters configuration";
     };
@@ -372,15 +390,21 @@ in
       };
 
       checks = mkOption {
-        type = types.listOf (types.enum [
+        type = types.listOf (
+          types.enum [
+            "disk-space"
+            "memory-usage"
+            "cpu-temperature"
+            "service-status"
+            "network-connectivity"
+            "certificate-expiry"
+          ]
+        );
+        default = [
           "disk-space"
           "memory-usage"
-          "cpu-temperature"
           "service-status"
-          "network-connectivity"
-          "certificate-expiry"
-        ]);
-        default = [ "disk-space" "memory-usage" "service-status" ];
+        ];
         description = "System health checks to perform";
       };
     };
@@ -413,27 +437,29 @@ in
       };
 
       email = mkOption {
-        type = types.nullOr (types.submodule {
-          options = {
-            to = mkOption {
-              type = types.listOf types.str;
-              description = "Email recipients";
+        type = types.nullOr (
+          types.submodule {
+            options = {
+              to = mkOption {
+                type = types.listOf types.str;
+                description = "Email recipients";
+              };
+              from = mkOption {
+                type = types.str;
+                description = "Sender email address";
+              };
+              smtpHost = mkOption {
+                type = types.str;
+                description = "SMTP server host";
+              };
+              smtpPort = mkOption {
+                type = types.port;
+                default = 587;
+                description = "SMTP server port";
+              };
             };
-            from = mkOption {
-              type = types.str;
-              description = "Sender email address";
-            };
-            smtpHost = mkOption {
-              type = types.str;
-              description = "SMTP server host";
-            };
-            smtpPort = mkOption {
-              type = types.port;
-              default = 587;
-              description = "SMTP server port";
-            };
-          };
-        });
+          }
+        );
         default = null;
         description = "Email notification configuration";
       };
@@ -445,8 +471,8 @@ in
     (mkIf cfg.prometheus.enable {
       services.prometheus = {
         enable = true;
-        port = cfg.prometheus.port;
-        listenAddress = cfg.prometheus.listenAddress;
+        inherit (cfg.prometheus) port;
+        inherit (cfg.prometheus) listenAddress;
         retentionTime = cfg.prometheus.retention;
 
         globalConfig = {
@@ -455,32 +481,37 @@ in
         };
 
         # Remote write configuration
-        remoteWrite = cfg.prometheus.remoteWrite;
+        inherit (cfg.prometheus) remoteWrite;
 
         # Scrape configurations
         scrapeConfigs = [
           {
             job_name = "prometheus";
-            static_configs = [{
-              targets = [ "${cfg.prometheus.listenAddress}:${toString cfg.prometheus.port}" ];
-            }];
+            static_configs = [
+              {
+                targets = [ "${cfg.prometheus.listenAddress}:${toString cfg.prometheus.port}" ];
+              }
+            ];
           }
-        ] ++ (mapAttrsToList
-          (name: exporterCfg: {
-            job_name = "exporter-${name}";
-            static_configs = [{
+        ]
+        ++ (mapAttrsToList (name: exporterCfg: {
+          job_name = "exporter-${name}";
+          static_configs = [
+            {
               targets = [ "${exporterCfg.listenAddress}:${toString exporterCfg.port}" ];
-            }];
-            scrape_interval = "30s";
-          })
-          (filterAttrs (_: exp: exp.enable) cfg.exporters));
+            }
+          ];
+          scrape_interval = "30s";
+        }) (filterAttrs (_: exp: exp.enable) cfg.exporters));
 
         # Alerting rules
-        ruleFiles = mkIf cfg.prometheus.alerting.enable [
-          (pkgs.writeText "monitoring-rules.yml" (builtins.toJSON generateAlertRules))
-        ] ++ optionals (cfg.prometheus.alerting.customRules != "") [
-          (pkgs.writeText "custom-rules.yml" cfg.prometheus.alerting.customRules)
-        ];
+        ruleFiles =
+          mkIf cfg.prometheus.alerting.enable [
+            (pkgs.writeText "monitoring-rules.yml" (builtins.toJSON generateAlertRules))
+          ]
+          ++ optionals (cfg.prometheus.alerting.customRules != "") [
+            (pkgs.writeText "custom-rules.yml" cfg.prometheus.alerting.customRules)
+          ];
       };
 
       # Open firewall for Prometheus
@@ -489,19 +520,25 @@ in
 
     # Exporters configuration
     {
-      services.prometheus.exporters = mkMerge (mapAttrsToList
-        (name: exporterCfg:
+      services.prometheus.exporters = mkMerge (
+        mapAttrsToList (
+          name: exporterCfg:
           mkIf exporterCfg.enable {
-            ${name} = mkExporterConfig (defaultExporters.${name} or { } // exporterCfg.extraConfig // {
-              inherit (exporterCfg) port listenAddress;
-            });
+            ${name} = mkExporterConfig (
+              defaultExporters.${name} or { }
+              // exporterCfg.extraConfig
+              // {
+                inherit (exporterCfg) port listenAddress;
+              }
+            );
           }
-        )
-        cfg.exporters);
+        ) cfg.exporters
+      );
 
       # Open firewall ports for enabled exporters
-      networking.firewall.allowedTCPPorts =
-        map (exp: exp.port) (filter (exp: exp.enable) (attrValues cfg.exporters));
+      networking.firewall.allowedTCPPorts = map (exp: exp.port) (
+        filter (exp: exp.enable) (attrValues cfg.exporters)
+      );
     }
 
     # Grafana configuration
@@ -511,7 +548,7 @@ in
         settings = {
           server = {
             http_port = cfg.grafana.port;
-            domain = cfg.grafana.domain;
+            inherit (cfg.grafana) domain;
           };
           security = {
             admin_password = cfg.grafana.adminPassword;
@@ -524,68 +561,91 @@ in
 
         provision = {
           enable = true;
-          datasources.settings.datasources = [{
-            name = "Prometheus";
-            type = "prometheus";
-            access = "proxy";
-            url = "http://${cfg.prometheus.listenAddress}:${toString cfg.prometheus.port}";
-            isDefault = true;
-          }];
+          datasources.settings.datasources = [
+            {
+              name = "Prometheus";
+              type = "prometheus";
+              access = "proxy";
+              url = "http://${cfg.prometheus.listenAddress}:${toString cfg.prometheus.port}";
+              isDefault = true;
+            }
+          ];
 
-          dashboards.settings.providers = [{
-            name = "System Monitoring";
-            type = "file";
-            folder = "System";
-            options.path = pkgs.writeTextDir "dashboards/system.json" (builtins.toJSON {
-              dashboard = {
-                id = null;
-                title = "System Monitoring";
-                tags = [ "system" "monitoring" ];
-                timezone = "browser";
-                panels = [
-                  {
-                    id = 1;
-                    title = "CPU Usage";
-                    type = "stat";
-                    targets = [{
-                      expr = "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)";
-                      refId = "A";
-                    }];
-                    fieldConfig = {
-                      defaults = {
-                        unit = "percent";
-                        min = 0;
-                        max = 100;
-                      };
+          dashboards.settings.providers = [
+            {
+              name = "System Monitoring";
+              type = "file";
+              folder = "System";
+              options.path = pkgs.writeTextDir "dashboards/system.json" (
+                builtins.toJSON {
+                  dashboard = {
+                    id = null;
+                    title = "System Monitoring";
+                    tags = [
+                      "system"
+                      "monitoring"
+                    ];
+                    timezone = "browser";
+                    panels = [
+                      {
+                        id = 1;
+                        title = "CPU Usage";
+                        type = "stat";
+                        targets = [
+                          {
+                            expr = "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)";
+                            refId = "A";
+                          }
+                        ];
+                        fieldConfig = {
+                          defaults = {
+                            unit = "percent";
+                            min = 0;
+                            max = 100;
+                          };
+                        };
+                        gridPos = {
+                          h = 8;
+                          w = 12;
+                          x = 0;
+                          y = 0;
+                        };
+                      }
+                      {
+                        id = 2;
+                        title = "Memory Usage";
+                        type = "stat";
+                        targets = [
+                          {
+                            expr = "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100";
+                            refId = "A";
+                          }
+                        ];
+                        fieldConfig = {
+                          defaults = {
+                            unit = "percent";
+                            min = 0;
+                            max = 100;
+                          };
+                        };
+                        gridPos = {
+                          h = 8;
+                          w = 12;
+                          x = 12;
+                          y = 0;
+                        };
+                      }
+                    ];
+                    time = {
+                      from = "now-1h";
+                      to = "now";
                     };
-                    gridPos = { h = 8; w = 12; x = 0; y = 0; };
-                  }
-                  {
-                    id = 2;
-                    title = "Memory Usage";
-                    type = "stat";
-                    targets = [{
-                      expr = "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100";
-                      refId = "A";
-                    }];
-                    fieldConfig = {
-                      defaults = {
-                        unit = "percent";
-                        min = 0;
-                        max = 100;
-                      };
-                    };
-                    gridPos = { h = 8; w = 12; x = 12; y = 0; };
-                  }
-                ];
-                time = {
-                  from = "now-1h";
-                  to = "now";
-                };
-                refresh = "30s";
-              };
-            });
-          }];
+                    refresh = "30s";
+                  };
+                }
+              );
+            }
+          ];
         };
       };
 
@@ -622,54 +682,54 @@ in
               }
 
               ${optionalString (elem "disk-space" cfg.systemHealth.checks) ''
-              # Check disk space
-              while read -r filesystem blocks used available capacity mountpoint; do
-                if [[ "$capacity" =~ ^([0-9]+)% ]] && [ "''${BASH_REMATCH[1]}" -gt 85 ]; then
-                  log_alert "Disk space low on $mountpoint: $capacity used"
-                fi
-              done < <(df -h | tail -n +2 | grep -E '^/dev/')
+                # Check disk space
+                while read -r filesystem blocks used available capacity mountpoint; do
+                  if [[ "$capacity" =~ ^([0-9]+)% ]] && [ "''${BASH_REMATCH[1]}" -gt 85 ]; then
+                    log_alert "Disk space low on $mountpoint: $capacity used"
+                  fi
+                done < <(df -h | tail -n +2 | grep -E '^/dev/')
               ''}
 
               ${optionalString (elem "memory-usage" cfg.systemHealth.checks) ''
-              # Check memory usage
-              memory_percent=$(free | grep Mem | awk '{printf("%.0f", $3/$2 * 100.0)}')
-              if [ "$memory_percent" -gt 90 ]; then
-                log_alert "High memory usage: $memory_percent%"
-              fi
-              log_metric "memory_usage_percent=$memory_percent"
+                # Check memory usage
+                memory_percent=$(free | grep Mem | awk '{printf("%.0f", $3/$2 * 100.0)}')
+                if [ "$memory_percent" -gt 90 ]; then
+                  log_alert "High memory usage: $memory_percent%"
+                fi
+                log_metric "memory_usage_percent=$memory_percent"
               ''}
 
               ${optionalString (elem "service-status" cfg.systemHealth.checks) ''
-              # Check critical service status
-              failed_services=$(systemctl list-units --failed --no-legend | wc -l)
-              if [ "$failed_services" -gt 0 ]; then
-                log_alert "$failed_services systemd services have failed"
-                systemctl list-units --failed --no-legend | while read -r unit _; do
-                  log_alert "Failed service: $unit"
-                done
-              fi
-              log_metric "failed_services_count=$failed_services"
+                # Check critical service status
+                failed_services=$(systemctl list-units --failed --no-legend | wc -l)
+                if [ "$failed_services" -gt 0 ]; then
+                  log_alert "$failed_services systemd services have failed"
+                  systemctl list-units --failed --no-legend | while read -r unit _; do
+                    log_alert "Failed service: $unit"
+                  done
+                fi
+                log_metric "failed_services_count=$failed_services"
               ''}
 
               ${optionalString (elem "cpu-temperature" cfg.systemHealth.checks) ''
-              # Check CPU temperature (if sensors available)
-              if command -v sensors >/dev/null; then
-                max_temp=$(sensors | grep -E 'Core|Package' | grep -oE '\+[0-9]+\.[0-9]+°C' | sed 's/+\([0-9]*\).*/\1/' | sort -n | tail -1)
-                if [ -n "$max_temp" ] && [ "$max_temp" -gt 80 ]; then
-                  log_alert "High CPU temperature: $max_temp°C"
+                # Check CPU temperature (if sensors available)
+                if command -v sensors >/dev/null; then
+                  max_temp=$(sensors | grep -E 'Core|Package' | grep -oE '\+[0-9]+\.[0-9]+°C' | sed 's/+\([0-9]*\).*/\1/' | sort -n | tail -1)
+                  if [ -n "$max_temp" ] && [ "$max_temp" -gt 80 ]; then
+                    log_alert "High CPU temperature: $max_temp°C"
+                  fi
+                  log_metric "cpu_max_temp_celsius=$max_temp"
                 fi
-                log_metric "cpu_max_temp_celsius=$max_temp"
-              fi
               ''}
 
               ${optionalString (elem "network-connectivity" cfg.systemHealth.checks) ''
-              # Check network connectivity
-              if ! ping -c 1 -W 5 8.8.8.8 >/dev/null 2>&1; then
-                log_alert "Network connectivity check failed"
-                log_metric "network_connectivity=0"
-              else
-                log_metric "network_connectivity=1"
-              fi
+                # Check network connectivity
+                if ! ping -c 1 -W 5 8.8.8.8 >/dev/null 2>&1; then
+                  log_alert "Network connectivity check failed"
+                  log_metric "network_connectivity=0"
+                else
+                  log_metric "network_connectivity=1"
+                fi
               ''}
 
               log_metric "health_check_completed=1"
@@ -713,16 +773,18 @@ in
           };
 
           schema_config = {
-            configs = [{
-              from = "2020-10-24";
-              store = "boltdb-shipper";
-              object_store = "filesystem";
-              schema = "v11";
-              index = {
-                prefix = "index_";
-                period = "24h";
-              };
-            }];
+            configs = [
+              {
+                from = "2020-10-24";
+                store = "boltdb-shipper";
+                object_store = "filesystem";
+                schema = "v11";
+                index = {
+                  prefix = "index_";
+                  period = "24h";
+                };
+              }
+            ];
           };
 
           storage_config = {
@@ -767,24 +829,30 @@ in
             filename = "/tmp/positions.yaml";
           };
 
-          clients = [{
-            url = "http://localhost:3100/loki/api/v1/push";
-          }];
+          clients = [
+            {
+              url = "http://localhost:3100/loki/api/v1/push";
+            }
+          ];
 
-          scrape_configs = [{
-            job_name = "journal";
-            journal = {
-              max_age = "12h";
-              labels = {
-                job = "systemd-journal";
-                host = config.networking.hostName;
+          scrape_configs = [
+            {
+              job_name = "journal";
+              journal = {
+                max_age = "12h";
+                labels = {
+                  job = "systemd-journal";
+                  host = config.networking.hostName;
+                };
               };
-            };
-            relabel_configs = [{
-              source_labels = [ "__journal__systemd_unit" ];
-              target_label = "unit";
-            }];
-          }];
+              relabel_configs = [
+                {
+                  source_labels = [ "__journal__systemd_unit" ];
+                  target_label = "unit";
+                }
+              ];
+            }
+          ];
         };
       };
     })
@@ -800,7 +868,7 @@ in
         nload
 
         # System information
-        neofetch
+        fastfetch
         lscpu
         lsblk
         lsusb

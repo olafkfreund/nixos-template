@@ -1,6 +1,11 @@
 # Workstation Profile Module
 # Contains all packages and configurations for a high-performance desktop workstation
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   # Hardware configuration for desktop workstation
@@ -13,7 +18,7 @@
       extraPackages = with pkgs; [
         mesa
         libvdpau-va-gl
-        vaapiVdpau
+        libva-vdpau-driver
       ];
     };
 
@@ -60,7 +65,10 @@
 
   # Kernel configuration for desktop performance
   boot = {
-    kernelModules = [ "kvm-intel" "kvm-amd" ];
+    kernelModules = [
+      "kvm-intel"
+      "kvm-amd"
+    ];
 
     kernelParams = [
       # Enable full CPU performance
@@ -78,11 +86,13 @@
       theme = "breeze";
     };
 
-    # Faster boot
+    # Faster boot. These are mkDefault because modules/profiles/default.nix
+    # imports this file for every host, so a plain assignment here collides with
+    # any host that sets its own bootloader timeout (server-template does).
     loader = {
-      systemd-boot.enable = true;
-      efi.canTouchEfiVariables = true;
-      timeout = 3;
+      systemd-boot.enable = lib.mkDefault true;
+      efi.canTouchEfiVariables = lib.mkDefault true;
+      timeout = lib.mkDefault 3;
     };
   };
 
@@ -142,10 +152,7 @@
         package = lib.mkDefault pkgs.qemu_kvm;
         runAsRoot = false;
         swtpm.enable = true;
-        ovmf = {
-          enable = true;
-          packages = [ pkgs.OVMFFull.fd ];
-        };
+        # `qemu.ovmf` was removed upstream — QEMU's OVMF images ship by default.
       };
     };
 
@@ -191,7 +198,7 @@
 
       # Development tools
       vscode
-      jetbrains.idea-community
+      jetbrains.idea
       docker-compose
       postman
 
@@ -278,6 +285,12 @@
       xdg-desktop-portal-gtk
       xdg-desktop-portal-gnome
     ];
+    # xdg-desktop-portal 1.17+ requires an explicit backend preference;
+    # without this it warns and falls back to lexicographical order.
+    config.common.default = [
+      "gnome"
+      "gtk"
+    ];
   };
 
   # Fonts for desktop use
@@ -286,17 +299,17 @@
     packages = with pkgs; [
       noto-fonts
       noto-fonts-cjk-sans
-      noto-fonts-emoji
+      noto-fonts-color-emoji
       liberation_ttf
       fira-code
       fira-code-symbols
       jetbrains-mono
       source-code-pro
-      ubuntu_font_family
+      ubuntu-classic
 
       # Microsoft fonts for compatibility
       corefonts
-      vistafonts
+      vista-fonts
     ];
 
     fontconfig = {

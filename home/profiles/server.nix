@@ -53,7 +53,7 @@
 
       # Database clients
       pkgs.postgresql_15 # psql client
-      pkgs.mysql80 # mysql client
+      pkgs.mysql84 # mysql client
       pkgs.sqlite
       pkgs.redis
 
@@ -191,7 +191,7 @@
     };
 
     # Git configuration for server environments
-    git.extraConfig = {
+    git.settings = {
       # Server-optimized settings
       core = {
         editor = "vim";

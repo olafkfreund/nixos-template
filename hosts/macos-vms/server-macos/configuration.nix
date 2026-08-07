@@ -68,8 +68,14 @@
       # Default server block
       virtualHosts."localhost" = {
         listen = [
-          { addr = "0.0.0.0"; port = 80; }
-          { addr = "0.0.0.0"; port = 8080; }
+          {
+            addr = "0.0.0.0";
+            port = 80;
+          }
+          {
+            addr = "0.0.0.0";
+            port = 8080;
+          }
         ];
         locations."/" = {
           return = "200 'NixOS Server VM on macOS is running!'";
@@ -81,7 +87,11 @@
     # Database services
     postgresql = {
       enable = true;
-      ensureDatabases = [ "developer" "development" "testing" ];
+      ensureDatabases = [
+        "developer"
+        "development"
+        "testing"
+      ];
       ensureUsers = [
         {
           name = "developer";
@@ -188,11 +198,17 @@
 
       # Additional ports for container services
       allowedTCPPortRanges = [
-        { from = 8000; to = 8999; } # Development services
+        {
+          from = 8000;
+          to = 8999;
+        } # Development services
       ];
     };
 
-    nameservers = [ "8.8.8.8" "1.1.1.1" ];
+    nameservers = [
+      "8.8.8.8"
+      "1.1.1.1"
+    ];
   };
 
   # Boot configuration for headless server
@@ -203,8 +219,21 @@
     };
 
     # Server kernel modules
-    kernelModules = [ "virtio_net" "virtio_pci" "virtio_mmio" "virtio_blk" "virtio_scsi" "virtio_console" ];
-    initrd.availableKernelModules = [ "virtio_net" "virtio_pci" "virtio_mmio" "virtio_blk" "virtio_scsi" ];
+    kernelModules = [
+      "virtio_net"
+      "virtio_pci"
+      "virtio_mmio"
+      "virtio_blk"
+      "virtio_scsi"
+      "virtio_console"
+    ];
+    initrd.availableKernelModules = [
+      "virtio_net"
+      "virtio_pci"
+      "virtio_mmio"
+      "virtio_blk"
+      "virtio_scsi"
+    ];
 
     # Server boot parameters
     kernelParams = [
@@ -240,7 +269,11 @@
       server-admin = {
         isNormalUser = true;
         description = "Server Administrator";
-        extraGroups = [ "wheel" "docker" "systemd-journal" ];
+        extraGroups = [
+          "wheel"
+          "docker"
+          "systemd-journal"
+        ];
         initialPassword = "nixos";
         openssh.authorizedKeys.keys = [
           # Add SSH public keys here for key-based authentication

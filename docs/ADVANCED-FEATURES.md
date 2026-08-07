@@ -171,15 +171,25 @@ nix flake check
 nix build .#checks.x86_64-linux.vm-test-desktop
 nix build .#checks.x86_64-linux.vm-test-server
 
-# Configuration validation
-nix build .#checks.x86_64-linux.config-syntax-check
-nix build .#checks.x86_64-linux.security-check
+# Lint and formatting gates
+nix build .#checks.x86_64-linux.statix-check
+nix build .#checks.x86_64-linux.deadnix-check
+nix build .#checks.x86_64-linux.shellcheck-check
+nix build .#checks.x86_64-linux.treefmt
+
+# Real builds of the WSL2 system and its Home Manager generation
+nix build .#checks.x86_64-linux.wsl2-config
+nix build .#checks.x86_64-linux.wsl2-home
 ```
+
+The full list is `nix flake show`. Every host in `nixosConfigurations` is
+evaluated by `nix flake check` itself, so there is no separate
+"configuration syntax" check — an unevaluatable host fails the check directly.
 
 **Test Categories:**
 
 - VM integration tests (desktop/server)
-- Configuration syntax validation
+- Lint gates: statix, deadnix, shellcheck, treefmt
 - Module dependency checking
 - Security validation
 - Performance benchmarking

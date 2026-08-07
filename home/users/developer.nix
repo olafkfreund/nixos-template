@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   # Developer-focused Home Manager configuration
@@ -130,7 +135,10 @@
         export PATH="$PATH:$HOME/.cargo/bin"
       '';
 
-      historyControl = [ "ignoredups" "erasedups" ];
+      historyControl = [
+        "ignoredups"
+        "erasedups"
+      ];
       historySize = 50000;
       historyFileSize = 100000;
     };
@@ -167,7 +175,10 @@
     fzf = {
       enable = true;
       defaultCommand = "fd --type f";
-      defaultOptions = [ "--height 40%" "--border" ];
+      defaultOptions = [
+        "--height 40%"
+        "--border"
+      ];
     };
 
     # Modern ls alternative
@@ -218,7 +229,7 @@
   home.packages = with pkgs; [
     # IDEs and Editors
     vscode
-    # jetbrains.idea-community
+    # jetbrains.idea
     # jetbrains.pycharm-community
 
     # Version Control
@@ -257,7 +268,7 @@
     # Database Tools
     # postgresql
     # sqlite
-    # mysql80
+    # mysql84
 
     # Container Tools (uncomment if using containers)
     # docker
@@ -300,8 +311,8 @@
     # maven
     # gradle
 
-    # C/C++
-    gcc
+    # C/C++ — hiPrio on gcc resolves the bin/ld collision with clang
+    (lib.hiPrio gcc)
     clang
     gdb
     valgrind
@@ -335,7 +346,7 @@
     yamllint # YAML linter
 
     # System Information
-    neofetch
+    fastfetch
     lshw
     pciutils
     usbutils

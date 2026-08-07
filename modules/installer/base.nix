@@ -1,7 +1,12 @@
 # Base installer configuration
 # This module provides common settings for all installer ISOs
 
-{ lib, pkgs, modulesPath, ... }:
+{
+  lib,
+  pkgs,
+  modulesPath,
+  ...
+}:
 
 {
   imports = [
@@ -72,7 +77,7 @@
 
     # Development tools (for custom configs)
     just
-    nixpkgs-fmt
+    nixfmt
   ];
 
   # Network configuration
@@ -88,7 +93,10 @@
   # Enable flakes in installer
   nix = {
     settings = {
-      experimental-features = [ "nix-command" "flakes" ];
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
       trusted-users = [ "root" ];
     };
 

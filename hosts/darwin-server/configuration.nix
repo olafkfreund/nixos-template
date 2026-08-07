@@ -1,7 +1,12 @@
 # nix-darwin Server Configuration
 # Headless server configuration for macOS development machines
 
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   imports = [
@@ -20,13 +25,23 @@
       essential = true;
       development = {
         enable = true;
-        languages = [ "node" "python" "go" "rust" "java" ];
+        languages = [
+          "node"
+          "python"
+          "go"
+          "rust"
+          "java"
+        ];
         databases = true;
         docker = true;
       };
       server = {
         enable = true;
-        cloud = [ "aws" "gcp" "azure" ];
+        cloud = [
+          "aws"
+          "gcp"
+          "azure"
+        ];
       };
     };
 
@@ -388,7 +403,8 @@
 
   # Fonts minimal set for server
   fonts.packages = with pkgs; [
-    (nerdfonts.override { fonts = [ "JetBrainsMono" "FiraCode" ]; })
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.fira-code
   ];
 
   # Server-optimized shell configuration

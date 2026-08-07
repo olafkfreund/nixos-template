@@ -77,7 +77,10 @@
   users.users.installer = {
     isNormalUser = true;
     description = "NixOS Installer User";
-    extraGroups = [ "wheel" "networkmanager" ];
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+    ];
     initialPassword = "installer";
   };
 

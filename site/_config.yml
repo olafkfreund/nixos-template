@@ -5,16 +5,18 @@ url: "https://olafkfreund.github.io"
 baseurl: "/nixos-template"
 author:
   name: "olafkfreund"
-# Self-contained dark "console" layout with a left sidebar (site/_layouts +
-# site/assets/css/style.css). No remote theme — that one dumped every page into
-# a single centered top nav.
+# Self-contained Gruvbox Dark layout with a left sidebar (site/_layouts +
+# site/assets/css/style.css). No remote theme — Rouge syntax highlighting is
+# themed to match Gruvbox in the same stylesheet.
 plugins: []
 # Navigation
 nav:
   - title: "Home"
     url: /
-  - title: "Getting Started"
+  - title: "Get Started"
     url: /getting-started/
+  - title: "Code Showcase"
+    url: /showcase/
   - title: "Usage"
     url: /usage/
   - title: "Features"

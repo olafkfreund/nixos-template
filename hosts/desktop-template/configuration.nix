@@ -1,6 +1,10 @@
 # Desktop Configuration Template - Simplified
 # Uses the profile system instead of duplicating packages
-{ config, lib, pkgs, ... }:
+{
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   imports = [
@@ -20,7 +24,10 @@
     profile = "workstation";
     description = "Desktop template for workstation environments";
     environment = "development";
-    tags = [ "template" "desktop" ];
+    tags = [
+      "template"
+      "desktop"
+    ];
   };
 
   # Module configuration
@@ -81,7 +88,12 @@
     networkmanager.enable = true;
     firewall = {
       enable = true;
-      allowedTCPPorts = [ 22 80 443 8080 ];
+      allowedTCPPorts = [
+        22
+        80
+        443
+        8080
+      ];
     };
     interfaces.enp0s31f6.wakeOnLan.enable = true;
   };

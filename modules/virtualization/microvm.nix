@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.modules.virtualization.microvm;
@@ -7,11 +12,17 @@ in
   options.modules.virtualization.microvm = {
     enable = lib.mkEnableOption "MicroVM optimizations";
 
-    minimizeSize = lib.mkEnableOption "aggressive size minimization" // { default = true; };
+    minimizeSize = lib.mkEnableOption "aggressive size minimization" // {
+      default = true;
+    };
 
-    disableDocumentation = lib.mkEnableOption "disable documentation to save space" // { default = true; };
+    disableDocumentation = lib.mkEnableOption "disable documentation to save space" // {
+      default = true;
+    };
 
-    useMinimalKernel = lib.mkEnableOption "use minimal kernel configuration" // { default = true; };
+    useMinimalKernel = lib.mkEnableOption "use minimal kernel configuration" // {
+      default = true;
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -43,7 +54,10 @@ in
 
         # Compress initrd aggressively
         compressor = "zstd";
-        compressorArgs = [ "-19" "-T0" ];
+        compressorArgs = [
+          "-19"
+          "-T0"
+        ];
       };
 
       # Optimize kernel for size and speed
@@ -92,24 +106,33 @@ in
     # Minimal system packages
     environment = {
       # Reduce default packages
-      defaultPackages = lib.mkIf cfg.minimizeSize (with pkgs; [
-        # Only absolute essentials
-        coreutils
-        util-linux
-        bash
-        nano
-      ]);
+      defaultPackages = lib.mkIf cfg.minimizeSize (
+        with pkgs;
+        [
+          # Only absolute essentials
+          coreutils
+          util-linux
+          bash
+          nano
+        ]
+      );
 
       # Minimal system packages
-      systemPackages = lib.mkIf cfg.minimizeSize (with pkgs; [
-        # Network tools
-        iproute2
-        iputils
-      ]);
+      systemPackages = lib.mkIf cfg.minimizeSize (
+        with pkgs;
+        [
+          # Network tools
+          iproute2
+          iputils
+        ]
+      );
 
-      # Reduce variables
+      # Reduce variables. EDITOR needs mkForce: modules/core/users.nix sets
+      # `programs.vim.defaultEditor = true`, which makes nixpkgs define EDITOR at
+      # the same priority. nano (installed above) is the deliberate choice for a
+      # microVM, so this override has to win rather than collide.
       variables = {
-        EDITOR = "nano";
+        EDITOR = lib.mkForce "nano";
         PAGER = "cat";
       };
     };
@@ -211,7 +234,11 @@ in
     # Minimal filesystem
     fileSystems = {
       "/" = {
-        options = [ "noatime" "nodiratime" "discard" ];
+        options = [
+          "noatime"
+          "nodiratime"
+          "discard"
+        ];
       };
     };
 

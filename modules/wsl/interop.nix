@@ -1,7 +1,12 @@
 # Windows Interoperability for WSL2
 # Provides seamless integration with Windows applications and file system
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -54,7 +59,8 @@ in
       cmd = "cmd.exe";
 
       # Development tools
-      "visual-studio" = "/mnt/c/Program\\ Files/Microsoft\\ Visual\\ Studio/*/Community/Common7/IDE/devenv.exe";
+      "visual-studio" =
+        "/mnt/c/Program\\ Files/Microsoft\\ Visual\\ Studio/*/Community/Common7/IDE/devenv.exe";
 
       # Windows utilities
       ipconfig = "ipconfig.exe";
@@ -63,23 +69,25 @@ in
     };
 
     # System packages for Windows integration
-    environment.systemPackages = with pkgs; mkMerge [
-      # Clipboard integration tools
-      (mkIf cfg.clipboard [
-        xclip # For X11 clipboard access
-        wl-clipboard # For Wayland clipboard access
-      ])
+    environment.systemPackages =
+      with pkgs;
+      mkMerge [
+        # Clipboard integration tools
+        (mkIf cfg.clipboard [
+          xclip # For X11 clipboard access
+          wl-clipboard # For Wayland clipboard access
+        ])
 
-      # Windows integration script wrappers
-      [
-        (pkgs.writeShellScriptBin "open-in-windows" ''
-          exec /etc/wsl-scripts/open-in-windows.sh "$@"
-        '')
-        (pkgs.writeShellScriptBin "edit-in-windows" ''
-          exec /etc/wsl-scripts/edit-in-windows.sh "$@"
-        '')
-      ]
-    ];
+        # Windows integration script wrappers
+        [
+          (pkgs.writeShellScriptBin "open-in-windows" ''
+            exec /etc/wsl-scripts/open-in-windows.sh "$@"
+          '')
+          (pkgs.writeShellScriptBin "edit-in-windows" ''
+            exec /etc/wsl-scripts/edit-in-windows.sh "$@"
+          '')
+        ]
+      ];
 
     # Environment variables for GUI applications
     environment.variables = {

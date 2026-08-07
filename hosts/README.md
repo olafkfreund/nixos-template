@@ -5,16 +5,21 @@ This directory contains per-machine NixOS (and nix-darwin) configurations.
 ## Quick start — the one happy path
 
 1. **Copy a template** that matches your hardware:
+
    ```
    cp -r hosts/desktop-template  hosts/<your-machine>
    # or laptop-template / server-template / wsl2-template
    ```
+
 1. **Generate hardware config** on the target machine:
+
    ```
    nixos-generate-config --show-hardware-config > hosts/<your-machine>/hardware-configuration.nix
    ```
+
 1. **Add your host** to `flake.nix` (follow the existing `mkSystem` call pattern).
 1. **Deploy:**
+
    ```
    just switch <your-machine>
    ```

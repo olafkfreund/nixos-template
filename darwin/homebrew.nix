@@ -178,8 +178,10 @@
   environment.variables = {
     # Ensure Homebrew paths are available
     HOMEBREW_PREFIX = if pkgs.stdenv.hostPlatform.isAarch64 then "/opt/homebrew" else "/usr/local";
-    HOMEBREW_CELLAR = if pkgs.stdenv.hostPlatform.isAarch64 then "/opt/homebrew/Cellar" else "/usr/local/Cellar";
-    HOMEBREW_REPOSITORY = if pkgs.stdenv.hostPlatform.isAarch64 then "/opt/homebrew" else "/usr/local/Homebrew";
+    HOMEBREW_CELLAR =
+      if pkgs.stdenv.hostPlatform.isAarch64 then "/opt/homebrew/Cellar" else "/usr/local/Cellar";
+    HOMEBREW_REPOSITORY =
+      if pkgs.stdenv.hostPlatform.isAarch64 then "/opt/homebrew" else "/usr/local/Homebrew";
 
     # Privacy settings
     HOMEBREW_NO_ANALYTICS = "1";

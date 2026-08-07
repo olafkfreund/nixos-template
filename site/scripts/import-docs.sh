@@ -54,7 +54,7 @@ for f in "$SRC"/*.md; do
     awk 'BEGIN{dropped=0} /^# /&&!dropped{dropped=1;next} {print}' "$f" \
       | DOCS_SRC="$SRC" python3 "$(dirname "$0")/rewrite-links.py"
     printf '\n{%% endraw %%}\n'
-  } > "$out"
+  } >"$out"
 
   count=$((count + 1))
 done

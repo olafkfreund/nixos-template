@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.modules.desktop.hyprland;
@@ -31,8 +36,12 @@ in
         };
 
         touchpad = {
-          natural_scroll = lib.mkEnableOption "natural scrolling for touchpad" // { default = true; };
-          disable_while_typing = lib.mkEnableOption "disable touchpad while typing" // { default = true; };
+          natural_scroll = lib.mkEnableOption "natural scrolling for touchpad" // {
+            default = true;
+          };
+          disable_while_typing = lib.mkEnableOption "disable touchpad while typing" // {
+            default = true;
+          };
         };
       };
 
@@ -65,7 +74,9 @@ in
 
       # Animations
       animations = {
-        enable = lib.mkEnableOption "animations" // { default = true; };
+        enable = lib.mkEnableOption "animations" // {
+          default = true;
+        };
         speed = lib.mkOption {
           type = lib.types.float;
           default = 1.0;
@@ -76,25 +87,48 @@ in
 
     # Waybar configuration
     waybar = {
-      enable = lib.mkEnableOption "Waybar status bar" // { default = true; };
+      enable = lib.mkEnableOption "Waybar status bar" // {
+        default = true;
+      };
       position = lib.mkOption {
-        type = lib.types.enum [ "top" "bottom" ];
+        type = lib.types.enum [
+          "top"
+          "bottom"
+        ];
         default = "top";
         description = "Waybar position";
       };
 
       modules = {
-        workspaces = lib.mkEnableOption "workspace indicator" // { default = true; };
-        window = lib.mkEnableOption "window title" // { default = true; };
-        clock = lib.mkEnableOption "clock widget" // { default = true; };
-        battery = lib.mkEnableOption "battery widget" // { default = true; };
-        network = lib.mkEnableOption "network widget" // { default = true; };
-        pulseaudio = lib.mkEnableOption "audio widget" // { default = true; };
-        tray = lib.mkEnableOption "system tray" // { default = true; };
+        workspaces = lib.mkEnableOption "workspace indicator" // {
+          default = true;
+        };
+        window = lib.mkEnableOption "window title" // {
+          default = true;
+        };
+        clock = lib.mkEnableOption "clock widget" // {
+          default = true;
+        };
+        battery = lib.mkEnableOption "battery widget" // {
+          default = true;
+        };
+        network = lib.mkEnableOption "network widget" // {
+          default = true;
+        };
+        pulseaudio = lib.mkEnableOption "audio widget" // {
+          default = true;
+        };
+        tray = lib.mkEnableOption "system tray" // {
+          default = true;
+        };
       };
 
       theme = lib.mkOption {
-        type = lib.types.enum [ "default" "minimal" "colorful" ];
+        type = lib.types.enum [
+          "default"
+          "minimal"
+          "colorful"
+        ];
         default = "default";
         description = "Waybar theme style";
       };
@@ -102,7 +136,9 @@ in
 
     # Dunst notification daemon
     dunst = {
-      enable = lib.mkEnableOption "Dunst notification daemon" // { default = true; };
+      enable = lib.mkEnableOption "Dunst notification daemon" // {
+        default = true;
+      };
 
       settings = {
         urgency_low = {
@@ -166,10 +202,16 @@ in
 
     # Theme and styling
     theme = {
-      enable = lib.mkEnableOption "custom theming" // { default = true; };
+      enable = lib.mkEnableOption "custom theming" // {
+        default = true;
+      };
 
       colorScheme = lib.mkOption {
-        type = lib.types.enum [ "dark" "light" "auto" ];
+        type = lib.types.enum [
+          "dark"
+          "light"
+          "auto"
+        ];
         default = "dark";
         description = "Color scheme preference";
       };
@@ -206,73 +248,77 @@ in
     # Environment configuration
     environment = {
       # Essential packages for Hyprland
-      systemPackages = with pkgs; [
-        # Core Wayland utilities
-        wl-clipboard # Clipboard manager
-        wlr-randr # Display configuration
-        wlogout # Logout menu
+      systemPackages =
+        with pkgs;
+        [
+          # Core Wayland utilities
+          wl-clipboard # Clipboard manager
+          wlr-randr # Display configuration
+          wlogout # Logout menu
 
-        # Application launcher and menus
-        wofi # Application launcher
-        rofi-wayland # Alternative launcher
+          # Application launcher and menus
+          wofi # Application launcher
+          rofi # Alternative launcher
 
-        # Terminal
-        alacritty # Default terminal
-        kitty # Alternative terminal
+          # Terminal
+          alacritty # Default terminal
+          kitty # Alternative terminal
 
-        # File manager
-        thunar # File manager
+          # File manager
+          thunar # File manager
 
-        # Screenshot and screen recording
-        grim # Screenshot tool
-        slurp # Screen area selection
-        swappy # Screenshot annotation
-        wf-recorder # Screen recorder
+          # Screenshot and screen recording
+          grim # Screenshot tool
+          slurp # Screen area selection
+          swappy # Screenshot annotation
+          wf-recorder # Screen recorder
 
-        # Wallpaper
-        swaybg # Wallpaper setter
-        hyprpaper # Hyprland wallpaper daemon
+          # Wallpaper
+          swaybg # Wallpaper setter
+          hyprpaper # Hyprland wallpaper daemon
 
-        # System utilities
-        brightnessctl # Brightness control
-        pamixer # Audio control
-        pavucontrol # Audio mixer GUI
+          # System utilities
+          brightnessctl # Brightness control
+          pamixer # Audio control
+          pavucontrol # Audio mixer GUI
 
-        # Theme and appearance
-        gtk3 # GTK3 for theme support
-        adwaita-icon-theme
-        gnome-themes-extra
+          # Theme and appearance
+          gtk3 # GTK3 for theme support
+          adwaita-icon-theme
+          gnome-themes-extra
 
-        # Fonts
-        jetbrains-mono
-        font-awesome
+          # Fonts
+          jetbrains-mono
+          font-awesome
 
-        # Media
-        imv # Image viewer
-        mpv # Video player
+          # Media
+          imv # Image viewer
+          mpv # Video player
 
-        # Archive support for file manager
-        file-roller # Archive manager
+          # Archive support for file manager
+          file-roller # Archive manager
 
-        # Network management
-        networkmanagerapplet
+          # Network management
+          networkmanagerapplet
 
-        # Clipboard manager
-        clipman # Clipboard history
+          # Clipboard manager
+          clipman # Clipboard history
 
-        # Color picker
-        hyprpicker # Color picker for Hyprland
+          # Color picker
+          hyprpicker # Color picker for Hyprland
 
-        # System information
-        fastfetch # System info
+          # System information
+          fastfetch # System info
 
-        # PDF viewer
-        zathura # Minimal PDF viewer
-      ] ++ lib.optionals cfg.waybar.enable [
-        waybar
-      ] ++ lib.optionals cfg.dunst.enable [
-        dunst
-      ];
+          # PDF viewer
+          zathura # Minimal PDF viewer
+        ]
+        ++ lib.optionals cfg.waybar.enable [
+          waybar
+        ]
+        ++ lib.optionals cfg.dunst.enable [
+          dunst
+        ];
 
       # Configuration files
       etc = {
@@ -288,7 +334,9 @@ in
 
               touchpad {
                   natural_scroll = ${if cfg.settings.input.touchpad.natural_scroll then "yes" else "no"}
-                  disable_while_typing = ${if cfg.settings.input.touchpad.disable_while_typing then "yes" else "no"}
+                  disable_while_typing = ${
+                    if cfg.settings.input.touchpad.disable_while_typing then "yes" else "no"
+                  }
               }
           }
 
@@ -436,84 +484,99 @@ in
         '';
 
         # Waybar configuration file
-        "xdg/waybar/config".text = lib.mkIf cfg.waybar.enable (builtins.toJSON {
-          mainBar = {
-            layer = "top";
-            position = cfg.waybar.position;
-            height = 35;
-            spacing = 4;
+        "xdg/waybar/config".text = lib.mkIf cfg.waybar.enable (
+          builtins.toJSON {
+            mainBar = {
+              layer = "top";
+              inherit (cfg.waybar) position;
+              height = 35;
+              spacing = 4;
 
-            modules-left = [ "hyprland/workspaces" "hyprland/window" ];
-            modules-center = [ "clock" ];
-            modules-right = [
-              "pulseaudio"
-              "network"
-              "battery"
-              "tray"
-            ];
+              modules-left = [
+                "hyprland/workspaces"
+                "hyprland/window"
+              ];
+              modules-center = [ "clock" ];
+              modules-right = [
+                "pulseaudio"
+                "network"
+                "battery"
+                "tray"
+              ];
 
-            # Module configurations
-            "hyprland/workspaces" = lib.mkIf cfg.waybar.modules.workspaces {
-              disable-scroll = true;
-              all-outputs = true;
-            };
-
-            "hyprland/window" = lib.mkIf cfg.waybar.modules.window {
-              format = "{title}";
-              max-length = 50;
-            };
-
-            clock = lib.mkIf cfg.waybar.modules.clock {
-              timezone = "UTC";
-              tooltip-format = "<big>{:%Y %B}</big>\\n<tt><small>{calendar}</small></tt>";
-              format-alt = "{:%Y-%m-%d}";
-            };
-
-            battery = lib.mkIf cfg.waybar.modules.battery {
-              states = {
-                warning = 30;
-                critical = 15;
+              # Module configurations
+              "hyprland/workspaces" = lib.mkIf cfg.waybar.modules.workspaces {
+                disable-scroll = true;
+                all-outputs = true;
               };
-              format = "{capacity}% {icon}";
-              format-charging = "{capacity}% ";
-              format-plugged = "{capacity}% ";
-              format-alt = "{time} {icon}";
-              format-icons = [ "" "" "" "" "" ];
-            };
 
-            network = lib.mkIf cfg.waybar.modules.network {
-              format-wifi = "{essid} ({signalStrength}%) ";
-              format-ethernet = "{ipaddr}/{cidr} ";
-              tooltip-format = "{ifname} via {gwaddr} ";
-              format-linked = "{ifname} (No IP) ";
-              format-disconnected = "Disconnected ⚠";
-              format-alt = "{ifname}: {ipaddr}/{cidr}";
-            };
-
-            pulseaudio = lib.mkIf cfg.waybar.modules.pulseaudio {
-              format = "{volume}% {icon} {format_source}";
-              format-bluetooth = "{volume}% {icon} {format_source}";
-              format-bluetooth-muted = " {icon} {format_source}";
-              format-muted = " {format_source}";
-              format-source = "{volume}% ";
-              format-source-muted = "";
-              format-icons = {
-                headphone = "";
-                hands-free = "";
-                headset = "";
-                phone = "";
-                portable = "";
-                car = "";
-                default = [ "" "" "" ];
+              "hyprland/window" = lib.mkIf cfg.waybar.modules.window {
+                format = "{title}";
+                max-length = 50;
               };
-              on-click = "pavucontrol";
-            };
 
-            tray = lib.mkIf cfg.waybar.modules.tray {
-              spacing = 10;
+              clock = lib.mkIf cfg.waybar.modules.clock {
+                timezone = "UTC";
+                tooltip-format = "<big>{:%Y %B}</big>\\n<tt><small>{calendar}</small></tt>";
+                format-alt = "{:%Y-%m-%d}";
+              };
+
+              battery = lib.mkIf cfg.waybar.modules.battery {
+                states = {
+                  warning = 30;
+                  critical = 15;
+                };
+                format = "{capacity}% {icon}";
+                format-charging = "{capacity}% ";
+                format-plugged = "{capacity}% ";
+                format-alt = "{time} {icon}";
+                format-icons = [
+                  ""
+                  ""
+                  ""
+                  ""
+                  ""
+                ];
+              };
+
+              network = lib.mkIf cfg.waybar.modules.network {
+                format-wifi = "{essid} ({signalStrength}%) ";
+                format-ethernet = "{ipaddr}/{cidr} ";
+                tooltip-format = "{ifname} via {gwaddr} ";
+                format-linked = "{ifname} (No IP) ";
+                format-disconnected = "Disconnected ⚠";
+                format-alt = "{ifname}: {ipaddr}/{cidr}";
+              };
+
+              pulseaudio = lib.mkIf cfg.waybar.modules.pulseaudio {
+                format = "{volume}% {icon} {format_source}";
+                format-bluetooth = "{volume}% {icon} {format_source}";
+                format-bluetooth-muted = " {icon} {format_source}";
+                format-muted = " {format_source}";
+                format-source = "{volume}% ";
+                format-source-muted = "";
+                format-icons = {
+                  headphone = "";
+                  hands-free = "";
+                  headset = "";
+                  phone = "";
+                  portable = "";
+                  car = "";
+                  default = [
+                    ""
+                    ""
+                    ""
+                  ];
+                };
+                on-click = "pavucontrol";
+              };
+
+              tray = lib.mkIf cfg.waybar.modules.tray {
+                spacing = 10;
+              };
             };
-          };
-        });
+          }
+        );
 
         # Waybar style configuration
         "xdg/waybar/style.css".text = lib.mkIf cfg.waybar.enable ''
@@ -713,10 +776,16 @@ in
 
       config = {
         common = {
-          default = [ "hyprland" "gtk" ];
+          default = [
+            "hyprland"
+            "gtk"
+          ];
         };
         hyprland = {
-          default = [ "hyprland" "gtk" ];
+          default = [
+            "hyprland"
+            "gtk"
+          ];
         };
       };
     };
@@ -787,7 +856,7 @@ in
         font-awesome
         noto-fonts
         noto-fonts-cjk-sans
-        noto-fonts-emoji
+        noto-fonts-color-emoji
       ];
 
       fontconfig = {
@@ -797,7 +866,6 @@ in
         };
       };
     };
-
 
     # Assertions to prevent conflicts
     assertions = [

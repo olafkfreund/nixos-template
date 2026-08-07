@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   # Nixvim configuration with modern Neovim setup
@@ -121,7 +126,7 @@
             enable = true;
             settings = {
               formatting = {
-                command = [ "${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt" ];
+                command = [ "${pkgs.nixfmt}/bin/nixfmt" ];
               };
             };
           };
@@ -303,9 +308,18 @@
           mappings = {
             custom_only = false;
             list = [
-              { key = "l"; action = "edit"; }
-              { key = "h"; action = "close_node"; }
-              { key = "v"; action = "vsplit"; }
+              {
+                key = "l";
+                action = "edit";
+              }
+              {
+                key = "h";
+                action = "close_node";
+              }
+              {
+                key = "v";
+                action = "vsplit";
+              }
             ];
           };
         };
@@ -359,9 +373,17 @@
         theme = "catppuccin";
         sections = {
           lualine_a = [ "mode" ];
-          lualine_b = [ "branch" "diff" "diagnostics" ];
+          lualine_b = [
+            "branch"
+            "diff"
+            "diagnostics"
+          ];
           lualine_c = [ "filename" ];
-          lualine_x = [ "encoding" "fileformat" "filetype" ];
+          lualine_x = [
+            "encoding"
+            "fileformat"
+            "filetype"
+          ];
           lualine_y = [ "progress" ];
           lualine_z = [ "location" ];
         };
@@ -408,11 +430,21 @@
         enable = true;
         settings = {
           signs = {
-            add = { text = "+"; };
-            change = { text = "~"; };
-            delete = { text = "_"; };
-            topdelete = { text = "‾"; };
-            changedelete = { text = "~"; };
+            add = {
+              text = "+";
+            };
+            change = {
+              text = "~";
+            };
+            delete = {
+              text = "_";
+            };
+            topdelete = {
+              text = "‾";
+            };
+            changedelete = {
+              text = "~";
+            };
           };
           current_line_blame = true;
           current_line_blame_opts = {
@@ -444,8 +476,14 @@
         settings = {
           check_ts = true;
           ts_config = {
-            lua = [ "string" "source" ];
-            javascript = [ "string" "template_string" ];
+            lua = [
+              "string"
+              "source"
+            ];
+            javascript = [
+              "string"
+              "template_string"
+            ];
             java = false;
           };
         };
@@ -498,7 +536,10 @@
       # Better escape
       better-escape = {
         enable = true;
-        mapping = [ "jk" "jj" ];
+        mapping = [
+          "jk"
+          "jj"
+        ];
       };
 
       # Markdown preview
@@ -861,12 +902,12 @@
     rust-analyzer # Rust LSP
     gopls # Go LSP
     pyright # Python LSP
-    nodePackages.typescript-language-server # TypeScript LSP
-    nodePackages.bash-language-server # Bash LSP
+    typescript-language-server # TypeScript LSP
+    bash-language-server # Bash LSP
     yaml-language-server # YAML LSP
 
     # Formatters and linters
-    nixpkgs-fmt # Nix formatter
+    nixfmt # Nix formatter (official, RFC 166)
     rustfmt # Rust formatter
     gofmt # Go formatter
     black # Python formatter
@@ -900,7 +941,7 @@
     # Fonts for better display
     jetbrains-mono
     fira-code
-    nerdfonts
+    nerd-fonts.jetbrains-mono
   ];
 
   # Set environment variables for Nixvim
@@ -918,7 +959,11 @@
     comment = "Edit text files with Neovim configured via Nix";
     icon = "nvim";
     exec = "nvim %F";
-    categories = [ "Utility" "TextEditor" "Development" ];
+    categories = [
+      "Utility"
+      "TextEditor"
+      "Development"
+    ];
     mimeType = [
       "text/english"
       "text/plain"

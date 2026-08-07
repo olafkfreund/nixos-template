@@ -1,6 +1,5 @@
 # Package overlays for custom packages and modifications
-{}:
-{
+_: {
   # Default overlay - modify packages or add custom ones
   default = _final: _prev: {
     # Example: Override a package version

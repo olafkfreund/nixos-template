@@ -11,7 +11,7 @@
 
     # Application launcher and menus
     wofi
-    rofi-wayland
+    rofi
 
     # Terminal emulators
     alacritty

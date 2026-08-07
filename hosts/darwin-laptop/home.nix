@@ -1,6 +1,9 @@
 # Darwin Laptop Home Manager Configuration
 # Uses shared profiles optimized for mobile computing
-{ config, pkgs, lib, inputs, outputs, ... }:
+{
+  lib,
+  ...
+}:
 
 {
   # Home Manager configuration
@@ -8,7 +11,7 @@
     useGlobalPkgs = true;
     useUserPackages = true;
 
-    users.admin = { config, pkgs, ... }: {
+    users.admin = { pkgs, ... }: {
       # Import shared Home Manager profiles
       imports = [
         ../../home/profiles/base.nix # Base configuration with git, bash, etc.
@@ -166,15 +169,17 @@
       # Enhanced starship configuration for mobile (battery indicator)
       programs.starship.settings = {
         # Add battery module to format
-        format = lib.mkForce (lib.concatStrings [
-          "$directory"
-          "$git_branch"
-          "$git_status"
-          "$nodejs"
-          "$python"
-          "$battery"
-          "$character"
-        ]);
+        format = lib.mkForce (
+          lib.concatStrings [
+            "$directory"
+            "$git_branch"
+            "$git_status"
+            "$nodejs"
+            "$python"
+            "$battery"
+            "$character"
+          ]
+        );
 
         # Battery status in prompt
         battery = {
@@ -235,8 +240,16 @@
           };
 
           key_bindings = [
-            { key = "V"; mods = "Command"; action = "Paste"; }
-            { key = "C"; mods = "Command"; action = "Copy"; }
+            {
+              key = "V";
+              mods = "Command";
+              action = "Paste";
+            }
+            {
+              key = "C";
+              mods = "Command";
+              action = "Copy";
+            }
           ];
         };
       };

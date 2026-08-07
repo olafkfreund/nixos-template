@@ -1,7 +1,13 @@
 # Example usage of the expert NixOS improvements
 # This shows how to use the new features in your host configurations
 
-{ config, lib, pkgs, flakeMeta, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  flakeMeta,
+  ...
+}:
 
 {
   # 1. SOPS Secrets Management
@@ -38,7 +44,9 @@
       "app-config" = {
         content = ''
           # Application configuration
-          database_url=postgresql://user:${config.sops.placeholder."database/postgres/password"}@localhost/myapp
+          database_url=postgresql://user:${
+            config.sops.placeholder."database/postgres/password"
+          }@localhost/myapp
           github_token=${config.sops.placeholder."api/github-token"}
 
           # Build information from flake metadata
@@ -73,7 +81,10 @@
     };
 
     allowedPorts = {
-      tcp = [ 8080 9000 ]; # Custom application ports
+      tcp = [
+        8080
+        9000
+      ]; # Custom application ports
       udp = [ 51820 ]; # WireGuard VPN
     };
 
@@ -137,11 +148,15 @@
 
   # 5. Conditional Configuration Based on Profile
   services.nginx.enable = flakeMeta.profile == "server";
-  services.xserver.enable = builtins.elem flakeMeta.profile [ "desktop" "gaming" ];
+  services.xserver.enable = builtins.elem flakeMeta.profile [
+    "desktop"
+    "gaming"
+  ];
 
   # Development tools only on development profile
-  environment.systemPackages = with pkgs;
-    [ ] ++ lib.optionals (flakeMeta.profile == "development") [
+  environment.systemPackages =
+    with pkgs;
+    lib.optionals (flakeMeta.profile == "development") [
       nodejs
       python3
       vscode

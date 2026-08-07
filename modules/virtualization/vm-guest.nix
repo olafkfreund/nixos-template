@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -10,7 +15,14 @@ in
     enable = mkEnableOption "Virtual machine guest optimizations";
 
     type = mkOption {
-      type = types.enum [ "auto" "qemu" "virtualbox" "vmware" "hyperv" "xen" ];
+      type = types.enum [
+        "auto"
+        "qemu"
+        "virtualbox"
+        "vmware"
+        "hyperv"
+        "xen"
+      ];
       default = "auto";
       description = "Virtual machine type (auto-detect if possible)";
     };
@@ -92,10 +104,11 @@ in
     # Auto-detect VM type if not specified
     assertions = [
       {
-        assertion = cfg.type != "auto" || (
-          pathExists "/sys/class/dmi/id/product_name" ||
-            pathExists "/sys/devices/virtual/dmi/id/product_name"
-        );
+        assertion =
+          cfg.type != "auto"
+          || (
+            pathExists "/sys/class/dmi/id/product_name" || pathExists "/sys/devices/virtual/dmi/id/product_name"
+          );
         message = "Cannot auto-detect VM type. Please specify manually.";
       }
     ];
@@ -129,7 +142,8 @@ in
           "console=tty0"
           "quiet"
           "loglevel=3"
-        ] ++ optionals cfg.serial.enable [
+        ]
+        ++ optionals cfg.serial.enable [
           "console=${cfg.serial.device},${toString cfg.serial.baudRate}"
         ];
 
@@ -164,11 +178,13 @@ in
         # Kernel modules for runtime
         kernelModules = [
           "virtio_console"
-        ] ++ optionals (cfg.type == "virtualbox") [
+        ]
+        ++ optionals (cfg.type == "virtualbox") [
           "vboxguest"
           "vboxsf"
           "vboxvideo"
-        ] ++ optionals (cfg.type == "vmware") [
+        ]
+        ++ optionals (cfg.type == "vmware") [
           "vmw_balloon"
           "vmw_pvscsi"
           "vmwgfx"
@@ -214,17 +230,22 @@ in
           enable = true;
           enable32Bit = true;
 
-          extraPackages = with pkgs; [
-            mesa
-            libGL
-          ] ++ optionals (cfg.type == "qemu" || cfg.type == "auto") [
-            virglrenderer
-            qemu
-          ] ++ optionals (cfg.type == "virtualbox") [
-            virtualboxGuestAdditions
-          ] ++ optionals (cfg.type == "vmware") [
-            xorg.xf86videovmware
-          ];
+          extraPackages =
+            with pkgs;
+            [
+              mesa
+              libGL
+            ]
+            ++ optionals (cfg.type == "qemu" || cfg.type == "auto") [
+              virglrenderer
+              qemu
+            ]
+            ++ optionals (cfg.type == "virtualbox") [
+              virtualboxGuestAdditions
+            ]
+            ++ optionals (cfg.type == "vmware") [
+              xorg.xf86videovmware
+            ];
         };
 
         # Audio disabled in VMs by default (use services.pulseaudio if needed)
@@ -313,37 +334,42 @@ in
     ];
 
     # System packages for VM environments
-    environment.systemPackages = with pkgs; [
-      # Basic VM tools
-      qemu-utils
+    environment.systemPackages =
+      with pkgs;
+      [
+        # Basic VM tools
+        qemu-utils
 
-      # Network diagnostics
-      inetutils
-      netcat
+        # Network diagnostics
+        inetutils
+        netcat
 
-      # System monitoring
-      htop
-      iotop
-      lsof
+        # System monitoring
+        htop
+        iotop
+        lsof
 
-      # File operations
-      rsync
-      unzip
+        # File operations
+        rsync
+        unzip
 
-      # Text editors
-      vim
-      nano
-    ] ++ optionals (cfg.type == "qemu" || cfg.type == "auto") [
-      # QEMU-specific tools
-      spice-gtk
-      virtiofsd
-    ] ++ optionals (cfg.type == "virtualbox") [
-      # VirtualBox guest additions
-      virtualboxGuestAdditions
-    ] ++ optionals (cfg.type == "vmware") [
-      # VMware tools would go here
-      open-vm-tools
-    ];
+        # Text editors
+        vim
+        nano
+      ]
+      ++ optionals (cfg.type == "qemu" || cfg.type == "auto") [
+        # QEMU-specific tools
+        spice-gtk
+        virtiofsd
+      ]
+      ++ optionals (cfg.type == "virtualbox") [
+        # VirtualBox guest additions
+        virtualboxGuestAdditions
+      ]
+      ++ optionals (cfg.type == "vmware") [
+        # VMware tools would go here
+        open-vm-tools
+      ];
 
     # Performance optimizations for VMs
     systemd = mkMerge [
@@ -403,7 +429,10 @@ in
     # Filesystem optimizations for VMs
     fileSystems = mkIf cfg.optimizations.storage {
       "/" = {
-        options = [ "noatime" "nodiratime" ];
+        options = [
+          "noatime"
+          "nodiratime"
+        ];
       };
     };
 
@@ -413,14 +442,12 @@ in
       cpuFreqGovernor = mkDefault null;
     };
 
-
     # Environment variables for VM detection
     environment.sessionVariables = {
       # Help applications detect VM environment
       NIXOS_IN_VM = "1";
       XDG_CURRENT_DESKTOP = mkIf (cfg.type == "qemu") "GNOME"; # Help with app compatibility
     };
-
 
   };
 }
