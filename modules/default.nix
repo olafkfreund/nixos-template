@@ -11,7 +11,6 @@
     ./security
     ./services
     ./virtualization
-    ./wsl
     ./template.nix
   ];
 }
