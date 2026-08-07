@@ -28,18 +28,6 @@ let
     nixpkgs.config.permittedInsecurePackages = [ "libsoup-2.74.3" ];
   };
 
-  # Home Manager profile paths (absolute from flake root) — shared by all builders
-  homeProfiles = {
-    base = self + "/home/profiles/base.nix";
-    desktop = self + "/home/profiles/desktop.nix";
-    development = self + "/home/profiles/development.nix";
-    server = self + "/home/profiles/server.nix";
-    gnome = self + "/home/profiles/gnome.nix";
-    hyprland = self + "/home/profiles/hyprland.nix";
-    niri = self + "/home/profiles/niri.nix";
-    headless = self + "/home/profiles/headless.nix";
-  };
-
   # Comprehensive flake metadata — shared by all builders so every host
   # (including WSL) can use modules/core/system-identification.nix.
   mkFlakeMeta =
@@ -78,7 +66,7 @@ let
     nixpkgs.lib.nixosSystem {
       inherit system;
       specialArgs = {
-        inherit inputs outputs homeProfiles;
+        inherit inputs outputs;
         flakeMeta = mkFlakeMeta { inherit hostname profile system; };
       };
       modules = [
@@ -160,7 +148,7 @@ let
     nixpkgs.lib.nixosSystem {
       inherit system;
       specialArgs = {
-        inherit inputs outputs homeProfiles;
+        inherit inputs outputs;
         flakeMeta = mkFlakeMeta { inherit hostname profile system; };
       };
       modules = [

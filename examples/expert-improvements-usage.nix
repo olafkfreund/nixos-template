@@ -10,55 +10,13 @@
 }:
 
 {
-  # 1. SOPS Secrets Management
-  modules.security.sops = {
+  # 1. Secrets management with agenix
+  # (This template uses agenix, not sops-nix. Secrets are age-encrypted in the
+  # repository and decrypted to tmpfs at boot, never into the Nix store.)
+  modules.security.agenix = {
     enable = true;
-    defaultSopsFile = ./secrets/secrets.yaml; # Your secrets file
-
     secrets = {
-      # Database credentials
-      "database/postgres/password" = {
-        owner = "postgresql";
-        group = "postgresql";
-        mode = "0440";
-        restartUnits = [ "postgresql.service" ];
-      };
-
-      # API keys
-      "api/github-token" = {
-        owner = "git";
-        mode = "0400";
-      };
-
-      # SSL certificates
-      "ssl/example.com/cert" = {
-        owner = "nginx";
-        group = "nginx";
-        mode = "0444";
-        reloadUnits = [ "nginx.service" ];
-      };
-    };
-
-    # Configuration templates combining multiple secrets
-    templates = {
-      "app-config" = {
-        content = ''
-          # Application configuration
-          database_url=postgresql://user:${
-            config.sops.placeholder."database/postgres/password"
-          }@localhost/myapp
-          github_token=${config.sops.placeholder."api/github-token"}
-
-          # Build information from flake metadata
-          build_date="${flakeMeta.buildDate}"
-          build_revision="${flakeMeta.flakeShortRev}"
-          hostname="${flakeMeta.hostname}"
-        '';
-        path = "/run/secrets/app.env";
-        owner = "myapp";
-        group = "myapp";
-        mode = "0440";
-      };
+      "database/postgres-password".file = ../secrets/postgres-password.age;
     };
   };
 
@@ -118,8 +76,8 @@
 
     serviceConfig = {
       ExecStart = "${pkgs.myapp}/bin/myapp";
-      # Use secret from SOPS
-      EnvironmentFile = config.sops.templates."app-config".path;
+      # Secret decrypted by agenix at boot, read at runtime
+      EnvironmentFile = config.age.secrets."database/postgres-password".path;
     };
   };
 

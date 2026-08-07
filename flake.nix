@@ -17,28 +17,10 @@
       "nixpkgs-unfree.cachix.org-1:hqvoInulhbV4nJ9yJOEr+4wxhDV4xq2d1DK7S6Nj6rs="
     ];
 
-    # Parallel building optimization
-    max-jobs = "auto";
-    cores = 0;
-
-    # Advanced build optimizations
-    keep-outputs = true;
-    keep-derivations = true;
-    auto-optimise-store = true;
-
-    # Network and download optimization
-    http-connections = 25;
-    download-attempts = 3;
-
-    # Build isolation and security
-    sandbox = true;
-    restrict-eval = false;
-
-    # Experimental features for advanced functionality
-    experimental-features = [
-      "nix-command"
-      "flakes"
-    ];
+    # Only substituters are kept here. max-jobs, cores, sandbox, keep-outputs
+    # and friends are silently ignored unless the user is a trusted user, so
+    # setting them in a flake gives a false sense of configuration. Those belong
+    # in the user's own nix.conf.
   };
 
   inputs = {
@@ -72,10 +54,6 @@
     };
     nix-darwin = {
       url = "github:LnL7/nix-darwin";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    sops-nix = {
-      url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-generators = {
