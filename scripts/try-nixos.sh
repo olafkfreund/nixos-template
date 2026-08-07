@@ -115,30 +115,30 @@ show_virtualization_setup() {
   echo
 
   case $DISTRO in
-    ubuntu | debian)
-      echo "  sudo apt update"
-      echo "  sudo apt install qemu-kvm libvirt-daemon-system libvirt-clients"
-      echo '  sudo usermod -a -G libvirt,kvm $USER'
-      ;;
-    fedora | rhel | centos)
-      echo "  sudo dnf install qemu-kvm libvirt"
-      echo '  sudo usermod -a -G libvirt,kvm $USER'
-      echo "  sudo systemctl enable --now libvirtd"
-      ;;
-    arch)
-      echo "  sudo pacman -S qemu-base libvirt"
-      echo '  sudo usermod -a -G libvirt,kvm $USER'
-      echo "  sudo systemctl enable --now libvirtd"
-      ;;
-    opensuse*)
-      echo "  sudo zypper install qemu-kvm libvirt"
-      echo '  sudo usermod -a -G libvirt,kvm $USER'
-      echo "  sudo systemctl enable --now libvirtd"
-      ;;
-    *)
-      echo "  Install qemu-kvm and libvirt packages for your distribution"
-      echo "  Add your user to kvm and libvirt groups"
-      ;;
+  ubuntu | debian)
+    echo "  sudo apt update"
+    echo "  sudo apt install qemu-kvm libvirt-daemon-system libvirt-clients"
+    echo '  sudo usermod -a -G libvirt,kvm $USER'
+    ;;
+  fedora | rhel | centos)
+    echo "  sudo dnf install qemu-kvm libvirt"
+    echo '  sudo usermod -a -G libvirt,kvm $USER'
+    echo "  sudo systemctl enable --now libvirtd"
+    ;;
+  arch)
+    echo "  sudo pacman -S qemu-base libvirt"
+    echo '  sudo usermod -a -G libvirt,kvm $USER'
+    echo "  sudo systemctl enable --now libvirtd"
+    ;;
+  opensuse*)
+    echo "  sudo zypper install qemu-kvm libvirt"
+    echo '  sudo usermod -a -G libvirt,kvm $USER'
+    echo "  sudo systemctl enable --now libvirtd"
+    ;;
+  *)
+    echo "  Install qemu-kvm and libvirt packages for your distribution"
+    echo "  Add your user to kvm and libvirt groups"
+    ;;
   esac
 
   echo
@@ -157,9 +157,9 @@ list_vms() {
 
       # Skip non-VM configurations
       case $vm_name in
-        *-template | common.nix)
-          continue
-          ;;
+      *-template | common.nix)
+        continue
+        ;;
       esac
 
       config_file="$vm_dir/configuration.nix"

@@ -18,6 +18,7 @@ This directory contains per-machine NixOS (and nix-darwin) configurations.
    ```
 
 1. **Add your host** to `flake.nix` (follow the existing `mkSystem` call pattern).
+
 1. **Deploy:**
 
    ```

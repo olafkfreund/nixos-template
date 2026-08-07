@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Install Nix
         uses: cachix/install-nix-action@v25
         with:
@@ -55,7 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0 # Fetch full history for changelog
       - name: Get version
@@ -72,7 +72,7 @@ jobs:
         id: changelog
         run: "echo \"Generating changelog...\"\n\n# Get the previous tag\nPREV_TAG=$(git tag --sort=-version:refname | grep -v \"${{ steps.get-version.outputs.version }}\" | head -n1)\n\nif [ -n \"$PREV_TAG\" ]; then\n  echo \"Generating changelog from $PREV_TAG to ${{ steps.get-version.outputs.version }}\"\n  CHANGELOG=$(git log --pretty=format:\"- %s (%h)\" \"$PREV_TAG..${{ steps.get-version.outputs.version }}\" | head -20)\nelse\n  echo \"No previous tag found, generating changelog from beginning\"\n  CHANGELOG=$(git log --pretty=format:\"- %s (%h)\" | head -20)\nfi\n\n# Create release notes\ncat > release-notes.md << 'EOF'\n## NixOS Template Release ${{ steps.get-version.outputs.version }}\n\nThis release includes the following changes:\n\n### Changes\n$CHANGELOG\n\n### Features\n\n- Comprehensive hardware detection (laptop/desktop/workstation/server)\n- Power management optimization for all hardware types\n- Automated setup scripts with smart defaults\n- VM support with automatic detection and optimization\n- Gaming configuration with Steam and performance optimizations  \n- Container support with Podman\n- Virtualization support with libvirt\n- Secrets management with agenix\n- Editor configurations (Emacs, Nixvim) with LSP\n- Multiple desktop environments (GNOME, KDE, Hyprland, Niri)\n- User template system with 5 predefined profiles\n- Comprehensive documentation and guides\n\n### Installation\n\n```bash\n# Clone the template\ngit clone https://github.com/your-username/nixos-template.git\ncd nixos-template\n\n# Check prerequisites\n./scripts/check-prerequisites.sh\n\n# Quick setup\n./scripts/quick-setup.sh\n\n# Or full interactive setup\n./scripts/nixos-setup.sh\n```\n\n### Documentation\n\n- [Setup Guide](docs/SETUP.md) - Comprehensive setup instructions\n- [Power Management](docs/POWER-MANAGEMENT.md) - Hardware-specific power optimization\n- [VM Support](docs/VM-SUPPORT.md) - Virtual machine configuration guide\n\n### Requirements\n\n- NixOS 23.11 or later\n- Nix with flakes enabled\n- 4GB+ RAM recommended\n- 10GB+ free disk space\nEOF\n\n# Set output for release creation\n{\n  echo 'release-notes<<EOF'\n  cat release-notes.md\n  echo 'EOF'\n} >> $GITHUB_OUTPUT\n"
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.get-version.outputs.version }}
           name: NixOS Template ${{ steps.get-version.outputs.version }}

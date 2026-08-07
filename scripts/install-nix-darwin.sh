@@ -88,22 +88,22 @@ echo ""
 read -r -p "Choose a configuration (1-3): " config_choice
 
 case $config_choice in
-  1)
-    CONFIG_TYPE="desktop"
-    CONFIG_DESC="Desktop"
-    ;;
-  2)
-    CONFIG_TYPE="laptop"
-    CONFIG_DESC="Laptop"
-    ;;
-  3)
-    CONFIG_TYPE="server"
-    CONFIG_DESC="Server"
-    ;;
-  *)
-    log_error "Invalid choice: $config_choice"
-    exit 1
-    ;;
+1)
+  CONFIG_TYPE="desktop"
+  CONFIG_DESC="Desktop"
+  ;;
+2)
+  CONFIG_TYPE="laptop"
+  CONFIG_DESC="Laptop"
+  ;;
+3)
+  CONFIG_TYPE="server"
+  CONFIG_DESC="Server"
+  ;;
+*)
+  log_error "Invalid choice: $config_choice"
+  exit 1
+  ;;
 esac
 
 # Determine configuration name based on architecture

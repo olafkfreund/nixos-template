@@ -291,18 +291,18 @@ check_hardware_support() {
   local arch
   arch=$(uname -m)
   case "$arch" in
-    x86_64)
-      print_success "x86_64 architecture (fully supported)"
-      ;;
-    aarch64)
-      print_success "ARM64 architecture (supported)"
-      ;;
-    i686)
-      print_warning "32-bit x86 architecture (limited support)"
-      ;;
-    *)
-      print_warning "Unsupported architecture: $arch"
-      ;;
+  x86_64)
+    print_success "x86_64 architecture (fully supported)"
+    ;;
+  aarch64)
+    print_success "ARM64 architecture (supported)"
+    ;;
+  i686)
+    print_warning "32-bit x86 architecture (limited support)"
+    ;;
+  *)
+    print_warning "Unsupported architecture: $arch"
+    ;;
   esac
 
   # Check for virtualization capabilities
@@ -430,30 +430,30 @@ check_hardware_type() {
 
         # Provide template recommendations
         case "$hardware_type" in
-          laptop)
-            print_info "Recommended template: laptop-template"
-            print_info "Power profile: Battery optimization with TLP"
-            print_info "Desktop environment: GNOME (good power management)"
-            ;;
-          desktop)
-            print_info "Recommended template: desktop-template"
-            print_info "Power profile: Performance optimization"
-            print_info "Desktop environment: GNOME or KDE"
-            ;;
-          workstation)
-            print_info "Recommended template: desktop-template (workstation variant)"
-            print_info "Power profile: Balanced performance"
-            print_info "Desktop environment: KDE (professional features)"
-            ;;
-          server)
-            print_info "Recommended template: server-template"
-            print_info "Power profile: Reliability and consistent performance"
-            print_info "Desktop environment: None (headless)"
-            ;;
-          *)
-            print_info "Recommended template: desktop-template (default)"
-            print_info "Power profile: Balanced"
-            ;;
+        laptop)
+          print_info "Recommended template: laptop-template"
+          print_info "Power profile: Battery optimization with TLP"
+          print_info "Desktop environment: GNOME (good power management)"
+          ;;
+        desktop)
+          print_info "Recommended template: desktop-template"
+          print_info "Power profile: Performance optimization"
+          print_info "Desktop environment: GNOME or KDE"
+          ;;
+        workstation)
+          print_info "Recommended template: desktop-template (workstation variant)"
+          print_info "Power profile: Balanced performance"
+          print_info "Desktop environment: KDE (professional features)"
+          ;;
+        server)
+          print_info "Recommended template: server-template"
+          print_info "Power profile: Reliability and consistent performance"
+          print_info "Desktop environment: None (headless)"
+          ;;
+        *)
+          print_info "Recommended template: desktop-template (default)"
+          print_info "Power profile: Balanced"
+          ;;
         esac
       else
         print_warning "Unable to determine hardware type"

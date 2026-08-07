@@ -382,46 +382,46 @@ main() {
 
 # Handle script arguments
 case "${1:-}" in
-  --help | -h)
-    echo "NixOS on WSL2 Installation Script"
-    echo
-    echo "Usage: $0 [options]"
-    echo
-    echo "Options:"
-    echo "  --help, -h     Show this help message"
-    echo "  --check        Check prerequisites only"
-    echo "  --uninstall    Uninstall NixOS WSL"
-    echo
-    echo "This script installs NixOS using NixOS-WSL with the template configuration."
-    echo "It requires Windows 10/11 with WSL 2 installed."
-    echo
-    exit 0
-    ;;
-  --check)
-    log_info "Checking prerequisites only..."
-    check_windows
-    check_wsl_version
-    check_prerequisites
-    log_success "Prerequisites check completed"
-    exit 0
-    ;;
-  --uninstall)
-    log_info "Uninstalling NixOS WSL..."
-    if wsl.exe --list --quiet | grep -q "$WSL_DISTRO_NAME"; then
-      wsl.exe --unregister "$WSL_DISTRO_NAME"
-      log_success "NixOS WSL uninstalled successfully"
-    else
-      log_warning "NixOS WSL distro '$WSL_DISTRO_NAME' not found"
-    fi
-    exit 0
-    ;;
-  "")
-    # No arguments, run main installation
-    main
-    ;;
-  *)
-    log_error "Unknown argument: $1"
-    echo "Use --help for usage information"
-    exit 1
-    ;;
+--help | -h)
+  echo "NixOS on WSL2 Installation Script"
+  echo
+  echo "Usage: $0 [options]"
+  echo
+  echo "Options:"
+  echo "  --help, -h     Show this help message"
+  echo "  --check        Check prerequisites only"
+  echo "  --uninstall    Uninstall NixOS WSL"
+  echo
+  echo "This script installs NixOS using NixOS-WSL with the template configuration."
+  echo "It requires Windows 10/11 with WSL 2 installed."
+  echo
+  exit 0
+  ;;
+--check)
+  log_info "Checking prerequisites only..."
+  check_windows
+  check_wsl_version
+  check_prerequisites
+  log_success "Prerequisites check completed"
+  exit 0
+  ;;
+--uninstall)
+  log_info "Uninstalling NixOS WSL..."
+  if wsl.exe --list --quiet | grep -q "$WSL_DISTRO_NAME"; then
+    wsl.exe --unregister "$WSL_DISTRO_NAME"
+    log_success "NixOS WSL uninstalled successfully"
+  else
+    log_warning "NixOS WSL distro '$WSL_DISTRO_NAME' not found"
+  fi
+  exit 0
+  ;;
+"")
+  # No arguments, run main installation
+  main
+  ;;
+*)
+  log_error "Unknown argument: $1"
+  echo "Use --help for usage information"
+  exit 1
+  ;;
 esac

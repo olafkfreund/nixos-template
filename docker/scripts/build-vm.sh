@@ -103,14 +103,14 @@ list_templates() {
 validate_format() {
   local format="$1"
   case "$format" in
-    virtualbox | hyperv | vmware | qemu | proxmox | all)
-      return 0
-      ;;
-    *)
-      log_error "Unsupported format: $format"
-      log_info "Supported formats: virtualbox, hyperv, vmware, qemu, proxmox, all"
-      return 1
-      ;;
+  virtualbox | hyperv | vmware | qemu | proxmox | all)
+    return 0
+    ;;
+  *)
+    log_error "Unsupported format: $format"
+    log_info "Supported formats: virtualbox, hyperv, vmware, qemu, proxmox, all"
+    return 1
+    ;;
   esac
 }
 
@@ -118,26 +118,26 @@ validate_format() {
 get_template_path() {
   local template="$1"
   case "$template" in
-    desktop)
-      echo "/templates/desktop-template.nix"
-      ;;
-    server)
-      echo "/templates/server-template.nix"
-      ;;
-    gaming)
-      echo "/templates/gaming-template.nix"
-      ;;
-    minimal)
-      echo "/templates/minimal-template.nix"
-      ;;
-    development)
-      echo "/templates/development-template.nix"
-      ;;
-    *)
-      log_error "Unknown template: $template"
-      list_templates
-      return 1
-      ;;
+  desktop)
+    echo "/templates/desktop-template.nix"
+    ;;
+  server)
+    echo "/templates/server-template.nix"
+    ;;
+  gaming)
+    echo "/templates/gaming-template.nix"
+    ;;
+  minimal)
+    echo "/templates/minimal-template.nix"
+    ;;
+  development)
+    echo "/templates/development-template.nix"
+    ;;
+  *)
+    log_error "Unknown template: $template"
+    list_templates
+    return 1
+    ;;
   esac
 }
 
@@ -290,51 +290,51 @@ main() {
   # Parse arguments
   while [[ $# -gt 0 ]]; do
     case $1 in
-      -h | --help)
-        show_help
-        exit 0
-        ;;
-      --list-templates)
-        list_templates
-        exit 0
-        ;;
-      -c | --config)
-        config="$2"
-        shift 2
-        ;;
-      -o | --output)
-        output_dir="$2"
-        shift 2
-        ;;
-      -s | --disk-size)
-        disk_size="$2"
-        shift 2
-        ;;
-      -m | --memory)
-        memory_size="$2"
-        shift 2
-        ;;
-      -n | --vm-name)
-        vm_name="$2"
-        shift 2
-        ;;
-      -t | --template)
-        template="$2"
-        shift 2
-        ;;
-      --validate-only)
-        validate_only=true
-        shift
-        ;;
-      virtualbox | hyperv | vmware | qemu | proxmox | all)
-        format="$1"
-        shift
-        ;;
-      *)
-        log_error "Unknown option: $1"
-        show_help
-        exit 1
-        ;;
+    -h | --help)
+      show_help
+      exit 0
+      ;;
+    --list-templates)
+      list_templates
+      exit 0
+      ;;
+    -c | --config)
+      config="$2"
+      shift 2
+      ;;
+    -o | --output)
+      output_dir="$2"
+      shift 2
+      ;;
+    -s | --disk-size)
+      disk_size="$2"
+      shift 2
+      ;;
+    -m | --memory)
+      memory_size="$2"
+      shift 2
+      ;;
+    -n | --vm-name)
+      vm_name="$2"
+      shift 2
+      ;;
+    -t | --template)
+      template="$2"
+      shift 2
+      ;;
+    --validate-only)
+      validate_only=true
+      shift
+      ;;
+    virtualbox | hyperv | vmware | qemu | proxmox | all)
+      format="$1"
+      shift
+      ;;
+    *)
+      log_error "Unknown option: $1"
+      show_help
+      exit 1
+      ;;
     esac
   done
 
