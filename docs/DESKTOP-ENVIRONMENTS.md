@@ -28,61 +28,6 @@ modules.desktop.gnome = {
 
 **Best for:** Users who want a polished, modern desktop experience with minimal configuration.
 
-### KDE Plasma Desktop
-
-Highly customizable desktop environment with extensive features.
-
-**Features:**
-
-- Plasma 6 desktop (with Plasma 5 option)
-- SDDM display manager
-- Comprehensive application suite
-- Advanced customization options
-- Wayland and X11 support
-- Professional workflow tools
-
-**Basic Configuration:**
-
-```nix
-modules.desktop.kde = {
-  enable = true;
-  version = "plasma6";           # plasma5 or plasma6
-  applications.enable = true;    # KDE app suite
-  wayland.enable = true;         # Wayland support
-  theme.darkMode = true;         # Dark theme
-};
-```
-
-**Advanced Configuration:**
-
-```nix
-modules.desktop.kde = {
-  enable = true;
-  version = "plasma6";
-
-  applications = {
-    enable = true;
-    minimal = false;             # Full app suite
-    office = true;               # LibreOffice integration
-    multimedia = true;           # KDE multimedia apps
-    development = true;          # KDE development tools
-  };
-
-  wayland = {
-    enable = true;
-    defaultSession = true;       # Use Wayland by default
-  };
-
-  performance = {
-    compositor = "opengl";       # opengl, xrender, auto
-    animations = true;
-    effects = true;
-  };
-};
-```
-
-**Best for:** Power users who want extensive customization options and a feature-rich desktop.
-
 ### Hyprland Tiling Window Manager
 
 Modern Wayland compositor with advanced tiling capabilities.
@@ -279,17 +224,44 @@ modules.desktop.hyprland = {
 
 ## Desktop Environment Comparison
 
-| Feature             | GNOME       | KDE           | Hyprland   | Niri              |
-| ------------------- | ----------- | ------------- | ---------- | ----------------- |
-| **Learning Curve**  | Easy        | Moderate      | Advanced   | Moderate          |
-| **Customization**   | Limited     | Extensive     | Complete   | High              |
-| **Resource Usage**  | Moderate    | Moderate      | Light      | Very Light        |
-| **Wayland Support** | Excellent   | Good          | Native     | Native            |
-| **Touch Support**   | Excellent   | Good          | None       | None              |
-| **Gaming**          | Good        | Excellent     | Good       | Good              |
-| **Professional**    | Good        | Excellent     | Advanced   | Excellent         |
-| **Development**     | Good        | Excellent     | Advanced   | Excellent         |
-| **Unique Feature**  | Polished UX | Customization | Animations | Scrollable Tiling |
+All three are Wayland-native; the template no longer ships an X11 session.
+
+| Feature            | GNOME       | Hyprland     | Niri              |
+| ------------------ | ----------- | ------------ | ----------------- |
+| **Learning Curve** | Easy        | Advanced     | Moderate          |
+| **Customization**  | Limited     | Complete     | High              |
+| **Resource Usage** | Moderate    | Light        | Very Light        |
+| **Touch Support**  | Excellent   | None         | None              |
+| **Gaming**         | Good        | Good         | Good              |
+| **Configured via** | dconf       | Home Manager | Home Manager      |
+| **Unique Feature** | Polished UX | Animations   | Scrollable Tiling |
+
+## Where the configuration lives
+
+GNOME is configured through the NixOS module (`modules.desktop.gnome`) and
+dconf. Hyprland and niri are configured through **Home Manager**, so a user can
+override a single binding without replacing the whole file:
+
+```nix
+# Hyprland — home/profiles/hyprland.nix
+wayland.windowManager.hyprland.settings = {
+  "$mod" = "SUPER";
+  bind = [ "$mod, Q, exec, alacritty" ];
+};
+
+# niri — home/profiles/niri.nix, via the niri-flake module
+programs.niri.settings.binds = with config.lib.niri.actions; {
+  "Mod+T".action = spawn "alacritty";
+};
+```
+
+Earlier versions wrote `/etc/hypr/hyprland.conf` and `/etc/niri/config.kdl` from
+inline Nix strings. Those were system-wide, so nothing could be overridden per
+user, and a config language embedded in a Nix string gets no LSP and no
+formatter.
+
+niri has no module in nixpkgs or home-manager, which is why
+[niri-flake](https://github.com/sodiboo/niri-flake) is an input.
 
 ## Configuration Guide
 
@@ -301,7 +273,6 @@ Edit your host configuration file (e.g., `hosts/your-hostname/configuration.nix`
 modules.desktop = {
   # Choose ONE desktop environment
   gnome.enable = true;
-  # kde.enable = true;
   # hyprland.enable = true;
   # niri.enable = true;
 
@@ -321,13 +292,6 @@ Each desktop environment includes Home Manager configurations for user-specific 
 ```nix
 # Import GNOME profile
 imports = [ ../../../home/profiles/gnome.nix ];
-```
-
-**KDE Home Configuration:**
-
-```nix
-# Import KDE profile
-imports = [ ../../../home/profiles/kde.nix ];
 ```
 
 **Hyprland Home Configuration:**
@@ -399,32 +363,6 @@ home-manager.users.charlie = {
 - `Super + L` - Lock screen
 - `Ctrl + Alt + T` - Terminal
 - `Alt + F2` - Run command
-
-### KDE Features
-
-**Applications:**
-
-- Dolphin file manager
-- Konsole terminal
-- Kate text editor
-- Spectacle screenshots
-- Gwenview image viewer
-- Okular document viewer
-
-**Customization:**
-
-- Plasma themes and widgets
-- Icon themes
-- Window decorations
-- Panel configuration
-- Keyboard shortcuts
-
-**Professional Tools:**
-
-- KDevelop IDE
-- Kdenlive video editor
-- Krita digital painting
-- LibreOffice integration
 
 ### Hyprland Features
 
@@ -519,19 +457,13 @@ home-manager.users.charlie = {
 
 **GNOME:**
 
-- Check Wayland vs X11 session at login
+- GNOME 50 is Wayland-only; there is no X11 session to fall back to
 - Use GNOME Tweaks for display settings
 - Check for conflicting extensions
 
-**KDE:**
-
-- Use System Settings → Display Configuration
-- Check compositor settings in System Settings
-- Verify SDDM display manager configuration
-
 **Hyprland:**
 
-- Check monitor configuration in hyprland.conf
+- Check the monitor setting in `wayland.windowManager.hyprland.settings`
 - Verify graphics drivers are loaded
 - Check Waybar configuration for display issues
 
@@ -548,13 +480,7 @@ home-manager.users.charlie = {
 
 - Disable animations in GNOME Tweaks
 - Limit number of active extensions
-- Use X11 session for older hardware
-
-**KDE:**
-
-- Adjust compositor settings
-- Disable desktop effects for performance
-- Use software rendering if needed
+- Reduce the number of active extensions
 
 **Hyprland:**
 
@@ -663,7 +589,6 @@ Users can choose at the login screen, but this increases system resource usage.
 
 1. Check desktop-specific logs:
    - GNOME: `journalctl --user -u gnome-session`
-   - KDE: `journalctl --user -u plasma-\*`
    - Hyprland: Check Hyprland logs in terminal
 
 1. Verify configuration:

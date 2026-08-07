@@ -11,15 +11,12 @@
 
     # Application launcher (fuzzel is great for niri)
     fuzzel
-    wofi
 
     # Terminal emulators
     alacritty
-    foot # Lightweight Wayland terminal
 
     # File managers
     thunar
-    nautilus
 
     # Screenshot and screen recording
     grim
@@ -224,44 +221,6 @@
   };
 
   # Foot terminal (alternative lightweight terminal)
-  programs.foot = {
-    enable = true;
-    settings = {
-      main = {
-        term = "xterm-256color";
-        font = "JetBrains Mono:size=12";
-        dpi-aware = "yes";
-        pad = "8x8";
-      };
-
-      mouse = {
-        hide-when-typing = "yes";
-      };
-
-      colors = {
-        background = "1e1e2e";
-        foreground = "cdd6f4";
-
-        regular0 = "45475a"; # black
-        regular1 = "f38ba8"; # red
-        regular2 = "a6e3a1"; # green
-        regular3 = "f9e2af"; # yellow
-        regular4 = "89b4fa"; # blue
-        regular5 = "f5c2e7"; # magenta
-        regular6 = "94e2d5"; # cyan
-        regular7 = "bac2de"; # white
-
-        bright0 = "585b70"; # bright black
-        bright1 = "f38ba8"; # bright red
-        bright2 = "a6e3a1"; # bright green
-        bright3 = "f9e2af"; # bright yellow
-        bright4 = "89b4fa"; # bright blue
-        bright5 = "f5c2e7"; # bright magenta
-        bright6 = "94e2d5"; # bright cyan
-        bright7 = "a6adc8"; # bright white
-      };
-    };
-  };
 
   # Waybar configuration (handled by system module but can be customized)
   programs.waybar = {
@@ -433,25 +392,6 @@
       };
     };
 
-    # Create niri config directory
-    configFile."niri/config.kdl".text = ''
-      // Custom Niri configuration
-      // This file is managed by Home Manager
-
-      // You can override the system niri configuration here
-      // or add user-specific settings
-
-      // Example: Custom window rules for user applications
-      window-rule {
-          match app-id="firefox"
-          default-column-width { proportion 0.75; }
-      }
-
-      window-rule {
-          match app-id="code"
-          default-column-width { proportion 0.6; }
-      }
-    '';
   };
 
   # Shell configuration optimized for niri
@@ -545,5 +485,200 @@
       "System"
       "Documentation"
     ];
+  };
+
+  # niri itself, as structured settings from niri-flake's Home Manager module.
+  #
+  # This replaces a 228-line KDL blob that modules/desktop/niri.nix wrote to
+  # /etc/niri/config.kdl. Neither nixpkgs nor home-manager ships a niri module,
+  # which is why that string existed; niri-flake supplies one, so the config is
+  # now typed and a host can override a single binding.
+  programs.niri = {
+    enable = true;
+    # niri-flake's own "stable" is 25.08, older than the niri in our pinned
+    # nixpkgs, so take the package from nixpkgs and use the flake for its module.
+    package = pkgs.niri;
+
+    settings = {
+      prefer-no-csd = true;
+      screenshot-path = "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png";
+      hotkey-overlay.skip-at-startup = false;
+
+      input = {
+        keyboard = {
+          xkb.layout = "us";
+          repeat-delay = 600;
+          repeat-rate = 25;
+        };
+        mouse = {
+          natural-scroll = false;
+          accel-speed = 0.0;
+          accel-profile = "flat";
+        };
+        touchpad = {
+          tap = true;
+          dwt = true;
+          natural-scroll = true;
+          click-method = "clickfinger";
+        };
+      };
+
+      layout = {
+        gaps = 16;
+        center-focused-column = "never";
+        preset-column-widths = [
+          { proportion = 1.0 / 3.0; }
+          { proportion = 1.0 / 2.0; }
+          { proportion = 2.0 / 3.0; }
+        ];
+        default-column-width.proportion = 1.0 / 2.0;
+      };
+
+      # ponytail: outputs are left to niri's autodetection. Override per host:
+      #   programs.niri.settings.outputs."DP-1" = { mode = { width = 2560; ... }; };
+
+      # Carried over from the old placeholder config.kdl this profile used to
+      # write; now typed instead of a KDL string.
+      window-rules = [
+        {
+          matches = [ { app-id = "firefox"; } ];
+          default-column-width.proportion = 0.75;
+        }
+        {
+          matches = [ { app-id = "code"; } ];
+          default-column-width.proportion = 0.6;
+        }
+      ];
+
+      spawn-at-startup = [
+        { command = [ "waybar" ]; }
+        { command = [ "dunst" ]; }
+      ];
+
+      binds =
+        with config.lib.niri.actions;
+        let
+          # niri has no shell behind `spawn`, so a pipeline needs spawn-sh.
+          # The old config used spawn with "$(slurp)" and "|" as literal argv,
+          # which silently never worked.
+          sh = spawn-sh;
+        in
+        {
+          "Mod+Shift+Slash".action = show-hotkey-overlay;
+
+          "Mod+T".action = spawn "alacritty";
+          "Mod+D".action = spawn "fuzzel";
+          "Mod+Q".action = close-window;
+          "Mod+Ctrl+L".action = spawn "swaylock";
+
+          "XF86AudioRaiseVolume".action = sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+";
+          "XF86AudioLowerVolume".action = sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-";
+          "XF86AudioMute".action = sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
+          "XF86MonBrightnessUp".action = sh "brightnessctl set 10%+";
+          "XF86MonBrightnessDown".action = sh "brightnessctl set 10%-";
+
+          "Print".action = sh "grim -g \"$(slurp)\" - | wl-copy";
+          "Mod+Print".action = sh "grim - | wl-copy";
+
+          "Mod+Left".action = focus-column-left;
+          "Mod+Right".action = focus-column-right;
+          "Mod+Up".action = focus-window-up;
+          "Mod+Down".action = focus-window-down;
+          "Mod+H".action = focus-column-left;
+          "Mod+L".action = focus-column-right;
+          "Mod+K".action = focus-window-up;
+          "Mod+J".action = focus-window-down;
+
+          "Mod+Ctrl+Left".action = move-column-left;
+          "Mod+Ctrl+Right".action = move-column-right;
+          "Mod+Ctrl+Up".action = move-window-up;
+          "Mod+Ctrl+Down".action = move-window-down;
+          "Mod+Ctrl+H".action = move-column-left;
+          "Mod+Ctrl+K".action = move-window-up;
+          "Mod+Ctrl+J".action = move-window-down;
+
+          "Mod+Home".action = focus-column-first;
+          "Mod+End".action = focus-column-last;
+          "Mod+Ctrl+Home".action = move-column-to-first;
+          "Mod+Ctrl+End".action = move-column-to-last;
+
+          "Mod+Shift+Left".action = focus-monitor-left;
+          "Mod+Shift+Right".action = focus-monitor-right;
+          "Mod+Shift+Up".action = focus-monitor-up;
+          "Mod+Shift+Down".action = focus-monitor-down;
+          "Mod+Shift+H".action = focus-monitor-left;
+          "Mod+Shift+L".action = focus-monitor-right;
+          "Mod+Shift+K".action = focus-monitor-up;
+          "Mod+Shift+J".action = focus-monitor-down;
+
+          "Mod+Shift+Ctrl+Left".action = move-column-to-monitor-left;
+          "Mod+Shift+Ctrl+Right".action = move-column-to-monitor-right;
+          "Mod+Shift+Ctrl+Up".action = move-column-to-monitor-up;
+          "Mod+Shift+Ctrl+Down".action = move-column-to-monitor-down;
+
+          "Mod+Page_Down".action = focus-workspace-down;
+          "Mod+Page_Up".action = focus-workspace-up;
+          "Mod+U".action = focus-workspace-down;
+          "Mod+I".action = focus-workspace-up;
+
+          "Mod+Ctrl+Page_Down".action = move-column-to-workspace-down;
+          "Mod+Ctrl+Page_Up".action = move-column-to-workspace-up;
+          "Mod+Ctrl+U".action = move-column-to-workspace-down;
+          "Mod+Ctrl+I".action = move-column-to-workspace-up;
+
+          "Mod+Shift+Page_Down".action = move-workspace-down;
+          "Mod+Shift+Page_Up".action = move-workspace-up;
+          "Mod+Shift+U".action = move-workspace-down;
+          "Mod+Shift+I".action = move-workspace-up;
+
+          "Mod+WheelScrollDown" = {
+            action = focus-workspace-down;
+            cooldown-ms = 150;
+          };
+          "Mod+WheelScrollUp" = {
+            action = focus-workspace-up;
+            cooldown-ms = 150;
+          };
+          "Mod+Ctrl+WheelScrollDown" = {
+            action = move-column-to-workspace-down;
+            cooldown-ms = 150;
+          };
+          "Mod+Ctrl+WheelScrollUp" = {
+            action = move-column-to-workspace-up;
+            cooldown-ms = 150;
+          };
+
+          "Mod+WheelScrollRight".action = focus-column-right;
+          "Mod+WheelScrollLeft".action = focus-column-left;
+          "Mod+Ctrl+WheelScrollRight".action = move-column-right;
+          "Mod+Ctrl+WheelScrollLeft".action = move-column-left;
+
+          "Mod+Comma".action = consume-window-into-column;
+          "Mod+Period".action = expel-window-from-column;
+
+          "Mod+R".action = switch-preset-column-width;
+          "Mod+F".action = maximize-column;
+          "Mod+Shift+F".action = fullscreen-window;
+          "Mod+C".action = center-column;
+
+          "Mod+Minus".action = set-column-width "-10%";
+          "Mod+Equal".action = set-column-width "+10%";
+          "Mod+Shift+Minus".action = set-window-height "-10%";
+          "Mod+Shift+Equal".action = set-window-height "+10%";
+
+          "Mod+Shift+E".action = quit;
+          "Mod+Shift+P".action = power-off-monitors;
+          "Mod+Shift+Ctrl+T".action = toggle-debug-tint;
+        }
+        # Mod+N focuses workspace N, Mod+Ctrl+N moves the column there.
+        // builtins.listToAttrs (
+          builtins.concatMap (i: [
+            {
+              name = "Mod+${toString i}";
+              value.action = focus-workspace i;
+            }
+          ]) (builtins.genList (n: n + 1) 9)
+        );
+    };
   };
 }

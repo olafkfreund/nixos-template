@@ -15,14 +15,14 @@ Manager configuration optimized for specific workflows.
 ### Developer User (`developer.nix`)
 
 - **Purpose**: Software development focused configuration
-- **Desktop**: GNOME/KDE recommended
+- **Desktop**: GNOME recommended
 - **Features**: Development tools, enhanced git, IDE integrations, multiple language support
 - **Best for**: Software developers, programmers, DevOps engineers
 
 ### Gaming User (`gamer.nix`)
 
 - **Purpose**: Gaming and entertainment focused configuration
-- **Desktop**: KDE recommended (best gaming integration)
+- **Desktop**: GNOME or Hyprland (both handle gaming well on Wayland)
 - **Features**: Steam, Lutris, Discord, streaming tools, gaming optimizations
 - **Best for**: Gamers, content creators, entertainment
 
@@ -219,7 +219,7 @@ Each template imports a desktop profile. To change desktop environments:
 ```nix
 imports = [
   # Change this line to your preferred desktop
-  ../profiles/kde.nix        # For KDE Plasma
+  ../profiles/niri.nix       # For niri
   # ../profiles/gnome.nix    # For GNOME
   # ../profiles/hyprland.nix # For Hyprland
   # ../profiles/niri.nix     # For Niri
@@ -293,7 +293,7 @@ Where each user file is based on a different template.
 | ------------------ | --------- | ----------- | ------ | ----------- | -------------- |
 | **Resource Usage** | Low       | Medium      | High   | Very Low    | Low            |
 | **Applications**   | Essential | Development | Gaming | Minimal     | Admin Tools    |
-| **Desktop**        | GNOME     | Any         | KDE    | None        | None           |
+| **Desktop**        | GNOME     | Any         | GNOME  | None        | None           |
 | **Complexity**     | Simple    | Advanced    | Medium | Very Simple | Advanced       |
 | **Use Case**       | General   | Coding      | Gaming | Embedded    | Administration |
 

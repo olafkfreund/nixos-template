@@ -42,25 +42,26 @@
       [
         # Web browsers
         firefox
-        chromium
 
         # Communication
         discord
         telegram-desktop
 
-        # File managers and utilities
-        dolphin # KDE file manager
-        thunar # XFCE file manager
+        # File managers and utilities.
+        # One per job: the GNOME module installs its own desktop's apps, and the
+        # Hyprland and niri profiles bring their own terminal and launcher, so
+        # this DE-neutral collection ships a single file manager, terminal,
+        # image viewer and PDF viewer rather than one per desktop.
+        thunar # Lightweight, desktop-agnostic file manager
         file-roller # Archive manager
         gparted # Partition manager
 
-        # Terminal emulators
+        # Terminal emulator (matches the default used by the Hyprland and
+        # niri profiles, so a user only learns one)
         alacritty
-        kitty
 
-        # Text editors
-        kate
-        gedit
+        # Graphical text editor
+        gnome-text-editor # GNOME's current editor; replaced gedit as the default
 
         # System utilities
         flameshot # Screenshots
@@ -74,7 +75,6 @@
       ++ lib.optionals config.modules.packages.desktop-apps.includeMultimedia [
         # Media players
         vlc
-        mpv
 
         # Audio
         audacity
@@ -95,9 +95,8 @@
         krita
         blender
 
-        # Image viewers
-        gwenview # KDE image viewer
-        eog # GNOME image viewer
+        # Image viewer
+        loupe # GNOME's current viewer; replaced eog as the default in GNOME 45
 
         # CAD and 3D
         freecad
@@ -107,9 +106,8 @@
         # Office suite
         libreoffice-fresh
 
-        # PDF viewers and tools
-        okular # KDE PDF viewer
-        evince # GNOME PDF viewer
+        # PDF viewer
+        papers # The continuation of evince, renamed in GNOME 46
 
         # Email
         thunderbird
@@ -187,7 +185,6 @@
 
       extraPortals = with pkgs; [
         xdg-desktop-portal-gtk
-        xdg-desktop-portal-kde
       ];
 
       # xdg-desktop-portal 1.17+ requires an explicit backend preference;

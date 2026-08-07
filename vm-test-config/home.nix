@@ -9,7 +9,6 @@
     ../../home/profiles/gnome.nix
 
     # KDE Desktop Profile
-    # ../../home/profiles/kde.nix
 
     # Hyprland Tiling WM Profile
     # ../../home/profiles/hyprland.nix

@@ -104,7 +104,6 @@
   imports = [
     # Choose your desktop profile
     ../profiles/gnome.nix
-    # ../profiles/kde.nix
     # ../profiles/hyprland.nix
     # ../profiles/niri.nix
 

@@ -47,7 +47,6 @@ in
 
       # Video tools
       vlc
-      mpv
     ];
   };
 }

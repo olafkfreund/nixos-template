@@ -82,6 +82,12 @@
       url = "github:nix-community/nixos-generators";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # niri has no module in nixpkgs or home-manager, so its config would
+    # otherwise have to be a hand-written KDL string. This provides both.
+    niri = {
+      url = "github:sodiboo/niri-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -195,7 +201,10 @@
             config.allowUnfree = true;
           };
           extraSpecialArgs = { inherit inputs outputs; };
-          modules = [ ./hosts/${hostname}/home.nix ];
+          modules = [
+            inputs.niri.homeModules.niri
+            ./hosts/${hostname}/home.nix
+          ];
         };
 
       # Import flake utilities to reduce duplication

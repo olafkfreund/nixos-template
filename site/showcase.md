@@ -267,6 +267,72 @@ full workflow.
 
 ---
 
+## ▸ Desktops are Wayland-only, and configured as modules
+
+GNOME, Hyprland and niri. All three are Wayland-native; there is no X11 session
+and no KDE. The two tiling compositors take their configuration from Home
+Manager, so a host overrides one binding instead of replacing a whole file.
+
+<div class="code-card">
+<div class="code-head"><span class="path">home/profiles/hyprland.nix</span><span class="tag">structured, not a string</span></div>
+{% highlight nix %}
+wayland.windowManager.hyprland = {
+  enable = true;
+  xwayland.enable = true;   # Steam and older Electron apps still work
+
+  settings = {
+    "$mod" = "SUPER";
+    decoration.rounding = 10;
+
+    bind = [
+      "$mod, Q, exec, alacritty"
+      "$mod, R, exec, wofi --show drun"
+    ]
+    # 20 workspace bindings, generated rather than written out twice
+    ++ builtins.concatMap (i: [
+      "$mod, ${toString i}, workspace, ${toString i}"
+      "$mod SHIFT, ${toString i}, movetoworkspace, ${toString i}"
+    ]) (builtins.genList (n: n + 1) 10);
+  };
+};
+{% endhighlight %}
+</div>
+
+niri has no module in nixpkgs or Home Manager, so the template pulls in
+[niri-flake](https://github.com/sodiboo/niri-flake) for one — actions are real
+Nix values, not strings in a KDL blob.
+
+<div class="code-card">
+<div class="code-head"><span class="path">home/profiles/niri.nix</span><span class="tag">typed actions</span></div>
+{% highlight nix %}
+programs.niri.settings.binds =
+  with config.lib.niri.actions;
+  {
+    "Mod+T".action = spawn "alacritty";
+    "Mod+Q".action = close-window;
+
+    # niri's `spawn` has no shell, so a pipeline needs spawn-sh.
+    # The old config passed "$(slurp)" and "|" as literal argv.
+    "Print".action = spawn-sh ''grim -g "$(slurp)" - | wl-copy'';
+
+    "Mod+WheelScrollDown" = {
+      action = focus-workspace-down;
+      cooldown-ms = 150;
+    };
+  };
+{% endhighlight %}
+</div>
+
+<div class="note">
+<b>Why this matters.</b> These were a 158-line <code>hyprland.conf</code> and a
+228-line <code>config.kdl</code>, written as inline Nix strings into
+<code>/etc</code>. System-wide, so nothing could be overridden per user, and a
+config language embedded in a Nix string gets no LSP, no formatter and one
+extra indent on every line.
+</div>
+
+---
+
 ## ▸ Quality is a build gate, not a promise
 
 `nix flake check` evaluates **every** host and builds every lint gate. If a

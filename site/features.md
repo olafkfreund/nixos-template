@@ -159,4 +159,4 @@ The template includes automatic detection of CPU microcode, SSD scheduler tuning
 
 ## Desktop Environments
 
-GNOME, KDE Plasma, and minimal setups are available as composable modules under `modules/desktop/`. Switch by changing the import in your host configuration. See [desktop environments](https://github.com/olafkfreund/nixos-template/blob/main/docs/DESKTOP-ENVIRONMENTS.md).
+GNOME, Hyprland and niri are available as composable modules under `modules/desktop/`, all Wayland-native. Hyprland and niri take their configuration from Home Manager, so a user can override a single binding without replacing the file. See [desktop environments](https://github.com/olafkfreund/nixos-template/blob/main/docs/DESKTOP-ENVIRONMENTS.md).
