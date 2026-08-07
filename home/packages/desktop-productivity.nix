@@ -5,7 +5,6 @@
   home.packages = with pkgs; [
     # Web browsers
     firefox
-    chromium
 
     # Office suite
     libreoffice

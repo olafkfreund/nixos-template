@@ -13,13 +13,11 @@
 
     # Desktop applications
     packages = [
-      # Browsers
+      # Browser
       pkgs.firefox
-      pkgs.chromium
 
-      # Media
+      # Media. The hyprland and niri profiles add mpv for themselves.
       pkgs.vlc
-      pkgs.mpv
 
       # Graphics and design
       pkgs.gimp

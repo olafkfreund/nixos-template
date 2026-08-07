@@ -187,7 +187,6 @@
     systemPackages = with pkgs; [
       # Desktop applications
       firefox
-      chromium
       thunderbird
       libreoffice
       gimp
