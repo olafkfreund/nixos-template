@@ -5,7 +5,7 @@
 
 > **⚠️ AI-Generated Content Notice**: This template was developed with AI assistance. While thoroughly tested and validated, please review configurations carefully before use, especially for production environments. Contributions and human oversight are welcome to improve the template.
 >
-> **Community Contributions Welcome**: If you identify any anti-patterns, improvements, or have suggestions for better NixOS practices, please contribute to our [NixOS Anti-Patterns Guide](docs/NIXOS-ANTI-PATTERNS.md). Your expertise helps make this template better for the entire NixOS community.
+> **Community Contributions Welcome**: If you identify any anti-patterns, improvements, or have suggestions for better NixOS practices, please contribute to our [NixOS Anti-Patterns Guide](NIXOS-ANTI-PATTERNS.md). Your expertise helps make this template better for the entire NixOS community.
 
 A modular, flake-based NixOS starter template with Home Manager integration, multi-host support, automatic GPU driver detection, and ready-made configurations for desktops, laptops, servers, virtual machines, WSL2, and macOS (nix-darwin). Clone it, copy a host template, and you have a working declarative system configuration in minutes.
 
@@ -36,7 +36,7 @@ sudo nixos-generate-config --show-hardware-config \
 just switch $(hostname)
 ```
 
-> Need a server, laptop, VM, or gaming host? See [docs/HOST-TEMPLATES.md](docs/HOST-TEMPLATES.md) for all available host types and flake.nix registration examples.
+> Need a server, laptop, VM, or gaming host? See [HOST-TEMPLATES.md](HOST-TEMPLATES.md) for all available host types and flake.nix registration examples.
 
 ---
 
@@ -50,7 +50,7 @@ nix build .#nixosConfigurations.desktop-test.config.system.build.vm
 # Log in as: vm-user / nixos
 ```
 
-Not on NixOS yet? See [docs/NON-NIXOS-USAGE.md](docs/NON-NIXOS-USAGE.md) for Docker-based and VM-based workflows that work on any OS, including Windows and macOS.
+Not on NixOS yet? See [NON-NIXOS-USAGE.md](NON-NIXOS-USAGE.md) for Docker-based and VM-based workflows that work on any OS, including Windows and macOS.
 
 ---
 
@@ -60,7 +60,7 @@ Running `just` with no arguments opens the **interactive menu** — a full contr
 
 ![Menu showcase](https://raw.githubusercontent.com/olafkfreund/nixos-template/main/site/assets/menu/showcase.gif)
 
-For the full guide see [docs/MENU.md](docs/MENU.md). Common recipes are also callable directly:
+For the full guide see [MENU.md](MENU.md). Common recipes are also callable directly:
 
 | Command              | What it does                                      |
 | -------------------- | ------------------------------------------------- |
@@ -103,40 +103,40 @@ Tracks **nixpkgs `nixos-unstable`** by default. To pin to a stable release, chan
 
 ## Documentation
 
-Full documentation lives in [`docs/`](docs/). See [docs/README.md](docs/README.md) for the complete index. Quick links:
+Full documentation lives in [`docs/`](https://github.com/olafkfreund/nixos-template/tree/main/docs). See the [documentation index](https://github.com/olafkfreund/nixos-template/blob/main/docs/README.md) for the full list. Quick links:
 
 **Getting started**
 
-- [docs/SETUP.md](docs/SETUP.md) — detailed first-time setup walkthrough
-- [docs/HOST-TEMPLATES.md](docs/HOST-TEMPLATES.md) — all host types and flake registration
-- [docs/USER-TEMPLATES.md](docs/USER-TEMPLATES.md) — Home Manager user profiles
-- [docs/NON-NIXOS-USAGE.md](docs/NON-NIXOS-USAGE.md) — using the template without NixOS
+- [SETUP.md](SETUP.md) — detailed first-time setup walkthrough
+- [HOST-TEMPLATES.md](HOST-TEMPLATES.md) — all host types and flake registration
+- [USER-TEMPLATES.md](USER-TEMPLATES.md) — Home Manager user profiles
+- [NON-NIXOS-USAGE.md](NON-NIXOS-USAGE.md) — using the template without NixOS
 
 **Platforms**
 
-- [docs/WINDOWS-HOWTO.md](docs/WINDOWS-HOWTO.md) — Windows + WSL2 setup
-- [docs/WSL2-CONFIGURATION.md](docs/WSL2-CONFIGURATION.md) — WSL2 NixOS configuration
-- [docs/MACOS-NIXOS-GUIDE.md](docs/MACOS-NIXOS-GUIDE.md) — macOS (nix-darwin) guide
-- [docs/NIX-DARWIN-GUIDE.md](docs/NIX-DARWIN-GUIDE.md) — nix-darwin reference
+- [WINDOWS-HOWTO.md](WINDOWS-HOWTO.md) — Windows + WSL2 setup
+- [WSL2-CONFIGURATION.md](WSL2-CONFIGURATION.md) — WSL2 NixOS configuration
+- [MACOS-NIXOS-GUIDE.md](MACOS-NIXOS-GUIDE.md) — macOS (nix-darwin) guide
+- [NIX-DARWIN-GUIDE.md](NIX-DARWIN-GUIDE.md) — nix-darwin reference
 
 **Hardware & GPU**
 
-- [docs/GPU-CONFIGURATION.md](docs/GPU-CONFIGURATION.md) — GPU driver setup (AMD/NVIDIA/Intel)
-- [docs/HARDWARE-AUTO-OPTIMIZATION.md](docs/HARDWARE-AUTO-OPTIMIZATION.md) — automatic hardware detection
-- [docs/ZERO-CONFIGURATION.md](docs/ZERO-CONFIGURATION.md) — zero-config hardware optimization
+- [GPU-CONFIGURATION.md](GPU-CONFIGURATION.md) — GPU driver setup (AMD/NVIDIA/Intel)
+- [HARDWARE-AUTO-OPTIMIZATION.md](HARDWARE-AUTO-OPTIMIZATION.md) — automatic hardware detection
+- [ZERO-CONFIGURATION.md](ZERO-CONFIGURATION.md) — zero-config hardware optimization
 
 **Advanced & Secrets**
 
-- [docs/AGENIX-SECRETS.md](docs/AGENIX-SECRETS.md) — age-encrypted secrets with agenix
-- [docs/DEPLOYMENT-IMAGES.md](docs/DEPLOYMENT-IMAGES.md) — cloud/VM image generation
-- [docs/ADVANCED-FEATURES.md](docs/ADVANCED-FEATURES.md) — overlays, custom packages, and more
+- [AGENIX-SECRETS.md](AGENIX-SECRETS.md) — age-encrypted secrets with agenix
+- [DEPLOYMENT-IMAGES.md](DEPLOYMENT-IMAGES.md) — cloud/VM image generation
+- [ADVANCED-FEATURES.md](ADVANCED-FEATURES.md) — overlays, custom packages, and more
 
 **Reference**
 
-- [docs/NIXOS-ANTI-PATTERNS.md](docs/NIXOS-ANTI-PATTERNS.md) — common mistakes and how to avoid them
-- [docs/CODE-QUALITY.md](docs/CODE-QUALITY.md) — linting and formatting tools
-- [docs/VALIDATION.md](docs/VALIDATION.md) — configuration validation
-- [docs/CHANGELOG.md](docs/CHANGELOG.md) — release history
+- [NIXOS-ANTI-PATTERNS.md](NIXOS-ANTI-PATTERNS.md) — common mistakes and how to avoid them
+- [CODE-QUALITY.md](CODE-QUALITY.md) — linting and formatting tools
+- [VALIDATION.md](VALIDATION.md) — configuration validation
+- [CHANGELOG.md](CHANGELOG.md) — release history
 
 ---
 
@@ -159,4 +159,4 @@ Full documentation lives in [`docs/`](docs/). See [docs/README.md](docs/README.m
 
 ## License
 
-GNU General Public License v3.0 — see [LICENSE](LICENSE).
+GNU General Public License v3.0 — see [LICENSE](https://github.com/olafkfreund/nixos-template/blob/main/LICENSE).
