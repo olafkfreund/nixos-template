@@ -65,7 +65,9 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./docker
-          push: true
+          # Never publish from a pull request: on PRs this job's job is to
+          # prove the image still builds, not to push to the registry.
+          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
@@ -73,6 +75,10 @@ jobs:
           platforms: linux/amd64,linux/arm64
   build-vm-matrix:
     needs: build-docker-image
+    # Skipped on pull requests: this job runs the published
+    # ghcr.io/.../nixos-vm-builder:latest image, which is only pushed from the
+    # default branch, and each matrix entry is an expensive multi-GB VM build.
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 120 # 2 hour timeout for entire job
     strategy:
