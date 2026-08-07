@@ -246,19 +246,16 @@ The template system provides pre-configured user environments:
 - Touch-friendly interface
 - Good hardware acceleration support
 
-#### KDE Plasma 6
-
-- Highly customizable desktop
-- Rich feature set
-- Traditional desktop paradigm
-- Excellent multi-monitor support
-
 #### Hyprland
 
-- Tiling window manager
-- Wayland native
-- Highly customizable
+- Tiling window manager, Wayland native
+- Configured through Home Manager (`wayland.windowManager.hyprland.settings`)
 - Great for developers and power users
+
+#### niri
+
+- Scrollable-tiling compositor, Wayland native
+- Configured through Home Manager via niri-flake (`programs.niri.settings`)
 
 #### Niri
 

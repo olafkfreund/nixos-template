@@ -60,7 +60,7 @@ Build minimal / desktop / preconfigured installers and write a bootable USB.
 
 ### Desktops
 
-Browse and test GNOME, KDE, Hyprland, and Niri; show Niri keybindings.
+Browse and test GNOME, Hyprland, and niri; show niri keybindings.
 
 ![Desktops]({{ '/assets/menu/06-desktops.png' | relative_url }})
 

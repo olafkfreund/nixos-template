@@ -216,24 +216,14 @@ nix build .#nixosConfigurations.desktop-test.config.system.build.vm
 ./result/bin/run-desktop-test-vm
 ```
 
-### KDE Plasma
-
-```bash
-# Use the kde-test configuration
-nix build .#nixosConfigurations.kde-test.config.system.build.vm
-./result/bin/run-kde-test-vm
-```
-
 ### Custom Desktop Environment
 
 Edit any VM configuration to try different desktops:
 
 ```nix
 # In hosts/my-vm/configuration.nix
-modules.desktop.gnome.enable = false;  # Disable GNOME
-modules.desktop.kde.enable = true;     # Enable KDE
-# or
-modules.desktop.hyprland.enable = true; # Enable Hyprland
+modules.desktop.gnome.enable = false;    # Disable GNOME
+modules.desktop.hyprland.enable = true;  # or niri.enable = true;
 ```
 
 ## Advanced Usage

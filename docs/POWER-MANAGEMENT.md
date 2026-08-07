@@ -219,7 +219,7 @@ cp -r hosts/desktop-template hosts/my-desktop
 **Includes:**
 
 - Performance-optimized settings
-- Full desktop environment (GNOME/KDE)
+- Full desktop environment (GNOME)
 - Gaming support (Steam, GameMode)
 - Development tools
 - Virtualization support
