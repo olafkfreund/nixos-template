@@ -94,6 +94,10 @@ let
             useUserPackages = lib.mkDefault true;
             # Pass inputs to Home Manager modules
             extraSpecialArgs = { inherit inputs; };
+            # niri has no module in nixpkgs or home-manager; niri-flake supplies
+            # programs.niri.settings so the config is structured KDL rather than
+            # a hand-written string.
+            sharedModules = [ inputs.niri.homeModules.niri ];
           };
         })
 
