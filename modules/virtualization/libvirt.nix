@@ -159,7 +159,6 @@ in
       virtio-win
       spice-gtk
       spice-protocol
-      virtio-win
 
       # USB redirection
       (mkIf cfg.spiceUSBRedirection spice-gtk)
