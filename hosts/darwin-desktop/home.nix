@@ -64,7 +64,6 @@
       home.packages = with pkgs; [
         # Additional terminal emulators for desktop use
         kitty
-        wezterm
 
         # Professional IDEs for desktop development
         jetbrains.idea
