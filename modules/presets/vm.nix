@@ -1,6 +1,11 @@
 # VM Guest Preset
 # Optimized for running as a virtual machine guest
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.modules.presets;
@@ -108,33 +113,38 @@ in
     };
 
     # VM-appropriate packages (lightweight)
-    environment.systemPackages = with pkgs; lib.mkDefault [
-      # Essential VM tools
-      firefox
-      gnome.gnome-terminal
+    environment.systemPackages =
+      with pkgs;
+      lib.mkDefault [
+        # Essential VM tools
+        firefox
+        gnome-terminal
 
-      # File management
-      gnome.nautilus
+        # File management
+        nautilus
 
-      # Text editing
-      gedit
+        # Text editing
+        gedit
 
-      # System utilities
-      htop
+        # System utilities
+        htop
 
-      # VM guest utilities
-      spice-vdagent
+        # VM guest utilities
+        spice-vdagent
 
-      # Development basics
-      git
-      vim
-    ];
+        # Development basics
+        git
+        vim
+      ];
 
     # VM-specific optimizations (preset configuration)
     fileSystems = {
       # Optimize for virtual disks (keep mkDefault - affects root filesystem)
       "/" = {
-        options = lib.mkDefault [ "noatime" "discard" ];
+        options = lib.mkDefault [
+          "noatime"
+          "discard"
+        ];
       };
     };
 

@@ -23,33 +23,69 @@ in
   # Each secret specifies which keys can decrypt it
 
   # User passwords
-  "user-password.age".publicKeys = [ users.alice systems.laptop systems.desktop ];
+  "user-password.age".publicKeys = [
+    users.alice
+    systems.laptop
+    systems.desktop
+  ];
   "root-password.age".publicKeys = allSystems;
 
   # SSH keys
-  "ssh-private-key.age".publicKeys = [ users.alice systems.laptop ];
-  "ssh-config.age".publicKeys = [ users.alice systems.laptop systems.desktop ];
+  "ssh-private-key.age".publicKeys = [
+    users.alice
+    systems.laptop
+  ];
+  "ssh-config.age".publicKeys = [
+    users.alice
+    systems.laptop
+    systems.desktop
+  ];
 
   # Network configuration
   "wifi-password.age".publicKeys = allSystems;
-  "vpn-config.age".publicKeys = [ users.alice systems.laptop ];
+  "vpn-config.age".publicKeys = [
+    users.alice
+    systems.laptop
+  ];
 
   # Application secrets
   "database-password.age".publicKeys = [ systems.server ];
-  "api-key.age".publicKeys = [ users.alice systems.server ];
+  "api-key.age".publicKeys = [
+    users.alice
+    systems.server
+  ];
   "jwt-secret.age".publicKeys = [ systems.server ];
 
   # Email configuration
-  "email-password.age".publicKeys = [ users.alice systems.laptop systems.desktop ];
-  "smtp-config.age".publicKeys = [ users.alice systems.laptop systems.desktop ];
+  "email-password.age".publicKeys = [
+    users.alice
+    systems.laptop
+    systems.desktop
+  ];
+  "smtp-config.age".publicKeys = [
+    users.alice
+    systems.laptop
+    systems.desktop
+  ];
 
   # Backup and sync
   "restic-password.age".publicKeys = allSystems;
-  "sync-token.age".publicKeys = [ users.alice systems.laptop systems.desktop ];
+  "sync-token.age".publicKeys = [
+    users.alice
+    systems.laptop
+    systems.desktop
+  ];
 
   # Development secrets
-  "github-token.age".publicKeys = [ users.alice systems.laptop systems.desktop ];
-  "docker-registry-auth.age".publicKeys = [ systems.server systems.desktop ];
+  "github-token.age".publicKeys = [
+    users.alice
+    systems.laptop
+    systems.desktop
+  ];
+  "docker-registry-auth.age".publicKeys = [
+    systems.server
+    systems.desktop
+  ];
 
   # Certificates and TLS
   "tls-cert.age".publicKeys = [ systems.server ];
@@ -59,5 +95,8 @@ in
   # Service-specific secrets
   "nextcloud-password.age".publicKeys = [ systems.server ];
   "matrix-config.age".publicKeys = [ systems.server ];
-  "monitoring-token.age".publicKeys = [ systems.server systems.laptop ];
+  "monitoring-token.age".publicKeys = [
+    systems.server
+    systems.laptop
+  ];
 }

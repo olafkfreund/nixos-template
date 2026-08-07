@@ -1,6 +1,11 @@
 # Laptop Configuration Template
 # Optimized for mobile computing with battery life and portability
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   imports = [
@@ -71,7 +76,10 @@
       settings = {
         verbose = true;
         backlight.disabled = false;
-        dpms.timeouts = [ 600 1200 ]; # Screen timeout on battery
+        dpms.timeouts = [
+          600
+          1200
+        ]; # Screen timeout on battery
         screen.contrib = 0.1;
         keyboard.disabled = true;
       };
@@ -222,7 +230,7 @@
       # High-quality fonts for laptop screens
       noto-fonts
       noto-fonts-cjk-sans
-      noto-fonts-emoji
+      noto-fonts-color-emoji
       liberation_ttf
       fira-code
       fira-code-symbols

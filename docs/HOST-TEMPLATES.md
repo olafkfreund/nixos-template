@@ -1,195 +1,189 @@
-# Host Template Functions
+# Adding a Host
 
-The NixOS template provides convenient functions for creating new hosts without duplicating configuration.
+This page describes how to add a new machine to the flake. Everything below is
+checked against the code in `lib/flake-utils.nix` — if a function is named here,
+it exists.
 
-## Quick Start
+> **Previous versions of this page documented `mkWorkstation`, `mkServer`,
+> `mkGaming`, `mkLaptop`, `mkVM`, `mkContainer`, `mkDevelopment`, `mkMinimal`,
+> `mkMediaServer`, `mkDesktopHost` and `mkServerHost`. None of those functions
+> ever existed in this repository** — they were removed as an anti-pattern (see
+> [NIXOS-ANTI-PATTERNS.md](NIXOS-ANTI-PATTERNS.md#4-unnecessary-template-functions))
+> but the documentation was never updated. There is one builder, `mkSystem`, and
+> it takes the machine type as a parameter.
 
-The template functions are available in `lib/flake-utils.nix` and can be used in your `flake.nix`:
+---
+
+## The short version
+
+```bash
+# 1. Copy the closest starting point
+cp -r hosts/desktop-template hosts/my-desktop
+
+# 2. Generate hardware configuration for THIS machine
+sudo nixos-generate-config --show-hardware-config \
+  > hosts/my-desktop/hardware-configuration.nix
+
+# 3. Register it: uncomment a line in the "ADD YOUR OWN HOSTS HERE" block
+#    near the bottom of flake.nix
+
+# 4. Build it
+sudo nixos-rebuild switch --flake .#my-desktop
+```
+
+Step 3 in full — in `flake.nix`:
 
 ```nix
-# Import the utilities
-flakeUtils = import ./lib/flake-utils.nix { inherit inputs outputs nixpkgs self home-manager sops-nix; };
-
-# Use template functions in nixosConfigurations
-nixosConfigurations = {
-  # Quick workstation
-  my-desktop = flakeUtils.mkWorkstation {
+nixosConfigurations = flakeUtils.allConfigurations // {
+  my-desktop = flakeUtils.mkSystem {
     hostname = "my-desktop";
-  };
-
-  # Development machine
-  dev-laptop = flakeUtils.mkDevelopment {
-    hostname = "dev-laptop";
-    system = "x86_64-linux";
-  };
-
-  # Headless server
-  web-server = flakeUtils.mkServer {
-    hostname = "web-server";
-    extraModules = [ ./modules/services/nginx.nix ];
+    profile = "workstation";
   };
 };
 ```
 
-## Available Templates
+Starting points in `hosts/`: `desktop-template`, `laptop-template`,
+`server-template`, `wsl2-template`.
 
-### Basic Host Types
+---
 
-- **`mkWorkstation`** - Desktop workstation with GUI applications
-- **`mkServer`** - Headless server optimized for system administration
-- **`mkDevelopment`** - Development environment with programming tools
-- **`mkGaming`** - Gaming-optimized system with Steam and drivers
-- **`mkLaptop`** - Mobile laptop with power management
-- **`mkMinimal`** - Minimal system with essential packages only
+## `mkSystem`
 
-### Specialized Templates
-
-- **`mkVM`** - Virtual machine with guest optimizations
-- **`mkContainer`** - Container/LXC system configuration
-- **`mkWSLSystem`** - Windows Subsystem for Linux 2
-
-### Advanced Templates with Home Manager
-
-- **`mkDesktopHost`** - Workstation with automatic Home Manager desktop profile
-- **`mkServerHost`** - Server with automatic Home Manager server profile
-
-## Template Parameters
-
-All templates accept these common parameters:
+The single builder for NixOS hosts. Defined in `lib/flake-utils.nix`.
 
 ```nix
-{
-  hostname,                    # Required: System hostname
-  system ? "x86_64-linux",   # Optional: System architecture
-  extraModules ? []           # Optional: Additional NixOS modules
+flakeUtils.mkSystem {
+  hostname = "my-server";        # required
+  system = "aarch64-linux";      # optional, default "x86_64-linux"
+  profile = "server";            # optional, default "workstation"
+  extraModules = [ ./extra.nix ];# optional, default [ ]
 }
 ```
 
-Advanced templates also accept:
+| Parameter      | Type            | Default          | Meaning                                                                                                |
+| -------------- | --------------- | ---------------- | ------------------------------------------------------------------------------------------------------ |
+| `hostname`     | string          | _(required)_     | Must match the directory name under `hosts/`. `mkSystem` imports `hosts/<hostname>/configuration.nix`. |
+| `system`       | string          | `"x86_64-linux"` | Nix system double.                                                                                     |
+| `profile`      | enum            | `"workstation"`  | One of `workstation`, `server`, `laptop`, `gaming`, `development`, `minimal`.                          |
+| `extraModules` | list of modules | `[ ]`            | Appended to the module list.                                                                           |
 
-```nix
-{
-  homeProfile ? "desktop",    # Home Manager profile to use
-  profile ? "workstation"     # System profile type
-}
-```
+### What `profile` actually does
+
+`profile` is **metadata**, not a package set. It is passed through `flakeMeta`
+to `modules/core/system-identification.nix`, where it drives the system
+description, `system.nixos.tags`, the `NIXOS_PROFILE` environment variable and
+the `nixos-info` command.
+
+It does **not** by itself install packages or enable services. What your host
+gets comes from the modules its `configuration.nix` imports. Setting
+`profile = "server"` on a host whose `configuration.nix` imports the desktop
+modules still gives you a desktop.
+
+### What every host gets automatically
+
+`mkSystem` always adds:
+
+- `hosts/<hostname>/configuration.nix`
+- the Home Manager NixOS module (with `useGlobalPkgs` and `useUserPackages`)
+- the agenix NixOS module, for secrets
+- a `flakeMeta` module providing `/etc/nixos/flake-metadata.json`, the
+  `NIXOS_*` environment variables and the `nixos-info` command
+
+`homeProfiles` is passed via `specialArgs`, so a host's `home.nix` can refer to
+the shared Home Manager profiles without relative paths.
+
+---
+
+## Other builders
+
+These exist and are used by this repository, but you are unlikely to need them
+for an ordinary machine.
+
+| Function           | Purpose                                          |
+| ------------------ | ------------------------------------------------ |
+| `mkSystem`         | Normal NixOS host. **This is the one you want.** |
+| `mkWSLSystem`      | NixOS under WSL2; adds the NixOS-WSL module.     |
+| `mkInstaller`      | Installer ISO from `hosts/installer-isos/`.      |
+| `mkMacOSInstaller` | Installer ISO from `hosts/macos-isos/`.          |
+
+The pre-built sets `templates`, `testConfigs`, `installers`, `macosVMs` and
+`wslConfigs` are merged into `allConfigurations`, which is what `flake.nix`
+exposes as `nixosConfigurations`.
+
+---
 
 ## Examples
 
-### Basic Server
+### Headless server on ARM
 
 ```nix
-web-server = flakeUtils.mkServer {
-  hostname = "web-server";
+my-server = flakeUtils.mkSystem {
+  hostname = "my-server";
+  system = "aarch64-linux";
+  profile = "server";
+};
+```
+
+### Laptop with extra host-specific modules
+
+```nix
+my-laptop = flakeUtils.mkSystem {
+  hostname = "my-laptop";
+  profile = "laptop";
   extraModules = [
-    # Custom nginx configuration
-    ({ config, ... }: {
-      services.nginx.enable = true;
-      networking.firewall.allowedTCPPorts = [ 80 443 ];
-    })
+    ./hosts/my-laptop/thinkpad-tweaks.nix
   ];
 };
 ```
 
-### Development Laptop
+### Overriding a setting without a separate file
+
+`extraModules` takes inline modules too:
 
 ```nix
-dev-laptop = flakeUtils.mkDevelopment {
-  hostname = "dev-laptop";
-  system = "x86_64-linux";
-  extraModules = [
-    # Laptop-specific power management
-    ./modules/hardware/laptop.nix
-
-    # Custom development tools
-    ({ config, pkgs, ... }: {
-      environment.systemPackages = with pkgs; [
-        jetbrains.idea-ultimate
-        docker
-        kubernetes
-      ];
-    })
-  ];
-};
-```
-
-### VM with Custom Profile
-
-```nix
-test-vm = flakeUtils.mkVM {
-  hostname = "test-vm";
-  profile = "development";  # Use development profile instead of default workstation
-  extraModules = [
-    # VM-specific optimizations are automatically included
-    ({ config, ... }: {
-      # Additional VM configuration
-      virtualisation.memorySize = 4096;
-      virtualisation.cores = 4;
-    })
-  ];
-};
-```
-
-### Complete Desktop with Home Manager
-
-```nix
-my-desktop = flakeUtils.mkDesktopHost {
+my-desktop = flakeUtils.mkSystem {
   hostname = "my-desktop";
-  homeProfile = "desktop";  # Uses home/profiles/desktop.nix
+  profile = "workstation";
   extraModules = [
-    ./hardware-configuration.nix
-    ({ config, pkgs, ... }: {
-      # System-level desktop configuration
-      services.xserver.enable = true;
-      services.xserver.displayManager.gdm.enable = true;
-      services.xserver.desktopManager.gnome.enable = true;
-    })
+    { time.timeZone = "Europe/Oslo"; }
   ];
 };
 ```
 
-## Custom Templates
+---
 
-You can create your own templates by following the same pattern:
+## Standalone Home Manager
+
+`homeConfigurations` entries are built by `mkHome` in `flake.nix` and are for
+using Home Manager **without** NixOS:
 
 ```nix
-# In your flake.nix
-let
-  flakeUtils = import ./lib/flake-utils.nix { inherit inputs outputs nixpkgs self home-manager sops-nix; };
-
-  # Custom template
-  mkMediaServer = { hostname, system ? "x86_64-linux", extraModules ? [] }:
-    flakeUtils.mkServer {
-      inherit hostname system;
-      extraModules = [
-        ./modules/services/plex.nix
-        ./modules/services/sonarr.nix
-        ./modules/services/radarr.nix
-      ] ++ extraModules;
-    };
-in {
-  nixosConfigurations = {
-    media-server = mkMediaServer {
-      hostname = "media-server";
-      extraModules = [
-        # Additional media server configuration
-        ({ config, ... }: {
-          services.plex.dataDir = "/mnt/media/plex";
-          networking.firewall.allowedTCPPorts = [ 32400 ];
-        })
-      ];
-    };
-  };
-}
+"user@my-desktop" = mkHome { hostname = "my-desktop"; };
 ```
 
-## Profile System Integration
+On a NixOS host you do not need this — `mkSystem` already wires Home Manager in.
 
-All template functions work seamlessly with the Home Manager profile system:
+---
 
-1. **Automatic Profile Application** - Templates automatically apply appropriate Home Manager profiles
-1. **Host-Specific Overrides** - Individual hosts can override profile settings
-1. **Consistent Configuration** - Shared profiles ensure consistent tool availability
-1. **Easy Maintenance** - Update profiles to affect all systems using them
+## Verifying before you switch
 
-For more information about the profile system, see [CLAUDE.md](../CLAUDE.md).
+```bash
+nix flake check                                    # evaluate every host
+nix build .#nixosConfigurations.my-desktop.config.system.build.toplevel --dry-run
+sudo nixos-rebuild test --flake .#my-desktop       # activate without a boot entry
+sudo nixos-rebuild switch --flake .#my-desktop
+```
+
+---
+
+## A caveat worth knowing
+
+`hosts/*/configuration.nix` in this repository imports `../../modules`, which
+imports **every** module directory including `modules/profiles/`, and
+`modules/profiles/default.nix` imports `workstation.nix` unconditionally.
+`workstation.nix` is not guarded by an enable option, so its desktop package set
+applies to any host that imports `../../modules` — including `server-template`.
+
+If you are building a genuinely minimal server, import the specific module
+directories you want instead of `../../modules`. `hosts/wsl2-template/configuration.nix`
+shows that selective-import style.

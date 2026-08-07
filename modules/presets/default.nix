@@ -23,14 +23,16 @@ in
     };
 
     preset = lib.mkOption {
-      type = lib.types.nullOr (lib.types.enum [
-        "workstation"
-        "laptop"
-        "server"
-        "gaming"
-        "vm-guest"
-        "developer"
-      ]);
+      type = lib.types.nullOr (
+        lib.types.enum [
+          "workstation"
+          "laptop"
+          "server"
+          "gaming"
+          "vm-guest"
+          "developer"
+        ]
+      );
       default = null;
       description = "The system preset to use";
     };

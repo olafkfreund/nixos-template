@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -44,7 +49,10 @@ in
 
       dns = mkOption {
         type = types.listOf types.str;
-        default = [ "1.1.1.1" "8.8.8.8" ];
+        default = [
+          "1.1.1.1"
+          "8.8.8.8"
+        ];
         description = "DNS servers for containers";
       };
     };
@@ -202,7 +210,7 @@ in
       # Container storage configuration
       storage.settings = {
         storage = {
-          driver = cfg.storage.driver;
+          inherit (cfg.storage) driver;
           runroot = cfg.storage.runRoot;
           graphroot = cfg.storage.graphRoot;
 
@@ -216,42 +224,45 @@ in
 
       # Registry configuration
       registries = {
-        search = cfg.registries.search;
-        insecure = cfg.registries.insecure;
-        block = cfg.registries.block;
+        inherit (cfg.registries) search;
+        inherit (cfg.registries) insecure;
+        inherit (cfg.registries) block;
       };
 
       # Policy configuration for image verification
       policy = {
-        default = [{ type = "insecureAcceptAnything"; }];
+        default = [ { type = "insecureAcceptAnything"; } ];
         transports = {
           docker-daemon = {
-            "" = [{ type = "insecureAcceptAnything"; }];
+            "" = [ { type = "insecureAcceptAnything"; } ];
           };
         };
       };
     };
 
     # System packages for containers
-    environment.systemPackages = with pkgs; [
-      podman
+    environment.systemPackages =
+      with pkgs;
+      [
+        podman
 
-      # Additional container tools
-      (mkIf cfg.additionalTools.buildah buildah)
-      (mkIf cfg.additionalTools.skopeo skopeo)
-      (mkIf cfg.additionalTools.podman-compose podman-compose)
-      (mkIf cfg.additionalTools.podman-tui podman-tui)
-      (mkIf cfg.additionalTools.dive dive)
-      (mkIf cfg.additionalTools.ctop ctop)
+        # Additional container tools
+        (mkIf cfg.additionalTools.buildah buildah)
+        (mkIf cfg.additionalTools.skopeo skopeo)
+        (mkIf cfg.additionalTools.podman-compose podman-compose)
+        (mkIf cfg.additionalTools.podman-tui podman-tui)
+        (mkIf cfg.additionalTools.dive dive)
+        (mkIf cfg.additionalTools.ctop ctop)
 
-      # Container development tools
-      conmon
-      crun
-      fuse-overlayfs
-      slirp4netns
+        # Container development tools
+        conmon
+        crun
+        fuse-overlayfs
+        slirp4netns
 
-      # Extra packages specified by user
-    ] ++ cfg.extraPackages;
+        # Extra packages specified by user
+      ]
+      ++ cfg.extraPackages;
 
     # User groups for container access
     users.groups.podman = { };
@@ -318,7 +329,10 @@ in
     # the complex configuration file management
 
     # Kernel modules needed for containers
-    boot.kernelModules = [ "overlay" "br_netfilter" ];
+    boot.kernelModules = [
+      "overlay"
+      "br_netfilter"
+    ];
 
     # Sysctl settings for containers
     boot.kernel.sysctl = {
@@ -345,12 +359,19 @@ in
     # Firewall rules for container networking
     networking.firewall = mkIf cfg.networking.enable {
       # Allow container-to-container communication
-      trustedInterfaces = [ "podman+" "cni+" ];
+      trustedInterfaces = [
+        "podman+"
+        "cni+"
+      ];
     };
 
     # Additional networking configuration
     networking.networkmanager = mkIf config.networking.networkmanager.enable {
-      unmanaged = [ "interface-name:veth*" "interface-name:podman*" "interface-name:cni*" ];
+      unmanaged = [
+        "interface-name:veth*"
+        "interface-name:podman*"
+        "interface-name:cni*"
+      ];
     };
   };
 }

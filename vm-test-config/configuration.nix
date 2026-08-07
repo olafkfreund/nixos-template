@@ -1,4 +1,9 @@
-{ config, lib, inputs, ... }:
+{
+  config,
+  lib,
+  inputs,
+  ...
+}:
 
 {
   imports = [
@@ -29,7 +34,7 @@
       # KDE Plasma Desktop
       # kde = {
       #   enable = true;
-      #   version = "plasma6";        # plasma5 or plasma6
+      #   # Plasma 6 (Plasma 5 was removed from nixpkgs)
       #   applications.enable = true; # KDE app suite
       #   wayland.enable = true;      # Wayland support
       #   theme.darkMode = true;      # Dark theme
@@ -140,7 +145,12 @@
   users.users.user = {
     isNormalUser = true;
     description = "Desktop User";
-    extraGroups = [ "networkmanager" "wheel" "audio" "video" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "audio"
+      "video"
+    ];
 
     # Initial password (change after first login)
     initialPassword = "nixos";

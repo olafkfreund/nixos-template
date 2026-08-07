@@ -375,7 +375,9 @@ If automated setup doesn't meet your needs:
 1. **Copy Example Configuration**
 
    ```bash
-   cp -r hosts/example-desktop hosts/my-host
+   # Starting points: desktop-template, laptop-template,
+   # server-template, wsl2-template
+   cp -r hosts/desktop-template hosts/my-host
    ```
 
 1. **Customize Configuration**
@@ -385,14 +387,19 @@ If automated setup doesn't meet your needs:
 
 1. **Add to Flake**
 
+   Open `flake.nix`, find the `ADD YOUR OWN HOSTS HERE` block inside
+   `nixosConfigurations`, and add an entry:
+
    ```nix
-   # In flake.nix
-   nixosConfigurations.my-host = nixpkgs.lib.nixosSystem {
-     inherit system;
-     modules = [ ./hosts/my-host ];
-     specialArgs = { inherit inputs outputs; };
-   };
+   my-host = flakeUtils.mkSystem {
+     hostname = "my-host";      # must match the hosts/ directory name
+     profile = "workstation";   # workstation, server, laptop, gaming,
+   };                           # development or minimal
    ```
+
+   Use `mkSystem` rather than calling `nixpkgs.lib.nixosSystem` yourself — it
+   wires in Home Manager, agenix and the flake metadata module for you. See
+   [HOST-TEMPLATES.md](HOST-TEMPLATES.md).
 
 1. **Build and Switch**
 

@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.modules.desktop.niri;
@@ -49,25 +54,39 @@ in
         };
 
         mouse = {
-          natural-scroll = lib.mkEnableOption "natural scrolling" // { default = false; };
+          natural-scroll = lib.mkEnableOption "natural scrolling" // {
+            default = false;
+          };
           accel-speed = lib.mkOption {
             type = lib.types.float;
             default = 0.0;
             description = "Mouse acceleration speed";
           };
           accel-profile = lib.mkOption {
-            type = lib.types.enum [ "flat" "adaptive" ];
+            type = lib.types.enum [
+              "flat"
+              "adaptive"
+            ];
             default = "adaptive";
             description = "Mouse acceleration profile";
           };
         };
 
         touchpad = {
-          tap = lib.mkEnableOption "tap to click" // { default = true; };
-          dwt = lib.mkEnableOption "disable while typing" // { default = true; };
-          natural-scroll = lib.mkEnableOption "natural scrolling for touchpad" // { default = true; };
+          tap = lib.mkEnableOption "tap to click" // {
+            default = true;
+          };
+          dwt = lib.mkEnableOption "disable while typing" // {
+            default = true;
+          };
+          natural-scroll = lib.mkEnableOption "natural scrolling for touchpad" // {
+            default = true;
+          };
           click-method = lib.mkOption {
-            type = lib.types.enum [ "button-areas" "clickfinger" ];
+            type = lib.types.enum [
+              "button-areas"
+              "clickfinger"
+            ];
             default = "clickfinger";
             description = "Touchpad click method";
           };
@@ -76,60 +95,75 @@ in
 
       # Output configuration
       outputs = lib.mkOption {
-        type = lib.types.listOf (lib.types.submodule {
-          options = {
-            name = lib.mkOption {
-              type = lib.types.str;
-              description = "Output name (e.g., DP-1, HDMI-A-1)";
+        type = lib.types.listOf (
+          lib.types.submodule {
+            options = {
+              name = lib.mkOption {
+                type = lib.types.str;
+                description = "Output name (e.g., DP-1, HDMI-A-1)";
+              };
+              mode = lib.mkOption {
+                type = lib.types.nullOr (
+                  lib.types.submodule {
+                    options = {
+                      width = lib.mkOption {
+                        type = lib.types.int;
+                        description = "Screen width";
+                      };
+                      height = lib.mkOption {
+                        type = lib.types.int;
+                        description = "Screen height";
+                      };
+                      refresh = lib.mkOption {
+                        type = lib.types.float;
+                        description = "Refresh rate";
+                      };
+                    };
+                  }
+                );
+                default = null;
+                description = "Output mode configuration";
+              };
+              scale = lib.mkOption {
+                type = lib.types.float;
+                default = 1.0;
+                description = "Output scale factor";
+              };
+              transform = lib.mkOption {
+                type = lib.types.enum [
+                  "normal"
+                  "90"
+                  "180"
+                  "270"
+                  "flipped"
+                  "flipped-90"
+                  "flipped-180"
+                  "flipped-270"
+                ];
+                default = "normal";
+                description = "Output transformation";
+              };
+              position = lib.mkOption {
+                type = lib.types.nullOr (
+                  lib.types.submodule {
+                    options = {
+                      x = lib.mkOption {
+                        type = lib.types.int;
+                        description = "X position";
+                      };
+                      y = lib.mkOption {
+                        type = lib.types.int;
+                        description = "Y position";
+                      };
+                    };
+                  }
+                );
+                default = null;
+                description = "Output position";
+              };
             };
-            mode = lib.mkOption {
-              type = lib.types.nullOr (lib.types.submodule {
-                options = {
-                  width = lib.mkOption {
-                    type = lib.types.int;
-                    description = "Screen width";
-                  };
-                  height = lib.mkOption {
-                    type = lib.types.int;
-                    description = "Screen height";
-                  };
-                  refresh = lib.mkOption {
-                    type = lib.types.float;
-                    description = "Refresh rate";
-                  };
-                };
-              });
-              default = null;
-              description = "Output mode configuration";
-            };
-            scale = lib.mkOption {
-              type = lib.types.float;
-              default = 1.0;
-              description = "Output scale factor";
-            };
-            transform = lib.mkOption {
-              type = lib.types.enum [ "normal" "90" "180" "270" "flipped" "flipped-90" "flipped-180" "flipped-270" ];
-              default = "normal";
-              description = "Output transformation";
-            };
-            position = lib.mkOption {
-              type = lib.types.nullOr (lib.types.submodule {
-                options = {
-                  x = lib.mkOption {
-                    type = lib.types.int;
-                    description = "X position";
-                  };
-                  y = lib.mkOption {
-                    type = lib.types.int;
-                    description = "Y position";
-                  };
-                };
-              });
-              default = null;
-              description = "Output position";
-            };
-          };
-        });
+          }
+        );
         default = [ ];
         description = "Output configurations";
       };
@@ -143,20 +177,26 @@ in
         };
 
         center-focused-column = lib.mkOption {
-          type = lib.types.enum [ "never" "always" "on-overflow" ];
+          type = lib.types.enum [
+            "never"
+            "always"
+            "on-overflow"
+          ];
           default = "on-overflow";
           description = "When to center the focused column";
         };
 
         preset-column-widths = lib.mkOption {
-          type = lib.types.listOf (lib.types.submodule {
-            options = {
-              proportion = lib.mkOption {
-                type = lib.types.float;
-                description = "Width as proportion of screen width";
+          type = lib.types.listOf (
+            lib.types.submodule {
+              options = {
+                proportion = lib.mkOption {
+                  type = lib.types.float;
+                  description = "Width as proportion of screen width";
+                };
               };
-            };
-          });
+            }
+          );
           default = [
             { proportion = 0.33333; }
             { proportion = 0.5; }
@@ -166,82 +206,96 @@ in
         };
 
         default-column-width = lib.mkOption {
-          type = lib.types.nullOr (lib.types.submodule {
-            options = {
-              proportion = lib.mkOption {
-                type = lib.types.float;
-                description = "Default width as proportion of screen width";
+          type = lib.types.nullOr (
+            lib.types.submodule {
+              options = {
+                proportion = lib.mkOption {
+                  type = lib.types.float;
+                  description = "Default width as proportion of screen width";
+                };
               };
-            };
-          });
-          default = { proportion = 0.5; };
+            }
+          );
+          default = {
+            proportion = 0.5;
+          };
           description = "Default column width";
         };
       };
 
       # Window rules
       window-rules = lib.mkOption {
-        type = lib.types.listOf (lib.types.submodule {
-          options = {
-            matches = lib.mkOption {
-              type = lib.types.listOf (lib.types.submodule {
-                options = {
-                  app-id = lib.mkOption {
-                    type = lib.types.nullOr lib.types.str;
-                    default = null;
-                    description = "Match application ID";
-                  };
-                  title = lib.mkOption {
-                    type = lib.types.nullOr lib.types.str;
-                    default = null;
-                    description = "Match window title";
-                  };
-                };
-              });
-              description = "Window matching criteria";
-            };
+        type = lib.types.listOf (
+          lib.types.submodule {
+            options = {
+              matches = lib.mkOption {
+                type = lib.types.listOf (
+                  lib.types.submodule {
+                    options = {
+                      app-id = lib.mkOption {
+                        type = lib.types.nullOr lib.types.str;
+                        default = null;
+                        description = "Match application ID";
+                      };
+                      title = lib.mkOption {
+                        type = lib.types.nullOr lib.types.str;
+                        default = null;
+                        description = "Match window title";
+                      };
+                    };
+                  }
+                );
+                description = "Window matching criteria";
+              };
 
-            default-column-width = lib.mkOption {
-              type = lib.types.nullOr (lib.types.submodule {
-                options = {
-                  proportion = lib.mkOption {
-                    type = lib.types.float;
-                    description = "Width proportion";
-                  };
-                };
-              });
-              default = null;
-              description = "Default column width for matching windows";
-            };
+              default-column-width = lib.mkOption {
+                type = lib.types.nullOr (
+                  lib.types.submodule {
+                    options = {
+                      proportion = lib.mkOption {
+                        type = lib.types.float;
+                        description = "Width proportion";
+                      };
+                    };
+                  }
+                );
+                default = null;
+                description = "Default column width for matching windows";
+              };
 
-            open-on-output = lib.mkOption {
-              type = lib.types.nullOr lib.types.str;
-              default = null;
-              description = "Output to open window on";
-            };
+              open-on-output = lib.mkOption {
+                type = lib.types.nullOr lib.types.str;
+                default = null;
+                description = "Output to open window on";
+              };
 
-            open-maximized = lib.mkOption {
-              type = lib.types.nullOr lib.types.bool;
-              default = null;
-              description = "Open window maximized";
-            };
+              open-maximized = lib.mkOption {
+                type = lib.types.nullOr lib.types.bool;
+                default = null;
+                description = "Open window maximized";
+              };
 
-            open-fullscreen = lib.mkOption {
-              type = lib.types.nullOr lib.types.bool;
-              default = null;
-              description = "Open window fullscreen";
+              open-fullscreen = lib.mkOption {
+                type = lib.types.nullOr lib.types.bool;
+                default = null;
+                description = "Open window fullscreen";
+              };
             };
-          };
-        });
+          }
+        );
         default = [ ];
         description = "Window rules for specific applications";
       };
 
       # Appearance
-      prefer-no-csd = lib.mkEnableOption "prefer server-side decorations" // { default = false; };
+      prefer-no-csd = lib.mkEnableOption "prefer server-side decorations" // {
+        default = false;
+      };
 
       hotkey-overlay = {
-        skip-at-startup = lib.mkEnableOption "skip hotkey overlay at startup" // { default = false; };
+        skip-at-startup = lib.mkEnableOption "skip hotkey overlay at startup" // {
+          default = false;
+        };
       };
 
       screenshot-path = lib.mkOption {
@@ -253,25 +307,48 @@ in
 
     # Waybar configuration
     waybar = {
-      enable = lib.mkEnableOption "Waybar status bar" // { default = true; };
+      enable = lib.mkEnableOption "Waybar status bar" // {
+        default = true;
+      };
       position = lib.mkOption {
-        type = lib.types.enum [ "top" "bottom" ];
+        type = lib.types.enum [
+          "top"
+          "bottom"
+        ];
         default = "top";
         description = "Waybar position";
       };
 
       modules = {
-        workspaces = lib.mkEnableOption "workspace indicator" // { default = true; };
-        window = lib.mkEnableOption "window title" // { default = true; };
-        clock = lib.mkEnableOption "clock widget" // { default = true; };
-        battery = lib.mkEnableOption "battery widget" // { default = true; };
-        network = lib.mkEnableOption "network widget" // { default = true; };
-        pulseaudio = lib.mkEnableOption "audio widget" // { default = true; };
-        tray = lib.mkEnableOption "system tray" // { default = true; };
+        workspaces = lib.mkEnableOption "workspace indicator" // {
+          default = true;
+        };
+        window = lib.mkEnableOption "window title" // {
+          default = true;
+        };
+        clock = lib.mkEnableOption "clock widget" // {
+          default = true;
+        };
+        battery = lib.mkEnableOption "battery widget" // {
+          default = true;
+        };
+        network = lib.mkEnableOption "network widget" // {
+          default = true;
+        };
+        pulseaudio = lib.mkEnableOption "audio widget" // {
+          default = true;
+        };
+        tray = lib.mkEnableOption "system tray" // {
+          default = true;
+        };
       };
 
       theme = lib.mkOption {
-        type = lib.types.enum [ "default" "minimal" "niri" ];
+        type = lib.types.enum [
+          "default"
+          "minimal"
+          "niri"
+        ];
         default = "niri";
         description = "Waybar theme style";
       };
@@ -279,7 +356,9 @@ in
 
     # Dunst notification daemon
     dunst = {
-      enable = lib.mkEnableOption "Dunst notification daemon" // { default = true; };
+      enable = lib.mkEnableOption "Dunst notification daemon" // {
+        default = true;
+      };
 
       settings = {
         urgency_low = {
@@ -343,10 +422,16 @@ in
 
     # Theme and styling
     theme = {
-      enable = lib.mkEnableOption "custom theming" // { default = true; };
+      enable = lib.mkEnableOption "custom theming" // {
+        default = true;
+      };
 
       colorScheme = lib.mkOption {
-        type = lib.types.enum [ "dark" "light" "auto" ];
+        type = lib.types.enum [
+          "dark"
+          "light"
+          "auto"
+        ];
         default = "dark";
         description = "Color scheme preference";
       };
@@ -385,8 +470,12 @@ in
           keyboard {
               xkb {
                   layout "${cfg.settings.input.keyboard.xkb.layout}"
-                  ${lib.optionalString (cfg.settings.input.keyboard.xkb.variant != "") ''variant "${cfg.settings.input.keyboard.xkb.variant}"''}
-                  ${lib.optionalString (cfg.settings.input.keyboard.xkb.options != null) ''options "${cfg.settings.input.keyboard.xkb.options}"''}
+                  ${lib.optionalString (
+                    cfg.settings.input.keyboard.xkb.variant != ""
+                  ) ''variant "${cfg.settings.input.keyboard.xkb.variant}"''}
+                  ${lib.optionalString (
+                    cfg.settings.input.keyboard.xkb.options != null
+                  ) ''options "${cfg.settings.input.keyboard.xkb.options}"''}
               }
 
               repeat-delay ${toString cfg.settings.input.keyboard.repeat-delay}
@@ -425,7 +514,9 @@ in
           center-focused-column "${cfg.settings.layout.center-focused-column}"
 
           preset-column-widths {
-              ${lib.concatMapStringsSep "\n          " (width: ''proportion ${toString width.proportion}'') cfg.settings.layout.preset-column-widths}
+              ${lib.concatMapStringsSep "\n          " (
+                width: "proportion ${toString width.proportion}"
+              ) cfg.settings.layout.preset-column-widths}
           }
 
           ${lib.optionalString (cfg.settings.layout.default-column-width != null) ''
@@ -444,8 +535,12 @@ in
               default-column-width { proportion ${toString rule.default-column-width.proportion} }
             ''}
             ${lib.optionalString (rule.open-on-output != null) ''open-on-output "${rule.open-on-output}"''}
-            ${lib.optionalString (rule.open-maximized != null) ''open-maximized ${if rule.open-maximized then "true" else "false"}''}
-            ${lib.optionalString (rule.open-fullscreen != null) ''open-fullscreen ${if rule.open-fullscreen then "true" else "false"}''}
+            ${lib.optionalString (rule.open-maximized != null)
+              "open-maximized ${if rule.open-maximized then "true" else "false"}"
+            }
+            ${lib.optionalString (rule.open-fullscreen != null)
+              "open-fullscreen ${if rule.open-fullscreen then "true" else "false"}"
+            }
         }
       '') cfg.settings.window-rules}
 
@@ -461,7 +556,9 @@ in
 
       spawn-at-startup "waybar"
       spawn-at-startup "dunst"
-      ${lib.optionalString (cfg.theme.wallpaper != "") ''spawn-at-startup "swaybg" "-i" "${cfg.theme.wallpaper}"''}
+      ${lib.optionalString (
+        cfg.theme.wallpaper != ""
+      ) ''spawn-at-startup "swaybg" "-i" "${cfg.theme.wallpaper}"''}
 
       // Niri key bindings
       binds {
@@ -597,154 +694,171 @@ in
     '';
 
     # Essential packages for Niri and Waybar
-    environment.systemPackages = with pkgs; [
-      # Waybar (if enabled)
-    ] ++ lib.optionals cfg.waybar.enable [
-      waybar
-    ] ++ lib.optionals cfg.dunst.enable [
-      dunst
-    ] ++ [
-      # Core Wayland utilities
-      wl-clipboard # Clipboard manager
-      wlr-randr # Display configuration
+    environment.systemPackages =
+      with pkgs;
+      lib.optionals cfg.waybar.enable [
+        waybar
+      ]
+      ++ lib.optionals cfg.dunst.enable [
+        dunst
+      ]
+      ++ [
+        # Core Wayland utilities
+        wl-clipboard # Clipboard manager
+        wlr-randr # Display configuration
 
-      # Application launcher (fuzzel works great with niri)
-      fuzzel # Fast application launcher
-      wofi # Alternative launcher
+        # Application launcher (fuzzel works great with niri)
+        fuzzel # Fast application launcher
+        wofi # Alternative launcher
 
-      # Terminal emulators
-      alacritty # Default terminal
-      foot # Lightweight Wayland terminal
+        # Terminal emulators
+        alacritty # Default terminal
+        foot # Lightweight Wayland terminal
 
-      # File manager
-      thunar # File manager
+        # File manager
+        thunar # File manager
 
-      # Screenshot and screen recording
-      grim # Screenshot tool
-      slurp # Screen area selection
-      swappy # Screenshot annotation
-      wf-recorder # Screen recorder
+        # Screenshot and screen recording
+        grim # Screenshot tool
+        slurp # Screen area selection
+        swappy # Screenshot annotation
+        wf-recorder # Screen recorder
 
-      # Wallpaper
-      swaybg # Wallpaper setter
+        # Wallpaper
+        swaybg # Wallpaper setter
 
-      # System utilities
-      brightnessctl # Brightness control
-      pamixer # Audio control
-      pavucontrol # Audio mixer GUI
+        # System utilities
+        brightnessctl # Brightness control
+        pamixer # Audio control
+        pavucontrol # Audio mixer GUI
 
-      # Screen locker
-      swaylock # Screen locker
+        # Screen locker
+        swaylock # Screen locker
 
-      # Theme and appearance
-      gtk3 # GTK3 for theme support
-      adwaita-icon-theme
-      gnome-themes-extra
+        # Theme and appearance
+        gtk3 # GTK3 for theme support
+        adwaita-icon-theme
+        gnome-themes-extra
 
-      # Fonts
-      jetbrains-mono
-      font-awesome
+        # Fonts
+        jetbrains-mono
+        font-awesome
 
-      # Media
-      imv # Image viewer
-      mpv # Video player
+        # Media
+        imv # Image viewer
+        mpv # Video player
 
-      # Archive support for file manager
-      file-roller # Archive manager
+        # Archive support for file manager
+        file-roller # Archive manager
 
-      # Network management
-      networkmanagerapplet
+        # Network management
+        networkmanagerapplet
 
-      # System information
-      fastfetch # System info
+        # System information
+        fastfetch # System info
 
-      # PDF viewer
-      zathura # Minimal PDF viewer
-    ];
+        # PDF viewer
+        zathura # Minimal PDF viewer
+      ];
 
     # Waybar configuration file
-    environment.etc."xdg/waybar/config".text = lib.mkIf cfg.waybar.enable (builtins.toJSON {
-      mainBar = {
-        layer = "top";
-        position = cfg.waybar.position;
-        height = 35;
-        spacing = 4;
+    environment.etc."xdg/waybar/config".text = lib.mkIf cfg.waybar.enable (
+      builtins.toJSON {
+        mainBar = {
+          layer = "top";
+          inherit (cfg.waybar) position;
+          height = 35;
+          spacing = 4;
 
-        modules-left = [ "niri/workspaces" "niri/window" ];
-        modules-center = [ "clock" ];
-        modules-right = [
-          "pulseaudio"
-          "network"
-          "battery"
-          "tray"
-        ];
+          modules-left = [
+            "niri/workspaces"
+            "niri/window"
+          ];
+          modules-center = [ "clock" ];
+          modules-right = [
+            "pulseaudio"
+            "network"
+            "battery"
+            "tray"
+          ];
 
-        # Niri-specific modules
-        "niri/workspaces" = lib.mkIf cfg.waybar.modules.workspaces {
-          current-only = false;
-          all-outputs = true;
-        };
+          # Niri-specific modules
+          "niri/workspaces" = lib.mkIf cfg.waybar.modules.workspaces {
+            current-only = false;
+            all-outputs = true;
+          };
 
-        "niri/window" = lib.mkIf cfg.waybar.modules.window {
-          format = "{}";
-          max-length = 50;
-          rewrite = {
-            "(.*) — Mozilla Firefox" = " $1";
-            "(.*) - Visual Studio Code" = "󰨞 $1";
+          "niri/window" = lib.mkIf cfg.waybar.modules.window {
+            format = "{}";
+            max-length = 50;
+            rewrite = {
+              "(.*) — Mozilla Firefox" = " $1";
+              "(.*) - Visual Studio Code" = "󰨞 $1";
+            };
+          };
+
+          clock = lib.mkIf cfg.waybar.modules.clock {
+            timezone = "UTC";
+            tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
+            format-alt = "{:%Y-%m-%d}";
+          };
+
+          battery = lib.mkIf cfg.waybar.modules.battery {
+            states = {
+              warning = 30;
+              critical = 15;
+            };
+            format = "{capacity}% {icon}";
+            format-charging = "{capacity}% ";
+            format-plugged = "{capacity}% ";
+            format-alt = "{time} {icon}";
+            format-icons = [
+              ""
+              ""
+              ""
+              ""
+              ""
+            ];
+          };
+
+          network = lib.mkIf cfg.waybar.modules.network {
+            format-wifi = "{essid} ({signalStrength}%) ";
+            format-ethernet = "{ipaddr}/{cidr} ";
+            tooltip-format = "{ifname} via {gwaddr} ";
+            format-linked = "{ifname} (No IP) ";
+            format-disconnected = "Disconnected ⚠";
+            format-alt = "{ifname}: {ipaddr}/{cidr}";
+          };
+
+          pulseaudio = lib.mkIf cfg.waybar.modules.pulseaudio {
+            format = "{volume}% {icon} {format_source}";
+            format-bluetooth = "{volume}% {icon} {format_source}";
+            format-bluetooth-muted = " {icon} {format_source}";
+            format-muted = " {format_source}";
+            format-source = "{volume}% ";
+            format-source-muted = "";
+            format-icons = {
+              headphone = "";
+              hands-free = "";
+              headset = "";
+              phone = "";
+              portable = "";
+              car = "";
+              default = [
+                ""
+                ""
+                ""
+              ];
+            };
+            on-click = "pavucontrol";
+          };
+
+          tray = lib.mkIf cfg.waybar.modules.tray {
+            spacing = 10;
           };
         };
-
-        clock = lib.mkIf cfg.waybar.modules.clock {
-          timezone = "UTC";
-          tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
-          format-alt = "{:%Y-%m-%d}";
-        };
-
-        battery = lib.mkIf cfg.waybar.modules.battery {
-          states = {
-            warning = 30;
-            critical = 15;
-          };
-          format = "{capacity}% {icon}";
-          format-charging = "{capacity}% ";
-          format-plugged = "{capacity}% ";
-          format-alt = "{time} {icon}";
-          format-icons = [ "" "" "" "" "" ];
-        };
-
-        network = lib.mkIf cfg.waybar.modules.network {
-          format-wifi = "{essid} ({signalStrength}%) ";
-          format-ethernet = "{ipaddr}/{cidr} ";
-          tooltip-format = "{ifname} via {gwaddr} ";
-          format-linked = "{ifname} (No IP) ";
-          format-disconnected = "Disconnected ⚠";
-          format-alt = "{ifname}: {ipaddr}/{cidr}";
-        };
-
-        pulseaudio = lib.mkIf cfg.waybar.modules.pulseaudio {
-          format = "{volume}% {icon} {format_source}";
-          format-bluetooth = "{volume}% {icon} {format_source}";
-          format-bluetooth-muted = " {icon} {format_source}";
-          format-muted = " {format_source}";
-          format-source = "{volume}% ";
-          format-source-muted = "";
-          format-icons = {
-            headphone = "";
-            hands-free = "";
-            headset = "";
-            phone = "";
-            portable = "";
-            car = "";
-            default = [ "" "" "" ];
-          };
-          on-click = "pavucontrol";
-        };
-
-        tray = lib.mkIf cfg.waybar.modules.tray {
-          spacing = 10;
-        };
-      };
-    });
+      }
+    );
 
     # Waybar style configuration
     environment.etc."xdg/waybar/style.css".text = lib.mkIf cfg.waybar.enable ''
@@ -1017,7 +1131,7 @@ in
         font-awesome
         noto-fonts
         noto-fonts-cjk-sans
-        noto-fonts-emoji
+        noto-fonts-color-emoji
       ];
 
       fontconfig = {

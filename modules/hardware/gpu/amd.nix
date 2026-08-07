@@ -1,10 +1,21 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.modules.hardware.gpu.amd;
   gpuCfg = config.modules.hardware.gpu;
-  isDesktop = builtins.elem gpuCfg.profile [ "desktop" "gaming" ];
-  isCompute = builtins.elem gpuCfg.profile [ "ai-compute" "server-compute" ];
+  isDesktop = builtins.elem gpuCfg.profile [
+    "desktop"
+    "gaming"
+  ];
+  isCompute = builtins.elem gpuCfg.profile [
+    "ai-compute"
+    "server-compute"
+  ];
 in
 {
   options.modules.hardware.gpu.amd = {
@@ -12,7 +23,15 @@ in
 
     # GPU model selection for specific optimizations
     model = lib.mkOption {
-      type = lib.types.enum [ "auto" "rdna3" "rdna2" "rdna1" "vega" "polaris" "legacy" ];
+      type = lib.types.enum [
+        "auto"
+        "rdna3"
+        "rdna2"
+        "rdna1"
+        "vega"
+        "polaris"
+        "legacy"
+      ];
       default = "auto";
       description = "AMD GPU architecture for specific optimizations";
     };
@@ -20,23 +39,40 @@ in
     # Desktop-specific options
     gaming = {
       enable = lib.mkEnableOption "gaming optimizations";
-      vulkan = lib.mkEnableOption "Vulkan API support" // { default = true; };
-      opengl = lib.mkEnableOption "OpenGL optimizations" // { default = true; };
+      vulkan = lib.mkEnableOption "Vulkan API support" // {
+        default = true;
+      };
+      opengl = lib.mkEnableOption "OpenGL optimizations" // {
+        default = true;
+      };
     };
 
     # AI/Compute options
     compute = {
       enable = lib.mkEnableOption "compute/AI optimizations";
-      rocm = lib.mkEnableOption "ROCm platform support" // { default = true; };
-      openCL = lib.mkEnableOption "OpenCL support" // { default = true; };
-      hip = lib.mkEnableOption "HIP runtime support" // { default = true; };
+      rocm = lib.mkEnableOption "ROCm platform support" // {
+        default = true;
+      };
+      openCL = lib.mkEnableOption "OpenCL support" // {
+        default = true;
+      };
+      hip = lib.mkEnableOption "HIP runtime support" // {
+        default = true;
+      };
     };
 
     # Overclocking and power management
     powerManagement = {
-      enable = lib.mkEnableOption "AMD GPU power management" // { default = true; };
+      enable = lib.mkEnableOption "AMD GPU power management" // {
+        default = true;
+      };
       profile = lib.mkOption {
-        type = lib.types.enum [ "auto" "low" "high" "manual" ];
+        type = lib.types.enum [
+          "auto"
+          "low"
+          "high"
+          "manual"
+        ];
         default = "auto";
         description = "Power management profile";
       };
@@ -59,11 +95,13 @@ in
         # IOMMU support for compute workloads
         "amd_iommu=on"
         "iommu=pt"
-      ] ++ lib.optionals (cfg.powerManagement.profile == "high") [
+      ]
+      ++ lib.optionals (cfg.powerManagement.profile == "high") [
         # High performance mode
         "amdgpu.dpm=1"
         "amdgpu.powerplay=1"
-      ] ++ lib.optionals isCompute [
+      ]
+      ++ lib.optionals isCompute [
         # Compute optimizations
         "amdgpu.vm_fragment_size=9"
         "amdgpu.vm_block_size=9"
@@ -78,60 +116,66 @@ in
       enable = true;
       enable32Bit = isDesktop;
 
-      extraPackages = with pkgs; [
-        # Mesa drivers
-        mesa.drivers
-
-        # AMD-specific packages
-        amdvlk # AMD Vulkan driver
-      ] ++ lib.optionals cfg.gaming.vulkan [
-        # Vulkan support
-        vulkan-loader
-        vulkan-validation-layers
-        vulkan-tools
-      ] ++ lib.optionals cfg.compute.rocm [
-        # ROCm platform
-        rocm-opencl-icd
-        rocm-opencl-runtime
-      ];
+      extraPackages =
+        with pkgs;
+        [
+          # Mesa drivers
+          mesa
+        ]
+        ++ lib.optionals cfg.gaming.vulkan [
+          # Vulkan support
+          vulkan-loader
+          vulkan-validation-layers
+          vulkan-tools
+        ]
+        ++ lib.optionals cfg.compute.rocm [
+          # ROCm platform
+          rocm-opencl-icd
+          rocm-opencl-runtime
+        ];
     };
 
     # System packages for AMD GPU support
-    environment.systemPackages = with pkgs; (
-      # Desktop gaming packages
-      lib.optionals isDesktop [
-        # AMD tools
-        radeontop # GPU monitoring
-        amdgpu-top # Modern AMD GPU monitor
+    environment.systemPackages =
+      with pkgs;
+      (
+        # Desktop gaming packages
+        lib.optionals isDesktop [
+          # AMD tools
+          radeontop # GPU monitoring
+          amdgpu-top # Modern AMD GPU monitor
 
-        # Graphics utilities
-        mesa-demos # OpenGL demos
-        vulkan-tools # Vulkan utilities
-        mesa-demos # OpenGL info
-      ] ++ lib.optionals (isDesktop && cfg.gaming.enable) [
-        # Gaming tools
-        mangohud # Gaming overlay
-        gamemode # Gaming optimizations
-      ] ++
-      # AI/Compute packages
-      lib.optionals isCompute [
-        # ROCm platform
-        rocm-opencl-icd
-        rocm-opencl-runtime
+          # Graphics utilities
+          mesa-demos # OpenGL demos
+          vulkan-tools # Vulkan utilities
+          mesa-demos # OpenGL info
+        ]
+        ++ lib.optionals (isDesktop && cfg.gaming.enable) [
+          # Gaming tools
+          mangohud # Gaming overlay
+          gamemode # Gaming optimizations
+        ]
+        ++
+          # AI/Compute packages
+          lib.optionals isCompute [
+            # ROCm platform
+            rocm-opencl-icd
+            rocm-opencl-runtime
 
-        # Development tools
-        clinfo # OpenCL info
-        rocm-smi # ROCm system management
+            # Development tools
+            clinfo # OpenCL info
+            rocm-smi # ROCm system management
 
-        # AI frameworks (examples)
-        # pytorch-rocm
-        # tensorflow-rocm
-      ] ++ lib.optionals (isCompute && cfg.compute.hip) [
-        # HIP runtime
-        hip
-        rocm-device-libs
-      ]
-    );
+            # AI frameworks (examples)
+            # pytorch-rocm
+            # tensorflow-rocm
+          ]
+        ++ lib.optionals (isCompute && cfg.compute.hip) [
+          # HIP runtime
+          hip
+          rocm-device-libs
+        ]
+      );
 
     # ROCm configuration for AI workloads
     systemd.tmpfiles.rules = lib.mkIf (cfg.compute.enable && cfg.compute.rocm) [
@@ -200,9 +244,13 @@ in
     # Add users to GPU groups (define users in host config)
     users.users = lib.mkMerge [
       # This will be applied to all normal users
-      (lib.genAttrs
-        (builtins.attrNames (lib.filterAttrs (_: user: user.isNormalUser) config.users.users))
-        (_: { extraGroups = [ "render" "video" ]; })
+      (lib.genAttrs (builtins.attrNames (lib.filterAttrs (_: user: user.isNormalUser) config.users.users))
+        (_: {
+          extraGroups = [
+            "render"
+            "video"
+          ];
+        })
       )
     ];
 

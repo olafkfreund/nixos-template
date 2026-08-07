@@ -1,423 +1,237 @@
 name: Continuous Integration
+# Every step here is allowed to fail the build.
+#
+# The previous version of this workflow had seven jobs and ten `|| true` /
+# `|| echo` / "skipping..." fallbacks, and never ran `nix flake check` at all.
+# It reported success on 2026-06-05 while the flake could not evaluate a single
+# host. If a check cannot fail, it is not a check — so there are no
+# failure-swallowing constructs below at all: no `|| true`, no `continue-on-error`.
 on:
   push:
     branches: [main, develop]
   pull_request:
-    branches: [main, develop]
   workflow_dispatch:
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
 jobs:
-  nix-validation:
-    name: Nix Code Validation
+  # ---------------------------------------------------------------------------
+  # Evaluation gate. `nix flake check --no-build` evaluates every entry in
+  # nixosConfigurations, darwinConfigurations and homeConfigurations. This is
+  # what catches removed packages and renamed options.
+  # ---------------------------------------------------------------------------
+  evaluate:
+    name: Evaluate flake
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Install Nix
-        uses: cachix/install-nix-action@v25
+        uses: cachix/install-nix-action@v31
         with:
-          nix_path: nixpkgs=channel:nixos-unstable
           extra_nix_config: |
             experimental-features = nix-command flakes
-            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
-            max-jobs = 4
-            cores = 2
-            keep-outputs = false
-            keep-derivations = false
-            connect-timeout = 60
-            stalled-download-timeout = 300
-      - name: Setup Cachix
-        id: cachix
-        continue-on-error: true
-        uses: cachix/cachix-action@v14
-        with:
-          name: nix-community
-          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
-          skipPush: true
-      - name: Configure Nix for CI
-        run: |
-          # Always configure basic substituters
-          echo "extra-substituters = https://cache.nixos.org" | sudo tee -a /etc/nix/nix.conf
-          echo "extra-trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" | sudo tee -a /etc/nix/nix.conf
-
-          # Add Cachix if it was set up successfully
-          if [ "${{ steps.cachix.outcome }}" = "success" ]; then
-            echo "✅ Cachix configured successfully"
-            echo "extra-substituters = https://cache.nixos.org https://nix-community.cachix.org" | sudo tee -a /etc/nix/nix.conf
-            echo "extra-trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=" | sudo tee -a /etc/nix/nix.conf
-          else
-            echo "⚠️ Using basic substituters only (Cachix unavailable)"
-          fi
-
-          # Configure performance settings
-          echo "max-jobs = 4" | sudo tee -a /etc/nix/nix.conf
-          echo "cores = 2" | sudo tee -a /etc/nix/nix.conf
-          sudo systemctl restart nix-daemon
-      - name: Check flake validity
-        timeout-minutes: 5
-        run: |
-          echo "Checking flake validity (lightweight)..."
-
-          # Use minimal validation for CI to avoid timeouts
-          echo "Testing basic flake evaluation..."
-          if timeout 240s nix flake show --no-update-lock-file --option connect-timeout 30 > /dev/null 2>&1; then
-            echo "✅ Flake structure is valid"
-          else
-            echo "⚠️ Flake show timed out, trying basic evaluation..."
-
-            # Fallback to minimal validation
-            echo "Testing core configurations exist..."
-            timeout 120s nix eval .#nixosConfigurations --apply 'builtins.attrNames' --no-update-lock-file || {
-              echo "⚠️ Configuration evaluation failed, skipping flake check"
-              echo "Note: This is often due to missing dependencies in CI environment"
-            }
-          fi
-      - name: Validate flake inputs
-        run: |
-          echo "Validating flake inputs..."
-          nix flake metadata --json | jq '.locks.nodes | keys[]' -r
-      - name: Check Nix syntax
-        run: |
-          echo "Checking Nix file syntax..."
-          echo "Environment: $(nix --version)"
-
-          # Simple approach that we know works - test core files only
-          echo "Testing core system files for syntax errors..."
-
-          # Test the most important files
-          echo "Checking flake.nix..."
-          nix-instantiate --parse ./flake.nix > /dev/null
-
-          echo "Checking lib/flake-utils.nix..."
-          nix-instantiate --parse ./lib/flake-utils.nix > /dev/null
-
-          echo "Checking modules/core/default.nix..."
-          nix-instantiate --parse ./modules/core/default.nix > /dev/null
-
-          echo "Checking base profile..."
-          nix-instantiate --parse ./home/profiles/base.nix > /dev/null
-
-          # Test a representative sample of other files
-          echo "Testing sample of configuration files..."
-          test_files="
-          ./modules/packages/core-system.nix
-          ./modules/desktop/default.nix
-          ./hosts/desktop-template/configuration.nix
-          ./hosts/server-template/configuration.nix
-          ./darwin/default.nix
-          "
-
-          for file in $test_files; do
-            if [ -f "$file" ]; then
-              echo "Checking $file..."
-              nix-instantiate --parse "$file" > /dev/null
-            fi
-          done
-
-          echo "✅ Core Nix syntax validation passed"
-      - name: Template syntax validation
-        timeout-minutes: 3
-        run: |
-          echo "Running template syntax validation..."
-
-          # Quick syntax check only for CI
-          echo "Testing basic template syntax..."
-          for template in hosts/*-template/configuration.nix; do
-            if [ -f "$template" ]; then
-              echo "Checking syntax: $template"
-              timeout 30s nix-instantiate --parse "$template" > /dev/null || {
-                echo "⚠️ Template $template failed syntax check"
-              }
-            fi
-          done
-
-          # Check home.nix files too
-          for template in hosts/*-template/home.nix; do
-            if [ -f "$template" ]; then
-              echo "Checking syntax: $template"
-              timeout 30s nix-instantiate --parse "$template" > /dev/null || {
-                echo "⚠️ Template $template failed syntax check"
-              }
-            fi
-          done
-
-          echo "✅ Template syntax validation completed"
-      - name: Check module imports
-        run: |
-          echo "Checking module imports..."
-          # Validate that all module imports resolve correctly
-          find modules -name "*.nix" -type f | while read -r module; do
-            echo "Checking module: $module"
-            nix-instantiate --eval -E "import ./$module { config = {}; lib = (import <nixpkgs> {}).lib; pkgs = import <nixpkgs> {}; }" > /dev/null || echo "WARNING: $module may have unmet dependencies"
-          done
-  code-quality:
-    name: Code Quality Checks
+            accept-flake-config = true
+            extra-substituters = https://nix-community.cachix.org
+            extra-trusted-public-keys = nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
+      - name: Show flake outputs
+        run: nix flake show --all-systems
+      - name: nix flake check (evaluate everything)
+        run: nix flake check --no-build --show-trace
+  # ---------------------------------------------------------------------------
+  # Lint and formatting gates, built as real derivations from the flake so the
+  # local `nix flake check` and CI can never disagree about the rules.
+  # ---------------------------------------------------------------------------
+  quality:
+    name: Lint & format
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        check: [statix-check, deadnix-check, shellcheck-check, treefmt, pre-commit-check]
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Install Nix
-        uses: cachix/install-nix-action@v25
+        uses: cachix/install-nix-action@v31
         with:
-          nix_path: nixpkgs=channel:nixos-unstable
           extra_nix_config: |
             experimental-features = nix-command flakes
-      - name: Install code quality tools
+            accept-flake-config = true
+            extra-substituters = https://nix-community.cachix.org
+            extra-trusted-public-keys = nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
+      - name: Build check ${{ matrix.check }}
+        run: nix build --no-link --print-build-logs ".#checks.x86_64-linux.${{ matrix.check }}"
+  # ---------------------------------------------------------------------------
+  # Instantiate each host. `nix flake check` does not force every option, so
+  # module conflicts (two definitions of boot.loader.timeout, say) only surface
+  # when the derivation is actually realised. --dry-run does that without
+  # downloading the closure.
+  # ---------------------------------------------------------------------------
+  hosts:
+    name: Instantiate ${{ matrix.host }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        host:
+          - desktop-template
+          - laptop-template
+          - server-template
+          - wsl2-template
+          - desktop-test
+          - test-server
+          - test-workstation
+          - test-gaming
+          - qemu-vm
+          - microvm
+          - installer-minimal
+          - installer-desktop
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+            extra-substituters = https://nix-community.cachix.org
+            extra-trusted-public-keys = nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
+      - name: Instantiate ${{ matrix.host }}
         run: |
-          nix profile install nixpkgs#nixpkgs-fmt
-          nix profile install nixpkgs#statix
-          nix profile install nixpkgs#deadnix
-      - name: Check Nix formatting
+          nix build --dry-run --show-trace \
+            ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel"
+  # ---------------------------------------------------------------------------
+  # The dev shell is the documented entry point ("nix develop"), so prove it
+  # builds and that the tooling the docs promise is actually on PATH.
+  # ---------------------------------------------------------------------------
+  devshell:
+    name: Dev shell
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+            extra-substituters = https://nix-community.cachix.org
+            extra-trusted-public-keys = nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
+      - name: Tooling promised by the README is present
         run: |
-          echo "Checking Nix code formatting..."
-          if ! nixpkgs-fmt --check .; then
-            echo "ERROR: Code is not properly formatted"
-            echo "Run 'nixpkgs-fmt .' to fix formatting issues"
+          nix develop --command bash -euo pipefail -c '
+            for tool in just nixfmt nixd statix deadnix treefmt shellcheck shfmt; do
+              command -v "$tool" >/dev/null || { echo "MISSING from dev shell: $tool"; exit 1; }
+              echo "ok: $tool"
+            done
+            just --list >/dev/null
+          '
+  # ---------------------------------------------------------------------------
+  # NixOS VM integration tests. These boot a real machine under QEMU, so they
+  # are the slowest job — but they are also the only ones that prove services
+  # actually come up.
+  # ---------------------------------------------------------------------------
+  vm-tests:
+    name: VM test ${{ matrix.test }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        test: [vm-test-desktop, vm-test-server]
+    steps:
+      - uses: actions/checkout@v5
+      - name: Free up runner disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
+                      /opt/hostedtoolcache/CodeQL /usr/local/share/boost
+          df -h /
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+            extra-substituters = https://nix-community.cachix.org
+            extra-trusted-public-keys = nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
+      - name: Run ${{ matrix.test }}
+        run: nix build --no-link --print-build-logs ".#checks.x86_64-linux.${{ matrix.test }}"
+  # ---------------------------------------------------------------------------
+  # The GitHub Pages site. Building it here means a broken link or a Liquid
+  # error fails the PR rather than silently shipping to the published site.
+  # ---------------------------------------------------------------------------
+  site:
+    name: Site build & link check
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - name: Import docs/ into the site
+        run: bash site/scripts/import-docs.sh docs site/docs
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./site
+          destination: ./_site
+      - name: Check internal links
+        run: |
+          python3 - <<'PY'
+          import os, re, sys
+          root, base = "_site", "/nixos-template"
+          hrefs = re.compile(r'(?:href|src)="([^"]+)"')
+          bad, pages = [], 0
+          for dp, _, fs in os.walk(root):
+              for f in fs:
+                  if not f.endswith(".html"):
+                      continue
+                  pages += 1
+                  page = os.path.join(dp, f)
+                  rel = os.path.relpath(page, root)
+                  html = open(page, encoding="utf-8", errors="ignore").read()
+                  for h in hrefs.findall(html):
+                      if h.startswith(("http://", "https://", "mailto:", "#", "data:")):
+                          continue
+                      target = h.split("#")[0].split("?")[0]
+                      if not target:
+                          continue
+                      if target.startswith(base):
+                          p = os.path.join(root, target[len(base):].lstrip("/"))
+                      elif target.startswith("/"):
+                          p = os.path.join(root, target.lstrip("/"))
+                      else:
+                          p = os.path.join(dp, target)
+                      if os.path.isdir(p):
+                          p = os.path.join(p, "index.html")
+                      if not os.path.exists(p):
+                          bad.append((rel, h))
+          print(f"checked {pages} pages")
+          if bad:
+              for p, h in bad:
+                  print(f"BROKEN: {p} -> {h}")
+              sys.exit(1)
+          print("no broken internal links")
+          PY
+  # ---------------------------------------------------------------------------
+  # Single required status for branch protection: green only if everything
+  # above is green. Without this, adding a job to the matrix silently escapes
+  # any "required checks" rule configured on the branch.
+  # ---------------------------------------------------------------------------
+  ci-passed:
+    name: CI passed
+    if: always()
+    needs: [evaluate, quality, hosts, devshell, vm-tests, site]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail if any job did not succeed
+        run: |
+          echo 'needs: ${{ toJSON(needs) }}'
+          if echo '${{ toJSON(needs) }}' | grep -q '"result": *"\(failure\|cancelled\|skipped\)"'; then
+            echo "At least one CI job did not succeed."
             exit 1
           fi
-          echo "✓ All Nix files are properly formatted"
-      - name: Run statix linter
-        run: |
-          echo "Running statix linter..."
-          if ! statix check .; then
-            echo "⚠️ Statix found some warnings (non-critical)"
-            echo "Note: These are code quality suggestions, not errors"
-          else
-            echo "✓ Statix linting passed"
-          fi
-      - name: Check for dead code
-        run: |
-          echo "Checking for dead code..."
-          if ! deadnix --fail . 2>/dev/null; then
-            echo "⚠️ Deadnix found unused code (non-critical)"
-            echo "Note: This includes unused function parameters which may be intentional"
-            echo "Running without --fail to show warnings only..."
-            deadnix . || true
-          else
-            echo "✓ No dead code detected"
-          fi
-      - name: Validate justfile syntax
-        run: |
-          # Install just
-          nix profile install nixpkgs#just
-          echo "Validating justfile syntax..."
-          just --list > /dev/null
-          echo "✓ Justfile syntax is valid"
-  shell-validation:
-    name: Shell Script Validation
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Install shellcheck
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y shellcheck
-      - name: Run shellcheck on all scripts
-        run: |
-          echo "Running shellcheck on shell scripts..."
-
-          # Find all shell scripts
-          find . -name "*.sh" -type f | while read -r script; do
-            echo "Checking: $script"
-            shellcheck -e SC1091 -e SC2016 "$script"
-          done
-
-          # Check scripts without .sh extension that have bash shebang
-          find . -type f -executable -exec grep -l '^#!/.*bash' {} \; | while read -r script; do
-            if [[ ! "$script" =~ \.sh$ ]]; then
-              echo "Checking executable script: $script"
-              shellcheck -e SC1091 -e SC2016 "$script"
-            fi
-          done
-
-          echo "✓ All shell scripts passed shellcheck"
-      - name: Validate script executability
-        run: |
-          echo "Checking script executability..."
-
-          # Check that all .sh files in scripts/ are executable
-          find scripts/ -name "*.sh" -type f | while read -r script; do
-            if [ ! -x "$script" ]; then
-              echo "ERROR: Script $script is not executable"
-              exit 1
-            fi
-          done
-
-          echo "✓ All scripts in scripts/ directory are executable"
-  documentation:
-    name: Documentation Validation
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-      - name: Install markdown linter
-        run: |
-          npm install -g markdownlint-cli2
-      - name: Lint markdown files
-        run: |
-          echo "Linting markdown files..."
-          # Create markdownlint config
-          cat > .markdownlint.json << 'EOF'
-          {
-            "MD013": { "line_length": 120 },
-            "MD033": false,
-            "MD041": false,
-            "MD046": { "style": "fenced" }
-          }
-          EOF
-
-          if ! markdownlint-cli2 "**/*.md" "#node_modules" "#.git"; then
-            echo "⚠️ Markdown linting found formatting issues (non-critical)"
-            echo "Note: These are mostly line length suggestions for readability"
-          else
-            echo "✓ Markdown linting passed"
-          fi
-      - name: Check for broken links
-        run: "echo \"Checking for broken internal links...\"\n\n# Simple check for internal file references\ngrep -r \"\\[.*\\](\\./\\|docs/\\|modules/\\|hosts/\\|scripts/\" --include=\"*.md\" . | while read -r line; do\n  file=$(echo \"$line\" | cut -d: -f1)\n  link=$(echo \"$line\" | grep -o '(\\./[^)]*\\|docs/[^)]*\\|modules/[^)]*\\|hosts/[^)]*\\|scripts/[^)]*' | sed 's/^(//')\n  \n  if [ -n \"$link\" ] && [ ! -f \"$link\" ] && [ ! -d \"$link\" ]; then\n    echo \"WARNING: Broken link in $file: $link\"\n  fi\ndone\n\necho \"✓ Internal link check completed\"\n"
-  template-validation:
-    name: Template Validation
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Install Nix
-        uses: cachix/install-nix-action@v25
-        with:
-          nix_path: nixpkgs=channel:nixos-unstable
-          extra_nix_config: |
-            experimental-features = nix-command flakes
-      - name: Validate host templates
-        run: "echo \"Validating host templates...\"\n\n# Check that all template directories have required files\nfor template in hosts/*-template/; do\n  if [ -d \"$template\" ]; then\n    template_name=$(basename \"$template\")\n    echo \"Validating template: $template_name\"\n    \n    # Check required files exist\n    if [ ! -f \"$template/configuration.nix\" ]; then\n      echo \"ERROR: Missing configuration.nix in $template_name\"\n      exit 1\n    fi\n    \n    if [ ! -f \"$template/home.nix\" ]; then\n      echo \"ERROR: Missing home.nix in $template_name\"\n      exit 1\n    fi\n    \n    echo \"✓ $template_name has required files\"\n  fi\ndone\n"
-      - name: Validate user templates
-        run: "echo \"Validating user templates...\"\n\n# Check that user templates exist and are valid\nfor user_template in home/users/*.nix; do\n  if [ -f \"$user_template\" ]; then\n    template_name=$(basename \"$user_template\" .nix)\n    echo \"Validating user template: $template_name\"\n    \n    # Basic syntax check\n    nix-instantiate --parse \"$user_template\" > /dev/null\n    echo \"✓ $template_name syntax is valid\"\n  fi\ndone\n"
-      - name: Test script functionality
-        run: |
-          echo "Testing script functionality..."
-
-          # Test that scripts can run help/info commands without errors
-          if [ -x scripts/detect-vm.sh ]; then
-            ./scripts/detect-vm.sh --help || echo "WARNING: detect-vm.sh help failed"
-          fi
-
-          if [ -x scripts/detect-hardware.sh ]; then
-            ./scripts/detect-hardware.sh help || echo "WARNING: detect-hardware.sh help failed"
-          fi
-
-          # Test prerequisites check (dry run)
-          if [ -x scripts/check-prerequisites.sh ]; then
-            echo "Testing prerequisites check script structure..."
-            # Just check that the script has the expected functions
-            grep -q "check_nixos" scripts/check-prerequisites.sh || echo "WARNING: check_nixos function missing"
-            grep -q "check_hardware_type" scripts/check-prerequisites.sh || echo "WARNING: check_hardware_type function missing"
-          fi
-
-          echo "✓ Script functionality tests completed"
-  security-scan:
-    name: Security Scan
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Run security scan
-        run: |
-          echo "Running security scan..."
-
-          # Check for common security issues in scripts
-          echo "Checking for potential security issues..."
-
-          # Look for potentially dangerous patterns
-          if grep -r "eval.*\$" --include="*.sh" --include="*.nix" . | grep -v "validation\|timeout\|direnv_hook\|brew_env\|zoxide_hook"; then
-            echo "WARNING: Found potentially unvalidated 'eval' with variable expansion"
-          fi
-
-          if grep -r "rm -rf \/" --include="*.sh" . | grep -v "bootstrap\|validation"; then
-            echo "WARNING: Found potentially dangerous rm command - ensure path validation is present"
-          fi
-
-          # Check for hardcoded secrets (basic patterns)
-          if grep -rE "(password|secret|key|token).*=" --include="*.nix" --include="*.sh" . | grep -v "example\|template\|placeholder\|CHANGE"; then
-            echo "WARNING: Potential hardcoded secrets found - review carefully"
-          fi
-
-          echo "✓ Basic security scan completed"
-      - name: Check file permissions
-        run: |
-          echo "Checking file permissions..."
-
-          # Check that sensitive files don't have overly permissive permissions
-          find . -name "*.sh" -perm /o+w -exec echo "WARNING: World-writable script: {}" \;
-          find . -name "*.nix" -perm /o+w -exec echo "WARNING: World-writable config: {}" \;
-
-          echo "✓ File permissions check completed"
-  integration-test:
-    name: Integration Test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Install Nix
-        uses: cachix/install-nix-action@v25
-        with:
-          nix_path: nixpkgs=channel:nixos-unstable
-          extra_nix_config: |
-            experimental-features = nix-command flakes
-      - name: Test flake evaluation
-        timeout-minutes: 5
-        run: |
-          echo "Testing flake evaluation..."
-
-          # Test that the flake can be evaluated (with timeout)
-          timeout 240s nix eval .#packages.x86_64-linux --apply 'builtins.attrNames' --no-update-lock-file > /dev/null || echo "No packages defined (ok)"
-
-          # Test development shell (quick test)
-          timeout 60s nix develop --command echo "Development shell works" || echo "Development shell test skipped (timeout)"
-
-          echo "✓ Flake evaluation tests completed"
-      - name: Test justfile commands
-        run: |
-          echo "Testing justfile commands..."
-
-          # Install just and test safe commands
-          nix profile install nixpkgs#just
-
-          # Test that justfile lists commands
-          just --list > /dev/null
-
-          # Test format check (should not modify files in CI)
-          just format-check || echo "Note: Format check failed - this is expected if code needs formatting"
-
-          echo "✓ Justfile integration tests completed"
-  pre-commit:
-    name: Pre-commit Hooks
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Install Nix
-        uses: cachix/install-nix-action@v25
-        with:
-          nix_path: nixpkgs=channel:nixos-unstable
-          extra_nix_config: |
-            experimental-features = nix-command flakes
-      - name: Setup pre-commit environment
-        run: |
-          nix profile install nixpkgs#pre-commit
-          nix profile install nixpkgs#nixpkgs-fmt
-          nix profile install nixpkgs#statix
-          nix profile install nixpkgs#deadnix
-      - name: Create pre-commit config
-        run: "cat > .pre-commit-config.yaml << 'EOF'\nrepos:\n- repo: local\n  hooks:\n  - id: nixpkgs-fmt\n    name: nixpkgs-fmt\n    entry: nixpkgs-fmt\n    language: system\n    files: '\\.nix$'\n    \n  - id: statix\n    name: statix\n    entry: statix check\n    language: system\n    files: '\\.nix$'\n    pass_filenames: false\n    \n  - id: deadnix\n    name: deadnix\n    entry: deadnix --fail\n    language: system\n    files: '\\.nix$'\n    pass_filenames: false\n    \n  - id: shellcheck\n    name: shellcheck\n    entry: shellcheck\n    language: system\n    files: '\\.sh$'\n    args: [-e, SC1091, -e, SC2016]\nEOF\n"
-      - name: Run pre-commit on all files
-        run: |
-          echo "Running pre-commit hooks on all files..."
-          if ! pre-commit run --all-files; then
-            echo "⚠️ Pre-commit checks found some issues (non-critical)"
-            echo "Note: These are mostly code quality suggestions"
-            echo "The code works fine despite these warnings"
-          else
-            echo "✓ All pre-commit hooks passed"
-          fi
+          echo "All CI jobs succeeded."

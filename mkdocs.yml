@@ -1,11 +1,8 @@
 # MkDocs config for Backstage TechDocs.
 # Edit at will — Backstage rebuilds on next view.
 # https://backstage.io/docs/features/techdocs/getting-started
-
 site_name: nixos-template
 site_description: A  template to start  you nixos journey.
-
 docs_dir: docs
-
 plugins:
   - techdocs-core

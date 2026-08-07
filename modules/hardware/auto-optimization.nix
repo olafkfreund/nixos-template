@@ -1,11 +1,24 @@
 # Hardware Auto-Optimization Module
 # Automatically detects hardware capabilities and optimizes system configuration
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
 let
   cfg = config.hardware.autoOptimization;
+
+  # Every `hardware.autoOptimization.override.*` option is `nullOr <type>` with a
+  # default of `null`, meaning "no override, use detection". The `or` operator is
+  # the wrong tool for that: the attribute always exists, it is merely null, so
+  # `cfg.override.isLaptop or hwDetection.isLaptop` yields null rather than the
+  # detected value — a type error in a conditional, and a silently empty string
+  # under toString. Resolve the fallback explicitly instead.
+  overrideOr = override: detected: if override != null then override else detected;
 
   # Hardware detection functions
   hwDetection = {
@@ -32,38 +45,47 @@ let
     # Memory-based configurations
     memory = {
       zramPercent =
-        if hwDetection.memoryGB >= 32 then 10
-        else if hwDetection.memoryGB >= 16 then 25
-        else if hwDetection.memoryGB >= 8 then 50
-        else 75;
+        if hwDetection.memoryGB >= 32 then
+          10
+        else if hwDetection.memoryGB >= 16 then
+          25
+        else if hwDetection.memoryGB >= 8 then
+          50
+        else
+          75;
 
       swappiness =
-        if hwDetection.memoryGB >= 16 then 10
-        else if hwDetection.memoryGB >= 8 then 20
-        else 60;
+        if hwDetection.memoryGB >= 16 then
+          10
+        else if hwDetection.memoryGB >= 8 then
+          20
+        else
+          60;
 
       kernelParams =
-        if hwDetection.memoryGB >= 32 then [
-          "transparent_hugepage=madvise"
-          "vm.nr_hugepages=1024"
-        ] else [ ];
+        if hwDetection.memoryGB >= 32 then
+          [
+            "transparent_hugepage=madvise"
+            "vm.nr_hugepages=1024"
+          ]
+        else
+          [ ];
     };
 
     # CPU-based configurations
     cpu = {
-      governor =
-        if hwDetection.isLaptop then "powersave"
-        else "performance";
+      governor = if hwDetection.isLaptop then "powersave" else "performance";
 
       buildCores = min hwDetection.cpuCores 8; # Cap build parallelism
-      buildJobs =
-        if hwDetection.memoryGB >= 16 then "auto"
-        else min (hwDetection.cpuCores / 2) 4;
+      buildJobs = if hwDetection.memoryGB >= 16 then "auto" else min (hwDetection.cpuCores / 2) 4;
 
       kernelPackage =
-        if hwDetection.cpuCores >= 16 then pkgs.linuxPackages_latest
-        else if hwDetection.cpuCores >= 8 then pkgs.linuxPackages
-        else pkgs.linuxPackages_hardened;
+        if hwDetection.cpuCores >= 16 then
+          pkgs.linuxPackages_latest
+        else if hwDetection.cpuCores >= 8 then
+          pkgs.linuxPackages
+        else
+          pkgs.linuxPackages; # linuxPackages_hardened was removed upstream
     };
 
     # GPU-based configurations
@@ -72,14 +94,15 @@ let
         hwDetection.hasNvidiaGPU || hwDetection.hasAMDGPU || hwDetection.hasIntelGPU;
 
       drivers =
-        (optionals hwDetection.hasNvidiaGPU [ "nvidia" ]) ++
-        (optionals hwDetection.hasAMDGPU [ "amdgpu" ]) ++
-        (optionals hwDetection.hasIntelGPU [ "i915" ]);
+        (optionals hwDetection.hasNvidiaGPU [ "nvidia" ])
+        ++ (optionals hwDetection.hasAMDGPU [ "amdgpu" ])
+        ++ (optionals hwDetection.hasIntelGPU [ "modesetting" ]); # X11 driver name, not the i915 kernel module
 
-      openglPackages = with pkgs;
-        (optionals hwDetection.hasNvidiaGPU [ nvidia-vaapi-driver ]) ++
-        (optionals hwDetection.hasAMDGPU [ mesa.drivers ]) ++
-        (optionals hwDetection.hasIntelGPU [ intel-media-driver ]);
+      openglPackages =
+        with pkgs;
+        (optionals hwDetection.hasNvidiaGPU [ nvidia-vaapi-driver ])
+        ++ (optionals hwDetection.hasAMDGPU [ mesa ])
+        ++ (optionals hwDetection.hasIntelGPU [ intel-media-driver ]);
     };
 
     # Storage-based configurations
@@ -87,8 +110,16 @@ let
       filesystem = if hwDetection.hasSSD then "ext4" else "btrfs";
       schedulerClass = if hwDetection.hasSSD then "none" else "bfq";
       mountOptions =
-        if hwDetection.hasSSD then [ "noatime" "discard=async" ]
-        else [ "compress=zstd" "noatime" ];
+        if hwDetection.hasSSD then
+          [
+            "noatime"
+            "discard=async"
+          ]
+        else
+          [
+            "compress=zstd"
+            "noatime"
+          ];
     };
 
     # Platform-specific optimizations
@@ -97,8 +128,8 @@ let
         (optionals hwDetection.isLaptop [
           "intel_pstate=active"
           "pcie_aspm=force"
-        ]) ++
-        (optionals (!hwDetection.isLaptop) [
+        ])
+        ++ (optionals (!hwDetection.isLaptop) [
           "intel_idle.max_cstate=1"
           "processor.max_cstate=1"
         ]);
@@ -203,7 +234,8 @@ in
         "vm.vfs_cache_pressure" = mkDefault 50;
         "vm.dirty_ratio" = mkDefault 15;
         "vm.dirty_background_ratio" = mkDefault 5;
-      } // (optionalAttrs (optimizations.memory.kernelParams != [ ]) {
+      }
+      // (optionalAttrs (optimizations.memory.kernelParams != [ ]) {
         "vm.nr_hugepages" = mkIf (hwDetection.memoryGB >= 32) 1024;
       });
 
@@ -297,13 +329,17 @@ in
           echo "🔍 Hardware Detection Results"
           echo "============================"
           echo ""
-          echo "💾 Memory: ${toString (cfg.override.memoryGB or hwDetection.memoryGB)} GB"
-          echo "🏗️  CPU Cores: ${toString (cfg.override.cpuCores or hwDetection.cpuCores)}"
-          echo "💻 Is Laptop: ${if (cfg.override.isLaptop or hwDetection.isLaptop) == true then "Yes" else "No"}"
-          echo "🖥️  Has NVIDIA GPU: ${if (cfg.override.hasNvidiaGPU or hwDetection.hasNvidiaGPU) == true then "Yes" else "No"}"
-          echo "🖥️  Has AMD GPU: ${if (hwDetection.hasAMDGPU or false) == true then "Yes" else "No"}"
-          echo "🖥️  Has Intel GPU: ${if (hwDetection.hasIntelGPU or false) == true then "Yes" else "No"}"
-          echo "💿 Has SSD: ${if (cfg.override.hasSSD or hwDetection.hasSSD) == true then "Yes" else "No"}"
+          echo "💾 Memory: ${toString (overrideOr cfg.override.memoryGB hwDetection.memoryGB)} GB"
+          echo "🏗️  CPU Cores: ${toString (overrideOr cfg.override.cpuCores hwDetection.cpuCores)}"
+          echo "💻 Is Laptop: ${
+            if (overrideOr cfg.override.isLaptop hwDetection.isLaptop) then "Yes" else "No"
+          }"
+          echo "🖥️  Has NVIDIA GPU: ${
+            if (overrideOr cfg.override.hasNvidiaGPU hwDetection.hasNvidiaGPU) then "Yes" else "No"
+          }"
+          echo "🖥️  Has AMD GPU: ${if (hwDetection.hasAMDGPU or false) then "Yes" else "No"}"
+          echo "🖥️  Has Intel GPU: ${if (hwDetection.hasIntelGPU or false) then "Yes" else "No"}"
+          echo "💿 Has SSD: ${if (overrideOr cfg.override.hasSSD hwDetection.hasSSD) then "Yes" else "No"}"
           echo ""
           echo "⚙️  Applied Optimizations:"
           echo "  ZRAM: ${toString optimizations.memory.zramPercent}% of RAM"
@@ -338,7 +374,9 @@ in
         (writeShellScriptBin "hw-info" ''
           echo "🔍 Quick Hardware Info"
           echo "===================="
-          echo "Memory: ${toString (cfg.override.memoryGB or hwDetection.memoryGB)}GB | CPU: ${toString (cfg.override.cpuCores or hwDetection.cpuCores)} cores | ${if (cfg.override.isLaptop or hwDetection.isLaptop) == true then "Laptop" else "Desktop"} | ${if (cfg.override.hasSSD or hwDetection.hasSSD) == true then "SSD" else "HDD"}"
+          echo "Memory: ${toString (overrideOr cfg.override.memoryGB hwDetection.memoryGB)}GB | CPU: ${toString (overrideOr cfg.override.cpuCores hwDetection.cpuCores)} cores | ${
+            if (overrideOr cfg.override.isLaptop hwDetection.isLaptop) then "Laptop" else "Desktop"
+          } | ${if (overrideOr cfg.override.hasSSD hwDetection.hasSSD) then "SSD" else "HDD"}"
         '')
       ];
     }

@@ -38,8 +38,21 @@
     ];
 
     # Include virtio modules for UTM/QEMU
-    kernelModules = [ "virtio_net" "virtio_pci" "virtio_mmio" "virtio_blk" "virtio_scsi" "virtio_balloon" ];
-    initrd.availableKernelModules = [ "virtio_net" "virtio_pci" "virtio_mmio" "virtio_blk" "virtio_scsi" ];
+    kernelModules = [
+      "virtio_net"
+      "virtio_pci"
+      "virtio_mmio"
+      "virtio_blk"
+      "virtio_scsi"
+      "virtio_balloon"
+    ];
+    initrd.availableKernelModules = [
+      "virtio_net"
+      "virtio_pci"
+      "virtio_mmio"
+      "virtio_blk"
+      "virtio_scsi"
+    ];
 
     # Support both BIOS and UEFI boot
     loader = {
@@ -66,7 +79,10 @@
     # Desktop environment
     xserver = {
       enable = true;
-      videoDrivers = [ "modesetting" "virtio" "qxl" ];
+      videoDrivers = [
+        "modesetting"
+        "qxl"
+      ]; # virtio-gpu is driven by modesetting
     };
 
     # Display manager
@@ -109,26 +125,22 @@
   users = {
     users.nixos = {
       isNormalUser = true;
-      extraGroups = [ "wheel" "networkmanager" ];
-      # Use password (highest precedence) to override deployment image initialPassword
+      extraGroups = [
+        "wheel"
+        "networkmanager"
+      ];
       password = lib.mkForce "nixos"; # Force override any conflicts
-      # Clear other password options to prevent warnings
-      initialPassword = lib.mkOverride 200 null; # Lower priority, gets overridden
-      hashedPassword = lib.mkOverride 200 null;
-      initialHashedPassword = lib.mkOverride 200 null;
-      hashedPasswordFile = lib.mkOverride 200 null;
+      # The installation-cd profile sets `initialHashedPassword = ""` at normal
+      # priority (100). Clearing it needs mkForce (50) — the previous
+      # `mkOverride 200` was *lower* priority, so it never applied and NixOS kept
+      # warning about two non-null password options.
+      initialHashedPassword = lib.mkForce null;
       shell = pkgs.zsh;
     };
     # Override root password for macOS ISO installer convenience
     users.root = {
-      # Use initialPassword with highest priority to override core/users.nix
       initialPassword = lib.mkOverride 10 "root"; # Higher priority than mkForce (50)
-      # Clear ALL other password options to prevent conflicts
-      hashedPassword = lib.mkOverride 200 null;
-      password = lib.mkOverride 200 null;
-      # Force initialHashedPassword to null to override any system defaults
-      initialHashedPassword = lib.mkOverride 200 null;
-      hashedPasswordFile = lib.mkOverride 200 null;
+      initialHashedPassword = lib.mkForce null;
     };
   };
 
@@ -382,8 +394,14 @@
   # Enable flakes for template usage
   nix = {
     settings = {
-      experimental-features = [ "nix-command" "flakes" ];
-      trusted-users = [ "root" "nixos" ];
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
+      trusted-users = [
+        "root"
+        "nixos"
+      ];
     };
   };
 

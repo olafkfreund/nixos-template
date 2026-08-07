@@ -1,7 +1,12 @@
 # Advanced Hardware Detection and Optimization
 # Automatically detects hardware characteristics and applies appropriate optimizations
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -9,10 +14,8 @@ let
   cfg = config.modules.hardware.detection;
 
   # Safe file reading function with fallback
-  safeReadFile = path: fallback:
-    if builtins.pathExists path
-    then (builtins.readFile path) or fallback
-    else fallback;
+  safeReadFile =
+    path: fallback: if builtins.pathExists path then (builtins.readFile path) or fallback else fallback;
 
   # Hardware detection functions with robust fallbacks
   detectVirtualization =
@@ -24,31 +27,38 @@ let
       hasQemuDmi = lib.hasInfix "QEMU" productName;
       hasVMwareeDmi = lib.hasInfix "VMware" sysVendor || lib.hasInfix "VMware" productName;
       hasVirtualBoxDmi = lib.hasInfix "VirtualBox" productName;
-      hasHyperVDmi = lib.hasInfix "Microsoft Corporation" sysVendor ||
-        lib.hasInfix "Hyper-V" productName;
-      hasWSLInterop = builtins.pathExists "/proc/sys/fs/binfmt_misc/WSLInterop" ||
-        builtins.pathExists "/run/WSL";
+      hasHyperVDmi = lib.hasInfix "Microsoft Corporation" sysVendor || lib.hasInfix "Hyper-V" productName;
+      hasWSLInterop =
+        builtins.pathExists "/proc/sys/fs/binfmt_misc/WSLInterop" || builtins.pathExists "/run/WSL";
       hasDockerEnv = builtins.pathExists "/.dockerenv";
       hasContainerEnv = builtins.getEnv "container" != "";
 
       # Additional detection methods
       hasSystemdContainer = builtins.getEnv "SYSTEMD_VIRTUALIZATION" != "";
-      hasVirtWhat = builtins.pathExists "/proc/xen" ||
-        lib.hasInfix "paravirt" (safeReadFile "/proc/cpuinfo" "");
+      hasVirtWhat =
+        builtins.pathExists "/proc/xen" || lib.hasInfix "paravirt" (safeReadFile "/proc/cpuinfo" "");
     in
     {
       isVirtualMachine = hasQemuDmi || hasVMwareeDmi || hasVirtualBoxDmi || hasHyperVDmi;
       isWSL = hasWSLInterop;
       isContainer = hasDockerEnv || hasContainerEnv || hasSystemdContainer;
       virtualization =
-        if hasQemuDmi then "qemu"
-        else if hasVMwareeDmi then "vmware"
-        else if hasVirtualBoxDmi then "virtualbox"
-        else if hasHyperVDmi then "hyperv"
-        else if hasWSLInterop then "wsl"
-        else if hasContainerEnv || hasSystemdContainer then "container"
-        else if hasVirtWhat then "virtualized" # Generic virtualization detected
-        else "bare-metal";
+        if hasQemuDmi then
+          "qemu"
+        else if hasVMwareeDmi then
+          "vmware"
+        else if hasVirtualBoxDmi then
+          "virtualbox"
+        else if hasHyperVDmi then
+          "hyperv"
+        else if hasWSLInterop then
+          "wsl"
+        else if hasContainerEnv || hasSystemdContainer then
+          "container"
+        else if hasVirtWhat then
+          "virtualized" # Generic virtualization detected
+        else
+          "bare-metal";
     };
 
   detectCPU =
@@ -57,13 +67,14 @@ let
 
       # Fallback CPU detection using Nix platform information
       platformVendor =
-        if pkgs.stdenv.hostPlatform.isx86_64 || pkgs.stdenv.hostPlatform.isx86_32
-        then "x86"
-        else if pkgs.stdenv.hostPlatform.isAarch64
-        then "arm"
-        else if pkgs.stdenv.hostPlatform.isRiscV64
-        then "riscv"
-        else "unknown";
+        if pkgs.stdenv.hostPlatform.isx86_64 || pkgs.stdenv.hostPlatform.isx86_32 then
+          "x86"
+        else if pkgs.stdenv.hostPlatform.isAarch64 then
+          "arm"
+        else if pkgs.stdenv.hostPlatform.isRiscV64 then
+          "riscv"
+        else
+          "unknown";
 
       # CPU vendor detection with fallbacks
       isIntel = lib.hasInfix "GenuineIntel" cpuinfo || lib.hasInfix "Intel" cpuinfo;
@@ -71,9 +82,11 @@ let
       isARM = lib.hasInfix "ARM" cpuinfo || pkgs.stdenv.hostPlatform.isAarch64;
 
       # CPU features detection with safe parsing
-      flags = lib.concatStringsSep " "
-        (lib.filter (line: lib.hasPrefix "flags" line || lib.hasPrefix "Features" line)
-          (lib.splitString "\n" cpuinfo));
+      flags = lib.concatStringsSep " " (
+        lib.filter (line: lib.hasPrefix "flags" line || lib.hasPrefix "Features" line) (
+          lib.splitString "\n" cpuinfo
+        )
+      );
 
       hasAVX = lib.hasInfix " avx " flags || lib.hasInfix " avx\t" flags;
       hasAVX2 = lib.hasInfix " avx2 " flags || lib.hasInfix " avx2\t" flags;
@@ -85,69 +98,87 @@ let
       coreCount =
         let
           # Method 1: Count processor entries in /proc/cpuinfo
-          processorLines = builtins.filter (line: lib.hasPrefix "processor" line)
-            (lib.splitString "\n" cpuinfo);
+          processorLines = builtins.filter (line: lib.hasPrefix "processor" line) (
+            lib.splitString "\n" cpuinfo
+          );
           procCount = builtins.length processorLines;
 
           # Method 2: Try nproc via /proc/sys/kernel/nproc
           nprocValue =
-            let nprocContent = safeReadFile "/sys/devices/system/cpu/online" "";
-            in if nprocContent != ""
-            then # Parse range like "0-3" or "0-7"
+            let
+              nprocContent = safeReadFile "/sys/devices/system/cpu/online" "";
+            in
+            if nprocContent != "" then # Parse range like "0-3" or "0-7"
               let
                 cleanContent = lib.strings.trim nprocContent;
                 parts = lib.splitString "-" cleanContent;
               in
-              if builtins.length parts == 2
-              then (lib.strings.toInt (builtins.elemAt parts 1)) + 1
-              else 1
-            else 0;
+              if builtins.length parts == 2 then (lib.strings.toInt (builtins.elemAt parts 1)) + 1 else 1
+            else
+              0;
 
           # Method 3: Fallback based on platform
           platformDefault =
-            if pkgs.stdenv.hostPlatform.isx86_64 then 4
-            else if pkgs.stdenv.hostPlatform.isAarch64 then 4
-            else 2;
+            if pkgs.stdenv.hostPlatform.isx86_64 then
+              4
+            else if pkgs.stdenv.hostPlatform.isAarch64 then
+              4
+            else
+              2;
         in
-        if procCount > 0 then procCount
-        else if nprocValue > 0 then nprocValue
-        else platformDefault;
+        if procCount > 0 then
+          procCount
+        else if nprocValue > 0 then
+          nprocValue
+        else
+          platformDefault;
 
       # CPU model detection with improved parsing
       modelName =
         let
-          modelLines = builtins.filter (line: lib.hasPrefix "model name" line)
-            (lib.splitString "\n" cpuinfo);
+          modelLines = builtins.filter (line: lib.hasPrefix "model name" line) (lib.splitString "\n" cpuinfo);
           firstModelLine = if modelLines != [ ] then builtins.head modelLines else "";
           modelMatch = builtins.match "model name[[:space:]]*:[[:space:]]*(.*)" firstModelLine;
 
           # Fallback for ARM
-          armModelLines = builtins.filter (line: lib.hasPrefix "Processor" line)
-            (lib.splitString "\n" cpuinfo);
+          armModelLines = builtins.filter (line: lib.hasPrefix "Processor" line) (
+            lib.splitString "\n" cpuinfo
+          );
           armModelLine = if armModelLines != [ ] then builtins.head armModelLines else "";
           armModelMatch = builtins.match "Processor[[:space:]]*:[[:space:]]*(.*)" armModelLine;
         in
-        if modelMatch != null then lib.strings.trim (builtins.head modelMatch)
-        else if armModelMatch != null then lib.strings.trim (builtins.head armModelMatch)
-        else "${platformVendor} CPU";
+        if modelMatch != null then
+          lib.strings.trim (builtins.head modelMatch)
+        else if armModelMatch != null then
+          lib.strings.trim (builtins.head armModelMatch)
+        else
+          "${platformVendor} CPU";
     in
     {
       vendor =
-        if isIntel then "intel"
-        else if isAMD then "amd"
-        else if isARM then "arm"
-        else platformVendor;
+        if isIntel then
+          "intel"
+        else if isAMD then
+          "amd"
+        else if isARM then
+          "arm"
+        else
+          platformVendor;
       cores = coreCount;
       model = modelName;
       features = {
-        inherit hasAVX hasAVX2 hasAVX512 hasSSE4 hasAES;
+        inherit
+          hasAVX
+          hasAVX2
+          hasAVX512
+          hasSSE4
+          hasAES
+          ;
       };
       # Additional metadata for debugging
       detection = {
         cpuinfoAvailable = cpuinfo != "";
-        detectionMethod =
-          if cpuinfo != "" then "procfs"
-          else "platform-fallback";
+        detectionMethod = if cpuinfo != "" then "procfs" else "platform-fallback";
       };
     };
 
@@ -158,8 +189,7 @@ let
       # Extract total memory in KB with robust parsing
       totalMemMatch = builtins.match ".*MemTotal:[[:space:]]*([0-9]+) kB.*" meminfo;
       totalMemKB =
-        if totalMemMatch != null
-        then
+        if totalMemMatch != null then
           let
             memStr = builtins.head totalMemMatch;
             # Safe integer conversion
@@ -168,25 +198,25 @@ let
           memInt
         else
         # Fallback estimation based on common system configurations
-          let
-            # Try alternative detection methods
-            sysMemInfo = safeReadFile "/sys/devices/system/memory/auto_online_blocks" "";
-          in
-          if pkgs.stdenv.hostPlatform.isx86_64 then 8388608  # 8GB default for x64
-          else if pkgs.stdenv.hostPlatform.isAarch64 then 4194304  # 4GB default for ARM64
-          else 2097152; # 2GB minimal default
+        if pkgs.stdenv.hostPlatform.isx86_64 then
+          8388608 # 8GB default for x64
+        else if pkgs.stdenv.hostPlatform.isAarch64 then
+          4194304 # 4GB default for ARM64
+        else
+          2097152; # 2GB minimal default
 
       # Convert to GB with safer arithmetic
-      totalMemGB =
-        if totalMemKB > 0
-        then totalMemKB / 1024 / 1024
-        else 8; # 8GB reasonable default for modern systems
+      totalMemGB = if totalMemKB > 0 then totalMemKB / 1024 / 1024 else 8; # 8GB reasonable default for modern systems
 
       memoryClass =
-        if totalMemGB >= 32 then "high"
-        else if totalMemGB >= 8 then "medium"
-        else if totalMemGB >= 4 then "low"
-        else "minimal";
+        if totalMemGB >= 32 then
+          "high"
+        else if totalMemGB >= 8 then
+          "medium"
+        else if totalMemGB >= 4 then
+          "low"
+        else
+          "minimal";
     in
     {
       totalGB = totalMemGB;
@@ -197,43 +227,52 @@ let
     let
       # Safe directory reading with fallbacks
       blockDevs =
-        if builtins.pathExists "/sys/block"
-        then (builtins.readDir "/sys/block") or { }
-        else { };
+        if builtins.pathExists "/sys/block" then (builtins.readDir "/sys/block") or { } else { };
 
       devNames = builtins.attrNames blockDevs;
 
       # Detect NVMe with multiple methods
       hasNVMe =
-        builtins.any (dev: lib.hasPrefix "nvme" dev) devNames ||
-        builtins.pathExists "/dev/nvme0n1" ||
-        builtins.pathExists "/sys/class/nvme";
+        builtins.any (dev: lib.hasPrefix "nvme" dev) devNames
+        || builtins.pathExists "/dev/nvme0n1"
+        || builtins.pathExists "/sys/class/nvme";
 
       # Detect SSD with robust checking
-      hasSSD = hasNVMe || # NVMe is always SSD
-        builtins.any
-          (dev:
-            let
-              rotationalFile = "/sys/block/${dev}/queue/rotational";
-              rotationalContent = safeReadFile rotationalFile "1";
-            in
-            (lib.hasPrefix "sd" dev || lib.hasPrefix "vd" dev) &&
-              (rotationalContent == "0\n" || rotationalContent == "0")
-          )
-          devNames;
+      hasSSD =
+        hasNVMe
+        # NVMe is always SSD
+        || builtins.any (
+          dev:
+          let
+            rotationalFile = "/sys/block/${dev}/queue/rotational";
+            rotationalContent = safeReadFile rotationalFile "1";
+          in
+          (lib.hasPrefix "sd" dev || lib.hasPrefix "vd" dev)
+          && (rotationalContent == "0\n" || rotationalContent == "0")
+        ) devNames;
 
       # Additional storage type detection
       hasVirtIO = builtins.any (dev: lib.hasPrefix "vd" dev) devNames;
       hasMMC = builtins.any (dev: lib.hasPrefix "mmcblk" dev) devNames;
     in
     {
-      inherit hasNVMe hasSSD hasVirtIO hasMMC;
+      inherit
+        hasNVMe
+        hasSSD
+        hasVirtIO
+        hasMMC
+        ;
       primaryType =
-        if hasNVMe then "nvme"
-        else if hasSSD then "ssd"
-        else if hasVirtIO then "virtio" # Virtual storage
-        else if hasMMC then "mmc" # eMMC/SD storage
-        else "hdd";
+        if hasNVMe then
+          "nvme"
+        else if hasSSD then
+          "ssd"
+        else if hasVirtIO then
+          "virtio" # Virtual storage
+        else if hasMMC then
+          "mmc" # eMMC/SD storage
+        else
+          "hdd";
       # Detection metadata
       detection = {
         devicesFound = devNames;
@@ -245,31 +284,29 @@ let
     let
       # Check for GPU vendors with multiple detection methods
       hasNvidiaDevice =
-        builtins.pathExists "/proc/driver/nvidia" ||
-        builtins.pathExists "/dev/nvidia0" ||
-        builtins.pathExists "/sys/module/nvidia";
+        builtins.pathExists "/proc/driver/nvidia"
+        || builtins.pathExists "/dev/nvidia0"
+        || builtins.pathExists "/sys/module/nvidia";
 
       drmDevs =
-        if builtins.pathExists "/sys/class/drm"
-        then (builtins.readDir "/sys/class/drm") or { }
-        else { };
+        if builtins.pathExists "/sys/class/drm" then (builtins.readDir "/sys/class/drm") or { } else { };
 
       drmDevNames = builtins.attrNames drmDevs;
 
       hasAMDDevice =
-        builtins.any (dev: lib.hasInfix "amd" dev || lib.hasInfix "radeon" dev) drmDevNames ||
-        builtins.pathExists "/sys/module/amdgpu" ||
-        builtins.pathExists "/sys/module/radeon";
+        builtins.any (dev: lib.hasInfix "amd" dev || lib.hasInfix "radeon" dev) drmDevNames
+        || builtins.pathExists "/sys/module/amdgpu"
+        || builtins.pathExists "/sys/module/radeon";
 
       hasIntelDevice =
-        builtins.any (dev: lib.hasInfix "intel" dev || lib.hasInfix "i915" dev) drmDevNames ||
-        builtins.pathExists "/sys/module/i915" ||
-        builtins.pathExists "/sys/module/xe"; # Intel Xe graphics
+        builtins.any (dev: lib.hasInfix "intel" dev || lib.hasInfix "i915" dev) drmDevNames
+        || builtins.pathExists "/sys/module/i915"
+        || builtins.pathExists "/sys/module/xe"; # Intel Xe graphics
 
       # Additional GPU detection
       hasVirtIOGPU =
-        builtins.any (dev: lib.hasInfix "virtio" dev) drmDevNames ||
-        builtins.pathExists "/sys/module/virtio_gpu";
+        builtins.any (dev: lib.hasInfix "virtio" dev) drmDevNames
+        || builtins.pathExists "/sys/module/virtio_gpu";
 
       hasNouveau = builtins.pathExists "/sys/module/nouveau";
     in
@@ -278,7 +315,7 @@ let
       hasAMD = hasAMDDevice;
       hasIntel = hasIntelDevice;
       hasVirtIO = hasVirtIOGPU;
-      hasNouveau = hasNouveau;
+      inherit hasNouveau;
       hasDiscrete = hasNvidiaDevice || hasAMDDevice;
       # Detection metadata
       detection = {
@@ -299,14 +336,18 @@ let
   # Performance profile determination
   performanceProfile =
     let
-      cpu = hardwareProfile.cpu;
-      memory = hardwareProfile.memory;
-      storage = hardwareProfile.storage;
+      inherit (hardwareProfile) cpu;
+      inherit (hardwareProfile) memory;
+      inherit (hardwareProfile) storage;
     in
-    if memory.class == "high" && cpu.cores >= 8 && storage.hasNVMe then "high-performance"
-    else if memory.class == "medium" && cpu.cores >= 4 && storage.hasSSD then "balanced"
-    else if memory.class == "low" then "resource-constrained"
-    else "minimal";
+    if memory.class == "high" && cpu.cores >= 8 && storage.hasNVMe then
+      "high-performance"
+    else if memory.class == "medium" && cpu.cores >= 4 && storage.hasSSD then
+      "balanced"
+    else if memory.class == "low" then
+      "resource-constrained"
+    else
+      "minimal";
 in
 
 {
@@ -347,7 +388,14 @@ in
     };
 
     profile = mkOption {
-      type = types.nullOr (types.enum [ "minimal" "resource-constrained" "balanced" "high-performance" ]);
+      type = types.nullOr (
+        types.enum [
+          "minimal"
+          "resource-constrained"
+          "balanced"
+          "high-performance"
+        ]
+      );
       default = null;
       description = ''
         Override automatic performance profile detection with manual classification.
@@ -380,7 +428,10 @@ in
       };
 
       logLevel = mkOption {
-        type = types.enum [ "info" "debug" ];
+        type = types.enum [
+          "info"
+          "debug"
+        ];
         default = "info";
         description = ''
           Hardware detection logging verbosity level:
@@ -397,7 +448,13 @@ in
     overrides = {
       cpu = {
         vendor = mkOption {
-          type = types.nullOr (types.enum [ "intel" "amd" "arm" ]);
+          type = types.nullOr (
+            types.enum [
+              "intel"
+              "amd"
+              "arm"
+            ]
+          );
           default = null;
           description = ''
             Override automatic CPU vendor detection.
@@ -430,7 +487,17 @@ in
 
       virtualization = {
         type = mkOption {
-          type = types.nullOr (types.enum [ "bare-metal" "qemu" "vmware" "virtualbox" "hyperv" "wsl" "container" ]);
+          type = types.nullOr (
+            types.enum [
+              "bare-metal"
+              "qemu"
+              "vmware"
+              "virtualbox"
+              "hyperv"
+              "wsl"
+              "container"
+            ]
+          );
           default = null;
           description = ''
             Override automatic virtualization environment detection.
@@ -577,57 +644,57 @@ in
                 log_info "Performance Profile: $PROFILE"
 
                 ${optionalString (cfg.reporting.logLevel == "debug") ''
-                # Debug Information
-                log_debug "=== Debug Information ==="
+                  # Debug Information
+                  log_debug "=== Debug Information ==="
 
-                # CPU Features
-                if [[ -r /proc/cpuinfo ]]; then
-                  CPU_FLAGS=$(grep -m1 "^flags" /proc/cpuinfo | cut -d: -f2 || echo "")
-                  AVX=$(echo "$CPU_FLAGS" | grep -o "avx" | head -1 || echo "false")
-                  AVX2=$(echo "$CPU_FLAGS" | grep -o "avx2" | head -1 || echo "false")
-                  AES=$(echo "$CPU_FLAGS" | grep -o "aes" | head -1 || echo "false")
-                  log_debug "CPU Features: AVX=$([[ -n $AVX ]] && echo true || echo false) AVX2=$([[ -n $AVX2 ]] && echo true || echo false) AES=$([[ -n $AES ]] && echo true || echo false)"
-                fi
-
-                # GPU Detection
-                GPU_NVIDIA="false"
-                GPU_AMD="false"
-                GPU_INTEL="false"
-
-                if [[ -d /proc/driver/nvidia ]]; then
-                  GPU_NVIDIA="true"
-                fi
-
-                if [[ -d /sys/class/drm ]]; then
-                  if ls /sys/class/drm/*amd* >/dev/null 2>&1; then
-                    GPU_AMD="true"
-                  fi
-                  if ls /sys/class/drm/*intel* >/dev/null 2>&1; then
-                    GPU_INTEL="true"
-                  fi
-                fi
-
-                log_debug "GPU: NVIDIA=$GPU_NVIDIA AMD=$GPU_AMD Intel=$GPU_INTEL"
-
-                # Storage Details
-                if [[ -d /sys/block ]]; then
-                  HAS_NVME="false"
-                  HAS_SSD="false"
-
-                  if ls /sys/block/nvme* >/dev/null 2>&1; then
-                    HAS_NVME="true"
-                    HAS_SSD="true"
-                  elif ls /sys/block/sd* >/dev/null 2>&1; then
-                    for dev in /sys/block/sd*; do
-                      if [[ -r "$dev/queue/rotational" ]] && [[ $(cat "$dev/queue/rotational" 2>/dev/null) == "0" ]]; then
-                        HAS_SSD="true"
-                        break
-                      fi
-                    done
+                  # CPU Features
+                  if [[ -r /proc/cpuinfo ]]; then
+                    CPU_FLAGS=$(grep -m1 "^flags" /proc/cpuinfo | cut -d: -f2 || echo "")
+                    AVX=$(echo "$CPU_FLAGS" | grep -o "avx" | head -1 || echo "false")
+                    AVX2=$(echo "$CPU_FLAGS" | grep -o "avx2" | head -1 || echo "false")
+                    AES=$(echo "$CPU_FLAGS" | grep -o "aes" | head -1 || echo "false")
+                    log_debug "CPU Features: AVX=$([[ -n $AVX ]] && echo true || echo false) AVX2=$([[ -n $AVX2 ]] && echo true || echo false) AES=$([[ -n $AES ]] && echo true || echo false)"
                   fi
 
-                  log_debug "Storage: NVMe=$HAS_NVME SSD=$HAS_SSD"
-                fi
+                  # GPU Detection
+                  GPU_NVIDIA="false"
+                  GPU_AMD="false"
+                  GPU_INTEL="false"
+
+                  if [[ -d /proc/driver/nvidia ]]; then
+                    GPU_NVIDIA="true"
+                  fi
+
+                  if [[ -d /sys/class/drm ]]; then
+                    if ls /sys/class/drm/*amd* >/dev/null 2>&1; then
+                      GPU_AMD="true"
+                    fi
+                    if ls /sys/class/drm/*intel* >/dev/null 2>&1; then
+                      GPU_INTEL="true"
+                    fi
+                  fi
+
+                  log_debug "GPU: NVIDIA=$GPU_NVIDIA AMD=$GPU_AMD Intel=$GPU_INTEL"
+
+                  # Storage Details
+                  if [[ -d /sys/block ]]; then
+                    HAS_NVME="false"
+                    HAS_SSD="false"
+
+                    if ls /sys/block/nvme* >/dev/null 2>&1; then
+                      HAS_NVME="true"
+                      HAS_SSD="true"
+                    elif ls /sys/block/sd* >/dev/null 2>&1; then
+                      for dev in /sys/block/sd*; do
+                        if [[ -r "$dev/queue/rotational" ]] && [[ $(cat "$dev/queue/rotational" 2>/dev/null) == "0" ]]; then
+                          HAS_SSD="true"
+                          break
+                        fi
+                      done
+                    fi
+
+                    log_debug "Storage: NVMe=$HAS_NVME SSD=$HAS_SSD"
+                  fi
                 ''}
 
                 log_info "=== Hardware Detection Complete ==="
@@ -653,7 +720,8 @@ in
       # Intel-specific kernel parameters
       boot.kernelParams = [
         "intel_pstate=active"
-      ] ++ optionals hardwareProfile.cpu.features.hasAES [
+      ]
+      ++ optionals hardwareProfile.cpu.features.hasAES [
         "cryptomgr.notests" # Skip crypto self-tests on Intel AES-NI
       ];
 
@@ -662,8 +730,8 @@ in
         enable = true;
         extraPackages = with pkgs; [
           intel-media-driver
-          vaapiIntel
-          vaapiVdpau
+          intel-vaapi-driver
+          libva-vdpau-driver
           libvdpau-va-gl
         ];
       };
@@ -681,13 +749,11 @@ in
       # AMD graphics support
       hardware.graphics = mkIf hardwareProfile.gpu.hasAMD {
         enable = true;
+        # amdvlk was removed by AMD; RADV (shipped in mesa) replaces it and is
+        # enabled by default, so no extra 32-bit driver package is needed.
         extraPackages = with pkgs; [
-          amdvlk
           rocm-opencl-icd
           rocm-opencl-runtime
-        ];
-        extraPackages32 = with pkgs.driversi686Linux; [
-          amdvlk
         ];
       };
     })
@@ -814,33 +880,36 @@ in
 
     # Hardware-specific packages
     {
-      environment.systemPackages = with pkgs; [
-        # Hardware detection tools
-        lshw
-        pciutils
-        usbutils
-        dmidecode
+      environment.systemPackages =
+        with pkgs;
+        [
+          # Hardware detection tools
+          lshw
+          pciutils
+          usbutils
+          dmidecode
 
-        # CPU-specific tools
-        (mkIf (hardwareProfile.cpu.vendor == "intel") intel-gpu-tools)
-        (mkIf (hardwareProfile.cpu.vendor == "amd") radeontop)
+          # CPU-specific tools
+          (mkIf (hardwareProfile.cpu.vendor == "intel") intel-gpu-tools)
+          (mkIf (hardwareProfile.cpu.vendor == "amd") radeontop)
 
-        # Storage tools
-        (mkIf hardwareProfile.storage.hasNVMe nvme-cli)
-        smartmontools
-        hdparm
+          # Storage tools
+          (mkIf hardwareProfile.storage.hasNVMe nvme-cli)
+          smartmontools
+          hdparm
 
-        # Performance monitoring
-        htop
-        iotop
-        powertop
+          # Performance monitoring
+          htop
+          iotop
+          powertop
 
-        # Hardware testing
-        stress-ng
-      ] ++ lib.optionals pkgs.stdenv.hostPlatform.isx86 [
-        # x86-only hardware testing tools
-        memtest86plus
-      ];
+          # Hardware testing
+          stress-ng
+        ]
+        ++ lib.optionals pkgs.stdenv.hostPlatform.isx86 [
+          # x86-only hardware testing tools
+          memtest86plus
+        ];
     }
   ]);
 }

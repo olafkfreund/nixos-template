@@ -33,7 +33,7 @@
 
     # Minimal git configuration
     git = {
-      extraConfig = {
+      settings = {
         # Disable resource-intensive features
         delta.enable = false;
         core = {

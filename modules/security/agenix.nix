@@ -1,4 +1,10 @@
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 
 with lib;
 with lib.lists;
@@ -102,44 +108,48 @@ in
     };
 
     secrets = mkOption {
-      type = types.attrsOf (types.submodule ({ name, ... }: {
-        options = {
-          file = mkOption {
-            type = types.path;
-            description = "Path to the encrypted secret file";
-          };
+      type = types.attrsOf (
+        types.submodule (
+          { name, ... }: {
+            options = {
+              file = mkOption {
+                type = types.path;
+                description = "Path to the encrypted secret file";
+              };
 
-          path = mkOption {
-            type = types.str;
-            default = "${cfg.secretsPath}/${name}";
-            description = "Path where the decrypted secret will be installed";
-          };
+              path = mkOption {
+                type = types.str;
+                default = "${cfg.secretsPath}/${name}";
+                description = "Path where the decrypted secret will be installed";
+              };
 
-          mode = mkOption {
-            type = types.str;
-            default = cfg.secretsMode;
-            description = "File mode for this secret";
-          };
+              mode = mkOption {
+                type = types.str;
+                default = cfg.secretsMode;
+                description = "File mode for this secret";
+              };
 
-          owner = mkOption {
-            type = types.str;
-            default = cfg.secretsOwner;
-            description = "Owner of this secret file";
-          };
+              owner = mkOption {
+                type = types.str;
+                default = cfg.secretsOwner;
+                description = "Owner of this secret file";
+              };
 
-          group = mkOption {
-            type = types.str;
-            default = cfg.secretsGroup;
-            description = "Group of this secret file";
-          };
+              group = mkOption {
+                type = types.str;
+                default = cfg.secretsGroup;
+                description = "Group of this secret file";
+              };
 
-          symlink = mkOption {
-            type = types.bool;
-            default = true;
-            description = "Whether to create a symlink at the specified path";
-          };
-        };
-      }));
+              symlink = mkOption {
+                type = types.bool;
+                default = true;
+                description = "Whether to create a symlink at the specified path";
+              };
+            };
+          }
+        )
+      );
       default = { };
       description = "Attribute set of secrets to decrypt";
       example = literalExpression ''
@@ -161,7 +171,10 @@ in
     };
 
     installationType = mkOption {
-      type = types.enum [ "activation" "system" ];
+      type = types.enum [
+        "activation"
+        "system"
+      ];
       default = "activation";
       description = ''
         Installation type for secrets:
@@ -190,28 +203,29 @@ in
 
     # Configure agenix
     age = {
-      secrets = mapAttrs
-        (_name: secretConfig: {
-          file = secretConfig.file;
-          path = secretConfig.path;
-          mode = secretConfig.mode;
-          owner = secretConfig.owner;
-          group = secretConfig.group;
-          symlink = secretConfig.symlink;
-        })
-        cfg.secrets;
+      secrets = mapAttrs (_name: secretConfig: {
+        inherit (secretConfig) file;
+        inherit (secretConfig) path;
+        inherit (secretConfig) mode;
+        inherit (secretConfig) owner;
+        inherit (secretConfig) group;
+        inherit (secretConfig) symlink;
+      }) cfg.secrets;
 
-      identityPaths = cfg.identityPaths;
+      inherit (cfg) identityPaths;
     };
 
     # System packages for secret management
-    environment.systemPackages = with pkgs; [
-      age # Age encryption tool
-      rage # Rust implementation of age
-      ssh-to-age # Convert SSH keys to age keys
-    ] ++ optionals (inputs ? agenix) [
-      inputs.agenix.packages.${pkgs.system}.default # agenix CLI tool
-    ];
+    environment.systemPackages =
+      with pkgs;
+      [
+        age # Age encryption tool
+        rage # Rust implementation of age
+        ssh-to-age # Convert SSH keys to age keys
+      ]
+      ++ optionals (inputs ? agenix) [
+        inputs.agenix.packages.${pkgs.system}.default # agenix CLI tool
+      ];
 
     # Ensure secrets directory exists with proper permissions
     systemd.tmpfiles.rules = [
@@ -274,38 +288,36 @@ in
 
       # Per-secret reload services (if using system installation)
       (mkIf (cfg.installationType == "system") (
-        mapAttrs'
-          (name: secretConfig: {
-            name = "agenix-${name}";
-            value = {
-              description = "Agenix secret: ${name}";
-              after = [ "agenix-install-secrets.service" ];
-              wantedBy = [ "multi-user.target" ];
+        mapAttrs' (name: secretConfig: {
+          name = "agenix-${name}";
+          value = {
+            description = "Agenix secret: ${name}";
+            after = [ "agenix-install-secrets.service" ];
+            wantedBy = [ "multi-user.target" ];
 
-              serviceConfig = {
-                Type = "oneshot";
-                RemainAfterExit = true;
-                User = "root";
-                Group = "root";
-              };
-
-              script = ''
-                # Verify secret file exists and has correct permissions
-                if [ -f "${secretConfig.path}" ]; then
-                  chmod ${secretConfig.mode} "${secretConfig.path}"
-                  chown ${secretConfig.owner}:${secretConfig.group} "${secretConfig.path}"
-                  echo "Secret ${name} installed successfully"
-                else
-                  echo "Warning: Secret ${name} not found at ${secretConfig.path}"
-                  exit 1
-                fi
-              '';
-
-              # Reload service when secret file changes
-              restartTriggers = [ secretConfig.file ];
+            serviceConfig = {
+              Type = "oneshot";
+              RemainAfterExit = true;
+              User = "root";
+              Group = "root";
             };
-          })
-          cfg.secrets
+
+            script = ''
+              # Verify secret file exists and has correct permissions
+              if [ -f "${secretConfig.path}" ]; then
+                chmod ${secretConfig.mode} "${secretConfig.path}"
+                chown ${secretConfig.owner}:${secretConfig.group} "${secretConfig.path}"
+                echo "Secret ${name} installed successfully"
+              else
+                echo "Warning: Secret ${name} not found at ${secretConfig.path}"
+                exit 1
+              fi
+            '';
+
+            # Reload service when secret file changes
+            restartTriggers = [ secretConfig.file ];
+          };
+        }) cfg.secrets
       ))
     ];
 

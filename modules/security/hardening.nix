@@ -2,7 +2,12 @@
 # Implements expert security recommendations for production systems
 # Based on CIS benchmarks and NixOS security best practices
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -27,7 +32,12 @@ in
     };
 
     profile = mkOption {
-      type = types.enum [ "desktop" "server" "workstation" "minimal" ];
+      type = types.enum [
+        "desktop"
+        "server"
+        "workstation"
+        "minimal"
+      ];
       default = "workstation";
       description = ''
         Security hardening profile that determines the aggressiveness of security measures:
@@ -184,7 +194,11 @@ in
         MemoryDenyWriteExecute = true;
 
         # Network restrictions
-        RestrictAddressFamilies = [ "AF_UNIX" "AF_INET" "AF_INET6" ];
+        RestrictAddressFamilies = [
+          "AF_UNIX"
+          "AF_INET"
+          "AF_INET6"
+        ];
 
         # Filesystem restrictions
         ProtectSystem = "strict";
@@ -375,7 +389,6 @@ in
       systemPackages = with pkgs; [
         # Security analysis tools
         lynis # Security audit tool
-        chkrootkit # Rootkit detector
         rkhunter # Rootkit hunter
 
         # Network security
@@ -420,9 +433,11 @@ in
     ];
 
     warnings =
-      optional (cfg.kernelSecurity && cfg.profile == "desktop")
-        "Aggressive kernel security hardening may impact desktop user experience" ++
-      optional (!cfg.networkSecurity && cfg.profile == "server")
-        "Network security hardening is recommended for server profiles";
+      optional (
+        cfg.kernelSecurity && cfg.profile == "desktop"
+      ) "Aggressive kernel security hardening may impact desktop user experience"
+      ++ optional (
+        !cfg.networkSecurity && cfg.profile == "server"
+      ) "Network security hardening is recommended for server profiles";
   };
 }

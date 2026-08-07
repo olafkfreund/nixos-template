@@ -284,7 +284,7 @@ cat_quality() {
   while choose "✅  Quality & Formatting" \
     "check|Run nix flake check" \
     "validate|check + lint + format-check + dead-code" \
-    "format|Format all Nix files (nixpkgs-fmt)" \
+    "format|Format all files (nix fmt / treefmt)" \
     "lint|Lint with statix" \
     "dead code|Find unused code with deadnix" \
     "full quality suite|validate + security audit + outdated" \

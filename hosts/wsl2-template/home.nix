@@ -1,6 +1,10 @@
 # WSL2 Template Home Manager Configuration
 # Uses shared profiles optimized for Windows Subsystem for Linux development
-{ config, lib, pkgs, ... }:
+{
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   # Import shared Home Manager profiles
@@ -41,7 +45,6 @@
   # WSL2-specific packages (extends development profile)
   home.packages = with pkgs; [
     # Windows integration tools
-    wslu # WSL utilities
 
     # Network tools for WSL2 development
     socat # For port forwarding
@@ -52,7 +55,7 @@
     p7zip
 
     # Development tools optimized for WSL2
-    nodejs_20 # Latest Node.js for web development
+    nodejs_22 # Node.js LTS (nodejs_20 is EOL)
     python311 # Python for scripting
 
     # WSL2-specific utilities
@@ -157,7 +160,8 @@
 
       # WSL2 management
       "wsl-shutdown" = "wsl.exe --shutdown";
-      "wsl-info" = "echo 'WSL2:' $WSL_DISTRO_NAME '| IP:' $(ip route show | grep default | awk '{print $3}')";
+      "wsl-info" =
+        "echo 'WSL2:' $WSL_DISTRO_NAME '| IP:' $(ip route show | grep default | awk '{print $3}')";
 
       # Windows path shortcuts
       "cdc" = "cd /mnt/c/";

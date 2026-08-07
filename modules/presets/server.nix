@@ -1,6 +1,11 @@
 # Server Preset
 # Optimized for reliability, security, and headless operation
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.modules.presets;
@@ -82,7 +87,10 @@ in
       };
 
       # Fast DNS servers (opinionated choice)
-      nameservers = [ "1.1.1.1" "8.8.8.8" ];
+      nameservers = [
+        "1.1.1.1"
+        "8.8.8.8"
+      ];
     };
 
     # Server-optimized boot parameters (preset configuration)
@@ -99,21 +107,26 @@ in
       loader.timeout = 1;
 
       # Enable virtualization modules (common for servers)
-      kernelModules = [ "kvm-intel" "kvm-amd" ];
+      kernelModules = [
+        "kvm-intel"
+        "kvm-amd"
+      ];
     };
 
     # Server-specific packages (core tools provided by shared modules)
-    environment.systemPackages = with pkgs; lib.mkDefault [
-      # Server-specific monitoring tools only
-      sysstat
-      lsof
+    environment.systemPackages =
+      with pkgs;
+      lib.mkDefault [
+        # Server-specific monitoring tools only
+        sysstat
+        lsof
 
-      # Container management
-      podman-compose
+        # Container management
+        podman-compose
 
-      # Backup tools
-      borgbackup
-    ];
+        # Backup tools
+        borgbackup
+      ];
 
     # Security hardening for servers (preset configuration)
     security = {
@@ -140,7 +153,6 @@ in
         bantime = 3600
       '';
     };
-
 
     # Disable auto-login (inappropriate for servers)
     services.getty.autologinUser = lib.mkForce null;

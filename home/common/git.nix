@@ -11,7 +11,7 @@
     userEmail = lib.mkDefault "changeme@example.com";
 
     # Common git configuration
-    extraConfig = {
+    settings = {
       init.defaultBranch = "main";
       pull.rebase = true;
       push.autoSetupRemote = true;

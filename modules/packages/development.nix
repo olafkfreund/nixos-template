@@ -1,6 +1,11 @@
 # Development tools package collection
 # Programming languages, IDEs, containerization, and development utilities
-{ pkgs, lib, config, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 
 {
   options.modules.packages.development = {
@@ -32,97 +37,103 @@
   };
 
   config = lib.mkIf config.modules.packages.development.enable {
-    environment.systemPackages = with pkgs; [
-      # Code editors and IDEs
-      vscode
-      neovim
-      jetbrains.idea-community
+    environment.systemPackages =
+      with pkgs;
+      [
+        # Code editors and IDEs
+        vscode
+        neovim
+        jetbrains.idea
 
-      # Version control
-      git
-      git-lfs
-      gh # GitHub CLI
-      gitui # TUI for git
+        # Version control
+        git
+        git-lfs
+        gh # GitHub CLI
+        gitui # TUI for git
 
-      # Build tools
-      gnumake
-      cmake
-      ninja
+        # Build tools
+        gnumake
+        cmake
+        ninja
 
-      # API and testing tools
-      curl
-      httpie
-      postman
+        # API and testing tools
+        curl
+        httpie
+        postman
 
-      # Documentation
-      pandoc
+        # Documentation
+        pandoc
 
-      # Terminal utilities
-      tmux
-      screen
+        # Terminal utilities
+        tmux
+        screen
 
-      # System monitoring for development
-      btop
-      htop
-      iotop
-      nethogs
+        # System monitoring for development
+        btop
+        htop
+        iotop
+        nethogs
 
-      # Text processing
-      ripgrep
-      fd
-      jq
-      yq
+        # Text processing
+        ripgrep
+        fd
+        jq
+        yq
 
-      # Performance tools
-      hyperfine # Benchmarking
-      valgrind
-      gdb
-      strace
+        # Performance tools
+        hyperfine # Benchmarking
+        valgrind
+        gdb
+        strace
 
-    ] ++ lib.optionals config.modules.packages.development.includeLanguages [
-      # Programming languages
-      nodejs_20
-      python311
-      python311Packages.pip
-      python311Packages.virtualenv
-      go
-      rustc
-      cargo
-      gcc
-      clang
-      openjdk17
+      ]
+      ++ lib.optionals config.modules.packages.development.includeLanguages [
+        # Programming languages
+        nodejs_22
+        python311
+        python311Packages.pip
+        python311Packages.virtualenv
+        go
+        rustc
+        cargo
+        gcc
+        clang
+        openjdk17
 
-      # Language servers
-      nixd # Nix LSP
-      nil # Alternative Nix LSP
+        # Language servers
+        nixd # Nix LSP
+        nil # Alternative Nix LSP
 
-    ] ++ lib.optionals config.modules.packages.development.includeContainers [
-      # Container tools
-      docker
-      docker-compose
-      podman
-      kubernetes
-      kubectl
-      k9s # Kubernetes TUI
-      helm
+      ]
+      ++ lib.optionals config.modules.packages.development.includeContainers [
+        # Container tools
+        docker
+        docker-compose
+        podman
+        kubernetes
+        kubectl
+        k9s # Kubernetes TUI
+        helm
 
-    ] ++ lib.optionals config.modules.packages.development.includeCloud [
-      # Cloud platform tools
-      awscli2
-      google-cloud-sdk
-      azure-cli
-      terraform
-      terragrunt
+      ]
+      ++ lib.optionals config.modules.packages.development.includeCloud [
+        # Cloud platform tools
+        awscli2
+        google-cloud-sdk
+        azure-cli
+        terraform
+        terragrunt
 
-    ] ++ lib.optionals config.modules.packages.development.includeDatabase [
-      # Database tools
-      dbeaver-bin
-      postgresql_15 # Includes psql client
-      mysql80 # Includes mysql client
-      sqlite
-      redis
-      mongodb-tools
-    ];
+      ]
+      ++ lib.optionals config.modules.packages.development.includeDatabase [
+        # Database tools
+        dbeaver-bin
+        postgresql_15 # Includes psql client
+        mysql84 # Includes mysql client
+        sqlite
+        redis
+        mongodb-tools
+      ];
 
     # Development environment configuration
     programs = {

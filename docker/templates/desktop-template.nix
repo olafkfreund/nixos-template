@@ -1,6 +1,10 @@
 # Desktop Template for VM Builder
 # Full desktop environment optimized for VMs
-{ config, pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   imports = [
@@ -59,7 +63,10 @@
     desktopManager.gnome.enable = true;
 
     # VM optimizations
-    videoDrivers = [ "vmware" "virtualbox" "qxl" ];
+    videoDrivers = [
+      "vmware"
+      "qxl"
+    ]; # virtualbox driver deprecated for kernel 7.0+
   };
 
   # Enable sound
@@ -83,7 +90,11 @@
   users.users.nixos = {
     isNormalUser = true;
     description = "NixOS User";
-    extraGroups = [ "networkmanager" "wheel" "docker" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "docker"
+    ];
     password = "nixos"; # Change this in production
   };
 
@@ -120,7 +131,10 @@
   };
 
   # Enable flakes and new nix command
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
   # Automatic garbage collection
   nix.gc = {

@@ -1,6 +1,11 @@
 # Darwin Package Collections
 # Nix-darwin compatible package management combining Nix packages and Homebrew
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -54,7 +59,7 @@ let
     texlive.combined.scheme-medium
 
     # Desktop-specific utilities
-    neofetch
+    fastfetch
   ];
 
   developmentPackages = with pkgs; [
@@ -95,24 +100,53 @@ let
     tmux
   ];
 
-  laptopPackages = with pkgs; [
-    # Lightweight tools optimized for battery
+  # Programming language packages
+  # npm ships with nodejs, so it needs no separate package
+  nodePackages = with pkgs; [
+    nodejs_22
+    yarn
+  ];
+  pythonPackages = with pkgs; [
+    python311
+    python311Packages.pip
+    python311Packages.virtualenv
+  ];
+  goPackages = with pkgs; [ go ];
+  rustPackages = with pkgs; [
+    rustc
+    cargo
+    rustfmt
+    clippy
+  ];
+  javaPackages = with pkgs; [
+    openjdk17
+    maven
+    gradle
+  ];
+  phpPackages = with pkgs; [
+    php82
+    php82Packages.composer
+  ];
+  rubyPackages = with pkgs; [
+    ruby_3_4
+    rubyPackages_3_4.bundler
   ];
 
-  # Programming language packages
-  nodePackages = with pkgs; [ nodejs_20 nodePackages.npm nodePackages.yarn ];
-  pythonPackages = with pkgs; [ python311 python311Packages.pip python311Packages.virtualenv ];
-  goPackages = with pkgs; [ go ];
-  rustPackages = with pkgs; [ rustc cargo rustfmt clippy ];
-  javaPackages = with pkgs; [ openjdk17 maven gradle ];
-  phpPackages = with pkgs; [ php82 php82Packages.composer ];
-  rubyPackages = with pkgs; [ ruby_3_2 rubyPackages_3_2.bundler ];
-
   # Database packages
-  databasePackages = with pkgs; [ postgresql_15 mysql80 sqlite redis ];
+  databasePackages = with pkgs; [
+    postgresql_15
+    mysql84
+    sqlite
+    redis
+  ];
 
   # Container packages
-  containerPackages = with pkgs; [ docker docker-compose kubectl kubernetes-helm ];
+  containerPackages = with pkgs; [
+    docker
+    docker-compose
+    kubectl
+    kubernetes-helm
+  ];
 
   # Cloud provider packages
   awsPackages = with pkgs; [ awscli2 ];
@@ -137,8 +171,21 @@ in
       development = {
         enable = mkEnableOption "Development packages and tools";
         languages = mkOption {
-          type = types.listOf (types.enum [ "node" "python" "go" "rust" "java" "php" "ruby" ]);
-          default = [ "node" "python" ];
+          type = types.listOf (
+            types.enum [
+              "node"
+              "python"
+              "go"
+              "rust"
+              "java"
+              "php"
+              "ruby"
+            ]
+          );
+          default = [
+            "node"
+            "python"
+          ];
           description = "Programming languages to include";
         };
         databases = mkOption {
@@ -156,7 +203,14 @@ in
       server = {
         enable = mkEnableOption "Server administration packages";
         cloud = mkOption {
-          type = types.listOf (types.enum [ "aws" "gcp" "azure" "digitalocean" ]);
+          type = types.listOf (
+            types.enum [
+              "aws"
+              "gcp"
+              "azure"
+              "digitalocean"
+            ]
+          );
           default = [ "aws" ];
           description = "Cloud provider tools to include";
         };
@@ -213,7 +267,8 @@ in
         "postman"
         "figma"
         "canva"
-      ] ++ optionals cfg.profiles.desktop.includeCreative [
+      ]
+      ++ optionals cfg.profiles.desktop.includeCreative [
         "adobe-creative-cloud"
         "sketch"
         "pixelmator-pro"
@@ -226,21 +281,18 @@ in
         "Xcode" = 497799835;
         "TestFlight" = 899247664;
         "Pixelmator Pro" = 1289583905;
-      } // optionalAttrs cfg.profiles.desktop.includeCreative {
+      }
+      // optionalAttrs cfg.profiles.desktop.includeCreative {
         "Final Cut Pro" = 424389933;
         "Logic Pro" = 634148309;
       };
 
       fonts.packages = with pkgs; [
-        (nerdfonts.override {
-          fonts = [
-            "FiraCode"
-            "JetBrainsMono"
-            "Hack"
-            "SourceCodePro"
-            "Inconsolata"
-          ];
-        })
+        nerd-fonts.fira-code
+        nerd-fonts.jetbrains-mono
+        nerd-fonts.hack
+        nerd-fonts.sauce-code-pro
+        nerd-fonts.inconsolata
         inter
         source-sans-pro
         source-serif-pro
@@ -251,7 +303,8 @@ in
 
     # Development packages
     (mkIf cfg.profiles.development.enable {
-      environment.systemPackages = developmentPackages
+      environment.systemPackages =
+        developmentPackages
         # Programming languages
         ++ optionals (elem "node" cfg.profiles.development.languages) nodePackages
         ++ optionals (elem "python" cfg.profiles.development.languages) pythonPackages
@@ -277,7 +330,8 @@ in
         "postman"
         "tableplus"
         "redis-insight"
-      ] ++ optionals cfg.profiles.development.docker [
+      ]
+      ++ optionals cfg.profiles.development.docker [
         "docker"
         "orbstack"
       ];
@@ -290,7 +344,8 @@ in
 
     # Server packages
     (mkIf cfg.profiles.server.enable {
-      environment.systemPackages = serverPackages
+      environment.systemPackages =
+        serverPackages
         # Cloud tools
         ++ optionals (elem "aws" cfg.profiles.server.cloud) awsPackages
         ++ optionals (elem "gcp" cfg.profiles.server.cloud) gcpPackages

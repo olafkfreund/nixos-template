@@ -138,7 +138,10 @@
         sysinfo
       '';
 
-      historyControl = [ "ignoredups" "erasedups" ];
+      historyControl = [
+        "ignoredups"
+        "erasedups"
+      ];
       historySize = 10000;
       historyFileSize = 20000;
     };

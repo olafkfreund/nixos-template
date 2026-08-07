@@ -1,11 +1,12 @@
 { pkgs, ... }:
-with pkgs; {
+with pkgs;
+{
   default = mkShell {
     name = "nixos-config";
 
     buildInputs = [
       # Nix tools
-      nixpkgs-fmt
+      nixfmt
       nil # Nix LSP
       nix-output-monitor # Better nix build output
       nix-tree # Visualize Nix dependencies

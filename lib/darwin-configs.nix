@@ -1,12 +1,22 @@
 # Darwin Configuration Generator
 # Eliminates duplication in Darwin configurations across architectures
-{ inputs, outputs, nixpkgs, nix-darwin, home-manager }:
+{
+  inputs,
+  outputs,
+  nixpkgs,
+  nix-darwin,
+  home-manager,
+}:
 
 let
   inherit (nixpkgs) lib;
 
   # Helper function for nix-darwin configurations
-  mkDarwin = { hostname, system ? "aarch64-darwin" }:
+  mkDarwin =
+    {
+      hostname,
+      system ? "aarch64-darwin",
+    }:
     nix-darwin.lib.darwinSystem {
       inherit system;
       specialArgs = { inherit inputs outputs; };
@@ -17,28 +27,31 @@ let
     };
 
   # Generate Darwin configurations for multiple architectures
-  mkDarwinConfigurations = hostnames:
+  mkDarwinConfigurations =
+    hostnames:
     let
       # Darwin systems we support
-      darwinSystems = [ "aarch64-darwin" "x86_64-darwin" ];
+      darwinSystems = [
+        "aarch64-darwin"
+        "x86_64-darwin"
+      ];
 
       # Generate configurations for each hostname and architecture
-      generateForHost = hostname:
-        lib.listToAttrs (map
-          (system:
+      generateForHost =
+        hostname:
+        lib.listToAttrs (
+          map (
+            system:
             let
               # Create config name based on architecture
-              configName =
-                if system == "aarch64-darwin"
-                then hostname
-                else "${hostname}-intel";
+              configName = if system == "aarch64-darwin" then hostname else "${hostname}-intel";
             in
             {
               name = configName;
               value = mkDarwin { inherit hostname system; };
             }
-          )
-          darwinSystems);
+          ) darwinSystems
+        );
     in
     lib.foldl' (acc: hostname: acc // (generateForHost hostname)) { } hostnames;
 

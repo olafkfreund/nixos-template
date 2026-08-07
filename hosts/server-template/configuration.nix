@@ -1,6 +1,11 @@
 # Server Configuration Template
 # Optimized for reliability, security, and performance
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   imports = [
@@ -15,7 +20,11 @@
     profile = "server";
     description = "Server template for production services";
     environment = "production";
-    tags = [ "template" "server" "headless" ];
+    tags = [
+      "template"
+      "server"
+      "headless"
+    ];
   };
 
   # Hardware profile for server
@@ -182,9 +191,11 @@
       scrapeConfigs = [
         {
           job_name = "node";
-          static_configs = [{
-            targets = [ "localhost:9100" ];
-          }];
+          static_configs = [
+            {
+              targets = [ "localhost:9100" ];
+            }
+          ];
         }
       ];
     };
@@ -344,7 +355,10 @@
     };
 
     # Kernel modules
-    kernelModules = [ "kvm-intel" "kvm-amd" ];
+    kernelModules = [
+      "kvm-intel"
+      "kvm-amd"
+    ];
 
     # Boot configuration
     loader = {

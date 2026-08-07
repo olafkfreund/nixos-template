@@ -22,7 +22,7 @@ This directory contains a comprehensive Neovim configuration built with Nixvim a
 
 ### Supported Languages
 
-- **Nix**: Full support with nil LSP and nixpkgs-fmt
+- **Nix**: Full support with nixd LSP and nixfmt
 - **Rust**: rust-analyzer with automatic formatting
 - **Go**: gopls with Go-specific features
 - **Python**: pyright with black formatting
@@ -351,7 +351,7 @@ toggleterm = {
 ### Nix Development
 
 - **nil**: Nix language server
-- **nixpkgs-fmt**: Automatic formatting
+- **nixfmt**: Automatic formatting
 - **Syntax highlighting**: Full Nix syntax support
 - **NixOS integration**: Understanding of NixOS modules
 

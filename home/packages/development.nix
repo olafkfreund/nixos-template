@@ -5,7 +5,7 @@
   home.packages = with pkgs; [
     # Code editors and IDEs
     vscode
-    jetbrains.idea-community
+    jetbrains.idea
 
     # Development utilities
     docker-compose

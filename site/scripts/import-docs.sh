@@ -30,7 +30,9 @@ for f in "$SRC"/*.md; do
   base="$(basename "$f" .md)"
 
   # Skip the docs index itself — the site has its own /documentation/ listing.
-  if [ "$base" = "README" ]; then
+  # index.md is the Backstage TechDocs landing page and duplicates the site's
+  # own front page, so it is skipped here too.
+  if [ "$base" = "README" ] || [ "$base" = "index" ]; then
     continue
   fi
 
@@ -54,7 +56,7 @@ for f in "$SRC"/*.md; do
     awk 'BEGIN{dropped=0} /^# /&&!dropped{dropped=1;next} {print}' "$f" \
       | DOCS_SRC="$SRC" python3 "$(dirname "$0")/rewrite-links.py"
     printf '\n{%% endraw %%}\n'
-  } > "$out"
+  } >"$out"
 
   count=$((count + 1))
 done

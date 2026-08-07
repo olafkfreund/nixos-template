@@ -1,7 +1,12 @@
 # WSL2 Network Configuration
 # Optimized networking settings for WSL2 environment
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -14,7 +19,11 @@ in
     enable = mkEnableOption "WSL2 networking optimizations";
 
     dnsConfig = mkOption {
-      type = types.enum [ "wsl" "custom" "auto" ];
+      type = types.enum [
+        "wsl"
+        "custom"
+        "auto"
+      ];
       default = "auto";
       description = ''
         DNS configuration mode:
@@ -26,7 +35,12 @@ in
 
     customDnsServers = mkOption {
       type = types.listOf types.str;
-      default = [ "8.8.8.8" "1.1.1.1" "8.8.4.4" "1.0.0.1" ];
+      default = [
+        "8.8.8.8"
+        "1.1.1.1"
+        "8.8.4.4"
+        "1.0.0.1"
+      ];
       description = "Custom DNS servers (used when dnsConfig = custom)";
     };
 
@@ -37,7 +51,11 @@ in
     };
 
     firewallConfig = mkOption {
-      type = types.enum [ "disabled" "minimal" "standard" ];
+      type = types.enum [
+        "disabled"
+        "minimal"
+        "standard"
+      ];
       default = "disabled";
       description = ''
         Firewall configuration for WSL2:
@@ -50,7 +68,10 @@ in
     portForwarding = mkOption {
       type = types.attrsOf types.port;
       default = { };
-      example = { ssh = 22; http = 8080; };
+      example = {
+        ssh = 22;
+        http = 8080;
+      };
       description = "Port forwarding configuration for development services";
     };
   };
@@ -196,10 +217,12 @@ in
       script = ''
         # Port forwarding information for Windows
         echo "WSL2 Port Forwarding Information:"
-        ${concatStringsSep "\n" (mapAttrsToList (name: port: ''
-          echo "Service: ${name} - Port: ${toString port}"
-          echo "  Access from Windows: localhost:${toString port}"
-        '') cfg.portForwarding)}
+        ${concatStringsSep "\n" (
+          mapAttrsToList (name: port: ''
+            echo "Service: ${name} - Port: ${toString port}"
+            echo "  Access from Windows: localhost:${toString port}"
+          '') cfg.portForwarding
+        )}
       '';
     };
 

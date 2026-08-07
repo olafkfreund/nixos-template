@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.modules.virtualization.qemu;
@@ -7,11 +12,17 @@ in
   options.modules.virtualization.qemu = {
     enable = lib.mkEnableOption "QEMU/KVM guest configuration";
 
-    virtioSupport = lib.mkEnableOption "VirtIO driver support" // { default = true; };
+    virtioSupport = lib.mkEnableOption "VirtIO driver support" // {
+      default = true;
+    };
 
-    spiceSupport = lib.mkEnableOption "SPICE guest tools" // { default = false; };
+    spiceSupport = lib.mkEnableOption "SPICE guest tools" // {
+      default = false;
+    };
 
-    qxlSupport = lib.mkEnableOption "QXL graphics driver" // { default = false; };
+    qxlSupport = lib.mkEnableOption "QXL graphics driver" // {
+      default = false;
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -63,14 +74,17 @@ in
     };
 
     # Optimize for QEMU/KVM
-    environment.systemPackages = with pkgs; [
-      # QEMU guest additions
-      qemu-utils
-    ] ++ lib.optionals cfg.spiceSupport [
-      # SPICE client tools
-      spice-vdagent
-      spice-gtk
-    ];
+    environment.systemPackages =
+      with pkgs;
+      [
+        # QEMU guest additions
+        qemu-utils
+      ]
+      ++ lib.optionals cfg.spiceSupport [
+        # SPICE client tools
+        spice-vdagent
+        spice-gtk
+      ];
 
     # Network configuration optimized for VMs
     networking = {
@@ -88,7 +102,10 @@ in
     fileSystems = {
       "/" = {
         # Use discard for SSD-backed storage
-        options = [ "noatime" "discard" ];
+        options = [
+          "noatime"
+          "discard"
+        ];
       };
     };
 

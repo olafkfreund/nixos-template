@@ -70,7 +70,7 @@
     # Desktop environment
     xserver = {
       enable = true;
-      videoDrivers = [ "modesetting" "virtio" ];
+      videoDrivers = [ "modesetting" ]; # virtio-gpu is driven by modesetting
 
       # Laptop input optimization
       # Note: libinput configuration moved to services.libinput
@@ -151,10 +151,21 @@
     # Firewall for laptop
     firewall = {
       enable = true;
-      allowedTCPPorts = [ 22 80 443 8080 3000 5000 8000 ];
+      allowedTCPPorts = [
+        22
+        80
+        443
+        8080
+        3000
+        5000
+        8000
+      ];
     };
 
-    nameservers = [ "8.8.8.8" "1.1.1.1" ];
+    nameservers = [
+      "8.8.8.8"
+      "1.1.1.1"
+    ];
   };
 
   # Boot configuration
@@ -165,8 +176,21 @@
     };
 
     # Laptop-appropriate kernel modules
-    kernelModules = [ "virtio_net" "virtio_pci" "virtio_mmio" "virtio_blk" "virtio_scsi" "virtio_balloon" ];
-    initrd.availableKernelModules = [ "virtio_net" "virtio_pci" "virtio_mmio" "virtio_blk" "virtio_scsi" ];
+    kernelModules = [
+      "virtio_net"
+      "virtio_pci"
+      "virtio_mmio"
+      "virtio_blk"
+      "virtio_scsi"
+      "virtio_balloon"
+    ];
+    initrd.availableKernelModules = [
+      "virtio_net"
+      "virtio_pci"
+      "virtio_mmio"
+      "virtio_blk"
+      "virtio_scsi"
+    ];
 
     # Power management kernel parameters
     kernelParams = [
@@ -184,7 +208,10 @@
     "/" = {
       device = "/dev/disk/by-label/nixos";
       fsType = "ext4";
-      options = [ "noatime" "compress=zstd" ]; # SSD-like optimizations
+      options = [
+        "noatime"
+        "compress=zstd"
+      ]; # SSD-like optimizations
     };
 
     "/boot" = {
@@ -205,7 +232,13 @@
       laptop-user = {
         isNormalUser = true;
         description = "Laptop VM User";
-        extraGroups = [ "wheel" "networkmanager" "audio" "video" "bluetooth" ];
+        extraGroups = [
+          "wheel"
+          "networkmanager"
+          "audio"
+          "video"
+          "bluetooth"
+        ];
         initialPassword = "nixos";
       };
     };

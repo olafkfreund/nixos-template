@@ -1,6 +1,12 @@
 # System Identification Module
 # Standardizes hostname, profile, and metadata patterns across all configurations
-{ config, lib, pkgs, inputs ? null, outputs ? null, flakeMeta ? null, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  flakeMeta ? null,
+  ...
+}:
 
 with lib;
 
@@ -8,45 +14,67 @@ let
   cfg = config.systemId;
 
   # Derive profile from hostname if not explicitly set
-  deriveProfile = hostname:
-    if hasInfix "server" hostname then "server"
-    else if hasInfix "laptop" hostname then "laptop"
-    else if hasInfix "desktop" hostname then "workstation"
-    else if hasInfix "gaming" hostname then "gaming"
-    else if hasInfix "vm" hostname then "workstation"
-    else if hasInfix "test" hostname then "workstation"
-    else "workstation"; # Default fallback
+  deriveProfile =
+    hostname:
+    if hasInfix "server" hostname then
+      "server"
+    else if hasInfix "laptop" hostname then
+      "laptop"
+    else if hasInfix "desktop" hostname then
+      "workstation"
+    else if hasInfix "gaming" hostname then
+      "gaming"
+    else if hasInfix "vm" hostname then
+      "workstation"
+    else if hasInfix "test" hostname then
+      "workstation"
+    else
+      "workstation"; # Default fallback
 
   # System type detection
   systemType =
-    if config.wsl.enable or false then "wsl"
-    else if config.virtualisation.vmware.guest.enable or false then "vm"
-    else if config.virtualisation.virtualbox.guest.enable or false then "vm"
-    else if config.virtualisation.qemu.guest.enable or false then "vm"
-    else if config.hardware.vmware.guest.enable or false then "vm"
-    else if pkgs.stdenv.hostPlatform.isDarwin then "darwin"
-    else "physical";
+    if config.wsl.enable or false then
+      "wsl"
+    else if config.virtualisation.vmware.guest.enable or false then
+      "vm"
+    else if config.virtualisation.virtualbox.guest.enable or false then
+      "vm"
+    else if config.virtualisation.qemu.guest.enable or false then
+      "vm"
+    else if config.hardware.vmware.guest.enable or false then
+      "vm"
+    else if pkgs.stdenv.hostPlatform.isDarwin then
+      "darwin"
+    else
+      "physical";
 
   # Standard naming patterns
   standardizedHostname =
     if cfg.useSystemTypePrefix then
-      if systemType == "vm" then "nixos-vm-${cfg.baseName}"
-      else if systemType == "wsl" then "nixos-wsl-${cfg.baseName}"
-      else if systemType == "darwin" then "nix-darwin-${cfg.baseName}"
-      else cfg.baseName
-    else cfg.baseName;
+      if systemType == "vm" then
+        "nixos-vm-${cfg.baseName}"
+      else if systemType == "wsl" then
+        "nixos-wsl-${cfg.baseName}"
+      else if systemType == "darwin" then
+        "nix-darwin-${cfg.baseName}"
+      else
+        cfg.baseName
+    else
+      cfg.baseName;
 
   # Computer/display name for Darwin systems
   darwinComputerName =
-    if cfg.profile == "server" then "nix-darwin Server"
-    else if cfg.profile == "laptop" then "nix-darwin Laptop"
-    else if cfg.profile == "workstation" then "nix-darwin Desktop"
-    else "nix-darwin System";
+    if cfg.profile == "server" then
+      "nix-darwin Server"
+    else if cfg.profile == "laptop" then
+      "nix-darwin Laptop"
+    else if cfg.profile == "workstation" then
+      "nix-darwin Desktop"
+    else
+      "nix-darwin System";
 
   # Standard state version based on system type
-  standardStateVersion =
-    if pkgs.stdenv.hostPlatform.isDarwin then 5
-    else "25.05";
+  standardStateVersion = if pkgs.stdenv.hostPlatform.isDarwin then 5 else "26.05";
 
 in
 {
@@ -59,9 +87,18 @@ in
     };
 
     profile = mkOption {
-      type = types.enum [ "workstation" "server" "laptop" "gaming" "development" "minimal" ];
+      type = types.enum [
+        "workstation"
+        "server"
+        "laptop"
+        "gaming"
+        "development"
+        "minimal"
+      ];
       description = "System profile type";
-      default = deriveProfile (if flakeMeta != null then flakeMeta.hostname or cfg.baseName else cfg.baseName);
+      default = deriveProfile (
+        if flakeMeta != null then flakeMeta.hostname or cfg.baseName else cfg.baseName
+      );
     };
 
     useSystemTypePrefix = mkOption {
@@ -90,7 +127,12 @@ in
     };
 
     environment = mkOption {
-      type = types.enum [ "production" "staging" "development" "testing" ];
+      type = types.enum [
+        "production"
+        "staging"
+        "development"
+        "testing"
+      ];
       default = "production";
       description = "Environment classification";
     };
@@ -99,7 +141,10 @@ in
       type = types.listOf types.str;
       default = [ ];
       description = "Custom tags for system classification";
-      example = [ "gpu-enabled" "high-memory" ];
+      example = [
+        "gpu-enabled"
+        "high-memory"
+      ];
     };
   };
 
@@ -107,7 +152,8 @@ in
     # Standard hostname configuration (lowest priority for deployment images)
     networking = {
       hostName = lib.mkOverride 2000 standardizedHostname;
-    } // optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
+    }
+    // optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
       # Darwin-specific naming
       localHostName = mkDefault standardizedHostname;
       computerName = mkDefault darwinComputerName;
@@ -119,13 +165,16 @@ in
     # Environment configuration
     environment = {
       # Environment variables for system identification
-      variables = mkIf (cfg.useFlakeMetadata && (flakeMeta != null)) ({
-        SYSTEM_ID_PROFILE = cfg.profile;
-        SYSTEM_ID_TYPE = systemType;
-        SYSTEM_ID_ENVIRONMENT = cfg.environment;
-      } // optionalAttrs (cfg.location != null) {
-        SYSTEM_ID_LOCATION = cfg.location;
-      });
+      variables = mkIf (cfg.useFlakeMetadata && (flakeMeta != null)) (
+        {
+          SYSTEM_ID_PROFILE = cfg.profile;
+          SYSTEM_ID_TYPE = systemType;
+          SYSTEM_ID_ENVIRONMENT = cfg.environment;
+        }
+        // optionalAttrs (cfg.location != null) {
+          SYSTEM_ID_LOCATION = cfg.location;
+        }
+      );
 
       # Enhanced system info command
       systemPackages = [
@@ -139,7 +188,7 @@ in
           echo "  Type: ${systemType}"
           echo "  Environment: ${cfg.environment}"
           ${optionalString (cfg.location != null) ''
-          echo "  Location: ${cfg.location}"
+            echo "  Location: ${cfg.location}"
           ''}
           echo "  Description: ${cfg.description}"
           echo ""
@@ -147,20 +196,25 @@ in
           echo ""
           echo "🖥️  Platform:"
           echo "  Architecture: $(uname -m)"
-          ${if pkgs.stdenv.hostPlatform.isDarwin then ''
-          echo "  macOS: $(sw_vers -productVersion)"
-          echo "  Darwin State Version: ${toString config.system.stateVersion}"
-          '' else ''
-          echo "  Kernel: $(uname -r)"
-          echo "  NixOS State Version: ${config.system.stateVersion}"
-          ''}
+          ${
+            if pkgs.stdenv.hostPlatform.isDarwin then
+              ''
+                echo "  macOS: $(sw_vers -productVersion)"
+                echo "  Darwin State Version: ${toString config.system.stateVersion}"
+              ''
+            else
+              ''
+                echo "  Kernel: $(uname -r)"
+                echo "  NixOS State Version: ${config.system.stateVersion}"
+              ''
+          }
           echo ""
           ${optionalString (cfg.useFlakeMetadata && (flakeMeta != null)) ''
-          echo "🔧 Flake Metadata:"
-          echo "  Build Date: ${flakeMeta.buildDate or "unknown"}"
-          echo "  Flake Rev: ${flakeMeta.flakeShortRev or "unknown"}"
-          echo "  Nixpkgs Rev: ${flakeMeta.nixpkgsShortRev or "unknown"}"
-          echo ""
+            echo "🔧 Flake Metadata:"
+            echo "  Build Date: ${flakeMeta.buildDate or "unknown"}"
+            echo "  Flake Rev: ${flakeMeta.flakeShortRev or "unknown"}"
+            echo "  Nixpkgs Rev: ${flakeMeta.nixpkgsShortRev or "unknown"}"
+            echo ""
           ''}
           echo "⚙️  Configuration:"
           echo "  Config Path: ${if flakeMeta != null then flakeMeta.configPath or "Unknown" else "Unknown"}"
@@ -187,7 +241,14 @@ in
     };
 
     # System description for nixos-version
-    system.nixos.tags = mkDefault ([ cfg.profile systemType cfg.environment ] ++ cfg.tags);
+    system.nixos.tags = mkDefault (
+      [
+        cfg.profile
+        systemType
+        cfg.environment
+      ]
+      ++ cfg.tags
+    );
 
     # Assertions for validation
     assertions = [
@@ -207,13 +268,14 @@ in
 
     # Warnings for common issues
     warnings =
-      optional (cfg.baseName == "nixos")
-        "Using default baseName 'nixos'. Consider setting a more specific systemId.baseName."
+      optional (
+        cfg.baseName == "nixos"
+      ) "Using default baseName 'nixos'. Consider setting a more specific systemId.baseName."
       ++
-      optional (cfg.profile == "workstation" && systemType == "vm")
-        "VM systems might be better suited for 'development' or 'testing' profile instead of 'workstation'."
-      ++
-      optional (!cfg.useFlakeMetadata && (flakeMeta != null))
-        "Flake metadata is available but systemId.useFlakeMetadata is disabled.";
+        optional (cfg.profile == "workstation" && systemType == "vm")
+          "VM systems might be better suited for 'development' or 'testing' profile instead of 'workstation'."
+      ++ optional (
+        !cfg.useFlakeMetadata && (flakeMeta != null)
+      ) "Flake metadata is available but systemId.useFlakeMetadata is disabled.";
   };
 }

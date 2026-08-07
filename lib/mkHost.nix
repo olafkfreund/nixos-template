@@ -1,12 +1,11 @@
 { lib }:
 
-{ hostname
-, system ? "x86_64-linux"
-, nixpkgs
-, inputs
-, modules ? [ ]
-, overlays ? [ ]
-, users ? [ ]
+{
+  hostname,
+  system ? "x86_64-linux",
+  inputs,
+  modules ? [ ],
+  overlays ? [ ],
 }:
 
 lib.nixosSystem {
@@ -14,12 +13,12 @@ lib.nixosSystem {
 
   specialArgs = {
     inherit inputs hostname;
-    outputs = inputs.self.outputs;
+    inherit (inputs.self) outputs;
   };
 
   modules = [
     # Base system configuration
-    ({ config, pkgs, ... }: {
+    ({ pkgs, ... }: {
       networking.hostName = hostname;
       nixpkgs = {
         config.allowUnfree = true;
@@ -29,7 +28,10 @@ lib.nixosSystem {
       # Nix configuration
       nix = {
         settings = {
-          experimental-features = [ "nix-command" "flakes" ];
+          experimental-features = [
+            "nix-command"
+            "flakes"
+          ];
           auto-optimise-store = true;
         };
 
@@ -55,5 +57,6 @@ lib.nixosSystem {
     # Common configuration
     ../hosts/common.nix
 
-  ] ++ modules;
+  ]
+  ++ modules;
 }

@@ -1,6 +1,11 @@
 # Power Management Module
 # Unified power management with hardware-specific optimizations
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -12,13 +17,27 @@ in
     enable = mkEnableOption "power management";
 
     profile = mkOption {
-      type = types.enum [ "laptop" "desktop" "server" "workstation" "gaming" ];
+      type = types.enum [
+        "laptop"
+        "desktop"
+        "server"
+        "workstation"
+        "gaming"
+      ];
       default = "desktop";
       description = "Hardware profile for power management optimization";
     };
 
     cpuGovernor = mkOption {
-      type = types.nullOr (types.enum [ "performance" "powersave" "ondemand" "conservative" "schedutil" ]);
+      type = types.nullOr (
+        types.enum [
+          "performance"
+          "powersave"
+          "ondemand"
+          "conservative"
+          "schedutil"
+        ]
+      );
       default = null;
       description = "CPU frequency scaling governor (null for auto-detection based on profile)";
     };
@@ -43,7 +62,11 @@ in
       };
 
       suspendMethod = mkOption {
-        type = types.enum [ "suspend" "hibernate" "hybrid-sleep" ];
+        type = types.enum [
+          "suspend"
+          "hibernate"
+          "hybrid-sleep"
+        ];
         default = "suspend";
         description = "Default suspend method for laptops";
       };
@@ -91,11 +114,16 @@ in
 
       # CPU frequency scaling governor
       cpuFreqGovernor =
-        if cfg.cpuGovernor != null then cfg.cpuGovernor
-        else if cfg.profile == "laptop" then "schedutil"
-        else if cfg.profile == "server" then "ondemand"
-        else if cfg.profile == "gaming" then "performance"
-        else "ondemand"; # desktop, workstation default
+        if cfg.cpuGovernor != null then
+          cfg.cpuGovernor
+        else if cfg.profile == "laptop" then
+          "schedutil"
+        else if cfg.profile == "server" then
+          "ondemand"
+        else if cfg.profile == "gaming" then
+          "performance"
+        else
+          "ondemand"; # desktop, workstation default
 
       # Power buttons and lid switch
       powertop.enable = cfg.profile == "laptop";
@@ -108,9 +136,7 @@ in
         enable = true;
         settings = {
           # CPU frequency scaling
-          CPU_SCALING_GOVERNOR_ON_AC =
-            if cfg.profile == "gaming" then "performance"
-            else "ondemand";
+          CPU_SCALING_GOVERNOR_ON_AC = if cfg.profile == "gaming" then "performance" else "ondemand";
           CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
 
           # CPU energy/performance policy
@@ -245,11 +271,13 @@ in
       logind = {
         lidSwitch = mkIf (cfg.profile == "laptop") cfg.laptop.suspendMethod;
         lidSwitchExternalPower = mkIf (cfg.profile == "laptop") "ignore";
-        extraConfig = mkIf (cfg.profile == "laptop") ''
-          HandlePowerKey=suspend
-          HandleSuspendKey=suspend
-          HandleHibernateKey=hibernate
-        '';
+        # `services.logind.extraConfig` was replaced by the structured
+        # `services.logind.settings.Login` freeform option.
+        settings.Login = mkIf (cfg.profile == "laptop") {
+          HandlePowerKey = "suspend";
+          HandleSuspendKey = "suspend";
+          HandleHibernateKey = "hibernate";
+        };
       };
 
       # ACPI events
@@ -267,25 +295,30 @@ in
     '';
 
     # Power monitoring tools
-    environment.systemPackages = with pkgs; [
-      # Common power monitoring
-      powertop
-      acpi
+    environment.systemPackages =
+      with pkgs;
+      [
+        # Common power monitoring
+        powertop
+        acpi
 
-      # Laptop-specific tools
-    ] ++ optionals (cfg.profile == "laptop") [
-      tlp
-      brightnessctl
+        # Laptop-specific tools
+      ]
+      ++ optionals (cfg.profile == "laptop") [
+        tlp
+        brightnessctl
 
-      # Battery information
-      upower
-    ] ++ optionals (cfg.profile == "server") [
-      # Server monitoring
-      lm_sensors
-      smartmontools
-    ] ++ optionals cfg.enableThermalManagement [
-      lm_sensors
-    ];
+        # Battery information
+        upower
+      ]
+      ++ optionals (cfg.profile == "server") [
+        # Server monitoring
+        lm_sensors
+        smartmontools
+      ]
+      ++ optionals cfg.enableThermalManagement [
+        lm_sensors
+      ];
 
     # Hardware monitoring
     hardware.sensor.iio.enable = mkDefault (cfg.profile == "laptop");
@@ -293,11 +326,10 @@ in
     # Firmware updates (mainly for laptops)
     services.fwupd.enable = mkDefault (cfg.profile == "laptop");
 
-    # Profile-specific optimizations
-    programs = {
-      # Laptop-specific programs
-      light.enable = cfg.profile == "laptop";
-    };
+    # `programs.light` was removed from nixpkgs (unmaintained upstream). We already
+    # ship brightnessctl above; registering it here installs its udev rules so
+    # users in the `video` group can change brightness without root.
+    services.udev.packages = optionals (cfg.profile == "laptop") [ pkgs.brightnessctl ];
 
     # ZRAM for memory-constrained systems
     zramSwap = mkIf (cfg.profile == "laptop") {

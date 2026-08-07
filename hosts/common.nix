@@ -1,4 +1,9 @@
-{ lib, inputs, outputs, ... }:
+{
+  lib,
+  inputs,
+  outputs,
+  ...
+}:
 
 {
   imports = [
@@ -33,7 +38,10 @@
   };
 
   # Enable flakes system-wide
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
   # Core packages are now provided by ../modules/packages/core-system.nix
 
@@ -44,6 +52,10 @@
     info.enable = true;
   };
 
-  # System version
-  system.stateVersion = lib.mkDefault "25.05";
+  # NOTE: `system.stateVersion` is deliberately NOT set here. It is defined once,
+  # in ../modules/core/system-identification.nix (imported above via
+  # ../modules/core), which also handles the different value nix-darwin expects.
+  # Defining it in both places meant two `mkDefault`s at equal priority — fine
+  # only while the two happened to agree, and a hard evaluation error the moment
+  # they drifted apart.
 }

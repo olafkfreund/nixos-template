@@ -3,7 +3,13 @@
 # Please migrate to agenix for new configurations
 # See docs/AGENIX-SECRETS.md for migration guide
 
-{ config, lib, pkgs, options, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  options,
+  ...
+}:
 
 with lib;
 
@@ -37,94 +43,98 @@ in
     };
 
     secrets = mkOption {
-      type = types.attrsOf (types.submodule {
-        options = {
-          sopsFile = mkOption {
-            type = types.nullOr types.path;
-            default = cfg.defaultSopsFile;
-            description = "SOPS file containing this secret";
-          };
+      type = types.attrsOf (
+        types.submodule {
+          options = {
+            sopsFile = mkOption {
+              type = types.nullOr types.path;
+              default = cfg.defaultSopsFile;
+              description = "SOPS file containing this secret";
+            };
 
-          key = mkOption {
-            type = types.nullOr types.str;
-            default = null;
-            description = "Key in the SOPS file (defaults to secret name)";
-          };
+            key = mkOption {
+              type = types.nullOr types.str;
+              default = null;
+              description = "Key in the SOPS file (defaults to secret name)";
+            };
 
-          path = mkOption {
-            type = types.nullOr types.str;
-            default = null;
-            description = "Path where secret should be available";
-          };
+            path = mkOption {
+              type = types.nullOr types.str;
+              default = null;
+              description = "Path where secret should be available";
+            };
 
-          owner = mkOption {
-            type = types.str;
-            default = "root";
-            description = "Owner of the secret file";
-          };
+            owner = mkOption {
+              type = types.str;
+              default = "root";
+              description = "Owner of the secret file";
+            };
 
-          group = mkOption {
-            type = types.str;
-            default = "root";
-            description = "Group of the secret file";
-          };
+            group = mkOption {
+              type = types.str;
+              default = "root";
+              description = "Group of the secret file";
+            };
 
-          mode = mkOption {
-            type = types.str;
-            default = "0400";
-            description = "Permissions for the secret file";
-          };
+            mode = mkOption {
+              type = types.str;
+              default = "0400";
+              description = "Permissions for the secret file";
+            };
 
-          restartUnits = mkOption {
-            type = types.listOf types.str;
-            default = [ ];
-            description = "Systemd units to restart when secret changes";
-          };
+            restartUnits = mkOption {
+              type = types.listOf types.str;
+              default = [ ];
+              description = "Systemd units to restart when secret changes";
+            };
 
-          reloadUnits = mkOption {
-            type = types.listOf types.str;
-            default = [ ];
-            description = "Systemd units to reload when secret changes";
+            reloadUnits = mkOption {
+              type = types.listOf types.str;
+              default = [ ];
+              description = "Systemd units to reload when secret changes";
+            };
           };
-        };
-      });
+        }
+      );
       default = { };
       description = "Secrets to manage with SOPS";
     };
 
     # Common secret templates
     templates = mkOption {
-      type = types.attrsOf (types.submodule {
-        options = {
-          content = mkOption {
-            type = types.str;
-            description = "Template content with secret references";
-          };
+      type = types.attrsOf (
+        types.submodule {
+          options = {
+            content = mkOption {
+              type = types.str;
+              description = "Template content with secret references";
+            };
 
-          owner = mkOption {
-            type = types.str;
-            default = "root";
-            description = "Owner of the template file";
-          };
+            owner = mkOption {
+              type = types.str;
+              default = "root";
+              description = "Owner of the template file";
+            };
 
-          group = mkOption {
-            type = types.str;
-            default = "root";
-            description = "Group of the template file";
-          };
+            group = mkOption {
+              type = types.str;
+              default = "root";
+              description = "Group of the template file";
+            };
 
-          mode = mkOption {
-            type = types.str;
-            default = "0400";
-            description = "Permissions for the template file";
-          };
+            mode = mkOption {
+              type = types.str;
+              default = "0400";
+              description = "Permissions for the template file";
+            };
 
-          path = mkOption {
-            type = types.str;
-            description = "Where to write the template";
+            path = mkOption {
+              type = types.str;
+              description = "Where to write the template";
+            };
           };
-        };
-      });
+        }
+      );
       default = { };
       description = "Templates for combining multiple secrets";
     };
@@ -137,34 +147,30 @@ in
       defaultSopsFile = mkIf (cfg.defaultSopsFile != null) cfg.defaultSopsFile;
 
       age = {
-        keyFile = cfg.age.keyFile;
-        generateKey = cfg.age.generateKey;
+        inherit (cfg.age) keyFile;
+        inherit (cfg.age) generateKey;
       };
 
       # Configure secrets
-      secrets = mapAttrs
-        (_name: secretCfg: {
-          sopsFile = mkIf (secretCfg.sopsFile != null) secretCfg.sopsFile;
-          key = mkIf (secretCfg.key != null) secretCfg.key;
-          path = mkIf (secretCfg.path != null) secretCfg.path;
-          owner = secretCfg.owner;
-          group = secretCfg.group;
-          mode = secretCfg.mode;
-          restartUnits = secretCfg.restartUnits;
-          reloadUnits = secretCfg.reloadUnits;
-        })
-        cfg.secrets;
+      secrets = mapAttrs (_name: secretCfg: {
+        sopsFile = mkIf (secretCfg.sopsFile != null) secretCfg.sopsFile;
+        key = mkIf (secretCfg.key != null) secretCfg.key;
+        path = mkIf (secretCfg.path != null) secretCfg.path;
+        inherit (secretCfg) owner;
+        inherit (secretCfg) group;
+        inherit (secretCfg) mode;
+        inherit (secretCfg) restartUnits;
+        inherit (secretCfg) reloadUnits;
+      }) cfg.secrets;
 
       # Configure templates
-      templates = mapAttrs
-        (_name: templateCfg: {
-          content = templateCfg.content;
-          owner = templateCfg.owner;
-          group = templateCfg.group;
-          mode = templateCfg.mode;
-          path = templateCfg.path;
-        })
-        cfg.templates;
+      templates = mapAttrs (_name: templateCfg: {
+        inherit (templateCfg) content;
+        inherit (templateCfg) owner;
+        inherit (templateCfg) group;
+        inherit (templateCfg) mode;
+        inherit (templateCfg) path;
+      }) cfg.templates;
     };
 
     # SOPS-nix manages users automatically - no manual user creation needed

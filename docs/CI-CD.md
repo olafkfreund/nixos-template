@@ -18,7 +18,7 @@ Runs on every push and pull request to validate code quality and functionality.
   - Comprehensive template validation script
 
 - **Code Quality**: Format checking, linting (statix), dead code detection (deadnix)
-  - All files properly formatted with nixpkgs-fmt
+  - All files properly formatted with nix fmt (treefmt)
   - Statix linting passes with zero issues
   - No dead code detected by deadnix
   - Justfile syntax validation
@@ -64,7 +64,7 @@ Automatically formats code and commits changes.
 
 **Features:**
 
-- Formats Nix files with `nixpkgs-fmt`
+- Formats all files with `nix fmt` (treefmt)
 - Removes dead code with `deadnix`
 - Formats shell scripts with `shfmt`
 - Formats markdown with `prettier`
@@ -113,10 +113,9 @@ just update-hooks
 
 **Nix Code Quality:**
 
-- `nixpkgs-fmt`: Format Nix files
+- `nixfmt`: Format Nix files (via treefmt)
 - `statix`: Lint Nix code for common issues
 - `deadnix`: Remove unused Nix code
-- `flake-check`: Validate flake configuration
 
 **Shell Scripts:**
 
@@ -266,7 +265,7 @@ Excludes build artifacts, secrets, and local configuration files.
 
 ### Code Formatting
 
-- **Nix**: `nixpkgs-fmt` for consistent formatting
+- **Nix**: `nixfmt` for consistent formatting
 - **Shell**: `shfmt` with 2-space indentation
 - **Markdown**: `prettier` with 120 character lines
 - **JSON/YAML**: `prettier` formatting

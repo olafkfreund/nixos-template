@@ -116,7 +116,10 @@
   users.users.myuser = {
     isNormalUser = true;
     hashedPasswordFile = config.age.secrets.user-password.path;
-    extraGroups = [ "wheel" "networkmanager" ];
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+    ];
   };
 
   # 2. PostgreSQL with secure password
@@ -219,7 +222,10 @@
   # 7. Systemd service with environment variables from secrets
   systemd.services.myapp = {
     description = "My Application";
-    after = [ "network.target" "postgresql.service" ];
+    after = [
+      "network.target"
+      "postgresql.service"
+    ];
     wantedBy = [ "multi-user.target" ];
 
     serviceConfig = {

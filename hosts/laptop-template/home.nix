@@ -1,6 +1,6 @@
 # Laptop Template Home Manager Configuration
 # Uses shared profiles optimized for mobile computing
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   # Import shared Home Manager profiles

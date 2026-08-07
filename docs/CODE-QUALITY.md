@@ -23,13 +23,13 @@ just quality
 
 ### Core Validation Tools
 
-| Tool                | Purpose                         | Command                |
-| ------------------- | ------------------------------- | ---------------------- |
-| **nixpkgs-fmt**     | Format Nix files                | `just fmt`             |
-| **statix**          | Lint and analyze Nix code       | `just lint`            |
-| **deadnix**         | Detect unused code              | `just dead-code-check` |
-| **vulnix**          | Security vulnerability scanning | `just security-audit`  |
-| **nix flake check** | Validate flake syntax and build | `just check`           |
+| Tool                     | Purpose                                 | Command                |
+| ------------------------ | --------------------------------------- | ---------------------- |
+| **nixfmt** (via treefmt) | Format Nix, shell, Markdown, YAML, JSON | `just fmt`             |
+| **statix**               | Lint and analyze Nix code               | `just lint`            |
+| **deadnix**              | Detect unused code                      | `just dead-code-check` |
+| **vulnix**               | Security vulnerability scanning         | `just security-audit`  |
+| **nix flake check**      | Validate flake syntax and build         | `just check`           |
 
 ### Development Utilities
 
@@ -99,7 +99,7 @@ just dev-setup
 
 The pre-commit configuration automatically runs these checks:
 
-- **File Formatting**: `nixpkgs-fmt` formats Nix files
+- **File Formatting**: `nixfmt` (the official Nix formatter) via `treefmt`
 - **Code Linting**: `statix` analyzes code quality
 - **Dead Code Detection**: `deadnix` finds unused code
 - **Flake Validation**: Ensures flake builds correctly

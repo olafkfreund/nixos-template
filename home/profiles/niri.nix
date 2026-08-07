@@ -167,8 +167,14 @@
         };
 
         indexed_colors = [
-          { index = 16; color = "#fab387"; }
-          { index = 17; color = "#f5e0dc"; }
+          {
+            index = 16;
+            color = "#fab387";
+          }
+          {
+            index = 17;
+            color = "#f5e0dc";
+          }
         ];
       };
 
@@ -476,67 +482,68 @@
   xdg.desktopEntries.niri-keybindings = {
     name = "Niri Keybindings";
     comment = "Reference for Niri window manager keybindings";
-    exec = "${pkgs.alacritty}/bin/alacritty -e ${pkgs.less}/bin/less ${
-      pkgs.writeText "niri-keybindings.txt" ''
-        Niri Keybindings Reference
+    exec = "${pkgs.alacritty}/bin/alacritty -e ${pkgs.less}/bin/less ${pkgs.writeText "niri-keybindings.txt" ''
+      Niri Keybindings Reference
 
-        Window Management:
-        Super + T                 Open terminal
-        Super + D                 Open application launcher
-        Super + Q                 Close window
-        Super + F                 Maximize column
-        Super + Shift + F         Fullscreen window
-        Super + C                 Center column
+      Window Management:
+      Super + T                 Open terminal
+      Super + D                 Open application launcher
+      Super + Q                 Close window
+      Super + F                 Maximize column
+      Super + Shift + F         Fullscreen window
+      Super + C                 Center column
 
-        Navigation:
-        Super + Left/H            Focus column left
-        Super + Right/L           Focus column right
-        Super + Up/K              Focus window up
-        Super + Down/J            Focus window down
-        Super + Home              Focus first column
-        Super + End               Focus last column
+      Navigation:
+      Super + Left/H            Focus column left
+      Super + Right/L           Focus column right
+      Super + Up/K              Focus window up
+      Super + Down/J            Focus window down
+      Super + Home              Focus first column
+      Super + End               Focus last column
 
-        Moving Windows:
-        Super + Ctrl + Left/H     Move column left
-        Super + Ctrl + Right/L    Move column right
-        Super + Ctrl + Up/K       Move window up
-        Super + Ctrl + Down/J     Move window down
-        Super + Ctrl + Home       Move column to first
-        Super + Ctrl + End        Move column to last
+      Moving Windows:
+      Super + Ctrl + Left/H     Move column left
+      Super + Ctrl + Right/L    Move column right
+      Super + Ctrl + Up/K       Move window up
+      Super + Ctrl + Down/J     Move window down
+      Super + Ctrl + Home       Move column to first
+      Super + Ctrl + End        Move column to last
 
-        Workspaces (Scrollable):
-        Super + Page_Up/I         Focus workspace up
-        Super + Page_Down/U       Focus workspace down
-        Super + Scroll Up         Focus workspace up
-        Super + Scroll Down       Focus workspace down
-        Super + 1-9               Focus workspace 1-9
+      Workspaces (Scrollable):
+      Super + Page_Up/I         Focus workspace up
+      Super + Page_Down/U       Focus workspace down
+      Super + Scroll Up         Focus workspace up
+      Super + Scroll Down       Focus workspace down
+      Super + 1-9               Focus workspace 1-9
 
-        Multi-Monitor:
-        Super + Shift + Left/H    Focus monitor left
-        Super + Shift + Right/L   Focus monitor right
-        Super + Shift + Up/K      Focus monitor up
-        Super + Shift + Down/J    Focus monitor down
+      Multi-Monitor:
+      Super + Shift + Left/H    Focus monitor left
+      Super + Shift + Right/L   Focus monitor right
+      Super + Shift + Up/K      Focus monitor up
+      Super + Shift + Down/J    Focus monitor down
 
-        Column Management:
-        Super + R                 Switch preset column width
-        Super + Minus             Decrease column width
-        Super + Equal             Increase column width
-        Super + Comma             Consume window into column
-        Super + Period            Expel window from column
+      Column Management:
+      Super + R                 Switch preset column width
+      Super + Minus             Decrease column width
+      Super + Equal             Increase column width
+      Super + Comma             Consume window into column
+      Super + Period            Expel window from column
 
-        System:
-        Super + Shift + E         Quit niri
-        Super + Shift + P         Power off monitors
-        Super + Ctrl + L          Lock screen
-        Print                     Screenshot
-        Super + Print             Screenshot to clipboard
+      System:
+      Super + Shift + E         Quit niri
+      Super + Shift + P         Power off monitors
+      Super + Ctrl + L          Lock screen
+      Print                     Screenshot
+      Super + Print             Screenshot to clipboard
 
-        Audio/Brightness:
-        Volume Up/Down            Adjust volume
-        Brightness Up/Down        Adjust brightness
-      ''
-    }";
+      Audio/Brightness:
+      Volume Up/Down            Adjust volume
+      Brightness Up/Down        Adjust brightness
+    ''}";
     icon = "preferences-desktop-keyboard";
-    categories = [ "System" "Documentation" ];
+    categories = [
+      "System"
+      "Documentation"
+    ];
   };
 }

@@ -1,0 +1,9 @@
+# statix configuration
+#
+# repeated_keys (W20) flags writing `boot.loader = { ... };` next to
+# `boot.kernelParams = [ ... ];` instead of collapsing everything into a single
+# `boot = { ... }` block. That split is idiomatic NixOS style and is used
+# throughout nixpkgs itself — grouping related options under their own
+# dotted path reads better than one enormous nested attrset. This is a matter
+# of taste rather than a defect, so the lint is disabled repo-wide.
+disabled = ["repeated_keys"]

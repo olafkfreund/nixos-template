@@ -23,7 +23,7 @@ This template provides a **complete NixOS ecosystem** covering the entire workfl
 ### Modern Development Tooling
 
 - **treefmt-nix**: Multi-language code formatting (Nix, Shell, Markdown, YAML, JSON)
-- **git-hooks.nix**: Pre-commit hooks with deadnix, statix, nixpkgs-fmt
+- **git-hooks.nix**: Pre-commit hooks with deadnix, statix, nixfmt
 - **nh (Nix Helper)**: Enhanced system management with better UX than nixos-rebuild
 - **Automatic formatting**: Format entire codebase with `just fmt`
 

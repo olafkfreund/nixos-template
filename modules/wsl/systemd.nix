@@ -1,7 +1,12 @@
 # WSL2 Systemd Optimizations
 # Systemd service configurations optimized for WSL2 environment
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -118,7 +123,7 @@ in
 
       # Logging optimizations
       (mkIf cfg.logging.optimize {
-        services.systemd-journald.extraConfig = ''
+        services.journald.extraConfig = ''
           # WSL2 journal optimizations
           Storage=persistent
           Compress=yes
@@ -180,8 +185,14 @@ in
           # WSL2 cleanup service
           "wsl-cleanup" = {
             description = "WSL2 Environment Cleanup";
-            conflicts = [ "shutdown.target" "reboot.target" ];
-            before = [ "shutdown.target" "reboot.target" ];
+            conflicts = [
+              "shutdown.target"
+              "reboot.target"
+            ];
+            before = [
+              "shutdown.target"
+              "reboot.target"
+            ];
 
             serviceConfig = {
               Type = "oneshot";

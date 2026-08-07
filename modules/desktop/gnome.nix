@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.modules.desktop.gnome;
@@ -14,11 +19,9 @@ in
       enable = true;
     };
 
-    # Display manager (updated path)
-    services.displayManager.gdm = {
-      enable = true;
-      wayland = true; # Use Wayland by default
-    };
+    # Display manager. GNOME 50 is Wayland-only, so `gdm.wayland` is gone —
+    # setting it is now a hard error rather than a no-op.
+    services.displayManager.gdm.enable = true;
 
     # Desktop environment (updated path)
     services.desktopManager.gnome.enable = true;

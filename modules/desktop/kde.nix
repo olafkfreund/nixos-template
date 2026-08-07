@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.modules.desktop.kde;
@@ -7,16 +12,14 @@ in
   options.modules.desktop.kde = {
     enable = lib.mkEnableOption "KDE Plasma desktop environment";
 
-    # Plasma version
-    version = lib.mkOption {
-      type = lib.types.enum [ "plasma5" "plasma6" ];
-      default = "plasma6";
-      description = "KDE Plasma version to use";
-    };
+    # Plasma 5 is end-of-life and has been removed from nixpkgs, so there is
+    # no version to choose any more — this module always configures Plasma 6.
 
     # KDE applications
     applications = {
-      enable = lib.mkEnableOption "KDE application suite" // { default = true; };
+      enable = lib.mkEnableOption "KDE application suite" // {
+        default = true;
+      };
       minimal = lib.mkEnableOption "minimal KDE applications only";
       office = lib.mkEnableOption "LibreOffice integration";
       multimedia = lib.mkEnableOption "KDE multimedia applications";
@@ -25,8 +28,12 @@ in
 
     # Customization options
     theme = {
-      enable = lib.mkEnableOption "custom KDE theming" // { default = true; };
-      darkMode = lib.mkEnableOption "dark theme by default" // { default = true; };
+      enable = lib.mkEnableOption "custom KDE theming" // {
+        default = true;
+      };
+      darkMode = lib.mkEnableOption "dark theme by default" // {
+        default = true;
+      };
       wallpaper = lib.mkOption {
         type = lib.types.str;
         default = "";
@@ -37,17 +44,27 @@ in
     # Performance optimizations
     performance = {
       compositor = lib.mkOption {
-        type = lib.types.enum [ "opengl" "xrender" "auto" ];
+        type = lib.types.enum [
+          "opengl"
+          "xrender"
+          "auto"
+        ];
         default = "auto";
         description = "KDE compositor backend";
       };
-      animations = lib.mkEnableOption "desktop animations" // { default = true; };
-      effects = lib.mkEnableOption "desktop effects" // { default = true; };
+      animations = lib.mkEnableOption "desktop animations" // {
+        default = true;
+      };
+      effects = lib.mkEnableOption "desktop effects" // {
+        default = true;
+      };
     };
 
     # Wayland support
     wayland = {
-      enable = lib.mkEnableOption "Wayland session support" // { default = true; };
+      enable = lib.mkEnableOption "Wayland session support" // {
+        default = true;
+      };
       defaultSession = lib.mkEnableOption "use Wayland as default session";
     };
   };
@@ -87,13 +104,9 @@ in
           # Default session
           defaultSession = lib.mkIf cfg.wayland.defaultSession "plasma";
         };
-
-        # Desktop environment
-        desktopManager.plasma5.enable = cfg.version == "plasma5";
       };
 
-      # Plasma 6 configuration (when available)
-      desktopManager.plasma6.enable = cfg.version == "plasma6";
+      desktopManager.plasma6.enable = true;
 
       # KDE services
       accounts-daemon.enable = true;
@@ -130,63 +143,72 @@ in
     # Environment configuration
     environment = {
       # Essential KDE applications
-      systemPackages = with pkgs; [
-        # Core KDE applications (always installed)
-        dolphin # File manager
-        konsole # Terminal
-        kate # Text editor
-        spectacle # Screenshot tool
-        gwenview # Image viewer
-        okular # Document viewer
-        ark # Archive manager
+      systemPackages =
+        with pkgs;
+        [
+          # Core KDE applications (always installed)
+          dolphin # File manager
+          konsole # Terminal
+          kate # Text editor
+          spectacle # Screenshot tool
+          gwenview # Image viewer
+          okular # Document viewer
+          ark # Archive manager
 
-        # System utilities
-        kdePackages.partitionmanager # Partition manager
-        kdePackages.kinfocenter # System information
-        kdePackages.systemsettings # System settings
+          # System utilities
+          kdePackages.partitionmanager # Partition manager
+          kdePackages.kinfocenter # System information
+          kdePackages.systemsettings # System settings
 
-        # KDE theming
-        kdePackages.breeze # Breeze theme
-        kdePackages.breeze-icons # Breeze icons
+          # KDE theming
+          kdePackages.breeze # Breeze theme
+          kdePackages.breeze-icons # Breeze icons
 
-      ] ++ lib.optionals (!cfg.applications.minimal) [
-        # Extended KDE applications
-        kdePackages.kmail # Email client
-        kdePackages.kontact # PIM suite
-        kdePackages.korganizer # Calendar
-        kdePackages.kaddressbook # Address book
-        kdePackages.knotes # Notes
-        kdePackages.kfind # File search
-        kdePackages.kcalc # Calculator
-        kdePackages.kcharselect # Character selector
+        ]
+        ++ lib.optionals (!cfg.applications.minimal) [
+          # Extended KDE applications
+          kdePackages.kmail # Email client
+          kdePackages.kontact # PIM suite
+          kdePackages.korganizer # Calendar
+          kdePackages.kaddressbook # Address book
+          kdePackages.knotes # Notes
+          kdePackages.kfind # File search
+          kdePackages.kcalc # Calculator
+          kdePackages.kcharselect # Character selector
 
-      ] ++ lib.optionals cfg.applications.multimedia [
-        # Multimedia applications
-        kdePackages.kdenlive # Video editor
-        kdePackages.krita # Digital painting
-        kdePackages.elisa # Music player
-        kdePackages.kamoso # Camera app
-        kdePackages.dragon # Video player
+        ]
+        ++ lib.optionals cfg.applications.multimedia [
+          # Multimedia applications
+          kdePackages.kdenlive # Video editor
+          kdePackages.krita # Digital painting
+          kdePackages.elisa # Music player
+          kdePackages.kamoso # Camera app
+          kdePackages.dragon # Video player
 
-      ] ++ lib.optionals cfg.applications.development [
-        # Development tools
-        kdePackages.kdevelop # IDE
-        kdePackages.kompare # Diff viewer
-        kdePackages.umbrello # UML modeler
+        ]
+        ++ lib.optionals cfg.applications.development [
+          # Development tools
+          kdePackages.kdevelop # IDE
+          kdePackages.kompare # Diff viewer
+          kdePackages.umbrello # UML modeler
 
-      ] ++ lib.optionals cfg.applications.office [
-        # Office applications
-        libreoffice-qt # LibreOffice with Qt integration
-        kdePackages.kmail # Email integration
-      ];
+        ]
+        ++ lib.optionals cfg.applications.office [
+          # Office applications
+          libreoffice-qt # LibreOffice with Qt integration
+          kdePackages.kmail # Email integration
+        ];
 
       # Remove unwanted applications
-      plasma5.excludePackages = lib.mkIf cfg.applications.minimal (with pkgs; [
-        kdePackages.elisa # Music player
-        kdePackages.khelpcenter # Help center
-        kdePackages.konsole # Keep terminal
-        # Add more packages to exclude for minimal install
-      ]);
+      plasma6.excludePackages = lib.mkIf cfg.applications.minimal (
+        with pkgs;
+        [
+          kdePackages.elisa # Music player
+          kdePackages.khelpcenter # Help center
+          kdePackages.konsole # Keep terminal
+          # Add more packages to exclude for minimal install
+        ]
+      );
     };
 
     # Fonts for better KDE experience
@@ -194,12 +216,12 @@ in
       # KDE fonts
       noto-fonts
       noto-fonts-cjk-sans
-      noto-fonts-emoji
+      noto-fonts-color-emoji
       liberation_ttf
 
       # Additional fonts for better rendering
       dejavu_fonts
-      ubuntu_font_family
+      ubuntu-classic
     ];
 
     # XDG portal configuration for better app integration
@@ -215,7 +237,10 @@ in
           default = [ "kde" ];
         };
         kde = {
-          default = [ "kde" "gtk" ];
+          default = [
+            "kde"
+            "gtk"
+          ];
         };
       };
     };

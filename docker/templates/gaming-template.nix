@@ -1,6 +1,10 @@
 # Gaming Template for VM Builder
 # High-performance gaming environment optimized for VMs
-{ config, pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   imports = [
@@ -72,7 +76,11 @@
     desktopManager.gnome.enable = true;
 
     # Gaming-optimized video drivers
-    videoDrivers = [ "vmware" "virtualbox" "qxl" "nvidia" ];
+    videoDrivers = [
+      "vmware"
+      "qxl"
+      "nvidia"
+    ]; # virtualbox driver deprecated for kernel 7.0+
   };
 
   # Enable hardware acceleration
@@ -80,7 +88,7 @@
     enable = true;
     enable32Bit = true;
     extraPackages = with pkgs; [
-      vaapiVdpau
+      libva-vdpau-driver
       libvdpau-va-gl
     ];
   };
@@ -102,8 +110,19 @@
     networkmanager.enable = true;
     firewall = {
       enable = true;
-      allowedTCPPorts = [ 27015 27036 ]; # Steam
-      allowedUDPPorts = [ 27015 27031 27032 27033 27034 27035 27036 ]; # Steam
+      allowedTCPPorts = [
+        27015
+        27036
+      ]; # Steam
+      allowedUDPPorts = [
+        27015
+        27031
+        27032
+        27033
+        27034
+        27035
+        27036
+      ]; # Steam
     };
   };
 
@@ -111,7 +130,14 @@
   users.users.nixos = {
     isNormalUser = true;
     description = "NixOS Gaming User";
-    extraGroups = [ "networkmanager" "wheel" "audio" "video" "input" "gamemode" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "audio"
+      "video"
+      "input"
+      "gamemode"
+    ];
     password = "nixos"; # Change this in production
   };
 
@@ -192,7 +218,10 @@
 
   # Enable flakes and optimize for gaming builds
   nix.settings = {
-    experimental-features = [ "nix-command" "flakes" ];
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
     # High-performance build settings
     max-jobs = "auto";
     cores = 0;
@@ -219,6 +248,6 @@
     dejavu_fonts
     source-code-pro
     noto-fonts
-    noto-fonts-emoji
+    noto-fonts-color-emoji
   ];
 }

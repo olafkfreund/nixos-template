@@ -66,7 +66,7 @@
       enable = true;
 
       # Optimize for VM display
-      videoDrivers = [ "modesetting" "virtio" ];
+      videoDrivers = [ "modesetting" ]; # virtio-gpu is driven by modesetting
 
       # Input optimization moved to services.libinput
     };
@@ -127,11 +127,20 @@
     # Firewall configuration for VM
     firewall = {
       enable = true;
-      allowedTCPPorts = [ 22 80 443 8080 3000 ]; # Common development ports
+      allowedTCPPorts = [
+        22
+        80
+        443
+        8080
+        3000
+      ]; # Common development ports
     };
 
     # DNS configuration
-    nameservers = [ "8.8.8.8" "1.1.1.1" ];
+    nameservers = [
+      "8.8.8.8"
+      "1.1.1.1"
+    ];
   };
 
   # Boot configuration for VM
@@ -143,8 +152,20 @@
     };
 
     # Kernel modules for VM
-    kernelModules = [ "virtio_net" "virtio_pci" "virtio_mmio" "virtio_blk" "virtio_scsi" ];
-    initrd.availableKernelModules = [ "virtio_net" "virtio_pci" "virtio_mmio" "virtio_blk" "virtio_scsi" ];
+    kernelModules = [
+      "virtio_net"
+      "virtio_pci"
+      "virtio_mmio"
+      "virtio_blk"
+      "virtio_scsi"
+    ];
+    initrd.availableKernelModules = [
+      "virtio_net"
+      "virtio_pci"
+      "virtio_mmio"
+      "virtio_blk"
+      "virtio_scsi"
+    ];
 
     # Optimize boot for VM
     kernelParams = [
@@ -180,7 +201,12 @@
       nixos = {
         isNormalUser = true;
         description = "NixOS VM User";
-        extraGroups = [ "wheel" "networkmanager" "audio" "video" ];
+        extraGroups = [
+          "wheel"
+          "networkmanager"
+          "audio"
+          "video"
+        ];
         initialPassword = "nixos"; # Change after first login
       };
     };

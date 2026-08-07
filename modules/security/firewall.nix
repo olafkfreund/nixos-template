@@ -1,7 +1,12 @@
 # Advanced Firewall Configuration with nftables
 # Provides modern, high-performance firewall rules with advanced features
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -14,7 +19,12 @@ in
     enable = mkEnableOption "Advanced nftables-based firewall";
 
     profile = mkOption {
-      type = types.enum [ "desktop" "server" "gaming" "development" ];
+      type = types.enum [
+        "desktop"
+        "server"
+        "gaming"
+        "development"
+      ];
       default = "desktop";
       description = "Firewall profile with preset rules";
     };
@@ -28,7 +38,16 @@ in
       };
 
       level = mkOption {
-        type = types.enum [ "emerg" "alert" "crit" "err" "warn" "notice" "info" "debug" ];
+        type = types.enum [
+          "emerg"
+          "alert"
+          "crit"
+          "err"
+          "warn"
+          "notice"
+          "info"
+          "debug"
+        ];
         default = "warn";
         description = "Log level for firewall events";
       };
@@ -106,7 +125,10 @@ in
     # Trusted networks
     trustedNetworks = mkOption {
       type = types.listOf types.str;
-      default = [ "127.0.0.0/8" "::1/128" ];
+      default = [
+        "127.0.0.0/8"
+        "::1/128"
+      ];
       description = "Networks to trust completely";
     };
 
@@ -135,15 +157,33 @@ in
               udp = [ 53 ] ++ cfg.allowedPorts.udp;
             };
             server = {
-              tcp = [ 22 80 443 ] ++ cfg.allowedPorts.tcp;
+              tcp = [
+                22
+                80
+                443
+              ]
+              ++ cfg.allowedPorts.tcp;
               udp = [ 53 ] ++ cfg.allowedPorts.udp;
             };
             gaming = {
               tcp = [ 22 ] ++ cfg.allowedPorts.tcp;
-              udp = [ 53 7777 27015 ] ++ cfg.allowedPorts.udp; # Common gaming ports
+              udp = [
+                53
+                7777
+                27015
+              ]
+              ++ cfg.allowedPorts.udp; # Common gaming ports
             };
             development = {
-              tcp = [ 22 3000 8000 8080 8443 9000 ] ++ cfg.allowedPorts.tcp;
+              tcp = [
+                22
+                3000
+                8000
+                8080
+                8443
+                9000
+              ]
+              ++ cfg.allowedPorts.tcp;
               udp = [ 53 ] ++ cfg.allowedPorts.udp;
             };
           };
@@ -157,15 +197,18 @@ in
           logRule =
             if cfg.logging.enable then
               "log level ${cfg.logging.level} flags all limit rate ${cfg.logging.rateLimit}"
-            else "";
+            else
+              "";
 
           # Blacklist rules
-          blacklistRules = concatStringsSep "\n        "
-            (map (ip: "ip saddr ${ip} ${logRule} drop") cfg.blacklist);
+          blacklistRules = concatStringsSep "\n        " (
+            map (ip: "ip saddr ${ip} ${logRule} drop") cfg.blacklist
+          );
 
           # Trusted network rules
-          trustedRules = concatStringsSep "\n        "
-            (map (net: "ip saddr ${net} accept") cfg.trustedNetworks);
+          trustedRules = concatStringsSep "\n        " (
+            map (net: "ip saddr ${net} accept") cfg.trustedNetworks
+          );
 
         in
         ''
@@ -205,31 +248,31 @@ in
               iifname "lo" accept
 
               # Blacklist
-              ${optionalString (cfg.blacklist != []) blacklistRules}
+              ${optionalString (cfg.blacklist != [ ]) blacklistRules}
 
               # Trusted networks
-              ${optionalString (cfg.trustedNetworks != []) trustedRules}
+              ${optionalString (cfg.trustedNetworks != [ ]) trustedRules}
 
               ${optionalString cfg.protection.enableDDoSProtection ''
-              # DDoS protection
-              # SYN flood protection
-              tcp flags syn tcp option maxseg size 1-535 ${logRule} drop
+                # DDoS protection
+                # SYN flood protection
+                tcp flags syn tcp option maxseg size 1-535 ${logRule} drop
 
-              # Limit new connections per source
-              ct state new add @ratelimit_conn { ip saddr . tcp dport } { 1 }
-              ct state new @ratelimit_conn { ip saddr . tcp dport } > ${toString cfg.protection.maxConnections} ${logRule} drop
+                # Limit new connections per source
+                ct state new add @ratelimit_conn { ip saddr . tcp dport } { 1 }
+                ct state new @ratelimit_conn { ip saddr . tcp dport } > ${toString cfg.protection.maxConnections} ${logRule} drop
               ''}
 
               ${optionalString cfg.protection.enablePortScanning ''
-              # Port scanning detection
-              ct state new tcp flags syn tcp dport 1-1024 add @portscan_detect { ip saddr timeout 24h } { 1 }
-              @portscan_detect { ip saddr } > 10 ${logRule} drop comment "Port scan detected"
+                # Port scanning detection
+                ct state new tcp flags syn tcp dport 1-1024 add @portscan_detect { ip saddr timeout 24h } { 1 }
+                @portscan_detect { ip saddr } > 10 ${logRule} drop comment "Port scan detected"
               ''}
 
               ${optionalString cfg.protection.enableBruteForceProtection ''
-              # SSH brute force protection
-              tcp dport 22 ct state new add @ratelimit_ssh { ip saddr timeout 10m } { 1 }
-              tcp dport 22 ct state new @ratelimit_ssh { ip saddr } > 5 ${logRule} drop
+                # SSH brute force protection
+                tcp dport 22 ct state new add @ratelimit_ssh { ip saddr timeout 10m } { 1 }
+                tcp dport 22 ct state new @ratelimit_ssh { ip saddr } > 5 ${logRule} drop
               ''}
 
               # ICMP (ping) with rate limiting
@@ -237,12 +280,12 @@ in
               icmpv6 type echo-request limit rate 5/second accept
 
               # Allow configured TCP ports
-              ${optionalString (currentPorts.tcp != [])
-                "tcp dport { ${portList currentPorts.tcp} } ct state new accept"}
+              ${optionalString (
+                currentPorts.tcp != [ ]
+              ) "tcp dport { ${portList currentPorts.tcp} } ct state new accept"}
 
               # Allow configured UDP ports
-              ${optionalString (currentPorts.udp != [])
-                "udp dport { ${portList currentPorts.udp} } accept"}
+              ${optionalString (currentPorts.udp != [ ]) "udp dport { ${portList currentPorts.udp} } accept"}
 
               # Custom input rules
               ${concatStringsSep "\n            " cfg.customRules.input}
@@ -271,28 +314,28 @@ in
             }
 
             ${optionalString cfg.protection.enableDDoSProtection ''
-            # Additional DDoS protection chain
-            chain ddos_protection {
-              # Limit concurrent connections
-              ct count over ${toString (cfg.protection.maxConnections * 2)} ${logRule} drop
+              # Additional DDoS protection chain
+              chain ddos_protection {
+                # Limit concurrent connections
+                ct count over ${toString (cfg.protection.maxConnections * 2)} ${logRule} drop
 
-              # Rate limit new connections
-              ct state new limit rate 100/second burst 150 packets accept
-              ${logRule} drop
-            }
+                # Rate limit new connections
+                ct state new limit rate 100/second burst 150 packets accept
+                ${logRule} drop
+              }
             ''}
           }
 
           ${optionalString cfg.logging.enable ''
-          # Logging table for monitoring
-          table inet logging {
-            chain log_input {
-              type filter hook input priority filter + 1;
-              meta nfproto ipv4 meta l4proto tcp log prefix "NFT-INPUT-TCP: " level ${cfg.logging.level}
-              meta nfproto ipv4 meta l4proto udp log prefix "NFT-INPUT-UDP: " level ${cfg.logging.level}
-              meta nfproto ipv4 meta l4proto icmp log prefix "NFT-INPUT-ICMP: " level ${cfg.logging.level}
+            # Logging table for monitoring
+            table inet logging {
+              chain log_input {
+                type filter hook input priority filter + 1;
+                meta nfproto ipv4 meta l4proto tcp log prefix "NFT-INPUT-TCP: " level ${cfg.logging.level}
+                meta nfproto ipv4 meta l4proto udp log prefix "NFT-INPUT-UDP: " level ${cfg.logging.level}
+                meta nfproto ipv4 meta l4proto icmp log prefix "NFT-INPUT-ICMP: " level ${cfg.logging.level}
+              }
             }
-          }
           ''}
         '';
     };

@@ -1,6 +1,11 @@
 # QEMU VM Home Manager Configuration
 # Uses shared profiles optimized for VM testing and development
-{ config, pkgs, inputs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
   # Import shared Home Manager profiles using inputs.self

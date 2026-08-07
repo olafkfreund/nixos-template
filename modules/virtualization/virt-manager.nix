@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -92,30 +97,33 @@ in
     ];
 
     # System packages for virtual machine management
-    environment.systemPackages = with pkgs; [
-      # Core VM management applications
-      (mkIf cfg.applications.virt-manager virt-manager)
-      (mkIf cfg.applications.gnome-boxes gnome-boxes)
-      (mkIf cfg.applications.virt-viewer virt-viewer)
-      (mkIf cfg.applications.qemu-gui qemu_full)
+    environment.systemPackages =
+      with pkgs;
+      [
+        # Core VM management applications
+        (mkIf cfg.applications.virt-manager virt-manager)
+        (mkIf cfg.applications.gnome-boxes gnome-boxes)
+        (mkIf cfg.applications.virt-viewer virt-viewer)
+        (mkIf cfg.applications.qemu-gui qemu_full)
 
-      # Remote access tools
-      (mkIf cfg.remoteConnections.ssh openssh)
+        # Remote access tools
+        (mkIf cfg.remoteConnections.ssh openssh)
 
-      # Additional tools for VM management
-      libosinfo # OS information database
-      osinfo-db-tools # OS database tools
-      libguestfs # Guest filesystem access
-      guestfs-tools # Guest tools
+        # Additional tools for VM management
+        libosinfo # OS information database
+        osinfo-db-tools # OS database tools
+        libguestfs # Guest filesystem access
+        guestfs-tools # Guest tools
 
-      # Integration packages
-      (mkIf cfg.integrations.nautilus gvfs)
+        # Integration packages
+        (mkIf cfg.integrations.nautilus gvfs)
 
-      # Cockpit machines plugin
-      (mkIf cfg.applications.cockpit-machines cockpit-machines)
+        # Cockpit machines plugin
+        (mkIf cfg.applications.cockpit-machines cockpit-machines)
 
-      # User-specified extra packages
-    ] ++ cfg.extraPackages;
+        # User-specified extra packages
+      ]
+      ++ cfg.extraPackages;
 
     # GNOME Boxes specific configuration
     programs.gnome-boxes = mkIf cfg.applications.gnome-boxes {
@@ -132,7 +140,6 @@ in
         };
       };
     };
-
 
     # Desktop entries and MIME types
     xdg = {
@@ -163,26 +170,26 @@ in
 
       // GNOME Boxes permissions
       ${optionalString cfg.applications.gnome-boxes ''
-      polkit.addRule(function(action, subject) {
-          if ((action.id == "org.libvirt.unix.manage" ||
-               action.id == "org.libvirt.api.domain.start" ||
-               action.id == "org.libvirt.api.domain.save" ||
-               action.id == "org.libvirt.api.domain.suspend" ||
-               action.id == "org.libvirt.api.domain.resume") &&
-              subject.user == "gnome-initial-setup") {
-              return polkit.Result.YES;
-          }
-      });
+        polkit.addRule(function(action, subject) {
+            if ((action.id == "org.libvirt.unix.manage" ||
+                 action.id == "org.libvirt.api.domain.start" ||
+                 action.id == "org.libvirt.api.domain.save" ||
+                 action.id == "org.libvirt.api.domain.suspend" ||
+                 action.id == "org.libvirt.api.domain.resume") &&
+                subject.user == "gnome-initial-setup") {
+                return polkit.Result.YES;
+            }
+        });
       ''}
 
       // Cockpit machines permissions
       ${optionalString cfg.applications.cockpit-machines ''
-      polkit.addRule(function(action, subject) {
-          if (action.id.indexOf("org.libvirt") == 0 &&
-              subject.user == "cockpit-ws") {
-              return polkit.Result.YES;
-          }
-      });
+        polkit.addRule(function(action, subject) {
+            if (action.id.indexOf("org.libvirt") == 0 &&
+                subject.user == "cockpit-ws") {
+                return polkit.Result.YES;
+            }
+        });
       ''}
     '';
 
@@ -201,7 +208,10 @@ in
       ];
 
       # Don't manage libvirt bridges
-      unmanaged = [ "interface-name:virbr*" "interface-name:br*" ];
+      unmanaged = [
+        "interface-name:virbr*"
+        "interface-name:br*"
+      ];
     };
 
     # Firewall configuration for remote management
@@ -230,12 +240,14 @@ in
     # GNOME specific integrations
     programs.dconf.enable = cfg.applications.gnome-boxes;
 
-    services.gnome = mkIf (cfg.applications.gnome-boxes && config.services.xserver.desktopManager.gnome.enable) {
-      gnome-initial-setup.enable = mkDefault true;
-    };
+    services.gnome =
+      mkIf (cfg.applications.gnome-boxes && config.services.xserver.desktopManager.gnome.enable)
+        {
+          gnome-initial-setup.enable = mkDefault true;
+        };
 
     # KDE specific integrations
-    programs.kde = mkIf (cfg.integrations.dolphin && config.services.xserver.desktopManager.plasma5.enable) {
+    programs.kde = mkIf (cfg.integrations.dolphin && config.services.desktopManager.plasma6.enable) {
       kdeconnect.enable = mkDefault true;
     };
 
@@ -245,7 +257,7 @@ in
       dejavu_fonts # Wide character support
       noto-fonts # Unicode support
       noto-fonts-cjk # Asian language support
-      noto-fonts-emoji # Emoji support
+      noto-fonts-color-emoji # Emoji support
     ];
 
     # Environment variables for VM management
@@ -272,16 +284,16 @@ in
           uri_default = "qemu:///system"
 
           ${optionalString cfg.remoteConnections.ssh ''
-          # Enable SSH transport
-          remote_display_port_min = 5900
-          remote_display_port_max = 65535
+            # Enable SSH transport
+            remote_display_port_min = 5900
+            remote_display_port_max = 65535
           ''}
 
           ${optionalString (!cfg.remoteConnections.ssh) ''
-          # Enable TCP transport (less secure)
-          listen_tls = 0
-          listen_tcp = 1
-          auth_tcp = "none"
+            # Enable TCP transport (less secure)
+            listen_tls = 0
+            listen_tcp = 1
+            auth_tcp = "none"
           ''}
         '';
       };

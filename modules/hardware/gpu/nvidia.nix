@@ -1,10 +1,21 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.modules.hardware.gpu.nvidia;
   gpuCfg = config.modules.hardware.gpu;
-  isDesktop = builtins.elem gpuCfg.profile [ "desktop" "gaming" ];
-  isCompute = builtins.elem gpuCfg.profile [ "ai-compute" "server-compute" ];
+  isDesktop = builtins.elem gpuCfg.profile [
+    "desktop"
+    "gaming"
+  ];
+  isCompute = builtins.elem gpuCfg.profile [
+    "ai-compute"
+    "server-compute"
+  ];
 in
 {
   options.modules.hardware.gpu.nvidia = {
@@ -12,7 +23,14 @@ in
 
     # Driver selection
     driver = lib.mkOption {
-      type = lib.types.enum [ "stable" "beta" "production" "legacy_470" "legacy_390" "open" ];
+      type = lib.types.enum [
+        "stable"
+        "beta"
+        "production"
+        "legacy_470"
+        "legacy_390"
+        "open"
+      ];
       default = "stable";
       description = "NVIDIA driver version to use";
     };
@@ -21,7 +39,15 @@ in
     hardware = {
       # GPU model for specific optimizations
       model = lib.mkOption {
-        type = lib.types.enum [ "auto" "rtx40" "rtx30" "rtx20" "gtx16" "gtx10" "legacy" ];
+        type = lib.types.enum [
+          "auto"
+          "rtx40"
+          "rtx30"
+          "rtx20"
+          "gtx16"
+          "gtx10"
+          "legacy"
+        ];
         default = "auto";
         description = "NVIDIA GPU generation for optimizations";
       };
@@ -45,7 +71,9 @@ in
       nvenc = lib.mkEnableOption "NVENC video encoding";
       prime = {
         enable = lib.mkEnableOption "PRIME support for hybrid graphics";
-        offload = lib.mkEnableOption "PRIME offload mode" // { default = true; };
+        offload = lib.mkEnableOption "PRIME offload mode" // {
+          default = true;
+        };
         sync = lib.mkEnableOption "PRIME sync mode";
         # Bus IDs are auto-detected but can be manually set
         nvidiaBusId = lib.mkOption {
@@ -64,8 +92,12 @@ in
     # AI/Compute options
     compute = {
       enable = lib.mkEnableOption "compute/AI optimizations";
-      cuda = lib.mkEnableOption "CUDA support" // { default = true; };
-      cudnn = lib.mkEnableOption "cuDNN support" // { default = true; };
+      cuda = lib.mkEnableOption "CUDA support" // {
+        default = true;
+      };
+      cudnn = lib.mkEnableOption "cuDNN support" // {
+        default = true;
+      };
       tensorrt = lib.mkEnableOption "TensorRT support";
       opencl = lib.mkEnableOption "OpenCL support";
       containers = lib.mkEnableOption "NVIDIA Container Runtime support";
@@ -87,13 +119,20 @@ in
     hardware.nvidia = {
       # Driver version
       package =
-        if cfg.driver == "stable" then config.boot.kernelPackages.nvidiaPackages.stable
-        else if cfg.driver == "beta" then config.boot.kernelPackages.nvidiaPackages.beta
-        else if cfg.driver == "production" then config.boot.kernelPackages.nvidiaPackages.production
-        else if cfg.driver == "legacy_470" then config.boot.kernelPackages.nvidiaPackages.legacy_470
-        else if cfg.driver == "legacy_390" then config.boot.kernelPackages.nvidiaPackages.legacy_390
-        else if cfg.driver == "open" then config.boot.kernelPackages.nvidiaPackages.open
-        else config.boot.kernelPackages.nvidiaPackages.stable;
+        if cfg.driver == "stable" then
+          config.boot.kernelPackages.nvidiaPackages.stable
+        else if cfg.driver == "beta" then
+          config.boot.kernelPackages.nvidiaPackages.beta
+        else if cfg.driver == "production" then
+          config.boot.kernelPackages.nvidiaPackages.production
+        else if cfg.driver == "legacy_470" then
+          config.boot.kernelPackages.nvidiaPackages.legacy_470
+        else if cfg.driver == "legacy_390" then
+          config.boot.kernelPackages.nvidiaPackages.legacy_390
+        else if cfg.driver == "open" then
+          config.boot.kernelPackages.nvidiaPackages.open
+        else
+          config.boot.kernelPackages.nvidiaPackages.stable;
 
       # Enable modesetting (required for Wayland)
       modesetting.enable = true;
@@ -120,13 +159,9 @@ in
 
         # Auto-detect or use manual bus IDs
         nvidiaBusId =
-          if cfg.gaming.prime.nvidiaBusId != ""
-          then cfg.gaming.prime.nvidiaBusId
-          else "PCI:1:0:0"; # Common default
+          if cfg.gaming.prime.nvidiaBusId != "" then cfg.gaming.prime.nvidiaBusId else "PCI:1:0:0"; # Common default
         intelBusId =
-          if cfg.gaming.prime.intelBusId != ""
-          then cfg.gaming.prime.intelBusId
-          else "PCI:0:2:0"; # Common default
+          if cfg.gaming.prime.intelBusId != "" then cfg.gaming.prime.intelBusId else "PCI:0:2:0"; # Common default
       };
     };
 
@@ -135,10 +170,12 @@ in
       # Enable IOMMU for compute workloads
       "intel_iommu=on"
       "iommu=pt"
-    ] ++ lib.optionals isCompute [
+    ]
+    ++ lib.optionals isCompute [
       # Compute optimizations
       "nvidia-drm.modeset=1"
-    ] ++ lib.optionals cfg.hardware.sli [
+    ]
+    ++ lib.optionals cfg.hardware.sli [
       # SLI support
       "nvidia-drm.fbdev=1"
     ];
@@ -148,59 +185,70 @@ in
       enable = true;
       enable32Bit = isDesktop;
 
-      extraPackages = with pkgs; [
-        # NVIDIA packages
-        nvidia-vaapi-driver # VAAPI support
-      ] ++ lib.optionals cfg.gaming.nvenc [
-        # Video encoding
-        nv-codec-headers
-      ] ++ lib.optionals cfg.compute.cuda [
-        # CUDA runtime
-        cudatoolkit
-      ];
+      extraPackages =
+        with pkgs;
+        [
+          # NVIDIA packages
+          nvidia-vaapi-driver # VAAPI support
+        ]
+        ++ lib.optionals cfg.gaming.nvenc [
+          # Video encoding
+          nv-codec-headers
+        ]
+        ++ lib.optionals cfg.compute.cuda [
+          # CUDA runtime
+          cudatoolkit
+        ];
     };
 
     # System packages for NVIDIA GPU support
-    environment.systemPackages = with pkgs; (
-      # Desktop packages
-      lib.optionals isDesktop [
-        # NVIDIA tools
-        nvidia-system-monitor-qt # GPU monitoring
-        nvtop # Terminal GPU monitor
+    environment.systemPackages =
+      with pkgs;
+      (
+        # Desktop packages
+        lib.optionals isDesktop [
+          # NVIDIA tools
+          nvidia-system-monitor-qt # GPU monitoring
+          nvtop # Terminal GPU monitor
 
-        # Graphics utilities
-        mesa-demos # OpenGL info
-        vulkan-tools # Vulkan utilities
-        nvidia-settings # NVIDIA control panel
-      ] ++ lib.optionals (isDesktop && cfg.gaming.enable) [
-        # Gaming tools
-        mangohud # Gaming overlay
-        gamemode # Gaming optimizations
-      ] ++
-      # AI/Compute packages
-      lib.optionals isCompute [
-        # CUDA development
-        cudatoolkit
+          # Graphics utilities
+          mesa-demos # OpenGL info
+          vulkan-tools # Vulkan utilities
+          nvidia-settings # NVIDIA control panel
+        ]
+        ++ lib.optionals (isDesktop && cfg.gaming.enable) [
+          # Gaming tools
+          mangohud # Gaming overlay
+          gamemode # Gaming optimizations
+        ]
+        ++
+          # AI/Compute packages
+          lib.optionals isCompute [
+            # CUDA development
+            cudatoolkit
 
-        # Monitoring and management
-        nvidia-ml-py # Python ML interface
-        nvtop # GPU monitoring
+            # Monitoring and management
+            nvidia-ml-py # Python ML interface
+            nvtop # GPU monitoring
 
-        # Development tools
-        nsight-compute # CUDA profiler
-        nsight-systems # System profiler
-      ] ++ lib.optionals (isCompute && cfg.compute.cudnn) [
-        # Deep learning
-        cudnn
-      ] ++ lib.optionals (isCompute && cfg.compute.tensorrt) [
-        # TensorRT inference
-        # tensorrt
-      ] ++ lib.optionals (isCompute && cfg.compute.containers) [
-        # Container support
-        nvidia-docker
-        nvidia-container-toolkit
-      ]
-    );
+            # Development tools
+            nsight-compute # CUDA profiler
+            nsight-systems # System profiler
+          ]
+        ++ lib.optionals (isCompute && cfg.compute.cudnn) [
+          # Deep learning
+          cudnn
+        ]
+        ++ lib.optionals (isCompute && cfg.compute.tensorrt) [
+          # TensorRT inference
+          # tensorrt
+        ]
+        ++ lib.optionals (isCompute && cfg.compute.containers) [
+          # Container support
+          nvidia-docker
+          nvidia-container-toolkit
+        ]
+      );
 
     # CUDA and AI framework support
     environment.sessionVariables = lib.mkMerge [
@@ -303,11 +351,12 @@ in
 
     # Add users to appropriate groups
     users.users = lib.mkMerge [
-      (lib.genAttrs
-        (builtins.attrNames (lib.filterAttrs (_: user: user.isNormalUser) config.users.users))
+      (lib.genAttrs (builtins.attrNames (lib.filterAttrs (_: user: user.isNormalUser) config.users.users))
         (_: {
-          extraGroups = [ "video" ]
-            ++ lib.optionals (cfg.compute.enable && cfg.compute.containers) [ "docker" ];
+          extraGroups = [
+            "video"
+          ]
+          ++ lib.optionals (cfg.compute.enable && cfg.compute.containers) [ "docker" ];
         })
       )
     ];

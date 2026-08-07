@@ -20,7 +20,6 @@
   # Keep it minimal - no desktop environment
   services.xserver.enable = lib.mkForce false;
 
-
   # Enhanced console experience
   console = {
     font = "Lat2-Terminus16";

@@ -1,6 +1,11 @@
 # Workstation Preset
 # High-performance desktop for productivity and development
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.modules.presets;
@@ -66,7 +71,11 @@ in
       firewall = {
         enable = true;
         # Common development ports (opinionated for workstation preset)
-        allowedTCPPorts = [ 3000 8000 8080 ];
+        allowedTCPPorts = [
+          3000
+          8000
+          8080
+        ];
       };
     };
 
@@ -79,7 +88,7 @@ in
     # Additional workstation-specific packages (core packages provided by shared modules)
     environment.systemPackages = with pkgs; [
       # Workstation-specific additions only
-      neofetch
+      fastfetch
       inkscape
     ];
 
@@ -89,7 +98,7 @@ in
       packages = with pkgs; [
         noto-fonts
         noto-fonts-cjk-sans
-        noto-fonts-emoji
+        noto-fonts-color-emoji
         liberation_ttf
         fira-code
         fira-code-symbols

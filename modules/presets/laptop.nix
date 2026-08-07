@@ -1,6 +1,11 @@
 # Laptop Preset
 # Optimized for mobile computing with battery life focus
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.modules.presets;
@@ -106,27 +111,29 @@ in
     };
 
     # Mobile-focused system packages
-    environment.systemPackages = with pkgs; lib.mkDefault [
-      # Essential productivity
-      firefox
+    environment.systemPackages =
+      with pkgs;
+      lib.mkDefault [
+        # Essential productivity
+        firefox
 
-      # Communication
-      thunderbird
+        # Communication
+        thunderbird
 
-      # System monitoring (battery focused)
-      htop
-      powertop
+        # System monitoring (battery focused)
+        htop
+        powertop
 
-      # File management
-      nautilus
+        # File management
+        nautilus
 
-      # Quick text editing
-      gedit
+        # Quick text editing
+        gedit
 
-      # Network utilities
-      networkmanager-openvpn
-      networkmanager-openconnect
-    ];
+        # Network utilities
+        networkmanager-openvpn
+        networkmanager-openconnect
+      ];
 
     # Power management settings
     powerManagement = {

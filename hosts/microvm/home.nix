@@ -23,7 +23,8 @@
       la = "ls -la";
 
       # System info
-      "sys" = "echo 'MicroVM:' $(hostname) '|' $(uname -r) '|' $(free -h | grep Mem | awk '{print $3\"/\"$2}')";
+      "sys" =
+        "echo 'MicroVM:' $(hostname) '|' $(uname -r) '|' $(free -h | grep Mem | awk '{print $3\"/\"$2}')";
       "ip" = "ip -c addr show";
 
       # Quick navigation

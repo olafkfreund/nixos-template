@@ -9,7 +9,12 @@ ENV NIX_CONF_DIR=/root/.config/nix
 RUN mkdir -p $NIX_CONF_DIR && \
     echo "experimental-features = nix-command flakes" > $NIX_CONF_DIR/nix.conf && \
     echo "substituters = https://cache.nixos.org https://nix-community.cachix.org" >> $NIX_CONF_DIR/nix.conf && \
-    echo "trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=" >> $NIX_CONF_DIR/nix.conf
+    echo "trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=" >> $NIX_CONF_DIR/nix.conf && \
+    # The multi-arch image is built for linux/arm64 under QEMU emulation, where
+    # Nix's seccomp filter cannot be installed ("unable to load seccomp BPF
+    # program: Invalid argument") and every `nix profile install` below fails.
+    # This has broken the weekly image build since at least 2026-06-07.
+    echo "filter-syscalls = false" >> $NIX_CONF_DIR/nix.conf
 
 # Install nixos-generators and required tools using latest version
 RUN nix profile install github:nix-community/nixos-generators && \

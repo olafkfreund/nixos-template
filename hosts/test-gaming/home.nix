@@ -1,6 +1,6 @@
 # Test Gaming Home Manager Configuration
 # Uses shared profiles optimized for gaming and testing
-{ config, pkgs, ... }:
+{ ... }:
 
 {
   # Import shared Home Manager profiles

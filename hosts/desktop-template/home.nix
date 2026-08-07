@@ -1,6 +1,6 @@
 # Desktop Template Home Manager Configuration
 # Uses shared profiles to reduce duplication
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   # Import shared Home Manager profiles
@@ -39,7 +39,7 @@
   # Desktop-specific additional packages (extends profile packages)
   home.packages = with pkgs; [
     # Advanced development tools (beyond development profile)
-    jetbrains.idea-community
+    jetbrains.idea
     dbeaver-bin
     postman
 

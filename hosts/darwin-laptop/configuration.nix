@@ -22,7 +22,10 @@
       essential = true;
       development = {
         enable = true;
-        languages = [ "node" "python" ]; # Minimal for battery life
+        languages = [
+          "node"
+          "python"
+        ]; # Minimal for battery life
         databases = false; # Disable to save resources
         docker = false; # Heavy on battery
       };
@@ -287,13 +290,9 @@
 
   # Fonts optimized for laptop screens
   fonts.packages = with pkgs; [
-    (nerdfonts.override {
-      fonts = [
-        "JetBrainsMono" # Excellent for laptop screens
-        "FiraCode"
-        "Hack"
-      ];
-    })
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.fira-code
+    nerd-fonts.hack
     inter
     source-sans-pro
   ];

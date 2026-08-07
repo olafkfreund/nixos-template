@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.modules.desktop.graphics;
@@ -16,7 +21,7 @@ in
 
       # Common graphics packages
       extraPackages = with pkgs; [
-        mesa.drivers
+        mesa
 
         # Video acceleration
         libva

@@ -2,7 +2,12 @@
 # This file should be replaced with actual hardware detection output:
 # nixos-generate-config --root /mnt --show-hardware-config > hosts/HOSTNAME/hardware-configuration.nix
 
-{ config, lib, modulesPath, ... }:
+{
+  config,
+  lib,
+  modulesPath,
+  ...
+}:
 
 {
   imports = [
@@ -10,7 +15,14 @@
   ];
 
   # Placeholder - replace with actual hardware configuration
-  boot.initrd.availableKernelModules = [ "uhci_hcd" "ehci_pci" "ata_piix" "megaraid_sas" "usb_storage" "sd_mod" ];
+  boot.initrd.availableKernelModules = [
+    "uhci_hcd"
+    "ehci_pci"
+    "ata_piix"
+    "megaraid_sas"
+    "usb_storage"
+    "sd_mod"
+  ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
@@ -23,7 +35,10 @@
   fileSystems."/boot" = {
     device = "/dev/disk/by-uuid/REPLACE-WITH-ACTUAL-UUID";
     fsType = "vfat";
-    options = [ "fmask=0022" "dmask=0022" ];
+    options = [
+      "fmask=0022"
+      "dmask=0022"
+    ];
   };
 
   swapDevices = [ ];

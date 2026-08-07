@@ -1,6 +1,11 @@
 # Darwin Package Collections
 # Comprehensive package management for nix-darwin systems combining Nix packages and Homebrew
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -63,8 +68,21 @@ in
       development = {
         enable = mkEnableOption "Development packages and tools";
         languages = mkOption {
-          type = types.listOf (types.enum [ "node" "python" "go" "rust" "java" "php" "ruby" ]);
-          default = [ "node" "python" ];
+          type = types.listOf (
+            types.enum [
+              "node"
+              "python"
+              "go"
+              "rust"
+              "java"
+              "php"
+              "ruby"
+            ]
+          );
+          default = [
+            "node"
+            "python"
+          ];
           description = "Programming languages to include";
         };
         databases = mkOption {
@@ -82,7 +100,14 @@ in
       server = {
         enable = mkEnableOption "Server administration packages";
         cloud = mkOption {
-          type = types.listOf (types.enum [ "aws" "gcp" "azure" "digitalocean" ]);
+          type = types.listOf (
+            types.enum [
+              "aws"
+              "gcp"
+              "azure"
+              "digitalocean"
+            ]
+          );
           default = [ "aws" ];
           description = "Cloud provider tools to include";
         };
@@ -176,34 +201,37 @@ in
         '')
       ];
 
-      homebrew = mkIf cfg.profiles.essential.includeHomebrew (baseHomebrew // {
-        # Essential CLI tools better from Homebrew
-        brews = [
-          "mas" # Mac App Store CLI
-        ];
+      homebrew = mkIf cfg.profiles.essential.includeHomebrew (
+        baseHomebrew
+        // {
+          # Essential CLI tools better from Homebrew
+          brews = [
+            "mas" # Mac App Store CLI
+          ];
 
-        # Essential GUI applications
-        casks = [
-          # Browsers
-          "firefox"
-          "google-chrome"
+          # Essential GUI applications
+          casks = [
+            # Browsers
+            "firefox"
+            "google-chrome"
 
-          # System utilities
-          "the-unarchiver"
-          "raycast"
-          "rectangle"
+            # System utilities
+            "the-unarchiver"
+            "raycast"
+            "rectangle"
 
-          # Communication
-          "slack"
-          "telegram"
-        ];
+            # Communication
+            "slack"
+            "telegram"
+          ];
 
-        # Essential Mac App Store apps
-        masApps = {
-          "Amphetamine" = 937984704; # Keep Mac awake
-          "The Unarchiver" = 425424353; # Archive utility
-        };
-      });
+          # Essential Mac App Store apps
+          masApps = {
+            "Amphetamine" = 937984704; # Keep Mac awake
+            "The Unarchiver" = 425424353; # Archive utility
+          };
+        }
+      );
     })
 
     # Desktop packages
@@ -218,7 +246,7 @@ in
         texlive.combined.scheme-medium
 
         # Desktop-specific utilities
-        neofetch
+        fastfetch
 
         (writeShellScriptBin "desktop-setup" ''
           echo "🖥️  Desktop Environment Setup"
@@ -266,7 +294,8 @@ in
           # Design and creativity
           "figma"
           "canva"
-        ] ++ optionals cfg.profiles.desktop.includeCreative [
+        ]
+        ++ optionals cfg.profiles.desktop.includeCreative [
           "adobe-creative-cloud"
           "sketch"
           "pixelmator-pro"
@@ -284,7 +313,8 @@ in
 
           # Design
           "Pixelmator Pro" = 1289583905;
-        } // optionalAttrs cfg.profiles.desktop.includeCreative {
+        }
+        // optionalAttrs cfg.profiles.desktop.includeCreative {
           "Final Cut Pro" = 424389933;
           "Logic Pro" = 634148309;
         };
@@ -292,15 +322,11 @@ in
 
       # Desktop fonts
       fonts.packages = with pkgs; [
-        (nerdfonts.override {
-          fonts = [
-            "FiraCode"
-            "JetBrainsMono"
-            "Hack"
-            "SourceCodePro"
-            "Inconsolata"
-          ];
-        })
+        nerd-fonts.fira-code
+        nerd-fonts.jetbrains-mono
+        nerd-fonts.hack
+        nerd-fonts.sauce-code-pro
+        nerd-fonts.inconsolata
         inter
         source-sans-pro
         source-serif-pro
@@ -311,84 +337,85 @@ in
 
     # Development packages
     (mkIf cfg.profiles.development.enable {
-      environment.systemPackages = with pkgs; [
-        # Version control
-        git-lfs
-        lazygit
+      environment.systemPackages =
+        with pkgs;
+        [
+          # Version control
+          git-lfs
+          lazygit
 
-        # Text editors
-        vim
-        neovim
+          # Text editors
+          vim
+          neovim
 
-        # Development utilities
-        (writeShellScriptBin "dev-env-setup" ''
-          echo "🚀 Development Environment Setup"
-          echo "==============================="
-          echo ""
+          # Development utilities
+          (writeShellScriptBin "dev-env-setup" ''
+            echo "🚀 Development Environment Setup"
+            echo "==============================="
+            echo ""
 
-          # Create development directories
-          mkdir -p ~/Development/{projects,experiments,scripts,tools}
+            # Create development directories
+            mkdir -p ~/Development/{projects,experiments,scripts,tools}
 
-          # Git global configuration
-          echo "⚙️  Configuring Git..."
-          git config --global init.defaultBranch main
-          git config --global pull.rebase true
-          git config --global push.autoSetupRemote true
+            # Git global configuration
+            echo "⚙️  Configuring Git..."
+            git config --global init.defaultBranch main
+            git config --global pull.rebase true
+            git config --global push.autoSetupRemote true
 
-          # Development aliases
-          echo "Creating development aliases..."
+            # Development aliases
+            echo "Creating development aliases..."
 
-          echo "✅ Development environment ready!"
-          echo "📁 Development directories created in ~/Development/"
-        '')
-      ]
-      # Programming languages
-      ++ optionals (elem "node" cfg.profiles.development.languages) [
-        nodejs_20
-        nodePackages.npm
-        nodePackages.yarn
-      ]
-      ++ optionals (elem "python" cfg.profiles.development.languages) [
-        python311
-        python311Packages.pip
-        python311Packages.virtualenv
-      ]
-      ++ optionals (elem "go" cfg.profiles.development.languages) [
-        go
-      ]
-      ++ optionals (elem "rust" cfg.profiles.development.languages) [
-        rustc
-        cargo
-        rustfmt
-        clippy
-      ]
-      ++ optionals (elem "java" cfg.profiles.development.languages) [
-        openjdk17
-        maven
-        gradle
-      ]
-      ++ optionals (elem "php" cfg.profiles.development.languages) [
-        php82
-        php82Packages.composer
-      ]
-      ++ optionals (elem "ruby" cfg.profiles.development.languages) [
-        ruby_3_2
-        rubyPackages_3_2.bundler
-      ]
-      # Database tools
-      ++ optionals cfg.profiles.development.databases [
-        postgresql_15
-        mysql80
-        sqlite
-        redis
-      ]
-      # Container tools
-      ++ optionals cfg.profiles.development.docker [
-        docker
-        docker-compose
-        kubectl
-        kubernetes-helm
-      ];
+            echo "✅ Development environment ready!"
+            echo "📁 Development directories created in ~/Development/"
+          '')
+        ]
+        # Programming languages
+        ++ optionals (elem "node" cfg.profiles.development.languages) [
+          nodejs_22
+          yarn
+        ]
+        ++ optionals (elem "python" cfg.profiles.development.languages) [
+          python311
+          python311Packages.pip
+          python311Packages.virtualenv
+        ]
+        ++ optionals (elem "go" cfg.profiles.development.languages) [
+          go
+        ]
+        ++ optionals (elem "rust" cfg.profiles.development.languages) [
+          rustc
+          cargo
+          rustfmt
+          clippy
+        ]
+        ++ optionals (elem "java" cfg.profiles.development.languages) [
+          openjdk17
+          maven
+          gradle
+        ]
+        ++ optionals (elem "php" cfg.profiles.development.languages) [
+          php82
+          php82Packages.composer
+        ]
+        ++ optionals (elem "ruby" cfg.profiles.development.languages) [
+          ruby_3_4
+          rubyPackages_3_4.bundler
+        ]
+        # Database tools
+        ++ optionals cfg.profiles.development.databases [
+          postgresql_15
+          mysql84
+          sqlite
+          redis
+        ]
+        # Container tools
+        ++ optionals cfg.profiles.development.docker [
+          docker
+          docker-compose
+          kubectl
+          kubernetes-helm
+        ];
 
       homebrew = baseHomebrew // {
         taps = baseHomebrew.taps ++ [
@@ -408,7 +435,8 @@ in
           "redis-insight"
 
           # Containerization
-        ] ++ optionals cfg.profiles.development.docker [
+        ]
+        ++ optionals cfg.profiles.development.docker [
           "docker"
           "orbstack"
         ];
@@ -423,76 +451,78 @@ in
 
     # Server packages
     (mkIf cfg.profiles.server.enable {
-      environment.systemPackages = with pkgs; [
-        # System administration
-        htop
-        iotop
-        nethogs
-        iftop
-        ncdu
+      environment.systemPackages =
+        with pkgs;
+        [
+          # System administration
+          htop
+          iotop
+          nethogs
+          iftop
+          ncdu
 
-        # Network tools
-        netcat
-        socat
-        traceroute
-        tcpdump
+          # Network tools
+          netcat
+          socat
+          traceroute
+          tcpdump
 
-        # Log analysis
-        multitail
+          # Log analysis
+          multitail
 
-        # Security
-        nftables
-        fail2ban
+          # Security
+          nftables
+          fail2ban
 
-        # Performance monitoring
-        sysstat
+          # Performance monitoring
+          sysstat
 
-        # Text processing for server management
-        yq
+          # Text processing for server management
+          yq
 
-        # Backup tools
-        restic
-        borgbackup
+          # Backup tools
+          restic
+          borgbackup
 
-        # Process management
-        tmux
+          # Process management
+          tmux
 
-        # Server management utilities
-        (writeShellScriptBin "server-status" ''
-          echo "🖥️  Server Status Report"
-          echo "======================="
-          echo ""
+          # Server management utilities
+          (writeShellScriptBin "server-status" ''
+            echo "🖥️  Server Status Report"
+            echo "======================="
+            echo ""
 
-          echo "📊 System Load:"
-          uptime | sed 's/^/  /'
-          echo ""
+            echo "📊 System Load:"
+            uptime | sed 's/^/  /'
+            echo ""
 
-          echo "💾 Memory Usage:"
-          vm_stat | perl -ne '/page size of (\d+)/ and $size=$1; /Pages\s+([^:]+):\s+(\d+)/ and printf("  %-16s: %6.2f MB\n", $1, $2 * $size / 1048576);' | head -5
-          echo ""
+            echo "💾 Memory Usage:"
+            vm_stat | perl -ne '/page size of (\d+)/ and $size=$1; /Pages\s+([^:]+):\s+(\d+)/ and printf("  %-16s: %6.2f MB\n", $1, $2 * $size / 1048576);' | head -5
+            echo ""
 
-          echo "💿 Disk Usage:"
-          df -h / | tail -1 | awk '{print "  Root: " $3 " used of " $2 " (" $5 " full)"}'
-          echo ""
+            echo "💿 Disk Usage:"
+            df -h / | tail -1 | awk '{print "  Root: " $3 " used of " $2 " (" $5 " full)"}'
+            echo ""
 
-          echo "🌐 Network:"
-          netstat -rn | grep default | head -1 | awk '{print "  Default Gateway: " $2}' || echo "  No default gateway found"
-          echo ""
+            echo "🌐 Network:"
+            netstat -rn | grep default | head -1 | awk '{print "  Default Gateway: " $2}' || echo "  No default gateway found"
+            echo ""
 
-          echo "🔧 Running Services (sample):"
-          ps aux | grep -E "(httpd|nginx|mysqld|postgres)" | grep -v grep | awk '{print "  " $11}' | sort | uniq || echo "  No common services detected"
-        '')
-      ]
-      # Cloud tools
-      ++ optionals (elem "aws" cfg.profiles.server.cloud) [
-        awscli2
-      ]
-      ++ optionals (elem "gcp" cfg.profiles.server.cloud) [
-        google-cloud-sdk
-      ]
-      ++ optionals (elem "azure" cfg.profiles.server.cloud) [
-        azure-cli
-      ];
+            echo "🔧 Running Services (sample):"
+            ps aux | grep -E "(httpd|nginx|mysqld|postgres)" | grep -v grep | awk '{print "  " $11}' | sort | uniq || echo "  No common services detected"
+          '')
+        ]
+        # Cloud tools
+        ++ optionals (elem "aws" cfg.profiles.server.cloud) [
+          awscli2
+        ]
+        ++ optionals (elem "gcp" cfg.profiles.server.cloud) [
+          google-cloud-sdk
+        ]
+        ++ optionals (elem "azure" cfg.profiles.server.cloud) [
+          azure-cli
+        ];
 
       homebrew = baseHomebrew // {
         taps = baseHomebrew.taps ++ [
@@ -612,8 +642,10 @@ in
       environment.variables = {
         # Homebrew paths
         HOMEBREW_PREFIX = if pkgs.stdenv.hostPlatform.isAarch64 then "/opt/homebrew" else "/usr/local";
-        HOMEBREW_CELLAR = if pkgs.stdenv.hostPlatform.isAarch64 then "/opt/homebrew/Cellar" else "/usr/local/Cellar";
-        HOMEBREW_REPOSITORY = if pkgs.stdenv.hostPlatform.isAarch64 then "/opt/homebrew" else "/usr/local/Homebrew";
+        HOMEBREW_CELLAR =
+          if pkgs.stdenv.hostPlatform.isAarch64 then "/opt/homebrew/Cellar" else "/usr/local/Cellar";
+        HOMEBREW_REPOSITORY =
+          if pkgs.stdenv.hostPlatform.isAarch64 then "/opt/homebrew" else "/usr/local/Homebrew";
 
         # Privacy settings
         HOMEBREW_NO_ANALYTICS = "1";

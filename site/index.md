@@ -3,12 +3,14 @@ layout: home
 title: "NixOS Template"
 ---
 
-<div class="hero">
-<pre style="color:var(--accent);text-shadow:var(--glow)">
- _ __ (_)_ __ ___  ___    _ _____ ___ _ __  _ __  | |__ _| |_ ___
-| '_ \| | \ / _ \/ __|  | __/ -_) '  \| '_ \| / _` |  _/ -_)
-|_| |_|_/_\_\___/\___|   \__\___|_|_|_| .__/|_\__,_|\__\___|
-                                      |_|  NixOS 26.05
+<div class="hero" markdown="1">
+<pre>
+       _                    _                       _       _
+ _ __ (_)_ __  ___  ___    | |_ ___ _ __ ___  _ __ | | __ _| |_ ___
+| '_ \| | \ \/ / _ \/ __|  | __/ _ \ '_ ` _ \| '_ \| |/ _` | __/ _ \
+| | | | |  >  < (_) \__ \  | ||  __/ | | | | | |_) | | (_| | ||  __/
+|_| |_|_| /_/\_\___/|___/   \__\___|_| |_| |_| .__/|_|\__,_|\__\___|
+                                             |_|      NixOS 26.05
 </pre>
 
 # A NixOS config you actually want to start from
@@ -18,7 +20,8 @@ curated foundation and override only what your machine needs.
 </div>
 
 <div class="btn-row">
-<a class="btn" href="{{ '/getting-started/' | relative_url }}">get started</a>
+<a class="btn btn-primary" href="{{ '/getting-started/' | relative_url }}">get started</a>
+<a class="btn" href="{{ '/showcase/' | relative_url }}">see the code</a>
 <a class="btn" href="{{ '/usage/' | relative_url }}">the menu</a>
 <a class="btn" href="{{ '/documentation/' | relative_url }}">docs</a>
 <a class="btn" href="https://github.com/olafkfreund/nixos-template">github</a>
@@ -50,18 +53,56 @@ command and confirms before running.
 
 ```
 $ nix develop                                   # enter the dev shell
-$ cp -r hosts/desktop-template hosts/$(hostname)
+$ cp -r hosts/desktop-template hosts/my-machine
 $ sudo nixos-generate-config --show-hardware-config \
-    > hosts/$(hostname)/hardware-configuration.nix
-$ just switch                                    # build & activate
+    > hosts/my-machine/hardware-configuration.nix
+```
+
+Register it in `flake.nix` — one entry in the `ADD YOUR OWN HOSTS HERE` block:
+
+```nix
+my-machine = flakeUtils.mkSystem {
+  hostname = "my-machine";
+  profile = "workstation";
+};
+```
+
+```
+just test my-machine                          # activate, no boot entry yet
+just switch my-machine                        # make it the default
 ```
 
 Just want to look first? Boot it in a VM, no install:
 
 ```
-$ nix build .#nixosConfigurations.desktop-test.config.system.build.vm
-$ ./result/bin/run-desktop-test-vm               # login: vm-user / nixos
+nix build .#nixosConfigurations.desktop-test.config.system.build.vm
+./result/bin/run-desktop-test-vm               # login: vm-user / nixos
 ```
+
+## ▸ a taste of the code
+
+One builder. The machine type is a parameter, not nine near-identical functions:
+
+```nix
+nixosConfigurations = flakeUtils.allConfigurations // {
+  my-desktop = flakeUtils.mkSystem {
+    hostname = "my-desktop";
+    profile = "workstation";
+  };
+};
+```
+
+Home Manager profiles compose; hosts override only what differs:
+
+```nix
+imports = [
+  ../../home/profiles/base.nix         # git, shell, core CLI tools
+  ../../home/profiles/desktop.nix      # GUI applications
+  ../../home/profiles/development.nix  # languages and dev tooling
+];
+```
+
+<p><a class="btn" href="{{ '/showcase/' | relative_url }}">full code showcase</a></p>
 
 ## ▸ screenshots
 

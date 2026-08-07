@@ -210,7 +210,11 @@
     networking = {
       port = 8080;
       interface = "0.0.0.0";
-      allowedIPs = [ "127.0.0.1" "10.0.0.0/8" "192.168.0.0/16" ];
+      allowedIPs = [
+        "127.0.0.1"
+        "10.0.0.0/8"
+        "192.168.0.0/16"
+      ];
     };
 
     user = "webapp";
@@ -262,7 +266,11 @@
       enable = true;
       maxretry = 3;
       bantime = "1h";
-      ignoreIP = [ "127.0.0.1/8" "10.0.0.0/8" "192.168.0.0/16" ];
+      ignoreIP = [
+        "127.0.0.1/8"
+        "10.0.0.0/8"
+        "192.168.0.0/16"
+      ];
     };
   };
 
@@ -325,7 +333,11 @@
     };
 
     # Advanced DNS configuration
-    nameservers = [ "1.1.1.1" "8.8.8.8" "9.9.9.9" ];
+    nameservers = [
+      "1.1.1.1"
+      "8.8.8.8"
+      "9.9.9.9"
+    ];
 
     # Network optimization
     kernel.sysctl = {
@@ -369,14 +381,16 @@
     ];
 
     # Enable various filesystems
-    supportedFilesystems = [ "ntfs" "exfat" "btrfs" "zfs" ];
+    supportedFilesystems = [
+      "ntfs"
+      "exfat"
+      "btrfs"
+      "zfs"
+    ];
 
-    # ZFS support (if using ZFS)
-    # zfs = {
-    #   enableUnstable = true;
-    #   forceImportRoot = false;
-    #   forceImportAll = false;
-    # };
+    # ZFS support. `forceImportRoot = false` becomes the upstream default in
+    # 26.11 and reduces the risk of data loss, so set it explicitly today.
+    zfs.forceImportRoot = false;
 
     # Plymouth for nice boot screen
     plymouth = {
@@ -473,7 +487,7 @@
     exa
 
     # System information
-    neofetch
+    fastfetch
     lscpu
     lshw
     inxi
@@ -535,7 +549,12 @@
       syntaxHighlighting.enable = true;
       ohMyZsh = {
         enable = true;
-        plugins = [ "git" "docker" "kubectl" "terraform" ];
+        plugins = [
+          "git"
+          "docker"
+          "kubectl"
+          "terraform"
+        ];
         theme = "robbyrussell";
       };
     };
@@ -614,21 +633,32 @@
     packages = with pkgs; [
       noto-fonts
       noto-fonts-cjk-sans
-      noto-fonts-emoji
+      noto-fonts-color-emoji
       liberation_ttf
       fira-code
       fira-code-symbols
       mplus-outline-fonts.githubRelease
       dina-font
       proggyfonts
-      (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" "JetBrainsMono" ]; })
+      nerd-fonts.fira-code
+      nerd-fonts.droid-sans-mono
+      nerd-fonts.jetbrains-mono
     ];
 
     fontconfig = {
       defaultFonts = {
-        serif = [ "Noto Serif" "Liberation Serif" ];
-        sansSerif = [ "Noto Sans" "Liberation Sans" ];
-        monospace = [ "FiraCode Nerd Font" "Liberation Mono" ];
+        serif = [
+          "Noto Serif"
+          "Liberation Serif"
+        ];
+        sansSerif = [
+          "Noto Sans"
+          "Liberation Sans"
+        ];
+        monospace = [
+          "FiraCode Nerd Font"
+          "Liberation Mono"
+        ];
       };
     };
   };

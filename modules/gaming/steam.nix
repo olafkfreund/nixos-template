@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 with lib.attrsets;
@@ -55,7 +60,11 @@ in
         type = types.listOf types.str;
         default = [ ];
         description = "Additional arguments to pass to gamescope";
-        example = [ "--rt" "--prefer-vk-device" "8086:9bc4" ];
+        example = [
+          "--rt"
+          "--prefer-vk-device"
+          "8086:9bc4"
+        ];
       };
     };
 
@@ -126,7 +135,9 @@ in
     # Assertions
     assertions = [
       {
-        assertion = cfg.gamescopeSession.enable -> config.services.xserver.enable || config.programs.wayland.enable or false;
+        assertion =
+          cfg.gamescopeSession.enable
+          -> config.services.xserver.enable || config.programs.wayland.enable or false;
         message = "GameScope session requires either X11 or Wayland to be enabled";
       }
     ];
@@ -134,11 +145,12 @@ in
     # Enable Steam
     programs.steam = {
       enable = true;
-      package = cfg.package;
-    } // (optionalAttrs cfg.gamescopeSession.enable {
+      inherit (cfg) package;
+    }
+    // (optionalAttrs cfg.gamescopeSession.enable {
       gamescopeSession = {
         enable = true;
-        args = cfg.gamescopeSession.args;
+        inherit (cfg.gamescopeSession) args;
       };
     });
 
@@ -186,46 +198,49 @@ in
     };
 
     # System packages for gaming
-    environment.systemPackages = with pkgs; [
-      # Core Steam and gaming tools
-      cfg.package
+    environment.systemPackages =
+      with pkgs;
+      [
+        # Core Steam and gaming tools
+        cfg.package
 
-      # Performance monitoring and optimization
-      (mkIf cfg.performance.mangohud mangohud)
-      (mkIf cfg.performance.gamemode gamemode)
+        # Performance monitoring and optimization
+        (mkIf cfg.performance.mangohud mangohud)
+        (mkIf cfg.performance.gamemode gamemode)
 
-      # Proton and compatibility tools
-      # Note: proton-ge-bin should be managed through protonup-qt or Steam directly
-      # (mkIf cfg.compattools.proton-ge proton-ge-bin)
-      # Note: luxtorpeda is not available as standalone package in nixpkgs
-      # It can be managed through protonup-qt or installed manually
-      # (mkIf cfg.compattools.luxtorpeda luxtorpeda)
-      protontricks
+        # Proton and compatibility tools
+        # Note: proton-ge-bin should be managed through protonup-qt or Steam directly
+        # (mkIf cfg.compattools.proton-ge proton-ge-bin)
+        # Note: luxtorpeda is not available as standalone package in nixpkgs
+        # It can be managed through protonup-qt or installed manually
+        # (mkIf cfg.compattools.luxtorpeda luxtorpeda)
+        protontricks
 
-      # Gaming utilities
-      steamtinkerlaunch
-      steam-run
+        # Gaming utilities
+        steamtinkerlaunch
+        steam-run
 
-      # Audio support
-      pulseaudio
-      pavucontrol
+        # Audio support
+        pulseaudio
+        pavucontrol
 
-      # Input device support
-      linuxConsoleTools
-      jstest-gtk
+        # Input device support
+        linuxConsoleTools
+        jstest-gtk
 
-      # Wine for additional Windows game support
-      wine
-      winetricks
+        # Wine for additional Windows game support
+        wine
+        winetricks
 
-      # Additional gaming fonts
-      (mkIf cfg.fonts.enable liberation_ttf)
-      (mkIf cfg.fonts.enable dejavu_fonts)
-      (mkIf cfg.fonts.enable source-han-sans)
-      (mkIf cfg.fonts.enable wqy_zenhei)
+        # Additional gaming fonts
+        (mkIf cfg.fonts.enable liberation_ttf)
+        (mkIf cfg.fonts.enable dejavu_fonts)
+        (mkIf cfg.fonts.enable source-han-sans)
+        (mkIf cfg.fonts.enable wqy_zenhei)
 
-      # Extra packages specified by user
-    ] ++ cfg.extraPackages;
+        # Extra packages specified by user
+      ]
+      ++ cfg.extraPackages;
 
     # Gaming optimizations
     boot = mkIf cfg.performance.optimizations {
@@ -399,7 +414,7 @@ in
         wqy_zenhei
         noto-fonts
         noto-fonts-cjk-sans
-        noto-fonts-emoji
+        noto-fonts-color-emoji
       ];
 
       fontconfig = {
@@ -410,9 +425,18 @@ in
         subpixel.rgba = "rgb";
 
         defaultFonts = {
-          serif = [ "Liberation Serif" "DejaVu Serif" ];
-          sansSerif = [ "Liberation Sans" "DejaVu Sans" ];
-          monospace = [ "Liberation Mono" "DejaVu Sans Mono" ];
+          serif = [
+            "Liberation Serif"
+            "DejaVu Serif"
+          ];
+          sansSerif = [
+            "Liberation Sans"
+            "DejaVu Sans"
+          ];
+          monospace = [
+            "Liberation Mono"
+            "DejaVu Sans Mono"
+          ];
         };
       };
     };
@@ -561,7 +585,6 @@ in
     services.irqbalance = mkIf cfg.performance.optimizations {
       enable = true;
     };
-
 
   };
 }

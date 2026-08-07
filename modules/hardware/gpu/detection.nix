@@ -1,18 +1,30 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.modules.hardware.gpu;
 in
 {
   options.modules.hardware.gpu = {
-    autoDetect = lib.mkEnableOption "automatic GPU detection and configuration" // { default = true; };
+    autoDetect = lib.mkEnableOption "automatic GPU detection and configuration" // {
+      default = true;
+    };
 
     # Note: Individual GPU enable options are declared in their respective modules
     # (amd.nix, nvidia.nix, intel.nix) - this module only sets them based on detection
 
     # Workload profiles
     profile = lib.mkOption {
-      type = lib.types.enum [ "desktop" "gaming" "ai-compute" "server-compute" ];
+      type = lib.types.enum [
+        "desktop"
+        "gaming"
+        "ai-compute"
+        "server-compute"
+      ];
       default = "desktop";
       description = "GPU optimization profile";
     };
@@ -21,7 +33,11 @@ in
     multiGpu = {
       enable = lib.mkEnableOption "multi-GPU configuration";
       primary = lib.mkOption {
-        type = lib.types.enum [ "amd" "nvidia" "intel" ];
+        type = lib.types.enum [
+          "amd"
+          "nvidia"
+          "intel"
+        ];
         default = "nvidia";
         description = "Primary GPU for display output";
       };

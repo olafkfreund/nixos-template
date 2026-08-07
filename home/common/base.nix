@@ -7,7 +7,7 @@
   programs.home-manager.enable = true;
 
   # Set state version (should match your NixOS version)
-  home.stateVersion = lib.mkDefault "25.05";
+  home.stateVersion = lib.mkDefault "26.05";
 
   # Basic shell configuration
   programs.bash = {
@@ -20,7 +20,10 @@
       "..." = "cd ../..";
     };
 
-    historyControl = [ "ignoredups" "ignorespace" ];
+    historyControl = [
+      "ignoredups"
+      "ignorespace"
+    ];
     historySize = 10000;
     historyFileSize = 20000;
   };
@@ -43,7 +46,10 @@
       enable = lib.mkDefault true;
       enableBashIntegration = true;
       icons = "auto";
-      extraOptions = [ "--group-directories-first" "--header" ];
+      extraOptions = [
+        "--group-directories-first"
+        "--header"
+      ];
     };
 
     # Better find command

@@ -2,7 +2,12 @@
 # Demonstrates best practices for NixOS module development with comprehensive
 # validation, assertions, and type safety
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -34,7 +39,9 @@ let
         type = types.attrs;
         default = { };
         description = "Additional configuration options";
-        example = { timeout = 30; };
+        example = {
+          timeout = 30;
+        };
       };
     };
   };
@@ -104,7 +111,10 @@ in
         type = types.listOf types.str;
         default = [ "127.0.0.1" ];
         description = "IP addresses allowed to connect";
-        example = [ "127.0.0.1" "192.168.1.0/24" ];
+        example = [
+          "127.0.0.1"
+          "192.168.1.0/24"
+        ];
       };
     };
 
@@ -124,7 +134,12 @@ in
     # Logging configuration
     logging = {
       level = mkOption {
-        type = types.enum [ "debug" "info" "warn" "error" ];
+        type = types.enum [
+          "debug"
+          "info"
+          "warn"
+          "error"
+        ];
         default = "info";
         description = "Log level";
       };
@@ -188,7 +203,8 @@ in
           message = "All service ports must be between 1025 and 65535";
         }
         {
-          assertion = cfg.resources.memory != null -> builtins.match "^[0-9]+[MGT]?$" cfg.resources.memory != null;
+          assertion =
+            cfg.resources.memory != null -> builtins.match "^[0-9]+[MGT]?$" cfg.resources.memory != null;
           message = "Memory limit must be in format like '1G', '512M', etc.";
         }
       ];
@@ -218,93 +234,95 @@ in
       systemd.tmpfiles.rules = [
         "d /var/lib/${cfg.user} 0755 ${cfg.user} ${cfg.group} -"
         "d /var/log/${cfg.user} 0755 ${cfg.user} ${cfg.group} -"
-      ] ++ optional (cfg.logging.file != null)
-        "f ${cfg.logging.file} 0644 ${cfg.user} ${cfg.group} -";
+      ]
+      ++ optional (cfg.logging.file != null) "f ${cfg.logging.file} 0644 ${cfg.user} ${cfg.group} -";
     }
 
     # Networking and firewall
     {
       networking.firewall = {
-        allowedTCPPorts = [ cfg.networking.port ] ++
-          (map (service: service.port) (filter (s: s.enable) (attrValues cfg.services)));
+        allowedTCPPorts = [
+          cfg.networking.port
+        ]
+        ++ (map (service: service.port) (filter (s: s.enable) (attrValues cfg.services)));
 
         # Advanced firewall rules for IP restrictions
         extraCommands = mkIf (cfg.networking.allowedIPs != [ ]) (
-          concatMapStringsSep "\n"
-            (ip:
-              "iptables -A nixos-fw -p tcp --dport ${toString cfg.networking.port} -s ${ip} -j ACCEPT"
-            )
-            cfg.networking.allowedIPs
+          concatMapStringsSep "\n" (
+            ip: "iptables -A nixos-fw -p tcp --dport ${toString cfg.networking.port} -s ${ip} -j ACCEPT"
+          ) cfg.networking.allowedIPs
         );
       };
     }
 
     # Service configuration
     (mkIf (cfg.services != { }) {
-      systemd.services = mapAttrs'
-        (name: serviceCfg:
-          nameValuePair name {
-            description = "Template service: ${name}";
-            after = [ "network.target" ];
-            wantedBy = [ "multi-user.target" ];
+      systemd.services = mapAttrs' (
+        name: serviceCfg:
+        nameValuePair name {
+          description = "Template service: ${name}";
+          after = [ "network.target" ];
+          wantedBy = [ "multi-user.target" ];
 
-            serviceConfig = {
-              Type = "simple";
-              User = cfg.user;
-              Group = cfg.group;
-              Restart = "always";
-              RestartSec = 5;
+          serviceConfig = {
+            Type = "simple";
+            User = cfg.user;
+            Group = cfg.group;
+            Restart = "always";
+            RestartSec = 5;
 
-              # Apply resource limits if specified
-              MemoryMax = mkIf (cfg.resources.memory != null) cfg.resources.memory;
-              CPUQuota = mkIf (cfg.resources.cpu != null) cfg.resources.cpu;
+            # Apply resource limits if specified
+            MemoryMax = mkIf (cfg.resources.memory != null) cfg.resources.memory;
+            CPUQuota = mkIf (cfg.resources.cpu != null) cfg.resources.cpu;
 
-              # Security hardening
-              NoNewPrivileges = true;
-              PrivateTmp = true;
-              ProtectHome = true;
-              ProtectKernelTunables = true;
-              ProtectControlGroups = true;
-              ProtectKernelModules = true;
-              RestrictSUIDSGID = true;
-              RestrictRealtime = true;
-              LockPersonality = true;
-              MemoryDenyWriteExecute = true;
+            # Security hardening
+            NoNewPrivileges = true;
+            PrivateTmp = true;
+            ProtectHome = true;
+            ProtectKernelTunables = true;
+            ProtectControlGroups = true;
+            ProtectKernelModules = true;
+            RestrictSUIDSGID = true;
+            RestrictRealtime = true;
+            LockPersonality = true;
+            MemoryDenyWriteExecute = true;
 
-              # Namespace isolation
-              PrivateDevices = true;
-              PrivateNetwork = false; # Set to true if no network needed
-              ProtectKernelLogs = true;
-              ProtectClock = true;
-            };
+            # Namespace isolation
+            PrivateDevices = true;
+            PrivateNetwork = false; # Set to true if no network needed
+            ProtectKernelLogs = true;
+            ProtectClock = true;
+          };
 
-            script = ''
-              echo "Starting ${name} on port ${toString serviceCfg.port}"
-              echo "Configuration: ${builtins.toJSON serviceCfg.extraConfig}"
+          script = ''
+            echo "Starting ${name} on port ${toString serviceCfg.port}"
+            echo "Configuration: ${builtins.toJSON serviceCfg.extraConfig}"
 
-              # Start the actual service
-              exec ${cfg.package}/bin/hello
-            '';
+            # Start the actual service
+            exec ${cfg.package}/bin/hello
+          '';
 
-            preStart = ''
-              echo "Preparing ${name}..."
-              # Pre-start checks and preparations
-            '';
+          preStart = ''
+            echo "Preparing ${name}..."
+            # Pre-start checks and preparations
+          '';
 
-            postStart = ''
-              # Wait for service to be ready
-              timeout 30 bash -c 'until nc -z localhost ${toString serviceCfg.port}; do sleep 1; done'
-            '';
-          }
-        )
-        (filterAttrs (_: s: s.enable) cfg.services);
+          postStart = ''
+            # Wait for service to be ready
+            timeout 30 bash -c 'until nc -z localhost ${toString serviceCfg.port}; do sleep 1; done'
+          '';
+        }
+      ) (filterAttrs (_: s: s.enable) cfg.services);
     })
 
     # Monitoring and metrics
     (mkIf cfg.features.metrics {
       services.prometheus.exporters.node = {
         enable = true;
-        enabledCollectors = [ "systemd" "processes" ];
+        enabledCollectors = [
+          "systemd"
+          "processes"
+        ];
       };
 
       # Custom metrics collection script

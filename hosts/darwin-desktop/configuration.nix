@@ -1,7 +1,12 @@
 # nix-darwin Desktop Configuration
 # Full-featured desktop configuration for macOS users
 
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   imports = [
@@ -24,7 +29,12 @@
       };
       development = {
         enable = true;
-        languages = [ "node" "python" "go" "rust" ];
+        languages = [
+          "node"
+          "python"
+          "go"
+          "rust"
+        ];
         databases = true;
         docker = true;
       };
@@ -215,15 +225,11 @@
 
   # Enable fonts
   fonts.packages = with pkgs; [
-    (nerdfonts.override {
-      fonts = [
-        "FiraCode"
-        "JetBrainsMono"
-        "Hack"
-        "SourceCodePro"
-        "Inconsolata"
-      ];
-    })
+    nerd-fonts.fira-code
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.hack
+    nerd-fonts.sauce-code-pro
+    nerd-fonts.inconsolata
     inter
     source-sans-pro
     source-serif-pro

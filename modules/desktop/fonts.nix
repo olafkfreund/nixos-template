@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.modules.desktop.fonts;
@@ -22,9 +27,18 @@ in
 
         # Default fonts
         defaultFonts = {
-          serif = [ "Noto Serif" "Liberation Serif" ];
-          sansSerif = [ "Noto Sans" "Liberation Sans" ];
-          monospace = [ "JetBrains Mono" "Liberation Mono" ];
+          serif = [
+            "Noto Serif"
+            "Liberation Serif"
+          ];
+          sansSerif = [
+            "Noto Sans"
+            "Liberation Sans"
+          ];
+          monospace = [
+            "JetBrains Mono"
+            "Liberation Mono"
+          ];
           emoji = [ "Noto Color Emoji" ];
         };
       };
@@ -34,7 +48,7 @@ in
         # System fonts
         noto-fonts
         noto-fonts-cjk-sans
-        noto-fonts-emoji
+        noto-fonts-color-emoji
         liberation_ttf
 
         # Programming fonts
@@ -45,7 +59,7 @@ in
         # Popular fonts
         roboto
         open-sans
-        ubuntu_font_family
+        ubuntu-classic
 
         # Icon fonts
         font-awesome

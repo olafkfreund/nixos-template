@@ -1,6 +1,9 @@
 # Darwin Desktop Home Manager Configuration
 # Uses shared profiles optimized for desktop development
-{ config, pkgs, lib, inputs, outputs, ... }:
+{
+  lib,
+  ...
+}:
 
 {
   # Home Manager configuration
@@ -8,7 +11,7 @@
     useGlobalPkgs = true;
     useUserPackages = true;
 
-    users.admin = { config, pkgs, ... }: {
+    users.admin = { pkgs, ... }: {
       # Import shared Home Manager profiles
       imports = [
         ../../home/profiles/base.nix # Base configuration with git, bash, etc.
@@ -64,7 +67,7 @@
         wezterm
 
         # Professional IDEs for desktop development
-        jetbrains.idea-community
+        jetbrains.idea
         jetbrains.webstorm
 
         # Media tools for desktop content creation
@@ -152,10 +155,26 @@
           };
 
           key_bindings = [
-            { key = "V"; mods = "Command"; action = "Paste"; }
-            { key = "C"; mods = "Command"; action = "Copy"; }
-            { key = "N"; mods = "Command"; action = "SpawnNewInstance"; }
-            { key = "T"; mods = "Command"; action = "CreateNewTab"; }
+            {
+              key = "V";
+              mods = "Command";
+              action = "Paste";
+            }
+            {
+              key = "C";
+              mods = "Command";
+              action = "Copy";
+            }
+            {
+              key = "N";
+              mods = "Command";
+              action = "SpawnNewInstance";
+            }
+            {
+              key = "T";
+              mods = "Command";
+              action = "CreateNewTab";
+            }
           ];
         };
       };

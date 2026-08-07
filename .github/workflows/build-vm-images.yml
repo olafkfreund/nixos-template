@@ -41,7 +41,7 @@ jobs:
       image-digest: ${{ steps.build.outputs.digest }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Log in to Container Registry
@@ -65,7 +65,9 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./docker
-          push: true
+          # Never publish from a pull request: on PRs this job's job is to
+          # prove the image still builds, not to push to the registry.
+          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
@@ -73,6 +75,10 @@ jobs:
           platforms: linux/amd64,linux/arm64
   build-vm-matrix:
     needs: build-docker-image
+    # Skipped on pull requests: this job runs the published
+    # ghcr.io/.../nixos-vm-builder:latest image, which is only pushed from the
+    # default branch, and each matrix entry is an expensive multi-GB VM build.
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 120 # 2 hour timeout for entire job
     strategy:
@@ -94,7 +100,7 @@ jobs:
             format: hyperv
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Log in to Container Registry
@@ -154,7 +160,7 @@ jobs:
         if: success()
         run: "cd workspace/output\n\n# Find the VM file\nVM_FILE=$(find . -name \"*${{ matrix.template }}*${{ matrix.format }}*\" -type f -not -name \"*.json\" | head -1)\n\nif [ -n \"$VM_FILE\" ]; then\n  echo \"Compressing: $VM_FILE\"\n  \n  # Compress based on format\n  case \"${{ matrix.format }}\" in\n    virtualbox)\n      # OVA files are already compressed\n      echo \"OVA file, skipping compression\"\n      ;;\n    *)\n      # Compress other formats\n      gzip -9 \"$VM_FILE\"\n      echo \"Compressed to: ${VM_FILE}.gz\"\n      ;;\n  esac\nelse\n  echo \"No VM file found to compress\"\n  exit 1\nfi\n"
       - name: Upload VM Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: nixos-${{ matrix.template }}-${{ matrix.format }}-vm
           path: workspace/output/*
@@ -171,7 +177,7 @@ jobs:
           echo "Checksums:"
           cat checksums-${{ matrix.template }}-${{ matrix.format }}.txt
       - name: Upload checksums
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: checksums-${{ matrix.template }}-${{ matrix.format }}
           path: workspace/output/checksums-*.txt
@@ -184,9 +190,9 @@ jobs:
       contents: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Download all artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: release-assets
       - name: Prepare release assets
@@ -278,7 +284,7 @@ jobs:
             3. Login with username: `nixos`, password: `nixos`
             4. Change the default password immediately
 
-            Built on: ${{ steps.build-vm.outputs.build-time }}
+            Built by workflow run ${{ github.run_number }} from commit ${{ github.sha }}
 
             **⚠️ These are test images with default passwords. Change credentials before use!**
           artifacts: "release/**"
@@ -291,7 +297,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Update build status badge

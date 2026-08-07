@@ -41,7 +41,7 @@
       pkgs.unrar
 
       # System monitoring
-      pkgs.neofetch
+      pkgs.fastfetch
     ];
 
   };
@@ -57,7 +57,10 @@
 
       settings = {
         window = {
-          padding = { x = 8; y = 8; };
+          padding = {
+            x = 8;
+            y = 8;
+          };
           decorations = "full";
           startup_mode = "Windowed";
         };
@@ -106,7 +109,7 @@
       code = "code .";
 
       # System information
-      sysinfo = "neofetch";
+      sysinfo = "fastfetch";
 
       # Package management
       update-system = "sudo nixos-rebuild switch";
@@ -126,7 +129,7 @@
       screenshot = "flameshot gui";
       screenshot-full = "flameshot full -p ~/Pictures/Screenshots/";
       code = "code .";
-      sysinfo = "neofetch";
+      sysinfo = "fastfetch";
       update-system = "sudo nixos-rebuild switch";
       update-home = "home-manager switch";
       serve-here = "python3 -m http.server 8000";

@@ -27,13 +27,19 @@ sudo nixos-generate-config --show-hardware-config \
   > hosts/$(hostname)/hardware-configuration.nix
 
 # 5. Register the host in flake.nix
-# See docs/HOST-TEMPLATES.md for the one-liner to add to nixosConfigurations.
+# Open flake.nix, find the "ADD YOUR OWN HOSTS HERE" block near the bottom,
+# and uncomment/edit one entry:
+#
+#   my-desktop = flakeUtils.mkSystem {
+#     hostname = "my-desktop";     # must match the hosts/ directory name
+#     profile = "workstation";     # workstation, server, laptop, gaming,
+#   };                             # development or minimal
 
 # 6. Build and switch
 just switch $(hostname)
 ```
 
-> Need a server, laptop, VM, or gaming host? See [docs/HOST-TEMPLATES.md](docs/HOST-TEMPLATES.md) for all available host types and flake.nix registration examples.
+> Need a server, laptop, VM, or gaming host? See [docs/HOST-TEMPLATES.md](docs/HOST-TEMPLATES.md) — one builder, `mkSystem`, with the machine type as a parameter.
 
 ---
 
@@ -53,7 +59,7 @@ Not on NixOS yet? See [docs/NON-NIXOS-USAGE.md](docs/NON-NIXOS-USAGE.md) for Doc
 
 ## Common Commands
 
-Running `just` with no arguments opens the **interactive menu** — a full control panel that groups all ~150 recipes into 9 categories, shows descriptions, previews the exact command, and asks for confirmation before running anything. No flags, no memorisation required.
+Running `just` with no arguments opens the **interactive menu** — a full control panel that groups all ~100 recipes into 9 categories, shows descriptions, previews the exact command, and asks for confirmation before running anything. No flags, no memorisation required.
 
 ![Menu showcase](https://raw.githubusercontent.com/olafkfreund/nixos-template/main/site/assets/menu/showcase.gif)
 
@@ -61,12 +67,12 @@ For the full guide see [docs/MENU.md](docs/MENU.md). Common recipes are also cal
 
 | Command              | What it does                                      |
 | -------------------- | ------------------------------------------------- |
-| `just`               | Open the interactive menu (all ~150 recipes)      |
+| `just`               | Open the interactive menu (all ~100 recipes)      |
 | `just switch <host>` | Build and activate configuration                  |
 | `just test <host>`   | Build and activate without adding a boot entry    |
 | `just boot <host>`   | Build and set as next boot, without switching now |
 | `just update`        | Update all flake inputs                           |
-| `just fmt`           | Format all Nix files                              |
+| `just fmt`           | Format Nix, shell, Markdown, YAML, JSON           |
 | `just check`         | Run `nix flake check`                             |
 | `just list`          | Print every recipe (raw, no menu UI)              |
 
@@ -94,7 +100,11 @@ nixos-template/
 
 ## Versioning
 
-Tracks **nixpkgs `nixos-unstable`** by default. To pin to a stable release, change the `nixpkgs` input URL in `flake.nix` (e.g. `github:NixOS/nixpkgs/nixos-26.05`). Host configurations use `system.stateVersion = "26.05"`.
+Tracks the current NixOS stable release, **nixpkgs `nixos-26.05`**, with Home Manager on the matching `release-26.05` branch. Stable gives near-complete binary cache coverage, so a first build downloads rather than compiles.
+
+Host configurations use `system.stateVersion = "26.05"`. That value records the release a machine was _first installed_ with — it is not a "current version" field, so leave it alone when you upgrade unless the release notes tell you otherwise.
+
+Prefer bleeding edge? Change both inputs in `flake.nix` to `nixos-unstable` and `home-manager` (master); the comment above the inputs spells it out.
 
 ---
 
