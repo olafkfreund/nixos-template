@@ -98,9 +98,12 @@
     }@inputs:
     let
       inherit (self) outputs;
+      # i686-linux is deliberately absent: git-hooks.nix does not provide
+      # `lib.i686-linux`, so `checks.i686-linux.pre-commit-check` fails to
+      # evaluate and `nix flake show --all-systems` errors out. Nothing in this
+      # template targets 32-bit x86, and nixpkgs support for it is minimal.
       systems = [
         "aarch64-linux"
-        "i686-linux"
         "x86_64-linux"
         "aarch64-darwin"
         "x86_64-darwin"
@@ -236,8 +239,15 @@
       packages = forAllSystems (
         system:
         let
-          # Generate deployment images using our factory
-          images = deploymentImages.mkDeploymentImages { inherit system; };
+          # Deployment images are NixOS systems, so they only make sense on
+          # Linux. Generating them for *-darwin built a nixosSystem with a
+          # Darwin pkgs set, which then tried to set the nix-darwin-only option
+          # `networking.computerName` on a NixOS configuration and failed to
+          # evaluate. `nix flake check` never caught it because it skips the
+          # darwin systems; only `nix flake show --all-systems` reaches here.
+          images = nixpkgs.lib.optionalAttrs (nixpkgs.lib.hasSuffix "-linux" system) (
+            deploymentImages.mkDeploymentImages { inherit system; }
+          );
         in
         # Merge custom packages with generated deployment images
         (import ./pkgs nixpkgs.legacyPackages.${system}) // images
