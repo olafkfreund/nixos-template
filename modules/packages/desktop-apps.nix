@@ -184,7 +184,6 @@
 
       extraPortals = with pkgs; [
         xdg-desktop-portal-gtk
-        xdg-desktop-portal-kde
       ];
 
       # xdg-desktop-portal 1.17+ requires an explicit backend preference;

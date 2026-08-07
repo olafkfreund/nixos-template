@@ -35,7 +35,6 @@ let
     development = self + "/home/profiles/development.nix";
     server = self + "/home/profiles/server.nix";
     gnome = self + "/home/profiles/gnome.nix";
-    kde = self + "/home/profiles/kde.nix";
     hyprland = self + "/home/profiles/hyprland.nix";
     niri = self + "/home/profiles/niri.nix";
     headless = self + "/home/profiles/headless.nix";

@@ -870,10 +870,6 @@ in
         assertion = !(cfg.enable && config.modules.desktop.gnome.enable);
         message = "Cannot enable both Hyprland and GNOME desktop environments";
       }
-      {
-        assertion = !(cfg.enable && config.modules.desktop.kde.enable);
-        message = "Cannot enable both Hyprland and KDE desktop environments";
-      }
     ];
   };
 }

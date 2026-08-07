@@ -1175,10 +1175,6 @@ in
         message = "Cannot enable both Niri and GNOME desktop environments";
       }
       {
-        assertion = !(cfg.enable && config.modules.desktop.kde.enable);
-        message = "Cannot enable both Niri and KDE desktop environments";
-      }
-      {
         assertion = !(cfg.enable && config.modules.desktop.hyprland.enable);
         message = "Cannot enable both Niri and Hyprland desktop environments";
       }

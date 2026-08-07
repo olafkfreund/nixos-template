@@ -12,7 +12,6 @@
   imports = [
     # Recommended for development
     ../profiles/gnome.nix
-    # ../profiles/kde.nix
     # ../profiles/hyprland.nix  # Popular with developers
     # ../profiles/niri.nix
   ];

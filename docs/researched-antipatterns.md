@@ -721,22 +721,76 @@ programs.bash = {
 };
 ```
 
-#### **Improper mkOutOfStoreSymlink Usage**
+#### **Choosing how to ship a dotfile**
 
-**Problem:** Breaks flake purity.
+There are four ways to get a config file into place with Home Manager, and the
+right choice depends on whether a native module exists and whether you want the
+file to stay editable as a real file.
+
+**1. Best — a native module option, when one exists**
 
 ```nix
-# ❌ BAD - Impure reference
+# Typed, mergeable, and a host can override one setting without
+# restating the whole file.
+programs.git.settings = {
+  init.defaultBranch = "main";
+  pull.rebase = true;
+};
+
+wayland.windowManager.hyprland.settings = {
+  "$mod" = "SUPER";
+  bind = [ "$mod, Q, exec, alacritty" ];
+};
+```
+
+**2. Also good — `.source`, pointing at a real file in the repository**
+
+```nix
+# Pure: the file is copied into the Nix store, so the flake fully
+# describes the result.
+home.file.".vimrc".source = ./dotfiles/vimrc;
+xdg.configFile."niri/config.kdl".source = ./dotfiles/niri.kdl;
+```
+
+The file stays a real file on disk, so your editor's LSP, syntax highlighting
+and formatter all work on it, and upstream documentation maps to it 1:1. Use
+this whenever no native module exists, or when the upstream format is large or
+awkward to express as Nix.
+
+**3. Escape hatch — `mkOutOfStoreSymlink`**
+
+```nix
 home.file.".vimrc".source =
   config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/.vimrc";
+```
 
-# ✅ GOOD - Pure configuration
+This symlinks to a path **outside** the Nix store, so edits take effect without
+a rebuild — genuinely useful while iterating on a config. The trade-off is real
+and worth stating plainly: the flake no longer describes the result, the target
+must already exist at that path on every machine, and a fresh clone will not
+reproduce your setup. Reach for it deliberately, not by default.
+
+**4. Avoid for anything sizeable — a long inline `.text` block**
+
+```nix
+# ❌ Fine for three lines. Miserable at a hundred.
 home.file.".vimrc".text = ''
-  " Vim configuration
   set number
   set expandtab
 '';
 ```
+
+Inside a Nix string you lose LSP, syntax highlighting and formatters for the
+embedded language; everything sits one indent level in; `''` and `${` need
+escaping; and when something breaks you debug the generated file and then walk
+back to the Nix source. A handful of lines is fine. A hundred-line block is a
+worse outcome than either option 1 or option 2.
+
+> **Note:** an earlier version of this guide presented a long inline `.text`
+> block as the "good" fix for `mkOutOfStoreSymlink`. That was wrong, and
+> community feedback rightly pushed back. The real distinction is _in the store
+> versus out of it_ — `.source = ./file` is pure **and** keeps a real file, so
+> it fixes the purity problem without inheriting the ergonomics problem.
 
 ---
 

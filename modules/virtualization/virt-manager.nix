@@ -67,11 +67,6 @@ in
         description = "Install Nautilus integration for GNOME Files";
       };
 
-      dolphin = mkOption {
-        type = types.bool;
-        default = false;
-        description = "Install Dolphin integration for KDE";
-      };
     };
 
     extraPackages = mkOption {
@@ -245,11 +240,6 @@ in
         {
           gnome-initial-setup.enable = mkDefault true;
         };
-
-    # KDE specific integrations
-    programs.kde = mkIf (cfg.integrations.dolphin && config.services.desktopManager.plasma6.enable) {
-      kdeconnect.enable = mkDefault true;
-    };
 
     # Font packages for better VM display
     fonts.packages = with pkgs; [
