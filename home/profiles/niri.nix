@@ -14,7 +14,6 @@
 
     # Terminal emulators
     alacritty
-    foot # Lightweight Wayland terminal
 
     # File managers
     thunar
@@ -222,44 +221,6 @@
   };
 
   # Foot terminal (alternative lightweight terminal)
-  programs.foot = {
-    enable = true;
-    settings = {
-      main = {
-        term = "xterm-256color";
-        font = "JetBrains Mono:size=12";
-        dpi-aware = "yes";
-        pad = "8x8";
-      };
-
-      mouse = {
-        hide-when-typing = "yes";
-      };
-
-      colors = {
-        background = "1e1e2e";
-        foreground = "cdd6f4";
-
-        regular0 = "45475a"; # black
-        regular1 = "f38ba8"; # red
-        regular2 = "a6e3a1"; # green
-        regular3 = "f9e2af"; # yellow
-        regular4 = "89b4fa"; # blue
-        regular5 = "f5c2e7"; # magenta
-        regular6 = "94e2d5"; # cyan
-        regular7 = "bac2de"; # white
-
-        bright0 = "585b70"; # bright black
-        bright1 = "f38ba8"; # bright red
-        bright2 = "a6e3a1"; # bright green
-        bright3 = "f9e2af"; # bright yellow
-        bright4 = "89b4fa"; # bright blue
-        bright5 = "f5c2e7"; # bright magenta
-        bright6 = "94e2d5"; # bright cyan
-        bright7 = "a6adc8"; # bright white
-      };
-    };
-  };
 
   # Waybar configuration (handled by system module but can be customized)
   programs.waybar = {
@@ -529,7 +490,7 @@
   # niri itself, as structured settings from niri-flake's Home Manager module.
   #
   # This replaces a 228-line KDL blob that modules/desktop/niri.nix wrote to
-  # /etc/niri/config.kdl. neither nixpkgs nor home-manager ships a niri module,
+  # /etc/niri/config.kdl. Neither nixpkgs nor home-manager ships a niri module,
   # which is why that string existed; niri-flake supplies one, so the config is
   # now typed and a host can override a single binding.
   programs.niri = {

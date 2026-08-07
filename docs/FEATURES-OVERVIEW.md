@@ -56,7 +56,6 @@ This template provides a **complete NixOS ecosystem** covering the entire workfl
 - **GNOME**: Full Wayland desktop with modern applications
 - **niri**: Scrollable-tiling Wayland compositor, configured via niri-flake
 - **Hyprland**: Tiling window manager with Waybar
-- **Niri**: Scrollable tiling window manager
 
 ### Non-NixOS User Support
 

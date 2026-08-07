@@ -48,9 +48,10 @@
         telegram-desktop
 
         # File managers and utilities.
-        # One per job: the GNOME and KDE modules install their own desktop's
-        # apps, so this DE-neutral collection deliberately does not ship a
-        # second file manager, terminal, viewer or browser alongside them.
+        # One per job: the GNOME module installs its own desktop's apps, and the
+        # Hyprland and niri profiles bring their own terminal and launcher, so
+        # this DE-neutral collection ships a single file manager, terminal,
+        # image viewer and PDF viewer rather than one per desktop.
         thunar # Lightweight, desktop-agnostic file manager
         file-roller # Archive manager
         gparted # Partition manager
