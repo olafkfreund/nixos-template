@@ -709,11 +709,9 @@ in
 
         # Application launcher (fuzzel works great with niri)
         fuzzel # Fast application launcher
-        wofi # Alternative launcher
 
         # Terminal emulators
         alacritty # Default terminal
-        foot # Lightweight Wayland terminal
 
         # File manager
         thunar # File manager

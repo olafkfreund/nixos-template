@@ -11,7 +11,6 @@
 
     # Application launcher (fuzzel is great for niri)
     fuzzel
-    wofi
 
     # Terminal emulators
     alacritty
@@ -19,7 +18,6 @@
 
     # File managers
     thunar
-    nautilus
 
     # Screenshot and screen recording
     grim

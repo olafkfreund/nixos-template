@@ -11,15 +11,12 @@
 
     # Application launcher and menus
     wofi
-    rofi
 
     # Terminal emulators
     alacritty
-    kitty
 
     # File managers
     thunar
-    nautilus
 
     # Screenshot and screen recording
     grim

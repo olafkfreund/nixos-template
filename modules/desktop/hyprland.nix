@@ -258,11 +258,9 @@ in
 
           # Application launcher and menus
           wofi # Application launcher
-          rofi # Alternative launcher
 
           # Terminal
           alacritty # Default terminal
-          kitty # Alternative terminal
 
           # File manager
           thunar # File manager
@@ -275,7 +273,6 @@ in
 
           # Wallpaper
           swaybg # Wallpaper setter
-          hyprpaper # Hyprland wallpaper daemon
 
           # System utilities
           brightnessctl # Brightness control

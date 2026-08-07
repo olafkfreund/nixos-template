@@ -37,7 +37,7 @@ in
       gnome-tour
       epiphany # Web browser
       geary # Email
-      totem # Video player
+      showtime # Video player (replaced totem in GNOME 48+)
     ];
 
     # Essential GNOME applications
