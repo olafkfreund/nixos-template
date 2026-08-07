@@ -85,7 +85,6 @@ nixos-template/
 ├── flake.nix              # Flake inputs, outputs, and nixosConfigurations
 ├── lib/                   # Helper functions
 │   ├── flake-utils.nix    # Configuration factory (mkSystem, allConfigurations)
-│   ├── mkHost.nix         # Per-host builder
 │   ├── deployment-images.nix  # Multi-platform image generation
 │   └── darwin-configs.nix # nix-darwin helpers
 ├── modules/               # Shared NixOS modules (core, desktop, GPU, services…)

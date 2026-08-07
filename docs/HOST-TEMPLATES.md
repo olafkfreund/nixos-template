@@ -89,8 +89,8 @@ modules still gives you a desktop.
 - a `flakeMeta` module providing `/etc/nixos/flake-metadata.json`, the
   `NIXOS_*` environment variables and the `nixos-info` command
 
-`homeProfiles` is passed via `specialArgs`, so a host's `home.nix` can refer to
-the shared Home Manager profiles without relative paths.
+A host's `home.nix` imports the shared Home Manager profiles by relative path,
+e.g. `../../home/profiles/desktop.nix`.
 
 ---
 
@@ -176,14 +176,20 @@ sudo nixos-rebuild switch --flake .#my-desktop
 
 ---
 
-## A caveat worth knowing
+## Presets
 
-`hosts/*/configuration.nix` in this repository imports `../../modules`, which
-imports **every** module directory including `modules/profiles/`, and
-`modules/profiles/default.nix` imports `workstation.nix` unconditionally.
-`workstation.nix` is not guarded by an enable option, so its desktop package set
-applies to any host that imports `../../modules` — including `server-template`.
+For a whole machine type in one line, import `../../modules/presets` and pick
+one:
 
-If you are building a genuinely minimal server, import the specific module
-directories you want instead of `../../modules`. `hosts/wsl2-template/configuration.nix`
-shows that selective-import style.
+```nix
+modules.presets = {
+  enable = true;
+  preset = "workstation";   # workstation | laptop | server | vm | gaming
+};
+```
+
+`desktop-template` and the `test-*` hosts work this way. Earlier versions also
+had a `modules/profiles/` directory doing the same job for one host; it was
+imported unconditionally by `modules/default.nix`, so its desktop package set
+landed on every host including servers. It has been removed in favour of
+presets.
