@@ -7,7 +7,6 @@
     ./gaming
     ./hardware
     ./presets
-    ./profiles
     ./security
     ./services
     ./virtualization

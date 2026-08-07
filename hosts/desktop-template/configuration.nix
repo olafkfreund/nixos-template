@@ -15,8 +15,15 @@
     ../../modules/hardware/power-management.nix
     ../../modules/gaming
     ../../modules/development
-    ../../modules/profiles/workstation.nix # Contains all the packages and common configs
+    ../../modules/presets
   ];
+
+  # Everything a workstation needs -- packages, services, virtualisation --
+  # comes from the preset. Override any of it below.
+  modules.presets = {
+    enable = true;
+    preset = "workstation";
+  };
 
   # System identification
   systemId = {
@@ -117,6 +124,23 @@
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # Home Manager integration - simplified
+  # Defined here rather than inherited from a shared module, matching
+  # laptop-template and server-template.
+  users.users.user = {
+    isNormalUser = true;
+    description = "Desktop User";
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+      "audio"
+      "video"
+      "docker"
+      "libvirtd"
+      "plugdev"
+    ];
+    group = "users";
+  };
+
   home-manager.users.user = import ./home.nix;
 
   # System maintenance

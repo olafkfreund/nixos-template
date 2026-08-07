@@ -27,6 +27,8 @@ in
 
     # Module configuration
     modules = {
+      packages.gaming.enable = true;
+
       # Maximum performance hardware configuration
       hardware.power-management = lib.mkDefault {
         enable = true;
