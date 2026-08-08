@@ -7,11 +7,9 @@
     ./gaming
     ./hardware
     ./presets
-    ./profiles
     ./security
     ./services
     ./virtualization
-    ./wsl
     ./template.nix
   ];
 }

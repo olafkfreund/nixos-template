@@ -141,21 +141,13 @@ modules.core.nixOptimization = {
 Secure configuration management with age encryption:
 
 ```nix
-# In your configuration
-sops = {
-  defaultSopsFile = ./secrets/secrets.yaml;
-  age.keyFile = "/var/lib/sops-nix/key.txt";
-
-  secrets = {
-    "database/password" = {
-      owner = "postgres";
-      group = "postgres";
-    };
-    "api/secret-key" = {
-      owner = "webapp";
-      mode = "0400";
-    };
-  };
+# In your configuration. This template uses agenix, not sops-nix:
+# secrets are age-encrypted in the repository and decrypted to tmpfs at
+# boot, never into the Nix store.
+age.secrets."database/password" = {
+  file = ./secrets/database-password.age;
+  owner = "postgres";
+  mode = "0400";
 };
 ```
 
@@ -435,7 +427,7 @@ modules = {
 
 ### From Basic Template
 
-1. Update your flake inputs to include sops-nix
+1. Update your flake inputs (agenix is already included)
 1. Import new modules in your configuration
 1. Enable desired features gradually
 1. Test in VM before deploying to production

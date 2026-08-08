@@ -18,7 +18,6 @@
     ../../modules/hardware
     ../../modules/services
     ../../modules/virtualization
-    # Skip WSL modules for now: ../../modules/wsl
   ];
 
   # System identification

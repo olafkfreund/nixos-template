@@ -32,11 +32,6 @@ NixOS on WSL2 provides a complete declarative Linux development environment that
 
 The template includes dedicated WSL2 modules:
 
-- **`modules/wsl/interop.nix`** - Windows application integration, clipboard, file associations
-- **`modules/wsl/networking.nix`** - Network optimizations, firewall configuration, diagnostics
-- **`modules/wsl/optimization.nix`** - Performance tuning for memory, filesystem, services
-- **`modules/wsl/systemd.nix`** - Systemd service optimizations for WSL2 environment
-
 ### Benefits
 
 - **Declarative Configuration** - Reproducible development environments with version control
