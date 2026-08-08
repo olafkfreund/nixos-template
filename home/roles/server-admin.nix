@@ -97,7 +97,7 @@
 
     # Git with server-focused settings
     git = {
-      extraConfig = {
+      settings = {
         core.editor = "vim"; # Vim is more common on servers
         user.useConfigOnly = true; # Require explicit user config
       };

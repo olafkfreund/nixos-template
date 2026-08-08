@@ -90,9 +90,11 @@
 
     # Suspend on low battery
     logind = {
-      powerKey = "suspend";
-      lidSwitch = "suspend";
-      lidSwitchExternalPower = "ignore";
+      settings.Login = {
+        HandlePowerKey = "suspend";
+        HandleLidSwitch = "suspend";
+        HandleLidSwitchExternalPower = "ignore";
+      };
     };
   };
 

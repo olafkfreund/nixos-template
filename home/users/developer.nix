@@ -31,10 +31,11 @@
     # Enhanced Git configuration for development
     git = {
       enable = true;
-      settings.user.name = "Developer Name";
-      settings.user.email = "developer@example.com";
 
-      extraConfig = {
+      settings = {
+        user.name = "Developer Name";
+        user.email = "developer@example.com";
+
         init.defaultBranch = "main";
         pull.rebase = true;
         push.autoSetupRemote = true;

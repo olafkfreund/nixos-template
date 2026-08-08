@@ -70,15 +70,17 @@
       "*.temp"
       "*.log"
     ];
+  };
 
-    # Delta for better diff viewing
-    delta = {
-      enable = lib.mkDefault true;
-      options = {
-        navigate = true;
-        line-numbers = true;
-        syntax-theme = "Dracula";
-      };
+  # Delta is its own module now; programs.git.delta.* was renamed, and the
+  # automatic git integration is deprecated in favour of setting it explicitly.
+  programs.delta = {
+    enable = lib.mkDefault true;
+    enableGitIntegration = lib.mkDefault true;
+    options = {
+      navigate = true;
+      line-numbers = true;
+      syntax-theme = "Dracula";
     };
   };
 }

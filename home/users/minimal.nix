@@ -18,10 +18,11 @@
     # Minimal Git configuration
     git = {
       enable = true;
-      settings.user.name = "Minimal User";
-      settings.user.email = "minimal@example.com";
 
-      extraConfig = {
+      settings = {
+        user.name = "Minimal User";
+        user.email = "minimal@example.com";
+
         init.defaultBranch = "main";
         pull.rebase = true;
         core.editor = "nano";

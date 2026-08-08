@@ -269,11 +269,12 @@ in
 
       # Laptop lid and power button handling
       logind = {
-        lidSwitch = mkIf (cfg.profile == "laptop") cfg.laptop.suspendMethod;
-        lidSwitchExternalPower = mkIf (cfg.profile == "laptop") "ignore";
+
         # `services.logind.extraConfig` was replaced by the structured
         # `services.logind.settings.Login` freeform option.
         settings.Login = mkIf (cfg.profile == "laptop") {
+          HandleLidSwitch = cfg.laptop.suspendMethod;
+          HandleLidSwitchExternalPower = "ignore";
           HandlePowerKey = "suspend";
           HandleSuspendKey = "suspend";
           HandleHibernateKey = "hibernate";
