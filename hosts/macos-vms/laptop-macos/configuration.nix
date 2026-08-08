@@ -356,8 +356,8 @@
       };
 
       programs.git = {
-        userName = "Laptop VM User";
-        userEmail = "laptop@vm.local";
+        settings.user.name = "Laptop VM User";
+        settings.user.email = "laptop@vm.local";
       };
 
       # Laptop-specific shell configuration

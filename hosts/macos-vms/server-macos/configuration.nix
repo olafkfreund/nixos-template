@@ -409,8 +409,8 @@
       };
 
       programs.git = {
-        userName = "Server Admin";
-        userEmail = "admin@server.local";
+        settings.user.name = "Server Admin";
+        settings.user.email = "admin@server.local";
       };
 
       # Server-specific shell configuration

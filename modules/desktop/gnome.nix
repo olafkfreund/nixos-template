@@ -14,10 +14,10 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    # Enable X11
-    services.xserver = {
-      enable = true;
-    };
+    # No `services.xserver.enable` here: GNOME 50 is Wayland-only, so an X
+    # server session is dead weight. XWayland is enabled explicitly instead, so
+    # X11-only apps (Steam, Discord, older Electron) still run.
+    programs.xwayland.enable = true;
 
     # Display manager. GNOME 50 is Wayland-only, so `gdm.wayland` is gone —
     # setting it is now a hard error rather than a no-op.

@@ -31,8 +31,8 @@
     # Enhanced Git configuration for development
     git = {
       enable = true;
-      userName = "Developer Name";
-      userEmail = "developer@example.com";
+      settings.user.name = "Developer Name";
+      settings.user.email = "developer@example.com";
 
       extraConfig = {
         init.defaultBranch = "main";

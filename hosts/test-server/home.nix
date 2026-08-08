@@ -16,8 +16,8 @@
 
   # User-specific git configuration
   programs.git = {
-    userName = "Test Server Admin";
-    userEmail = "admin@test-server.local";
+    settings.user.name = "Test Server Admin";
+    settings.user.email = "admin@test-server.local";
   };
 
   # Server-specific shell aliases

@@ -437,8 +437,8 @@
     };
 
     programs.git = {
-      userName = "Developer";
-      userEmail = "developer@example.com";
+      settings.user.name = "Developer";
+      settings.user.email = "developer@example.com";
     };
   };
 

@@ -22,8 +22,8 @@
 
   # Override git configuration with user-specific details (REQUIRED)
   programs.git = {
-    userName = "Your Name"; # Change to your name
-    userEmail = "your.email@example.com"; # Change to your email
+    settings.user.name = "Your Name"; # Change to your name
+    settings.user.email = "your.email@example.com"; # Change to your email
   };
 
   # WSL2-specific environment variables
@@ -99,7 +99,7 @@
     };
 
     # WSL2-specific Zsh configuration
-    initExtra = ''
+    initContent = ''
       # WSL2 environment setup
       export WSL_DISTRO_NAME=$(cat /proc/version | grep -oP 'Microsoft.*' | head -1 || echo "WSL2")
 

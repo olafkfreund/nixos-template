@@ -18,8 +18,8 @@
     # Minimal Git configuration
     git = {
       enable = true;
-      userName = "Minimal User";
-      userEmail = "minimal@example.com";
+      settings.user.name = "Minimal User";
+      settings.user.email = "minimal@example.com";
 
       extraConfig = {
         init.defaultBranch = "main";

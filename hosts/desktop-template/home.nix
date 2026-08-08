@@ -18,8 +18,8 @@
 
   # Override git configuration with host-specific details
   programs.git = {
-    userName = "Desktop User";
-    userEmail = "user@example.com";
+    settings.user.name = "Desktop User";
+    settings.user.email = "user@example.com";
   };
 
   # Desktop template-specific customizations

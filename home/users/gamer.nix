@@ -26,10 +26,10 @@
   # Basic Git configuration
   programs.git = {
     enable = true;
-    userName = "Gamer Name";
-    userEmail = "gamer@example.com";
 
     settings = {
+      user.email = "gamer@example.com";
+      user.name = "Gamer Name";
       init.defaultBranch = "main";
       pull.rebase = true;
       push.autoSetupRemote = true;

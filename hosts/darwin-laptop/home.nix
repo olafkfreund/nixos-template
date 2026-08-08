@@ -27,8 +27,8 @@
 
       # Override git configuration for Darwin laptop
       programs.git = {
-        userName = "Darwin Laptop User";
-        userEmail = "laptop-user@darwin-laptop.local";
+        settings.user.name = "Darwin Laptop User";
+        settings.user.email = "laptop-user@darwin-laptop.local";
 
         extraConfig = {
           # Mobile-optimized settings
@@ -103,7 +103,7 @@
       };
 
       # Darwin laptop-specific zsh enhancements
-      programs.zsh.initExtra = ''
+      programs.zsh.initContent = ''
         # Darwin laptop mobile optimizations
 
         # Check power source and optimize accordingly

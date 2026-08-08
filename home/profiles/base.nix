@@ -44,10 +44,10 @@ in
       enable = lib.mkDefault true;
 
       # Default user info - override in host-specific configs
-      userName = lib.mkDefault "User Name";
-      userEmail = lib.mkDefault "user@example.com";
 
       settings = {
+        user.email = lib.mkDefault "user@example.com";
+        user.name = lib.mkDefault "User Name";
         init.defaultBranch = "main";
         pull.rebase = true;
         push.autoSetupRemote = true;
@@ -111,7 +111,7 @@ in
         extended = true;
       };
 
-      initExtra = ''
+      initContent = ''
         # Better directory navigation
         setopt AUTO_PUSHD
         setopt PUSHD_IGNORE_DUPS

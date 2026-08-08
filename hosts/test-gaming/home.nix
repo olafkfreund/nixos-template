@@ -18,8 +18,8 @@
 
   # Override git configuration for gaming tests
   programs.git = {
-    userName = "Test Gamer";
-    userEmail = "gamer@test-gaming.local";
+    settings.user.name = "Test Gamer";
+    settings.user.email = "gamer@test-gaming.local";
   };
 
   # Gaming-specific environment optimizations

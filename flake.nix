@@ -299,13 +299,11 @@
               echo "  nixfmt, statix, deadnix, shellcheck, pre-commit"
               echo ""
 
-              # Setup pre-commit hooks if not already done
-              if [[ ! -f .git/hooks/pre-commit ]] && command -v pre-commit >/dev/null; then
-                echo "🔗 Setting up pre-commit hooks..."
-                pre-commit install --install-hooks
-                echo "✅ Pre-commit hooks installed"
-              fi
-
+              # Hooks are installed by git-hooks.nix below. There is deliberately
+              # no `pre-commit install` here: it read a separate
+              # .pre-commit-config.yaml and raced this shellHook for
+              # .git/hooks/pre-commit, so the repository had two competing hook
+              # sets and the one CI does not check usually won.
               ${pre-commit-check.${system}.shellHook or ""}
             '';
           };

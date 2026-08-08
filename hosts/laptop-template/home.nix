@@ -18,8 +18,8 @@
 
   # Override git configuration with host-specific details
   programs.git = {
-    userName = "Laptop User";
-    userEmail = "laptop-user@example.com";
+    settings.user.name = "Laptop User";
+    settings.user.email = "laptop-user@example.com";
   };
 
   # Laptop-specific environment variables

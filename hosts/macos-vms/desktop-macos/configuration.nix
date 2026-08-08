@@ -294,8 +294,8 @@
 
       # Git configuration (users should change this)
       programs.git = {
-        userName = "NixOS VM User";
-        userEmail = "nixos@vm.local";
+        settings.user.name = "NixOS VM User";
+        settings.user.email = "nixos@vm.local";
       };
 
       # VM-specific shell configuration

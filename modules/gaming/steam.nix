@@ -135,10 +135,18 @@ in
     # Assertions
     assertions = [
       {
+        # `programs.wayland.enable` is not a real option -- that namespace holds
+        # individual compositors -- so the old `or false` made this assertion
+        # blind to Wayland and it would reject any Wayland-only host.
         assertion =
           cfg.gamescopeSession.enable
-          -> config.services.xserver.enable || config.programs.wayland.enable or false;
-        message = "GameScope session requires either X11 or Wayland to be enabled";
+          -> (
+            config.programs.hyprland.enable
+            || config.programs.niri.enable
+            || config.services.desktopManager.gnome.enable
+            || config.services.xserver.enable
+          );
+        message = "GameScope session requires a graphical session (GNOME, Hyprland, niri, or X11)";
       }
     ];
 
