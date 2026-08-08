@@ -127,7 +127,11 @@ git commit --no-verify -m "commit message"
 
 ### Pre-commit Configuration
 
-- **`.pre-commit-config.yaml`** - Hook definitions and settings
+- **Hooks are defined in `flake.nix`** under `pre-commit-check`, using
+  [git-hooks.nix](https://github.com/cachix/git-hooks.nix). Entering `nix develop`
+  installs them, and `nix build .#checks.<system>.pre-commit-check` runs the same
+  set -- which is what CI enforces. There is no separate
+  `.pre-commit-config.yaml`; a second config meant two competing hook sets.
 - **`.markdownlint.yaml`** - Markdown linting rules
 
 ### Tool Behavior
@@ -287,7 +291,7 @@ just build example-desktop  # Test build
 
 ### Adding Custom Checks
 
-Edit `.pre-commit-config.yaml` to add new hooks:
+Add hooks to the `pre-commit-check` block in `flake.nix`:
 
 ```yaml
 - repo: local
@@ -303,7 +307,7 @@ Edit `.pre-commit-config.yaml` to add new hooks:
 
 - **Statix**: Create `statix.toml` for custom rules
 - **Deadnix**: Use command-line flags in justfile
-- **Pre-commit**: Modify `.pre-commit-config.yaml`
+- **Pre-commit**: Modify the `pre-commit-check` hooks in `flake.nix`
 
 ## Resources
 

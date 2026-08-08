@@ -7,11 +7,11 @@
     enable = lib.mkDefault true;
 
     # Default identity (override in host-specific config)
-    userName = lib.mkDefault "Change Me";
-    userEmail = lib.mkDefault "changeme@example.com";
 
     # Common git configuration
     settings = {
+      user.email = lib.mkDefault "changeme@example.com";
+      user.name = lib.mkDefault "Change Me";
       init.defaultBranch = "main";
       pull.rebase = true;
       push.autoSetupRemote = true;

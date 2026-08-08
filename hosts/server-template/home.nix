@@ -22,8 +22,8 @@
 
   # Override git configuration with host-specific details
   programs.git = {
-    userName = "Server Admin";
-    userEmail = "admin@example.com";
+    settings.user.name = "Server Admin";
+    settings.user.email = "admin@example.com";
   };
 
   # Server-specific environment variables

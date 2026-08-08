@@ -36,8 +36,8 @@
 
   # Override Git configuration for desktop use
   programs.git = {
-    userName = lib.mkForce "Desktop User";
-    userEmail = lib.mkForce "user@example.com";
+    settings.user.name = lib.mkForce "Desktop User";
+    settings.user.email = lib.mkForce "user@example.com";
     extraConfig = {
       credential.helper = "store";
       rerere.enabled = true;

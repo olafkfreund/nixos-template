@@ -26,8 +26,8 @@
       programs = {
         # Override git configuration for Darwin server administration
         git = {
-          userName = "Darwin Server Admin";
-          userEmail = "admin@darwin-server.local";
+          settings.user.name = "Darwin Server Admin";
+          settings.user.email = "admin@darwin-server.local";
         };
 
         # Darwin server-specific zsh configuration
@@ -64,7 +64,7 @@
           };
 
           # Darwin server-specific zsh enhancements
-          initExtra = ''
+          initContent = ''
             # Darwin server environment setup
             export SERVER_TYPE="darwin"
             export HOMEBREW_NO_AUTO_UPDATE=1

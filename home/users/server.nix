@@ -23,8 +23,8 @@
     # Server-focused Git configuration
     git = {
       enable = true;
-      userName = "Server Admin";
-      userEmail = "admin@example.com";
+      settings.user.name = "Server Admin";
+      settings.user.email = "admin@example.com";
 
       extraConfig = {
         init.defaultBranch = "main";

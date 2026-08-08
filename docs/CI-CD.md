@@ -217,9 +217,10 @@ just update-hooks
 
 ## Configuration Files
 
-### `.pre-commit-config.yaml`
+### Pre-commit hooks
 
-Pre-commit hook configuration with all quality checks.
+Defined in `flake.nix` under `pre-commit-check` via git-hooks.nix, so the
+hooks a contributor gets from `nix develop` are exactly the ones CI runs.
 
 ### `.markdownlint.json`
 

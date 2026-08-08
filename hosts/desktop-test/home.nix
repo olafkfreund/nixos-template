@@ -19,8 +19,8 @@
 
   # Override git configuration with host-specific details
   programs.git = {
-    userName = "VM User";
-    userEmail = "vm-user@example.com";
+    settings.user.name = "VM User";
+    settings.user.email = "vm-user@example.com";
   };
 
   # VM-specific shell customizations (extends base profile)

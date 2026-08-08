@@ -23,8 +23,8 @@
 
   # Override git configuration for VM testing
   programs.git = {
-    userName = "VM Test User";
-    userEmail = "vm-test@example.com";
+    settings.user.name = "VM Test User";
+    settings.user.email = "vm-test@example.com";
   };
 
   # VM-specific environment variables

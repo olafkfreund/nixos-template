@@ -202,3 +202,25 @@ just edit-secret api-key
 ```
 
 `just <recipe>` bypasses the menu entirely and runs immediately, so existing scripts and muscle memory continue to work without any changes.
+
+## Recipes not surfaced in the menu
+
+The menu covers the common path. A handful of recipes are only reachable
+directly, either because they take arguments the menu cannot prompt for or
+because they are niche. `just list` always shows the full set.
+
+| Recipe                                     | What it does                                     |
+| ------------------------------------------ | ------------------------------------------------ |
+| `just create-vm [host] [memory] [disk]`    | Create a QEMU VM with explicit resources         |
+| `just deploy-vm <host> <ip> [user]`        | Copy a built configuration to a running VM       |
+| `just build-vm-iso <host>`                 | Build an installation ISO for one host           |
+| `just vm-recommendations`                  | Suggest VM settings for the detected hardware    |
+| `just build-wsl2-home`                     | Build only the WSL2 Home Manager generation      |
+| `just create-macos-installer`              | Build a macOS-hosted installer image             |
+| `just apply-home-desktop <desktop> [user]` | Apply one desktop's Home Manager profile         |
+| `just copy-user-template <template>`       | Copy a user template into `home/users/`          |
+| `just validate-user <template>`            | Check a user template evaluates and is formatted |
+| `just compare-users <a> <b>`               | Diff two user templates                          |
+| `just new-secret <name>`                   | Create a new age-encrypted secret                |
+| `just show-decrypted`                      | Print decrypted secrets (use with care)          |
+| `just show-versions`                       | Show flake input versions and revisions          |

@@ -27,8 +27,8 @@
 
       # Override git configuration for Darwin desktop development
       programs.git = {
-        userName = "Darwin Desktop Developer";
-        userEmail = "developer@darwin-desktop.local";
+        settings.user.name = "Darwin Desktop Developer";
+        settings.user.email = "developer@darwin-desktop.local";
 
         extraConfig = {
           # VS Code integration for Darwin
@@ -97,7 +97,7 @@
       };
 
       # Darwin desktop-specific zsh enhancements
-      programs.zsh.initExtra = ''
+      programs.zsh.initContent = ''
         # Darwin desktop environment setup
 
         # Desktop-optimized FZF configuration

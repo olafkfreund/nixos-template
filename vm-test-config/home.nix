@@ -32,8 +32,8 @@
     # Git configuration
     git = {
       enable = true;
-      userName = "Your Name";
-      userEmail = "your.email@example.com";
+      settings.user.name = "Your Name";
+      settings.user.email = "your.email@example.com";
 
       extraConfig = {
         init.defaultBranch = "main";
