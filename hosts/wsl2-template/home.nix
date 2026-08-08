@@ -182,7 +182,7 @@
   };
 
   # WSL2-specific Git configuration
-  programs.git.extraConfig = {
+  programs.git.settings = {
     # Windows line ending handling
     core.autocrlf = "input";
     core.eol = "lf";

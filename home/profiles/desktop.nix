@@ -137,7 +137,7 @@
     };
 
     # Git configuration for desktop development
-    git.extraConfig = {
+    git.settings = {
       # Enhanced diff and merge tools for GUI environments
       diff.tool = "vscode";
       merge.tool = "vscode";

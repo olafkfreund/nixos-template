@@ -99,19 +99,26 @@
   programs.ssh = {
     enable = true;
 
-    extraConfig = ''
-      # VM-friendly SSH settings
-      Host *
-        ServerAliveInterval 60
-        ServerAliveCountMax 3
-        TCPKeepAlive yes
+    # Home Manager's implicit defaults are being removed upstream, so opt out
+    # and state what this VM actually wants.
+    enableDefaultConfig = false;
 
-      # Common VM access patterns
-      Host host hypervisor
-        HostName 10.0.2.2
-        User your-username
-        Port 22
-    '';
+    # `settings` takes upstream OpenSSH directive names; matchBlocks is
+    # deprecated. The attribute name becomes the `Host` line.
+    settings = {
+      "*" = {
+        ServerAliveInterval = 60;
+        ServerAliveCountMax = 3;
+        TCPKeepAlive = "yes";
+      };
+
+      # Reaching the hypervisor from inside a QEMU user-mode network
+      "host hypervisor" = {
+        HostName = "10.0.2.2";
+        User = "your-username";
+        Port = 22;
+      };
+    };
   };
 
   # VM-specific environment variables (extends base profile)

@@ -37,6 +37,10 @@
     };
   };
 
+  # The installer profile pulls in ZFS. `forceImportRoot = false` becomes the
+  # upstream default in 26.11 and reduces the risk of data loss, so set it now.
+  boot.zfs.forceImportRoot = false;
+
   # Set root password for installer (change this!)
   # Override the default locked password from core/users.nix for installer environments
   users.users.root = {

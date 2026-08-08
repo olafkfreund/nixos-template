@@ -20,10 +20,11 @@
     # Git configuration
     git = {
       enable = true;
-      settings.user.name = "User Name";
-      settings.user.email = "user@example.com";
 
-      extraConfig = {
+      settings = {
+        user.name = "User Name";
+        user.email = "user@example.com";
+
         init.defaultBranch = "main";
         pull.rebase = true;
         push.autoSetupRemote = true;

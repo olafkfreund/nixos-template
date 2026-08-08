@@ -60,8 +60,8 @@
     rclone
 
     # Lightweight alternatives (these live under the xfce package set)
-    xfce.mousepad # Lightweight text editor
-    xfce.thunar # Lightweight file manager
+    mousepad # Lightweight text editor
+    thunar # Lightweight file manager
   ];
 
   # Laptop-optimized bash aliases (extends base profile)
@@ -140,7 +140,7 @@
   '';
 
   # Laptop-optimized Git configuration for mobile work
-  programs.git.extraConfig = {
+  programs.git.settings = {
     # Laptop-specific Git optimizations
     core.preloadindex = true;
     core.fscache = true;
