@@ -4,11 +4,45 @@
   inputs,
   outputs,
   nixpkgs,
-  nixos-generators,
 }:
 
 let
   inherit (nixpkgs) lib;
+
+  # nixos-generators format names -> the equivalent in nixpkgs' own
+  # `system.build.images`, which replaced it upstream in NixOS 25.05.
+  formatModule = {
+    amazon = "amazon";
+    azure = "azure";
+    do = "digital-ocean";
+    iso = "iso";
+    lxc = "lxc";
+    qcow = "qemu";
+    virtualbox = "virtualbox";
+    vmware = "vmware";
+  };
+
+  # Build one image: evaluate the host, then take the format's output from
+  # `system.build.images`. This is what nixos-generators did, minus the
+  # dependency.
+  #
+  # The per-image settings go into `image.modules.<format>` rather than the base
+  # module list. `system.build.images.<format>` is a separate evaluation built
+  # with extendModules, so options a format declares -- `isoImage.*`, for
+  # instance -- only exist there. `image.modules` is a deferredModule, so this
+  # merges with the format module nixpkgs already puts there.
+  mkImage =
+    baseConfig: config:
+    let
+      fmt = formatModule.${config.format} or (throw "unknown image format: ${config.format}");
+      evaluated = nixpkgs.lib.nixosSystem (
+        baseConfig
+        // {
+          modules = baseConfig.modules ++ [ { image.modules.${fmt} = config.extraConfig; } ];
+        }
+      );
+    in
+    evaluated.config.system.build.images.${fmt};
 
   # Factory function to create deployment images
   mkDeploymentImages =
@@ -144,7 +178,11 @@ let
         lxc = {
           format = "lxc";
           extraConfig = {
-            # LXC container optimizations
+            # LXC container optimizations. modules/core/boot.nix turns on
+            # systemd-boot for every host; a container has no bootloader, and
+            # leaving both it and the container's init script enabled defines
+            # system.build.installBootLoader twice.
+            boot.loader.systemd-boot.enable = lib.mkForce false;
             boot.isContainer = true;
             services.openssh.enable = true;
             security.audit.enable = lib.mkForce false;
@@ -384,32 +422,10 @@ let
       };
 
       # Generate standard platform images
-      standardImages = lib.mapAttrs (
-        _name: config:
-        nixos-generators.nixosGenerate (
-          baseConfig
-          // {
-            inherit (config) format;
-            modules = baseConfig.modules ++ [
-              (_: config.extraConfig)
-            ];
-          }
-        )
-      ) platformConfigs;
+      standardImages = lib.mapAttrs (_name: mkImage baseConfig) platformConfigs;
 
       # Generate specialized images
-      specialImages = lib.mapAttrs (
-        _name: config:
-        nixos-generators.nixosGenerate (
-          baseConfig
-          // {
-            inherit (config) format;
-            modules = baseConfig.modules ++ [
-              (_: config.extraConfig)
-            ];
-          }
-        )
-      ) specializedImages;
+      specialImages = lib.mapAttrs (_name: mkImage baseConfig) specializedImages;
 
     in
     standardImages

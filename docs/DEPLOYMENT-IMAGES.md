@@ -368,7 +368,7 @@ sudo nix-collect-garbage -d
 ## Additional Resources
 
 - [NixOS Manual](https://nixos.org/manual/nixos/stable/)
-- [nixos-generators Documentation](https://github.com/nix-community/nixos-generators)
+- [NixOS image documentation](https://nixos.org/manual/nixos/stable/#sec-image-nixos-rebuild-build-image) — `system.build.images`, which replaced nixos-generators in NixOS 25.05
 - [NixOS Cloud Images](https://nixos.org/download#cloud-images)
 - [Deployment Best Practices](./ADVANCED-FEATURES.md)
 

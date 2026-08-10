@@ -56,10 +56,6 @@
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixos-generators = {
-      url = "github:nix-community/nixos-generators";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     # niri has no module in nixpkgs or home-manager, so its config would
     # otherwise have to be a hand-written KDL string. This provides both.
     niri = {
@@ -77,7 +73,6 @@
       treefmt-nix,
       git-hooks,
       nix-darwin,
-      nixos-generators,
       ...
     }@inputs:
     let
@@ -199,12 +194,7 @@
 
       # Import deployment images generator
       deploymentImages = import ./lib/deployment-images.nix {
-        inherit
-          inputs
-          outputs
-          nixpkgs
-          nixos-generators
-          ;
+        inherit inputs outputs nixpkgs;
       };
 
       # Import Darwin configurations generator
