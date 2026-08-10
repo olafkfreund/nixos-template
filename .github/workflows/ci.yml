@@ -58,7 +58,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        check: [statix-check, deadnix-check, shellcheck-check, treefmt, pre-commit-check]
+        check:
+          - statix-check
+          - deadnix-check
+          - shellcheck-check
+          - treefmt
+          - pre-commit-check
+          # Examples and `nix flake init` templates live outside any host, so
+          # nothing else evaluates them. These three do.
+          - disko-examples
+          - specialisation-examples
+          - templates-evaluate
     steps:
       - uses: actions/checkout@v5
       - name: Install Nix
@@ -99,6 +109,21 @@ jobs:
           - microvm
           - installer-minimal
           - installer-desktop
+          - installer-preconfigured
+          # The macOS-VM and macOS-installer hosts were absent from this list,
+          # so CI stayed green while five of them could not evaluate at all
+          # (a `environment.variables.EDITOR` conflict and a broken
+          # xf86-video-qxl). A host that nothing builds is a host that rots.
+          - desktop-macos
+          - desktop-macos-intel
+          - laptop-macos
+          - laptop-macos-intel
+          - server-macos
+          - server-macos-intel
+          - installer-minimal-macos
+          - installer-minimal-macos-aarch64
+          - installer-desktop-macos
+          - installer-desktop-macos-aarch64
     steps:
       - uses: actions/checkout@v5
       - name: Install Nix

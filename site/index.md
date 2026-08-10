@@ -21,11 +21,29 @@ curated foundation and override only what your machine needs.
 
 <div class="btn-row">
 <a class="btn btn-primary" href="{{ '/getting-started/' | relative_url }}">get started</a>
+<a class="btn" href="{{ '/docs/FAQ.html' | relative_url }}">faq</a>
 <a class="btn" href="{{ '/showcase/' | relative_url }}">see the code</a>
 <a class="btn" href="{{ '/usage/' | relative_url }}">the menu</a>
 <a class="btn" href="{{ '/documentation/' | relative_url }}">docs</a>
 <a class="btn" href="https://github.com/olafkfreund/nixos-template">github</a>
 </div>
+
+## ▸ new to nix? start small
+
+You do not have to fork this repository. Take a self-contained flake of four
+short files into your own repo instead:
+
+```
+nix flake init -t github:olafkfreund/nixos-template#minimal
+nix flake init -t github:olafkfreund/nixos-template#desktop
+```
+
+`minimal` is NixOS plus Home Manager, readable end to end in two minutes.
+`desktop` adds a Wayland GNOME session, PipeWire, and a LUKS-encrypted btrfs
+layout the graphical installer cannot give you. Come back here for modules to
+copy as you want them.
+
+<p><a class="btn" href="{{ '/docs/FAQ.html' | relative_url }}">read the FAQ first</a></p>
 
 ## ▸ see it in action
 

@@ -40,6 +40,22 @@
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Declarative disk partitioning. The graphical installer cannot express
+    # LUKS, LVM, btrfs subvolumes or ZFS, which is where most first installs
+    # get stuck; disko puts the whole layout in the flake instead.
+    # See hosts/examples/disko-*.nix and docs/DISK-SETUP.md.
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    # Per-model hardware quirks (Framework, ThinkPad, XPS, Surface, Pi, ...).
+    # `follows` matters here: left alone it locks a second full nixpkgs, and
+    # evaluating two nixpkgs alongside 25 hosts is what previously exhausted
+    # the CI runner's memory.
+    nixos-hardware = {
+      url = "github:NixOS/nixos-hardware";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -209,6 +225,90 @@
       };
     in
     {
+      # Starting points for your OWN repository, rather than a fork of this one.
+      #
+      #   nix flake init -t github:olafkfreund/nixos-template#minimal
+      #   nix flake init -t github:olafkfreund/nixos-template#desktop
+      #
+      # Each is a self-contained flake of four or five short files. Most people
+      # do not want to inherit 25 hosts and a preset system on day one; they
+      # want something they can read end to end and then grow.
+      templates = {
+        minimal = {
+          path = ./templates/minimal;
+          description = "NixOS + Home Manager in one readable flake";
+          welcomeText = ''
+            # Minimal NixOS configuration
+
+            Four files. Read them in any order; they are short.
+
+            **1.** Replace the placeholder hardware config, on the target machine:
+
+            ```
+            sudo nixos-generate-config --show-hardware-config > hardware-configuration.nix
+            ```
+
+            **2.** Pick a hostname. It appears twice and the two must match:
+            `networking.hostName` in `configuration.nix`, and
+            `nixosConfigurations.<name>` in `flake.nix`.
+
+            **3.** Replace the username `me` in `configuration.nix` and `home.nix`.
+
+            **4.** Commit first -- flakes ignore untracked files, so an
+            uncommitted file is invisible to the build:
+
+            ```
+            git init && git add -A
+            sudo nixos-rebuild switch --flake .#my-machine
+            ```
+
+            Want a Wayland desktop with an encrypted disk instead?
+
+            ```
+            nix flake init -t github:olafkfreund/nixos-template#desktop
+            ```
+          '';
+        };
+
+        desktop = {
+          path = ./templates/desktop;
+          description = "Wayland GNOME desktop with LUKS-encrypted btrfs (disko)";
+          welcomeText = ''
+            # NixOS desktop configuration
+
+            **`disko.nix` ERASES the disk it names.** Confirm the device first:
+
+            ```
+            lsblk -o NAME,SIZE,MODEL
+            ```
+
+            **1.** Set that device in `disko.nix` (it defaults to `/dev/nvme0n1`).
+
+            **2.** Generate your hardware config, then delete the `fileSystems`
+            and `swapDevices` blocks it writes -- `disko.nix` owns those, and two
+            modules defining `fileSystems."/"` is a conflict, not a merge:
+
+            ```
+            sudo nixos-generate-config --show-hardware-config > hardware-configuration.nix
+            ```
+
+            **3.** Replace the hostname `my-desktop` and the username `me`.
+
+            **4.** Partition and install:
+
+            ```
+            git init && git add -A
+            sudo nix run github:nix-community/disko/latest -- --mode destroy,format,mount ./disko.nix
+            sudo nixos-install --flake .#my-desktop
+            ```
+
+            On a supported laptop? Uncomment the matching `nixos-hardware`
+            module in `flake.nix` -- it fixes suspend, function keys and
+            firmware quirks that are tedious to work out yourself.
+          '';
+        };
+      };
+
       # Custom packages and modifications, exported as overlays
       overlays = import ./overlays { };
 
@@ -410,6 +510,152 @@
           ${nixpkgs.legacyPackages.${system}.shellcheck}/bin/shellcheck scripts/*.sh
           touch $out
         '';
+
+        # The `nix flake init -t` templates are nested flakes, so `nix flake
+        # check` never looks inside them -- they would silently rot against a
+        # renamed option and only break for the newcomer running the command
+        # from the README. Evaluate their modules here instead.
+        templates-evaluate =
+          let
+            inherit (nixpkgs) lib;
+            evalTemplate =
+              modules:
+              (lib.nixosSystem {
+                inherit system modules;
+              }).config.system.build.toplevel.drvPath;
+          in
+          nixpkgs.legacyPackages.${system}.runCommand "templates-evaluate" { } ''
+            # Referencing each drvPath forces full module evaluation; the
+            # `builtins.seq` keeps the store path itself out of $out.
+            echo ${
+              lib.escapeShellArg (
+                builtins.seq (evalTemplate [
+                  ./templates/minimal/configuration.nix
+                  ./templates/minimal/hardware-configuration.nix
+                ]) "ok minimal"
+              )
+            }
+            echo ${
+              lib.escapeShellArg (
+                builtins.seq (evalTemplate [
+                  inputs.disko.nixosModules.disko
+                  ./templates/desktop/configuration.nix
+                  ./templates/desktop/hardware-configuration.nix
+                  ./templates/desktop/disko.nix
+                ]) "ok desktop"
+              )
+            }
+            touch $out
+          '';
+
+        # Same reasoning as disko-examples: hosts/examples/specialisations.nix
+        # is imported by no host, so nothing would notice if an option under it
+        # were renamed. Assert the boot entries it promises actually exist.
+        specialisation-examples =
+          let
+            inherit (nixpkgs) lib;
+            evaluated =
+              (lib.nixosSystem {
+                inherit system;
+                modules = [
+                  ./hosts/examples/specialisations.nix
+                  ./templates/minimal/hardware-configuration.nix
+                  {
+                    boot.loader.systemd-boot.enable = true;
+                    system.stateVersion = "26.05";
+                    # nvidia-sync flips prime.sync on, which the module only
+                    # accepts alongside the bus IDs and the nvidia driver.
+                    services.xserver.videoDrivers = [ "nvidia" ];
+                    hardware.nvidia = {
+                      open = true;
+                      prime = {
+                        intelBusId = "PCI:0:2:0";
+                        nvidiaBusId = "PCI:1:0:0";
+                        offload.enable = true;
+                        offload.enableOffloadCmd = true;
+                      };
+                    };
+                    nixpkgs.config.allowUnfree = true;
+                  }
+                ];
+              }).config;
+            got = lib.attrNames evaluated.specialisation;
+            wanted = [
+              "nvidia-sync"
+              "rescue"
+            ];
+            missing = lib.subtractLists got wanted;
+          in
+          nixpkgs.legacyPackages.${system}.runCommand "specialisation-examples" { } ''
+            echo ${
+              lib.escapeShellArg (
+                if missing == [ ] then
+                  "ok specialisations: ${toString got}"
+                else
+                  throw "missing specialisations: ${toString missing}"
+              )
+            }
+            touch $out
+          '';
+
+        # The disko layouts in hosts/examples/ are imported by no host, which is
+        # exactly how the old vm-test-config/ rotted until it referenced a flake
+        # input that no longer existed. So evaluate them here: each layout is
+        # built into a throwaway nixosSystem and asserted to produce the mounts
+        # it claims. A typo'd option or a renamed disko attribute fails the PR.
+        disko-examples =
+          let
+            inherit (nixpkgs) lib;
+            mkDiskoHost =
+              layout:
+              lib.nixosSystem {
+                inherit system;
+                specialArgs = { inherit inputs; };
+                modules = [
+                  inputs.disko.nixosModules.disko
+                  layout
+                  {
+                    boot.loader.systemd-boot.enable = true;
+                    system.stateVersion = "26.05";
+                  }
+                ];
+              };
+            mountsOf = layout: lib.attrNames (mkDiskoHost layout).config.fileSystems;
+            # attrNames are plain strings, so nothing from the evaluated system
+            # leaks into this derivation's closure.
+            expect =
+              name: layout: wanted:
+              let
+                got = mountsOf layout;
+                missing = lib.subtractLists got wanted;
+              in
+              if missing == [ ] then
+                "ok ${name}: ${toString got}"
+              else
+                throw "disko example ${name} is missing mountpoints: ${toString missing}";
+          in
+          nixpkgs.legacyPackages.${system}.runCommand "disko-examples" { } ''
+            echo ${
+              lib.escapeShellArg (
+                expect "disko-simple" ./hosts/examples/disko-simple.nix [
+                  "/"
+                  "/boot"
+                ]
+              )
+            }
+            echo ${
+              lib.escapeShellArg (
+                expect "disko-luks-btrfs" ./hosts/examples/disko-luks-btrfs.nix [
+                  "/"
+                  "/boot"
+                  "/home"
+                  "/nix"
+                  "/persist"
+                ]
+              )
+            }
+            touch $out
+          '';
 
         # VM Integration Tests (minimal configuration to avoid circular dependencies)
         vm-test-desktop = nixpkgs.legacyPackages.${system}.testers.runNixOSTest {

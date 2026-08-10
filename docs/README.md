@@ -8,8 +8,10 @@ All extended documentation for the NixOS template lives here. The [main README](
 
 | File                                         | Description                                                                 |
 | -------------------------------------------- | --------------------------------------------------------------------------- |
+| [FAQ.md](FAQ.md)                             | **Start here.** The questions new users actually hit, answered              |
 | [MENU.md](MENU.md)                           | The `just` menu — interactive control panel for all ~150 recipes            |
 | [SETUP.md](SETUP.md)                         | Detailed first-time setup walkthrough                                       |
+| [DISK-SETUP.md](DISK-SETUP.md)               | Declarative partitioning with disko, including LUKS full-disk encryption    |
 | [HOST-TEMPLATES.md](HOST-TEMPLATES.md)       | All host types (desktop/server/laptop/VM/gaming) and flake.nix registration |
 | [USER-TEMPLATES.md](USER-TEMPLATES.md)       | Home Manager user profiles and customisation                                |
 | [NON-NIXOS-USAGE.md](NON-NIXOS-USAGE.md)     | Using the template on Windows or macOS without a native NixOS install       |
