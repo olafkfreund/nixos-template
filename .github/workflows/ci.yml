@@ -114,6 +114,39 @@ jobs:
           nix build --dry-run --show-trace \
             ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel"
   # ---------------------------------------------------------------------------
+  # Standalone Home Manager generations. These are not flake checks: mkHome
+  # calls `import nixpkgs` to set allowUnfree, so each one is a second full
+  # nixpkgs evaluation and folding them into `nix flake check` alongside 25
+  # hosts exhausted the runner. One per runner keeps them covered.
+  # ---------------------------------------------------------------------------
+  home:
+    name: Home ${{ matrix.home }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        home:
+          - "user@desktop-template"
+          - "user@laptop-template"
+          - "user@server-template"
+          - "nixos@wsl2-template"
+          - "vm-user@desktop-test"
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+            extra-substituters = https://nix-community.cachix.org
+            extra-trusted-public-keys = nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
+      - name: Build ${{ matrix.home }}
+        run: |
+          nix build --dry-run --show-trace \
+            '.#homeConfigurations."${{ matrix.home }}".activationPackage'
+  # ---------------------------------------------------------------------------
   # The dev shell is the documented entry point ("nix develop"), so prove it
   # builds and that the tooling the docs promise is actually on PATH.
   # ---------------------------------------------------------------------------
@@ -233,7 +266,7 @@ jobs:
   ci-passed:
     name: CI passed
     if: always()
-    needs: [evaluate, quality, hosts, devshell, vm-tests, site]
+    needs: [evaluate, quality, hosts, home, devshell, vm-tests, site]
     runs-on: ubuntu-latest
     steps:
       - name: Fail if any job did not succeed

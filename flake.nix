@@ -375,178 +375,172 @@
 
       # Checks for CI/CD and development
       # Available through 'nix flake check'
-      checks = forAllSystems (
-        system:
-        {
-          # Pre-commit hooks check
-          pre-commit-check = pre-commit-check.${system};
+      checks = forAllSystems (system: {
+        # Pre-commit hooks check
+        pre-commit-check = pre-commit-check.${system};
 
-          # Treefmt formatting check
-          treefmt = treefmtEval.${system}.config.build.check self;
+        # Treefmt formatting check
+        treefmt = treefmtEval.${system}.config.build.check self;
 
-          # NOTE: there is deliberately no "run `nix flake check` inside a check"
-          # derivation here. Nix cannot invoke itself inside the build sandbox
-          # (no daemon, no network), so such a check can only ever fail. The
-          # per-host evaluation it was meant to provide already happens: `nix flake
-          # check` evaluates every entry in `nixosConfigurations` natively.
+        # NOTE: there is deliberately no "run `nix flake check` inside a check"
+        # derivation here. Nix cannot invoke itself inside the build sandbox
+        # (no daemon, no network), so such a check can only ever fail. The
+        # per-host evaluation it was meant to provide already happens: `nix flake
+        # check` evaluates every entry in `nixosConfigurations` natively.
 
-          # Statix linting
-          statix-check = nixpkgs.legacyPackages.${system}.runCommand "statix-check" { } ''
-            cd ${self}
-            ${nixpkgs.legacyPackages.${system}.statix}/bin/statix check .
-            touch $out
-          '';
+        # Statix linting
+        statix-check = nixpkgs.legacyPackages.${system}.runCommand "statix-check" { } ''
+          cd ${self}
+          ${nixpkgs.legacyPackages.${system}.statix}/bin/statix check .
+          touch $out
+        '';
 
-          # Deadnix check
-          deadnix-check = nixpkgs.legacyPackages.${system}.runCommand "deadnix-check" { } ''
-            cd ${self}
-            ${nixpkgs.legacyPackages.${system}.deadnix}/bin/deadnix --fail .
-            touch $out
-          '';
+        # Deadnix check
+        deadnix-check = nixpkgs.legacyPackages.${system}.runCommand "deadnix-check" { } ''
+          cd ${self}
+          ${nixpkgs.legacyPackages.${system}.deadnix}/bin/deadnix --fail .
+          touch $out
+        '';
 
-          # Shell script validation. `-S warning` keeps real problems failing the
-          # build while ignoring info-level notes such as SC2016, which fires on
-          # help text that deliberately prints a literal `$USER`.
-          shellcheck-check = nixpkgs.legacyPackages.${system}.runCommand "shellcheck-check" { } ''
-            cd ${self}
-            ${nixpkgs.legacyPackages.${system}.shellcheck}/bin/shellcheck scripts/*.sh
-            touch $out
-          '';
+        # Shell script validation. `-S warning` keeps real problems failing the
+        # build while ignoring info-level notes such as SC2016, which fires on
+        # help text that deliberately prints a literal `$USER`.
+        shellcheck-check = nixpkgs.legacyPackages.${system}.runCommand "shellcheck-check" { } ''
+          cd ${self}
+          ${nixpkgs.legacyPackages.${system}.shellcheck}/bin/shellcheck scripts/*.sh
+          touch $out
+        '';
 
-          # VM Integration Tests (minimal configuration to avoid circular dependencies)
-          vm-test-desktop = nixpkgs.legacyPackages.${system}.testers.runNixOSTest {
-            name = "nixos-template-desktop-test";
-            nodes.machine = { pkgs, ... }: {
-              # Minimal test configuration - no complex module imports
+        # VM Integration Tests (minimal configuration to avoid circular dependencies)
+        vm-test-desktop = nixpkgs.legacyPackages.${system}.testers.runNixOSTest {
+          name = "nixos-template-desktop-test";
+          nodes.machine = { pkgs, ... }: {
+            # Minimal test configuration - no complex module imports
 
-              # Basic system setup
-              boot.loader.systemd-boot.enable = true;
-              boot.loader.efi.canTouchEfiVariables = true;
+            # Basic system setup
+            boot.loader.systemd-boot.enable = true;
+            boot.loader.efi.canTouchEfiVariables = true;
 
-              # Network
-              networking.hostName = "desktop-test";
-              networking.networkmanager.enable = true;
+            # Network
+            networking.hostName = "desktop-test";
+            networking.networkmanager.enable = true;
 
-              # User for testing
-              users.users.nixos = {
-                isNormalUser = true;
-                extraGroups = [
-                  "wheel"
-                  "networkmanager"
-                ];
-                password = "test";
-              };
-
-              # Essential packages for testing
-              environment.systemPackages = with pkgs; [
-                git
-                vim
-                curl
-                wget
+            # User for testing
+            users.users.nixos = {
+              isNormalUser = true;
+              extraGroups = [
+                "wheel"
+                "networkmanager"
               ];
-
-              # System state version
-              system.stateVersion = "26.05";
+              password = "test";
             };
-            testScript = ''
-              machine.start()
-              machine.wait_for_unit("multi-user.target")
 
-              # Test essential services
-              machine.succeed("systemctl is-active NetworkManager")
+            # Essential packages for testing
+            environment.systemPackages = with pkgs; [
+              git
+              vim
+              curl
+              wget
+            ];
 
-              # Test basic tools are available
-              machine.succeed("which git")
-              machine.succeed("which vim")
-
-              # Test user exists
-              machine.succeed("id nixos")
-
-              machine.shutdown()
-            '';
+            # System state version
+            system.stateVersion = "26.05";
           };
+          testScript = ''
+            machine.start()
+            machine.wait_for_unit("multi-user.target")
 
-          vm-test-server = nixpkgs.legacyPackages.${system}.testers.runNixOSTest {
-            name = "nixos-template-server-test";
-            nodes.machine = { pkgs, ... }: {
-              # Minimal server test configuration - no complex module imports
+            # Test essential services
+            machine.succeed("systemctl is-active NetworkManager")
 
-              # Basic system setup
-              boot.loader.systemd-boot.enable = true;
-              boot.loader.efi.canTouchEfiVariables = true;
+            # Test basic tools are available
+            machine.succeed("which git")
+            machine.succeed("which vim")
 
-              # Network and firewall
-              networking = {
-                hostName = "server-test";
-                firewall = {
-                  enable = true;
-                  allowedTCPPorts = [ 22 ];
-                };
-              };
+            # Test user exists
+            machine.succeed("id nixos")
 
-              # SSH service for server testing
-              services.openssh = {
+            machine.shutdown()
+          '';
+        };
+
+        vm-test-server = nixpkgs.legacyPackages.${system}.testers.runNixOSTest {
+          name = "nixos-template-server-test";
+          nodes.machine = { pkgs, ... }: {
+            # Minimal server test configuration - no complex module imports
+
+            # Basic system setup
+            boot.loader.systemd-boot.enable = true;
+            boot.loader.efi.canTouchEfiVariables = true;
+
+            # Network and firewall
+            networking = {
+              hostName = "server-test";
+              firewall = {
                 enable = true;
-                settings.PasswordAuthentication = true; # For testing only
+                allowedTCPPorts = [ 22 ];
               };
-
-              # Test user
-              users.users.nixos = {
-                isNormalUser = true;
-                extraGroups = [ "wheel" ];
-                password = "test";
-              };
-
-              # Essential server packages for testing
-              environment.systemPackages = with pkgs; [
-                git
-                vim
-                curl
-                wget
-                htop
-              ];
-
-              # System state version
-              system.stateVersion = "26.05";
             };
-            testScript = ''
-              machine.start()
-              machine.wait_for_unit("multi-user.target")
 
-              # Test SSH service
-              machine.wait_for_unit("sshd.service")
-              machine.succeed("systemctl is-active sshd")
+            # SSH service for server testing
+            services.openssh = {
+              enable = true;
+              settings.PasswordAuthentication = true; # For testing only
+            };
 
-              # Test firewall is running
-              machine.succeed("systemctl is-active firewall")
+            # Test user
+            users.users.nixos = {
+              isNormalUser = true;
+              extraGroups = [ "wheel" ];
+              password = "test";
+            };
 
-              # Test server tools are available
-              machine.succeed("which htop")
-              machine.succeed("which curl")
+            # Essential server packages for testing
+            environment.systemPackages = with pkgs; [
+              git
+              vim
+              curl
+              wget
+              htop
+            ];
 
-              machine.shutdown()
-            '';
+            # System state version
+            system.stateVersion = "26.05";
           };
+          testScript = ''
+            machine.start()
+            machine.wait_for_unit("multi-user.target")
 
-          # NOTE: `config-syntax-check`, `module-dependency-check` and
-          # `security-check` used to live here. Each one ended in an unconditional
-          # `echo "✅ ..."; touch $out`, so all three passed no matter what they
-          # found — `config-syntax-check` only echoed host names without evaluating
-          # anything. A check that cannot fail is worse than no check, because it
-          # reads as coverage. Real evaluation coverage comes from `nix flake
-          # check` walking `nixosConfigurations`, and real linting from
-          # statix/deadnix/shellcheck above.
-        }
-        # Build the WSL2 outputs for real, by referring to the derivations
-        # directly. (The previous version shelled out to `nix build` inside a
-        # sandboxed derivation, which can never work.)
-        // nixpkgs.lib.optionalAttrs (system == "x86_64-linux") {
-          # Only the standalone Home Manager generation is checked here. The
-          # WSL2 system itself is instantiated by the `hosts` matrix in CI, so
-          # a `wsl2-config` check would evaluate the same derivation twice in
-          # one process.
-          wsl2-home = self.homeConfigurations."nixos@wsl2-template".activationPackage;
-        }
-      );
+            # Test SSH service
+            machine.wait_for_unit("sshd.service")
+            machine.succeed("systemctl is-active sshd")
+
+            # Test firewall is running
+            machine.succeed("systemctl is-active firewall")
+
+            # Test server tools are available
+            machine.succeed("which htop")
+            machine.succeed("which curl")
+
+            machine.shutdown()
+          '';
+        };
+
+        # NOTE: `config-syntax-check`, `module-dependency-check` and
+        # `security-check` used to live here. Each one ended in an unconditional
+        # `echo "✅ ..."; touch $out`, so all three passed no matter what they
+        # found — `config-syntax-check` only echoed host names without evaluating
+        # anything. A check that cannot fail is worse than no check, because it
+        # reads as coverage. Real evaluation coverage comes from `nix flake
+        # check` walking `nixosConfigurations`, and real linting from
+        # statix/deadnix/shellcheck above.
+
+        # NOTE: the standalone homeConfigurations are deliberately not checks.
+        # mkHome calls `import nixpkgs` to set allowUnfree, so each one is a
+        # second full nixpkgs evaluation; pulling them into `nix flake check`
+        # on top of 25 hosts exhausted the CI runner and nix was killed. CI
+        # builds them on their own runners instead -- see the `home` matrix in
+        # .github/workflows/ci.yml.
+      });
     };
 }
