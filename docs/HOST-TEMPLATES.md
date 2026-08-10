@@ -42,8 +42,8 @@ nixosConfigurations = flakeUtils.allConfigurations // {
 };
 ```
 
-Starting points in `hosts/`: `desktop-template`, `laptop-template`,
-`server-template`, `wsl2-template`.
+Starting points in `hosts/`: `desktop-template` (GNOME), `hyprland-template`,
+`niri-template`, `laptop-template`, `server-template`, `wsl2-template`.
 
 ---
 

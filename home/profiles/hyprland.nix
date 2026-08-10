@@ -206,19 +206,8 @@
     systemd.enable = true;
   };
 
-  # Mako notification daemon (alternative to dunst)
-  services.mako = {
-    enable = false; # Using dunst from system config by default
-    backgroundColor = "#1e1e2e";
-    borderColor = "#cba6f7";
-    textColor = "#cdd6f4";
-    borderRadius = 8;
-    borderSize = 2;
-    font = "JetBrains Mono 10";
-    padding = "10";
-    margin = "10";
-    defaultTimeout = 5000;
-  };
+  # ponytail: no mako block. dunst is the notification daemon here, and the
+  # disabled mako config only produced deprecation warnings.
 
   # Swaylock screen locker
   programs.swaylock = {

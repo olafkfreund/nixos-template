@@ -870,17 +870,14 @@ niri-debug:
 
 # Show Niri configuration paths
 niri-config-info:
-    @echo "Niri Configuration Information:"
+    @echo "Niri Configuration"
     @echo ""
-    @echo "System config:     /etc/niri/config.kdl"
-    @echo "User config:       ~/.config/niri/config.kdl"
-    @echo "Socket:            \$XDG_RUNTIME_DIR/niri/niri.sock"
+    @echo "Niri is configured through Home Manager, not /etc:"
+    @echo "  Profile:    home/profiles/niri.nix  (programs.niri.settings)"
+    @echo "  Generated:  ~/.config/niri/config.kdl"
     @echo ""
-    @echo "Useful commands:"
-    @echo "  niri msg --help           Show all available commands"
-    @echo "  niri msg workspaces       List current workspaces"
-    @echo "  niri msg windows          List current windows"
-    @echo "  niri msg version          Show Niri version"
+    @echo "Edit the profile and rebuild; the generated file is read-only."
+    @echo "Docs: docs/DESKTOP-ENVIRONMENTS.md"
 
 # User Template Management
 
@@ -1345,8 +1342,3 @@ test-all-macos:
 
     @echo ""
     @echo "✅ All macOS configurations test successfully!"
-
-# Create macOS installation script (disabled due to parser issues)
-create-macos-installer:
-    @echo "⚠️  This command is temporarily disabled due to justfile parser issues"
-    @echo "📝 You can create a macOS installer script manually using the build-macos-* commands"

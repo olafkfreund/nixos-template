@@ -17,14 +17,12 @@ All extended documentation for the NixOS template lives here. The [main README](
 
 ## Platforms
 
-| File                                                     | Description                                          |
-| -------------------------------------------------------- | ---------------------------------------------------- |
-| [WINDOWS-HOWTO.md](WINDOWS-HOWTO.md)                     | End-to-end guide for Windows users (WSL2 and Docker) |
-| [WINDOWS-QUICK-REFERENCE.md](WINDOWS-QUICK-REFERENCE.md) | Quick command reference for Windows/WSL2 workflows   |
-| [WINDOWS-VM-BUILDER.md](WINDOWS-VM-BUILDER.md)           | Docker-based NixOS VM builder for Windows            |
-| [WSL2-CONFIGURATION.md](WSL2-CONFIGURATION.md)           | NixOS configuration inside WSL2                      |
-| [MACOS-NIXOS-GUIDE.md](MACOS-NIXOS-GUIDE.md)             | Running NixOS VMs on macOS for testing               |
-| [NIX-DARWIN-GUIDE.md](NIX-DARWIN-GUIDE.md)               | nix-darwin (native macOS management) reference       |
+| File                                           | Description                                          |
+| ---------------------------------------------- | ---------------------------------------------------- |
+| [WINDOWS-HOWTO.md](WINDOWS-HOWTO.md)           | End-to-end guide for Windows users (WSL2 and Docker) |
+| [WSL2-CONFIGURATION.md](WSL2-CONFIGURATION.md) | NixOS configuration inside WSL2                      |
+| [MACOS-NIXOS-GUIDE.md](MACOS-NIXOS-GUIDE.md)   | Running NixOS VMs on macOS for testing               |
+| [NIX-DARWIN-GUIDE.md](NIX-DARWIN-GUIDE.md)     | nix-darwin (native macOS management) reference       |
 
 ## Hardware & GPU
 
@@ -55,10 +53,9 @@ All extended documentation for the NixOS template lives here. The [main README](
 
 ## Reference
 
-| File                                                     | Description                                                           |
-| -------------------------------------------------------- | --------------------------------------------------------------------- |
-| [NIXOS-ANTI-PATTERNS.md](NIXOS-ANTI-PATTERNS.md)         | Common NixOS mistakes and how to avoid them                           |
-| [researched-antipatterns.md](researched-antipatterns.md) | Comprehensive Nix/NixOS anti-pattern research reference               |
-| [CODE-QUALITY.md](CODE-QUALITY.md)                       | Linting, formatting, and code quality tools (statix, deadnix, nixfmt) |
-| [VALIDATION.md](VALIDATION.md)                           | Configuration validation workflow                                     |
-| [CHANGELOG.md](CHANGELOG.md)                             | Release history and notable changes                                   |
+| File                                             | Description                                                           |
+| ------------------------------------------------ | --------------------------------------------------------------------- |
+| [NIXOS-ANTI-PATTERNS.md](NIXOS-ANTI-PATTERNS.md) | Common NixOS mistakes and how to avoid them                           |
+| [CODE-QUALITY.md](CODE-QUALITY.md)               | Linting, formatting, and code quality tools (statix, deadnix, nixfmt) |
+| [VALIDATION.md](VALIDATION.md)                   | Configuration validation workflow                                     |
+| [CHANGELOG.md](CHANGELOG.md)                     | Release history and notable changes                                   |

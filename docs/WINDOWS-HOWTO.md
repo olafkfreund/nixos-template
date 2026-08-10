@@ -379,6 +379,111 @@ docker run --rm olafkfreund/nixos-vm-builder:latest --help
 - Update channels first: `nix-channel --update`
 - Use system config instead of nix-env
 
+## Virtualization Platform Setup
+
+### VirtualBox (Recommended for Beginners)
+
+1. **Download VirtualBox**: [virtualbox.org](https://www.virtualbox.org/)
+
+1. **Install Extension Pack** for better performance
+
+1. **Import OVA**:
+   - File → Import Appliance
+   - Select your `nixos-*.ova` file
+   - Adjust VM settings if needed
+   - Click Import
+
+1. **First Boot**:
+   - Start the VM
+   - Login with `nixos` / `nixos`
+   - Change password: `passwd`
+
+### Hyper-V (Windows Pro/Enterprise)
+
+1. **Enable Hyper-V**:
+
+   ```powershell
+   Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
+   ```
+
+1. **Hyper-V Manager**:
+   - Open Hyper-V Manager
+   - Action → New → Virtual Machine
+   - Use existing virtual hard disk
+   - Select your `nixos-*.vhdx` file
+
+1. **VM Settings**:
+   - Enable Dynamic Memory
+   - Set appropriate CPU cores
+   - Connect to virtual switch
+
+### VMware Workstation/Player
+
+1. **Create New VM**:
+   - File → New Virtual Machine
+   - Select "I will install the operating system later"
+   - Choose Linux → Other Linux
+
+1. **Add Disk**:
+   - Remove default disk
+   - Add existing disk
+   - Select your `nixos-*.vmdk` file
+
+1. **VM Settings**:
+   - Adjust memory and CPU
+   - Enable virtualization features
+
+### QEMU (Advanced Users)
+
+```powershell
+# Install QEMU for Windows
+winget install qemu
+
+# Run VM
+qemu-system-x86_64 -m 4096 -hda nixos-desktop.qcow2 -enable-kvm
+```
+
+## Security Best Practices
+
+### Initial Setup
+
+1. **Change Default Password**:
+
+   ```bash
+   passwd nixos
+   ```
+
+1. **Update System**:
+
+   ```bash
+   sudo nixos-rebuild switch --upgrade
+   ```
+
+1. **Configure SSH Keys** (for server VMs):
+
+   ```bash
+   # Generate SSH key on Windows
+   ssh-keygen -t ed25519
+
+   # Copy to VM
+   ssh-copy-id nixos@vm-ip-address
+   ```
+
+1. **Enable Firewall**:
+
+   ```bash
+   sudo systemctl enable firewall
+   sudo systemctl start firewall
+   ```
+
+### Production Considerations
+
+- **Change all default passwords**
+- **Configure proper SSH keys**
+- **Enable automatic security updates**
+- **Set up backup procedures**
+- **Configure monitoring and logging**
+
 ## Next Steps: Learning Path
 
 ### Week 1: Basic Exploration

@@ -6,7 +6,7 @@
 
 A modular, flake-based NixOS starter template with Home Manager integration, multi-host support, automatic GPU driver detection, and ready-made configurations for desktops, laptops, servers, virtual machines, WSL2, and macOS (nix-darwin). Clone it, copy a host template, and you have a working declarative system configuration in minutes.
 
-**Wayland-only, three desktops:** GNOME, [Hyprland](https://hypr.land) and [niri](https://github.com/YaLTeR/niri). There is no X11 session — XWayland is enabled so Steam, Discord and older Electron apps still run. Hyprland and niri are configured through Home Manager, so a host can override a single keybinding without replacing the whole config file.
+**Wayland-only, three desktops:** GNOME, [Hyprland](https://hypr.land) and [niri](https://github.com/YaLTeR/niri) — each with a ready-to-copy host (`hosts/desktop-template`, `hosts/hyprland-template`, `hosts/niri-template`). There is no X11 session — XWayland is enabled so Steam, Discord and older Electron apps still run. Hyprland and niri are configured through Home Manager, so a host can override a single keybinding without replacing the whole config file.
 
 ---
 

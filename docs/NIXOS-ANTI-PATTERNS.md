@@ -401,7 +401,7 @@ These patterns help both human developers and AI systems create better NixOS cod
 
 ## **Extended Comprehensive Anti-Patterns Reference**
 
-> **Source**: Research compilation from @docs/researched-antipatterns.md and community best practices
+> **Source**: Community review of this repository, plus published Nix/NixOS best-practice research.
 
 ### **🔍 Nix Language Anti-Patterns**
 
@@ -1046,12 +1046,61 @@ Before any configuration change, verify:
 
 ---
 
+## **Additional Anti-Patterns**
+
+Folded in from a second reference document that duplicated 20 of its 32
+sections with this one. Only the material that was genuinely unique is kept.
+
+#### **Cross-compilation Incompatible Outputs**
+
+**Problem:** Hardcoding system prevents cross-compilation.
+
+````nix
+
+#### **Dangerous `rec` Usage**
+
+**Problem:** Easy to create infinite recursion with shadowing.
+
+```nix
+
+#### **Empty or Collapsible `let` Expressions**
+
+**Problem:** Adds unnecessary visual clutter.
+
+```nix
+
+#### **Excessive Thunk Creation**
+
+**Problem:** Memory usage and stack overflow risks.
+
+```nix
+
+#### **Mixing Build and Runtime Dependencies**
+
+**Problem:** Wrong categorization breaks cross-compilation.
+
+```nix
+
+#### **Mixing Managed and Unmanaged Configs**
+
+**Problem:** Partial adoption creates conflicts.
+
+```nix
+
+#### **No Binary Cache Usage**
+
+**Problem:** Rebuilding everything from scratch.
+
+```yaml
+
+---
+
 ## **References and Further Reading**
 
-- **Primary Anti-Patterns Guide**: @docs/researched-antipatterns.md (comprehensive reference)
 - **Repository-Specific Patterns**: @CLAUDE.md (development guidelines for this repo)
 - **Official Documentation**: [NixOS Manual](https://nixos.org/manual/nixos/stable/)
 - **Community Resources**: [NixOS Discourse](https://discourse.nixos.org/), [NixOS Matrix](https://matrix.to/#/#nixos:nixos.org)
 - **Code Quality Tools**: [statix](https://github.com/nerdypepper/statix), [nixpkgs-hammering](https://github.com/jtojnar/nixpkgs-hammering)
 
 This comprehensive guide ensures robust, maintainable, and community-standard NixOS configurations.
+````

@@ -216,7 +216,6 @@ because they are niche. `just list` always shows the full set.
 | `just build-vm-iso <host>`                 | Build an installation ISO for one host           |
 | `just vm-recommendations`                  | Suggest VM settings for the detected hardware    |
 | `just build-wsl2-home`                     | Build only the WSL2 Home Manager generation      |
-| `just create-macos-installer`              | Build a macOS-hosted installer image             |
 | `just apply-home-desktop <desktop> [user]` | Apply one desktop's Home Manager profile         |
 | `just copy-user-template <template>`       | Copy a user template into `home/users/`          |
 | `just validate-user <template>`            | Check a user template evaluates and is formatted |
