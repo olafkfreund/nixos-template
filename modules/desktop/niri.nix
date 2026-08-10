@@ -846,7 +846,7 @@ in
       # Thunar file manager
       thunar = {
         enable = true;
-        plugins = with pkgs.xfce; [
+        plugins = with pkgs; [
           thunar-archive-plugin
           thunar-volman
         ];
@@ -865,30 +865,16 @@ in
       accounts-daemon.enable = true; # Account management
       gnome.gnome-keyring.enable = true; # Keyring for secrets
 
-      # Audio
-      pipewire = {
-        enable = true;
-        audio.enable = true;
-        pulse.enable = true;
-        jack.enable = false;
-
-        # Low latency configuration
-        extraConfig.pipewire = {
-          "92-low-latency" = {
-            "context.properties" = {
-              "default.clock.rate" = 48000;
-              "default.clock.quantum" = 1024;
-            };
-          };
-        };
-      };
+      # Audio is owned by modules/desktop/audio.nix. This module used to
+      # repeat the whole pipewire block, and its `jack.enable = false` collided
+      # with audio.nix's `true`, so any host enabling both failed to evaluate.
 
       # Display manager (minimal)
       greetd = {
         enable = true;
         settings = {
           default_session = {
-            command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd niri";
+            command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd niri";
             user = "greeter";
           };
         };

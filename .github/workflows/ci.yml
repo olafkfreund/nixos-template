@@ -80,6 +80,8 @@ jobs:
         host:
           - desktop-template
           - laptop-template
+          - hyprland-template
+          - niri-template
           - server-template
           - wsl2-template
           - desktop-test

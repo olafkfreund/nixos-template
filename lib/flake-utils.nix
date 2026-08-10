@@ -196,13 +196,22 @@ let
     };
 
   # Generate template configurations (laptop, desktop, server)
-  mkTemplates = lib.genAttrs [ "laptop-template" "desktop-template" "server-template" ] (
-    name:
-    mkSystem {
-      hostname = name;
-      extraModules = [ templateConfig ];
-    }
-  );
+  mkTemplates =
+    lib.genAttrs
+      [
+        "laptop-template"
+        "desktop-template"
+        "server-template"
+        "hyprland-template"
+        "niri-template"
+      ]
+      (
+        name:
+        mkSystem {
+          hostname = name;
+          extraModules = [ templateConfig ];
+        }
+      );
 
   # Generate VM test configurations
   mkTestConfigs =

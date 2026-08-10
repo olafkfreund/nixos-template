@@ -107,3 +107,8 @@ site/_site/
 site/.jekyll-cache/
 site/.jekyll-metadata
 site/Gemfile.lock
+
+# Stray editor/manual backups
+*.backup
+*.bak
+*.orig

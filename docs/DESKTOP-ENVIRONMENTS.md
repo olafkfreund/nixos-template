@@ -236,6 +236,20 @@ All three are Wayland-native; the template no longer ships an X11 session.
 | **Configured via** | dconf       | Home Manager | Home Manager      |
 | **Unique Feature** | Polished UX | Animations   | Scrollable Tiling |
 
+## Try one
+
+Each desktop has a host that enables it, so you can copy a working example
+rather than wire the module up yourself:
+
+| Host                      | Desktop  |
+| ------------------------- | -------- |
+| `hosts/desktop-template`  | GNOME    |
+| `hosts/hyprland-template` | Hyprland |
+| `hosts/niri-template`     | niri     |
+
+These are built by CI, so a change that breaks one of the desktop modules fails
+the build rather than reaching a user.
+
 ## Where the configuration lives
 
 GNOME is configured through the NixOS module (`modules.desktop.gnome`) and
