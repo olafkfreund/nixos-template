@@ -35,6 +35,23 @@ jobs:
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
                       /opt/hostedtoolcache/CodeQL /usr/local/share/boost
           df -h /
+      # `nix flake check` evaluates all 25 hosts plus every check in ONE
+      # process, and evaluation memory is cumulative. Measured under a 14G
+      # cgroup cap, this dies with exit 137 (OOM) part-way through the hosts --
+      # on `main` as well as here, so the ceiling predates the examples checks;
+      # they just pushed a 16G runner over it.
+      #
+      # Swap rather than dropping the check: this job is the only thing that
+      # evaluates darwinConfigurations, overlays and packages together, and a
+      # gate that cannot fail is not a gate. If this needs raising again, the
+      # real fix is splitting the flake, not more swap.
+      - name: Add swap headroom for whole-flake evaluation
+        run: |
+          sudo fallocate -l 8G /swapfile
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+          free -h
       - name: Install Nix
         uses: cachix/install-nix-action@v31
         with:
