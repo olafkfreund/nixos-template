@@ -9,7 +9,7 @@ The template now includes several advanced modules that provide enterprise-grade
 - **Advanced Hardware Detection** - Automatic hardware profiling and optimization
 - **Performance Monitoring** - Comprehensive system monitoring with Prometheus and Grafana
 - **Enhanced Nix Optimization** - Advanced Nix store management and build optimization
-- **Secrets Management** - SOPS-nix integration for secure configuration management
+- **Secrets Management** - agenix integration for age-encrypted secrets
 - **Comprehensive Testing** - VM-based integration testing and validation
 - **Module Template** - Production-ready module development patterns
 
@@ -136,14 +136,13 @@ modules.core.nixOptimization = {
 - Experimental features management
 - Resource limits for build isolation
 
-### 🔐 Secrets Management (SOPS-nix Integration)
+### 🔐 Secrets Management (agenix)
 
-Secure configuration management with age encryption:
+Secrets are age-encrypted in the repository and decrypted to tmpfs at boot,
+never into the Nix store.
 
 ```nix
-# In your configuration. This template uses agenix, not sops-nix:
-# secrets are age-encrypted in the repository and decrypted to tmpfs at
-# boot, never into the Nix store.
+# In your configuration
 age.secrets."database/password" = {
   file = ./secrets/database-password.age;
   owner = "postgres";
@@ -351,7 +350,7 @@ The system automatically detects and applies performance profiles:
 ### Security
 
 - Enable AppArmor and fail2ban for enhanced security
-- Use SOPS for secrets management
+- Use agenix for secrets management
 - Regular security updates through automated testing
 - Network segmentation and firewall rules
 

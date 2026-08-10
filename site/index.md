@@ -39,12 +39,13 @@ command and confirms before running.
 ## ▸ what you get
 
 <div class="feature-grid">
+<div class="card"><b>Wayland-only</b><p>GNOME · Hyprland · niri. No X11 session; XWayland keeps legacy apps working.</p></div>
 <div class="card"><b>Flake-first</b><p>Fully reproducible with flake.lock — one command to build any host.</p></div>
 <div class="card"><b>Profile-based Home Manager</b><p>base · desktop · development · server profiles compose cleanly.</p></div>
 <div class="card"><b>Multi-host templates</b><p>desktop · laptop · server · WSL2 · macOS — ready to clone.</p></div>
 <div class="card"><b>GPU auto-detection</b><p>AMD, NVIDIA, and Intel configured declaratively.</p></div>
 <div class="card"><b>VM testing</b><p>Spin up any host as a QEMU VM in seconds — no install.</p></div>
-<div class="card"><b>Installer ISOs</b><p>Build bootable NixOS installers pre-seeded with your config.</p></div>
+<div class="card"><b>Installer &amp; cloud images</b><p>ISO, qcow2, AWS, Azure, DigitalOcean, LXC, VMware — from nixpkgs directly.</p></div>
 <div class="card"><b>agenix secrets</b><p>age-encrypted secrets wired into systemd — zero plaintext in the store.</p></div>
 <div class="card"><b>The just menu</b><p>A guided, zero-dependency control panel over every task.</p></div>
 </div>
