@@ -100,7 +100,7 @@ Full reference: [Agenix secrets](https://github.com/olafkfreund/nixos-template/b
 
 ## Custom Installer ISOs
 
-Generate a bootable NixOS ISO pre-seeded with your configuration using `nixos-generators`. Boot from a USB stick to install your exact setup on bare metal.
+Generate a bootable NixOS ISO pre-seeded with your configuration using nixpkgs' own `system.build.images`. Boot from a USB stick to install your exact setup on bare metal.
 
 ```bash
 # Build the installer ISO for the default installer profile
@@ -117,7 +117,7 @@ Full reference: [ISO creation](https://github.com/olafkfreund/nixos-template/blo
 
 ## Multi-platform Deployment Images
 
-Produce cloud and hypervisor images from the same configuration used on bare metal. The `build-images` targets call `nixos-generators` with appropriate format flags.
+Produce cloud and hypervisor images from the same configuration used on bare metal. The `build-images` targets read `system.build.images.<format>` straight from nixpkgs, so there is no extra flake input to keep in step.
 
 ```bash
 just build-images
