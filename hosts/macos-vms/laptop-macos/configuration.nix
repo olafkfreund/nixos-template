@@ -325,7 +325,10 @@
 
   # Environment variables
   environment.variables = {
-    EDITOR = "nano";
+    # mkForce: nixpkgs' shells-environment.nix now defines EDITOR = "vim" at
+    # normal priority, so a plain assignment here is a conflict, not an
+    # override, and the host fails to evaluate.
+    EDITOR = lib.mkForce "nano";
     BROWSER = "firefox";
 
     # VM identification

@@ -37,7 +37,7 @@ nix build .#nixosConfigurations.desktop-test.config.system.build.vm
 just vm my-machine
 ```
 
-The `vm-test` and `vm-test-config` directories contain pre-baked integration test hosts used in CI. Full reference: [VM support](https://github.com/olafkfreund/nixos-template/blob/main/docs/VM-SUPPORT.md)
+CI boots two of these for real under QEMU on every pull request — the `vm-test-desktop` and `vm-test-server` flake checks — so a service that fails to start fails the build. Full reference: [VM support](https://github.com/olafkfreund/nixos-template/blob/main/docs/VM-SUPPORT.md)
 
 ---
 

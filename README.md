@@ -10,7 +10,23 @@ A modular, flake-based NixOS starter template with Home Manager integration, mul
 
 ---
 
-## Quick Start (NixOS)
+## Start Small (recommended for a first configuration)
+
+Most people do not want to inherit 25 hosts and a preset system on day one.
+Get a self-contained flake of four or five short files in **your own** repo:
+
+```bash
+nix flake init -t github:olafkfreund/nixos-template#minimal   # NixOS + Home Manager
+nix flake init -t github:olafkfreund/nixos-template#desktop   # + Wayland GNOME, LUKS disk
+```
+
+Each prints its own next steps. Come back here to copy modules as you want
+them. New to NixOS generally? [**docs/FAQ.md**](docs/FAQ.md) answers the
+questions you are about to have.
+
+---
+
+## Quick Start (the full template)
 
 ```bash
 # 1. Clone the repository
@@ -115,7 +131,9 @@ Full documentation lives in [`docs/`](docs/). See [docs/README.md](docs/README.m
 
 **Getting started**
 
+- [docs/FAQ.md](docs/FAQ.md) — the questions new users actually hit, answered
 - [docs/SETUP.md](docs/SETUP.md) — detailed first-time setup walkthrough
+- [docs/DISK-SETUP.md](docs/DISK-SETUP.md) — declarative partitioning and full-disk encryption
 - [docs/HOST-TEMPLATES.md](docs/HOST-TEMPLATES.md) — all host types and flake registration
 - [docs/USER-TEMPLATES.md](docs/USER-TEMPLATES.md) — Home Manager user profiles
 - [docs/NON-NIXOS-USAGE.md](docs/NON-NIXOS-USAGE.md) — using the template without NixOS
@@ -150,11 +168,16 @@ Full documentation lives in [`docs/`](docs/). See [docs/README.md](docs/README.m
 
 ## Troubleshooting
 
-| Problem                           | Fix                                              |
-| --------------------------------- | ------------------------------------------------ |
-| Build fails with evaluation error | Run `nix flake check` for details                |
-| VM hangs at boot                  | Rebuild: `just test <host>` inside the VM config |
-| `permission denied` errors        | Ensure your user is in the `wheel` group         |
+| Problem                                        | Fix                                                 |
+| ---------------------------------------------- | --------------------------------------------------- |
+| A file you just added is "not found"           | `git add -A` — flakes cannot see untracked files    |
+| Build fails with evaluation error              | Run `nix flake check` for details                   |
+| Downloaded binary: `No such file or directory` | Already handled by `nix-ld`; see [FAQ](docs/FAQ.md) |
+| VM hangs at boot                               | Rebuild: `just test <host>` inside the VM config    |
+| `permission denied` errors                     | Ensure your user is in the `wheel` group            |
+| Disk filling up                                | `sudo nix-collect-garbage -d`                       |
+
+More in [docs/FAQ.md](docs/FAQ.md).
 
 **Getting help:**
 

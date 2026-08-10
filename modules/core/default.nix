@@ -6,6 +6,7 @@
     ./locale.nix
     ./networking.nix
     ./nix.nix
+    ./nix-ld.nix
     ./nix-optimization.nix
     ./performance.nix
     ./security.nix

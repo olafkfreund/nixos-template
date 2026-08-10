@@ -59,22 +59,10 @@
 
   # Network configuration for server
   networking = {
-    # Use systemd-networkd for servers (more reliable)
+    # Use systemd-networkd for servers (more reliable). Per-interface DHCP is
+    # configured in `systemd.network` below rather than here.
     useNetworkd = true;
     useDHCP = false;
-
-    # Configure specific interface (adjust as needed)
-    interfaces.enp0s31f6 = {
-      useDHCP = true;
-      # Static IP example:
-      # ipv4.addresses = [{
-      #   address = "192.168.1.100";
-      #   prefixLength = 24;
-      # }];
-
-      # Wake-on-LAN support
-      wakeOnLan.enable = true;
-    };
 
     # Server firewall configuration
     firewall = {
@@ -104,6 +92,26 @@
       "8.8.4.4"
     ];
   };
+
+  # DHCP on whatever wired interface this machine actually has.
+  #
+  # This used to hardcode `enp0s31f6` alongside `useDHCP = false`, which meant
+  # any machine without that exact interface name booted with no network at
+  # all. Predictable names vary per board (eno1, enp3s0, ens18, ...), so match
+  # a pattern rather than guessing a name.
+  systemd.network.networks."10-wired" = {
+    matchConfig.Name = "en* eth*";
+    networkConfig.DHCP = "yes";
+    linkConfig.RequiredForOnline = "routable";
+  };
+
+  # Static IP instead? Drop the DHCP line above and use:
+  #
+  # systemd.network.networks."10-wired" = {
+  #   matchConfig.Name = "eno1";                       # from `ip link`
+  #   address = [ "192.168.1.100/24" ];
+  #   routes = [ { Gateway = "192.168.1.1"; } ];
+  # };
 
   # Server services
   services = {

@@ -1,7 +1,6 @@
 # Desktop Configuration Template - Simplified
 # Uses the profile system instead of duplicating packages
 {
-  lib,
   pkgs,
   ...
 }:
@@ -80,7 +79,7 @@
   # Zero-configuration hardware optimization
   hardware.autoOptimization = {
     enable = true;
-    debug = true;
+    debug = false; # set true to have the detected hardware printed on rebuild
     detection = {
       enableMemoryOptimization = true;
       enableCpuOptimization = true;
@@ -95,14 +94,16 @@
     networkmanager.enable = true;
     firewall = {
       enable = true;
-      allowedTCPPorts = [
-        22
-        80
-        443
-        8080
-      ];
+      # A desktop serves nothing. Open only what you actually listen on --
+      # every extra port here is reachable from your whole LAN.
+      allowedTCPPorts = [ 22 ]; # SSH, for `just switch` from another machine
+      # Running a dev server you want to reach from your phone? Add it:
+      # allowedTCPPorts = [ 22 3000 ];
     };
-    interfaces.enp0s31f6.wakeOnLan.enable = true;
+    # No `interfaces.<name>` block: interface names differ on every machine
+    # (enp0s31f6, eno1, wlp3s0...). NetworkManager handles whatever you have.
+    # Wake-on-LAN, if you want it, needs YOUR interface name from `ip link`:
+    # interfaces.eno1.wakeOnLan.enable = true;
   };
 
   # Services - only host-specific configurations
@@ -113,7 +114,6 @@
       settings = {
         PasswordAuthentication = false;
         PermitRootLogin = "no";
-        X11Forwarding = lib.mkForce true;
       };
     };
     displayManager.autoLogin.enable = false;
@@ -145,8 +145,11 @@
 
   # System maintenance
   system = {
+    # Off by default. Unattended upgrades on a machine you are still learning
+    # to configure means waking up to a changed system you did not change --
+    # run `just update && just switch <host>` when you are ready instead.
     autoUpgrade = {
-      enable = true;
+      enable = false;
       allowReboot = false;
       dates = "weekly";
     };

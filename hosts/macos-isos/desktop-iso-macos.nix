@@ -79,10 +79,12 @@
     # Desktop environment
     xserver = {
       enable = true;
-      videoDrivers = [
-        "modesetting"
-        "qxl"
-      ]; # virtio-gpu is driven by modesetting
+      # `modesetting` alone. The separate xf86-video-qxl driver is marked
+      # broken in nixpkgs, which made this whole ISO refuse to evaluate -- and
+      # it is redundant anyway: the in-kernel qxl DRM driver is what actually
+      # binds the device, and virtio-gpu (what UTM gives Apple Silicon guests)
+      # is driven by modesetting too.
+      videoDrivers = [ "modesetting" ];
     };
 
     # Display manager

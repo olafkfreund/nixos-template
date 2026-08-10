@@ -35,6 +35,29 @@ jobs:
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
                       /opt/hostedtoolcache/CodeQL /usr/local/share/boost
           df -h /
+      # `nix flake check` evaluates all 25 hosts plus every check in ONE
+      # process, and evaluation memory is cumulative. Measured under a 14G
+      # cgroup cap, this dies with exit 137 (OOM) part-way through the hosts --
+      # on `main` as well as here, so the ceiling predates the examples checks;
+      # they just pushed a 16G runner over it.
+      #
+      # Swap rather than dropping the check: this job is the only thing that
+      # evaluates darwinConfigurations, overlays and packages together, and a
+      # gate that cannot fail is not a gate. If this needs raising again, the
+      # real fix is splitting the flake, not more swap.
+      - name: Add swap headroom for whole-flake evaluation
+        run: |
+          # NOT /swapfile: the Ubuntu runner image already has one, active, so
+          # writing there fails with "fallocate failed: Text file busy". The
+          # extra swap goes on the larger /mnt volume as a second swap area.
+          # 16G RAM + the image's own 4G swap is ~20G, and measured peak here
+          # is ~20.1G -- exactly the edge that produced the first OOM.
+          sudo fallocate -l 8G /mnt/swapfile
+          sudo chmod 600 /mnt/swapfile
+          sudo mkswap /mnt/swapfile
+          sudo swapon /mnt/swapfile
+          swapon --show
+          free -h
       - name: Install Nix
         uses: cachix/install-nix-action@v31
         with:
@@ -58,7 +81,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        check: [statix-check, deadnix-check, shellcheck-check, treefmt, pre-commit-check]
+        check:
+          - statix-check
+          - deadnix-check
+          - shellcheck-check
+          - treefmt
+          - pre-commit-check
+          # Examples and `nix flake init` templates live outside any host, so
+          # nothing else evaluates them. These three do.
+          - disko-examples
+          - specialisation-examples
+          - templates-evaluate
     steps:
       - uses: actions/checkout@v5
       - name: Install Nix
@@ -99,6 +132,21 @@ jobs:
           - microvm
           - installer-minimal
           - installer-desktop
+          - installer-preconfigured
+          # The macOS-VM and macOS-installer hosts were absent from this list,
+          # so CI stayed green while five of them could not evaluate at all
+          # (a `environment.variables.EDITOR` conflict and a broken
+          # xf86-video-qxl). A host that nothing builds is a host that rots.
+          - desktop-macos
+          - desktop-macos-intel
+          - laptop-macos
+          - laptop-macos-intel
+          - server-macos
+          - server-macos-intel
+          - installer-minimal-macos
+          - installer-minimal-macos-aarch64
+          - installer-desktop-macos
+          - installer-desktop-macos-aarch64
     steps:
       - uses: actions/checkout@v5
       - name: Install Nix
