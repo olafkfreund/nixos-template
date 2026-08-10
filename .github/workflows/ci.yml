@@ -28,6 +28,13 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v5
+      # Instantiating every host writes a lot of .drv files. Without this the
+      # runner ran out of room part-way through and nix was killed (exit 143).
+      - name: Free up runner disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
+                      /opt/hostedtoolcache/CodeQL /usr/local/share/boost
+          df -h /
       - name: Install Nix
         uses: cachix/install-nix-action@v31
         with:

@@ -541,7 +541,10 @@
         # directly. (The previous version shelled out to `nix build` inside a
         # sandboxed derivation, which can never work.)
         // nixpkgs.lib.optionalAttrs (system == "x86_64-linux") {
-          wsl2-config = self.nixosConfigurations.wsl2-template.config.system.build.toplevel;
+          # Only the standalone Home Manager generation is checked here. The
+          # WSL2 system itself is instantiated by the `hosts` matrix in CI, so
+          # a `wsl2-config` check would evaluate the same derivation twice in
+          # one process.
           wsl2-home = self.homeConfigurations."nixos@wsl2-template".activationPackage;
         }
       );
