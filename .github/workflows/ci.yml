@@ -47,10 +47,16 @@ jobs:
       # real fix is splitting the flake, not more swap.
       - name: Add swap headroom for whole-flake evaluation
         run: |
-          sudo fallocate -l 8G /swapfile
-          sudo chmod 600 /swapfile
-          sudo mkswap /swapfile
-          sudo swapon /swapfile
+          # NOT /swapfile: the Ubuntu runner image already has one, active, so
+          # writing there fails with "fallocate failed: Text file busy". The
+          # extra swap goes on the larger /mnt volume as a second swap area.
+          # 16G RAM + the image's own 4G swap is ~20G, and measured peak here
+          # is ~20.1G -- exactly the edge that produced the first OOM.
+          sudo fallocate -l 8G /mnt/swapfile
+          sudo chmod 600 /mnt/swapfile
+          sudo mkswap /mnt/swapfile
+          sudo swapon /mnt/swapfile
+          swapon --show
           free -h
       - name: Install Nix
         uses: cachix/install-nix-action@v31
